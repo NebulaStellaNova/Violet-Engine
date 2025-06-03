@@ -1,0 +1,21 @@
+{
+  "dependencies": [
+    {
+      "name": "flixel",
+      "type": "haxelib",
+      "version": null
+    },
+    {
+      "name": "lscript",
+      "type": "git",
+      "dir": null,
+      "ref": "main",
+      "url": "https://github.com/SrtHero278/lscript"
+    },
+    {
+      "name": "rulescript",
+      "type": "haxelib",
+      "version": null
+    }
+  ]
+}

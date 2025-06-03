@@ -1,2 +1,4 @@
-/export
+.haxelib/
+export/
+
 .DS_Store
