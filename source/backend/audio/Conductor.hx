@@ -1,4 +1,4 @@
-package backend;
+package backend.audio;
 
 import flixel.FlxG;
 
