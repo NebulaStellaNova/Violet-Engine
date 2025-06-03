@@ -14,8 +14,10 @@
     },
     {
       "name": "rulescript",
-      "type": "haxelib",
-      "version": null
+      "type": "git",
+      "dir": null,
+      "ref": "dev",
+      "url": "https://github.com/Kriptel/RuleScript/"
     }
   ]
 }
