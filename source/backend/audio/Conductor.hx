@@ -11,7 +11,6 @@ typedef AudioData = {
 	var bpm:Float;
 	var signature:Array<Int>;
 	var ?offset:Float;
-	var checkpoints:Array<CheckpointTyping>;
 }
 
 typedef BPMChange = {
@@ -42,7 +41,7 @@ class Conductor {
 		artist: "Kawai Sprite",
 		name: "Freaky Menu",
 		bpm: 102,
-		signature: [4, 4, 4, 4],
+		signature: [4, 4],
 		checkpoints: []
 	}
 	/**
