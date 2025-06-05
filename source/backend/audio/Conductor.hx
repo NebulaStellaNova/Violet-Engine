@@ -5,6 +5,15 @@ import flixel.sound.FlxSound;
 import flixel.sound.FlxSoundGroup;
 import flixel.tweens.FlxTween;
 
+typedef AudioData = {
+	var artist:String;
+	var name:String;
+	var bpm:Float;
+	var signature:Array<Int>;
+	var ?offset:Float;
+	var checkpoints:Array<CheckpointTyping>;
+}
+
 typedef BPMChange = {
 	var stepTime:Float;
 	var songTime:Float;
@@ -26,6 +35,16 @@ typedef CheckpointTyping = {
  */
 @:access(flixel.system.frontEnds.SoundFrontEnd.loadHelper)
 class Conductor {
+	/**
+	 * Default/Current AudioData I suppose. - Nebula
+	 */
+	public static var data(default, null):AudioData = {
+		artist: "Kawai Sprite",
+		name: "Freaky Menu",
+		bpm: 102,
+		signature: [4, 4, 4, 4],
+		checkpoints: []
+	}
 	/**
 	 * The sound group all conductor audio is tied to.
 	 */
@@ -183,7 +202,7 @@ class Conductor {
 	}
 
 	static var audioEnded:Bool = false;
-	inline static function onCompleteFunc():Void {
+	inline static function onCompleteFunc(?_onComplete = null):Void {
 		if (_onComplete != null) {
 			_onComplete();
 			_onComplete = null;
@@ -433,8 +452,8 @@ class Conductor {
 			prevTime = audio == null ? 0 : (audio.playing ? audio.time : time);
 			return;
 		} else { // jic
-			if (audio.onComplete != onCompleteFunc)
-				audio.onComplete = onCompleteFunc;
+			//if (audio.onComplete != onCompleteFunc)
+			//	audio.onComplete = onCompleteFunc;
 		}
 
 		if (!audio.playing && !autoSetTime)
@@ -552,19 +571,6 @@ class Conductor {
 	 * Renders any bpm change that happen throughout the song.
 	 */
 	public static function applyBPMChanges():Void {
-		/**
-		The **data** var here in my engine was used for holding info like this.
-		```haxe
-		typedef AudioData = {
-			var artist:String;
-			var name:String;
-			var bpm:Float;
-			var signature:Array<Int>;
-			var ?offset:Float;
-			var checkpoints:Array<CheckpointTyping>;
-		}
-		```
-		**/
 		bpmChanges = [
 			{
 				stepTime: 0,
