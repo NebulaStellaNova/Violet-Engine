@@ -41,8 +41,7 @@ class Conductor {
 		artist: "Kawai Sprite",
 		name: "Freaky Menu",
 		bpm: 102,
-		signature: [4, 4],
-		checkpoints: []
+		signature: [4, 4]
 	}
 	/**
 	 * The sound group all conductor audio is tied to.
@@ -580,29 +579,5 @@ class Conductor {
 			}
 		];
 		changeBPM(startBpm = prevBpm = data.bpm, data.signature[0], data.signature[1]);
-
-		var curBPM:Float = data.bpm;
-		var curSig:Array<Int> = data.signature;
-		var songTime:Float = 0;
-		var stepTime:Float = 0;
-		for (checkpoint in data.checkpoints) {
-			if (
-				checkpoint.bpm == curBPM /* &&
-				curSig[0] == checkpoint.signature[0] &&
-				curSig[1] == checkpoint.signature[1] */
-			) continue;
-			stepTime += (checkpoint.time - songTime) / ((60 / curBPM) * 1000 / 4);
-			songTime = checkpoint.time;
-			curBPM = checkpoint.bpm;
-			curSig = checkpoint.signature;
-
-			bpmChanges.push({
-				stepTime: stepTime,
-				songTime: songTime,
-				bpm: curBPM,
-				beatsPM: curSig[0],
-				stepsPB: curSig[1]
-			});
-		}
 	}
 }
