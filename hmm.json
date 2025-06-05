@@ -6,6 +6,11 @@
       "version": null
     },
     {
+      "name": "hmm",
+      "type": "haxelib",
+      "version": null
+    },
+    {
       "name": "lscript",
       "type": "git",
       "dir": null,
