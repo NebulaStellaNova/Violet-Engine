@@ -86,6 +86,10 @@ class MainMenuState extends MusicBeatState {
 		super.update(elapsed);
         changeSelection(uiCheck());   
         bg.color = MathUtil.colorLerp(bg.color, menuData.items[curSelected].color, 0.16);
+        if (stateScript != null) {
+            stateScript.call("postUpdate", [elapsed]);
+            stateScript.call("onUpdatePost", [elapsed]);
+        }
 	}
 
     public function changeSelection(amt:Int) {
