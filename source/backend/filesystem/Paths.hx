@@ -1,5 +1,6 @@
 package backend.filesystem;
 
+import haxe.Json;
 import sys.FileSystem;
 import haxe.io.Path;
 
@@ -17,6 +18,9 @@ class Paths {
     public static function font(path:String, ?directory:String):String { 
         return 'assets/fonts/${directory != null ? Path.addTrailingSlash(directory) : ""}$path';
     }
+    public static function json(path:String, ?directory:String):String { 
+        return 'assets/${directory != null ? Path.addTrailingSlash(directory) : ""}$path.json';
+    }
 
     public static function fileExists(path:String) {
         return FileSystem.exists(path);
@@ -33,5 +37,9 @@ class Paths {
     public static function readStringFromPath(path:String):String
     {
         return sys.io.File.getContent(path);
+    }
+
+    public static function parseJson(path:String, ?directory:String) {
+        return Json.parse(readStringFromPath(json(path, directory)));
     }
 }

@@ -1,5 +1,8 @@
 package states;
 
+import backend.ClassData;
+import flixel.util.FlxTimer;
+import scripting.events.SelectionEvent;
 import backend.objects.NovaText;
 import flixel.text.FlxText;
 import utils.MathUtil;
@@ -42,6 +45,8 @@ class MainMenuState extends MusicBeatState {
 
     public var leftWatermark:NovaText;
 
+    public var canSelect:Bool = true;
+
 	override public function create()
 	{
 		super.create();
@@ -73,6 +78,7 @@ class MainMenuState extends MusicBeatState {
 	}
 
     function uiCheck() {
+        if (!canSelect) return 0;
         if (FlxG.keys.justPressed.UP)
             return -1;
         else if (FlxG.keys.justPressed.DOWN)
@@ -86,22 +92,41 @@ class MainMenuState extends MusicBeatState {
 		super.update(elapsed);
         changeSelection(uiCheck());   
         bg.color = MathUtil.colorLerp(bg.color, menuData.items[curSelected].color, 0.16);
-        if (stateScript != null) {
-            stateScript.call("postUpdate", [elapsed]);
-            stateScript.call("onUpdatePost", [elapsed]);
+
+        if (FlxG.keys.justPressed.ENTER) {
+            pickSelection();
         }
+
+        call("postUpdate", [elapsed]);
+        call("onUpdatePost", [elapsed]);
+
 	}
 
     public function changeSelection(amt:Int) {
-        if (amt != 0) {
+        var event:SelectionEvent = runEvent("onChangeSelection", new SelectionEvent(FlxMath.wrap(curSelected + amt, 0, menuItems.length-1)));
+        if (event.cancelled) return;
+        if (amt != 0 && !event.soundCancelled) {
             FlxG.sound.play(Paths.sound("scroll", "menu"));
         }
-        curSelected = FlxMath.wrap(curSelected + amt, 0, menuItems.length-1);
-        for (i=>item in menuItems) {
+        curSelected = event.selection;
+        for (i => item in menuItems) {
             item.playAnim(i == curSelected ? "selected" : "static");
             item.updateHitbox();
             item.screenCenter(X);
         }
+    }
+
+    public function pickSelection() {
+        var event:SelectionEvent = runEvent("onPickSelection", new SelectionEvent(curSelected));
+        if (!event.soundCancelled) FlxG.sound.play(Paths.sound("confirm", "menu"));
+        if (event.cancelled) return;
+
+        canSelect = false;
+
+        new FlxTimer().start(1, (t)->{
+            switchState(new ClassData(menuData.items[curSelected].state).target);
+            canSelect = true;
+        });
     }
 
 }

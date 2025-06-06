@@ -1,4 +1,4 @@
-package backend.rulescript;
+package backend.scripts;
 
 import flixel.sound.FlxSound;
 import flixel.group.FlxGroup.FlxTypedGroup;
@@ -13,6 +13,10 @@ import flixel.*;
 import rulescript.parsers.HxParser;
 import rulescript.RuleScript;
 
+/**
+ * @author @zyflixel
+ * # THANKS - Nebula
+ */
 class FunkinScript extends RuleScript {
     private var scriptCode: String;
     private var executed: Bool = false;
@@ -63,6 +67,10 @@ class FunkinScript extends RuleScript {
         //set('game', PlayState.current);
         set('NovaSprite', NovaSprite);
         set('Paths', Paths);
+
+        set('X', FlxAxes.X);
+        set('Y', FlxAxes.Y);
+        set('XY', FlxAxes.XY);
 
         // Custom
         set('add', (object: FlxBasic) -> return FlxG.state.add(object));

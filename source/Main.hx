@@ -21,6 +21,7 @@ class Main extends Sprite
 			className = FlxStringUtil.getClassName(state, true);
 			log(className, DebugMessage);
 		});
+		FlxG.resetState();
 	}
 
 	inline function initEverything() {
