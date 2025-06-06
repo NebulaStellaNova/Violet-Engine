@@ -22,8 +22,8 @@ class MusicBeatState extends FlxState {
 		if (Paths.fileExists(scriptPath)) {
 			stateScript.execute(Paths.readStringFromPath(scriptPath));
 			stateScript.init();
-			stateScript.call("create");
-			stateScript.call("onCreate");
+			/* stateScript.call("create");
+			stateScript.call("onCreate"); */
 		}
 	}
 

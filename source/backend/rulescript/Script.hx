@@ -26,9 +26,8 @@ class Script extends RuleScript {
     }
     
     public function call(funcName: String, ?args: Array<Dynamic>):Dynamic {
-        trace(funcName);
+        if (!variables.exists(funcName)) return null;
         final func: Dynamic = variables.get(funcName);
-        if(func == null) return null;
 
         if(Reflect.isFunction(func))
             return Reflect.callMethod(null, func, args ?? []);
