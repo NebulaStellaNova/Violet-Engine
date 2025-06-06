@@ -1,0 +1,46 @@
+{
+	"directory": "menus/mainmenu",
+	"background": "menuBGdesat",
+	"items": [
+		{
+			"id": "storymode",
+			"item": "story mode",
+			"animations": {
+				"idle": "basic",
+				"selected": "white"
+			},
+			"state": "source:StoryMenuState",
+			"color": "#FF00FF"
+		},
+		{
+			"id": "freeplay",
+			"item": "freeplay",
+			"animations": {
+				"idle": "basic",
+				"selected": "white"
+			},
+			"state": "source:FreeplayState",
+			"color": "#ff4242"
+		},
+		{
+			"id": "credits",
+			"item": "credits",
+			"animations": {
+				"idle": "basic",
+				"selected": "white"
+			},
+			"state": "source:CreditsState",
+			"color": "#42b7ff"
+		},
+		{
+			"id": "options",
+			"item": "options",
+			"animations": {
+				"idle": "basic",
+				"selected": "white"
+			},
+			"state": "source:OptionsState",
+			"color": "#FFFFFF"
+		}
+	]
+}

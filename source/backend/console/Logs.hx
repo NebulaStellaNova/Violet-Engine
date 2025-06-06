@@ -28,15 +28,15 @@ class Logs {
         var dataString:String = '[  ${fileName}:${infos.lineNumber}  ]';
         switch (type) {
             case ErrorMessage:
-                finalOut +=    '${ConsoleColors.RED}[   ERROR   ] -> $dataString:${ConsoleColors.WHITE} $value';
+                finalOut +=       '${ConsoleColors.RED}[   ERROR   ] -> $dataString:${ConsoleColors.WHITE} $value';
             case WarningMessage:
-                finalOut += '${ConsoleColors.YELLOW}[  WARNING  ] -> $dataString:${ConsoleColors.WHITE} $value';
+                finalOut +=    '${ConsoleColors.YELLOW}[  WARNING  ] -> $dataString:${ConsoleColors.WHITE} $value';
             case SystemMessage:
-                finalOut +=   '${ConsoleColors.BLUE}[    SYS    ] -> $dataString:${ConsoleColors.WHITE} $value';
+                finalOut +=      '${ConsoleColors.BLUE}[    SYS    ] -> $dataString:${ConsoleColors.WHITE} $value';
             case DebugMessage:
-                finalOut +=   '${ConsoleColors.GRAY}[   DEBUG   ] -> $dataString:${ConsoleColors.WHITE} $value';
+                finalOut += '${ConsoleColors.DARKGREEN}[   DEBUG   ] -> $dataString:${ConsoleColors.WHITE} $value';
             default:
-                finalOut +=  '${ConsoleColors.WHITE}[    LOG    ] -> $dataString:${ConsoleColors.WHITE} $value';
+                finalOut +=      '${ConsoleColors.GRAY}[    LOG    ] -> $dataString:${ConsoleColors.WHITE} $value';
         }
         Sys.println(finalOut + ConsoleColors.WHITE);
     }

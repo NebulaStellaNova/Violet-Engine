@@ -11,6 +11,11 @@
       "version": null
     },
     {
+      "name": "linc_luajit",
+      "type": "haxelib",
+      "version": null
+    },
+    {
       "name": "lscript",
       "type": "git",
       "dir": null,
@@ -21,7 +26,7 @@
       "name": "rulescript",
       "type": "git",
       "dir": null,
-      "ref": "dev",
+      "ref": "main",
       "url": "https://github.com/Kriptel/RuleScript/"
     }
   ]

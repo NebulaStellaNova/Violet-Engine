@@ -1,5 +1,7 @@
 package;
 
+import flixel.util.FlxStringUtil;
+import flixel.FlxG;
 import flixel.FlxSprite;
 import states.MainMenuState;
 import backend.console.Logs;
@@ -8,11 +10,17 @@ import openfl.display.Sprite;
 
 class Main extends Sprite
 {
+	public static var className:String;
+
 	public function new()
 	{
 		super();
 		initEverything();
 		addChild(new FlxGame(1280, 720, MainMenuState, 60, 60, true, false));
+		FlxG.signals.preStateCreate.add((state)->{
+			className = FlxStringUtil.getClassName(state, true);
+			log(className, DebugMessage);
+		});
 	}
 
 	inline function initEverything() {
