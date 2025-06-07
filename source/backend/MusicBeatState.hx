@@ -8,12 +8,17 @@ import flixel.FlxG;
 
 import flixel.util.FlxStringUtil;
 import states.substates.DebugSubState;
+import flixel.system.debug.watch.Tracker;
 
 class MusicBeatState extends FlxState {
 
 	var debugSubState = null;
 
 	var stateScript:FunkinScript;
+
+	var defaultDebugVars:Array<String> = ["stateScript"];
+	var debugVars:Array<String> = [];
+	var ____________________ = "                  ";
 	//var stateLuaScript:LuaScript;
 
     override public function create() {
@@ -30,6 +35,14 @@ class MusicBeatState extends FlxState {
 		if (Paths.fileExists(luaScriptPath)) {
 			//stateLuaScript = new LuaScript(Paths.readStringFromPath(luaScriptPath));
 		}
+
+		#if FLX_DEBUG
+        //var trackerProfile = new TrackerProfile(MusicBeatState, defaultDebugVars.concat(debugVars).concat(["____________________"]), []);
+        //FlxG.debugger.addTrackerProfile(trackerProfile);
+        //FlxG.debugger.track(FlxG.state, "Current State");
+
+		FlxG.watch.add(this, "stateScript", "State HScript:");
+        #end
 
 
 		

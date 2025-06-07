@@ -35,6 +35,9 @@ typedef MenuData = {
 
 class MainMenuState extends MusicBeatState {
 
+    public var curSelectedString:String = "";
+    public var bgColorString:String = "";
+
     public var curSelected:Int = 0;
 
     public var menuData:MenuData;
@@ -49,6 +52,7 @@ class MainMenuState extends MusicBeatState {
 
 	override public function create()
 	{
+        debugVars = ["curSelected"];
 		super.create();
 
         menuData = Json.parse(Paths.readStringFromPath("assets/data/config/menuData.json"));
@@ -75,6 +79,14 @@ class MainMenuState extends MusicBeatState {
         leftWatermark.y = FlxG.height - leftWatermark.getHeight() - 5;
         //leftWatermark.setFormat(Paths.font("Tardling v1.1.ttf"), 20);
         add(leftWatermark);
+
+        
+        #if FLX_DEBUG
+		FlxG.watch.add(this, "curSelectedString", "Current Selected Item:");
+		FlxG.watch.add(this, "bgColorString", "Background Color:");
+		FlxG.game.debugger.console.registerFunction('setSelectionColor', setSelectionColor);
+		FlxG.game.debugger.console.registerFunction('changeSelection', changeSelection);
+        #end
 	}
 
     function uiCheck() {
@@ -92,6 +104,7 @@ class MainMenuState extends MusicBeatState {
 		super.update(elapsed);
         changeSelection(uiCheck());   
         bg.color = MathUtil.colorLerp(bg.color, menuData.items[curSelected].color, 0.16);
+        bgColorString = JsonColor.fromInt(bg.color);
 
         if (FlxG.keys.justPressed.ENTER) {
             pickSelection();
@@ -114,6 +127,7 @@ class MainMenuState extends MusicBeatState {
             item.updateHitbox();
             item.screenCenter(X);
         }
+        curSelectedString = menuData.items[curSelected].item;
     }
 
     public function pickSelection() {
@@ -127,6 +141,10 @@ class MainMenuState extends MusicBeatState {
             switchState(new ClassData(menuData.items[curSelected].state).target);
             canSelect = true;
         });
+    }
+
+    public function setSelectionColor(hex) {
+        menuData.items[curSelected].color = hex;
     }
 
 }
