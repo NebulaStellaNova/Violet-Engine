@@ -16,30 +16,25 @@ class MusicBeatState extends FlxState {
 	var stateScript:FunkinScript;
 	//var stateLuaScript:LuaScript;
 
-    override public function create()
-	{
+    override public function create() {
 		super.create();
-		//stateScript = new Script(new HxParser());
-
-		
+			
 		var luaScriptPath = "assets/data/scripts/states/" + Main.className + ".lua";
 		var scriptPath = "assets/data/scripts/states/" + Main.className + ".hx";
 		if (Paths.fileExists(scriptPath)) {
 			stateScript = new FunkinScript(Paths.readStringFromPath(scriptPath));
 			call("create");
 			call("onCreate");
-			for (i in Reflect.fields(FlxG.state)) {
-				set(i, Reflect.field(FlxG.state, i));
-			}
-			postCreate();
-			
+			stateScript.superInstance = this;
 		}
 		if (Paths.fileExists(luaScriptPath)) {
 			//stateLuaScript = new LuaScript(Paths.readStringFromPath(luaScriptPath));
 		}
 
+
 		
-		//FlxG.signals.postStateSwitch.add(postCreate);
+		//postCreate();
+
 	}
 
 	override public function update(elapsed:Float)

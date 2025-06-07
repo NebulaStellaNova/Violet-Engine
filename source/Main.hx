@@ -19,7 +19,7 @@ class Main extends Sprite
 		addChild(new FlxGame(1280, 720, MainMenuState, 60, 60, true, false));
 		FlxG.signals.preStateCreate.add((state)->{
 			className = FlxStringUtil.getClassName(state, true);
-			log(className, DebugMessage);
+			//log(className, DebugMessage);
 		});
 		FlxG.resetState();
 	}
