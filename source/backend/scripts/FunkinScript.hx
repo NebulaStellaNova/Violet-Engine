@@ -12,6 +12,7 @@ import flixel.text.*;
 import flixel.*;
 import rulescript.parsers.HxParser;
 import rulescript.RuleScript;
+import hxwindowmode.WindowColorMode;
 
 /**
  * @author @zyflixel
@@ -67,6 +68,7 @@ class FunkinScript extends RuleScript {
         //set('game', PlayState.current);
         set('NovaSprite', NovaSprite);
         set('Paths', Paths);
+        set('WindowColorMode', WindowColorMode);
 
         set('X', FlxAxes.X);
         set('Y', FlxAxes.Y);

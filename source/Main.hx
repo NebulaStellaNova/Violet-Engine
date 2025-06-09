@@ -7,6 +7,7 @@ import states.MainMenuState;
 import backend.console.Logs;
 import flixel.FlxGame;
 import openfl.display.Sprite;
+import hxwindowmode.WindowColorMode;
 
 class Main extends Sprite
 {
@@ -26,6 +27,7 @@ class Main extends Sprite
 			//log(className, DebugMessage);
 		});
 		FlxG.resetState();
+		WindowColorMode.setDarkMode();
 	}
 
 	inline function initEverything() {
