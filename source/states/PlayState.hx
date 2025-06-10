@@ -22,6 +22,18 @@ typedef ChartData = {
 
 class PlayState extends MusicBeatState {
 
+	public static var keybinds = [
+		// Main Keybinds
+		"W",
+		"F",
+		"J",
+		"O",
+		// Alt Keybinds
+		"E",
+		"F",
+		"K",
+		"O"
+	];
 
 	public static var songID:String;
 	public static var varient:String;
@@ -33,9 +45,15 @@ class PlayState extends MusicBeatState {
 
 	public var notes:Array<Note> = [];
 
+	function getKeyPress(index:Int, isRelease:Bool = false) {
+		return (isRelease ? FlxG.keys.anyJustReleased : FlxG.keys.anyJustPressed)([FlxKey.fromString(keybinds[index].toUpperCase()), FlxKey.fromString(keybinds[index+4].toUpperCase())]);
+	}
+
 	override public function create()
 	{
 		super.create();
+
+		
 
 		Conductor.curMusic = "";
 		Conductor.loadSong(songID);
@@ -66,6 +84,13 @@ class PlayState extends MusicBeatState {
 	override public function update(elapsed:Float)
 	{
 		super.update(elapsed);
+
+		if (FlxG.keys.justPressed.ENTER) {		
+            FlxG.state.persistentUpdate = false;
+			Conductor.pause();
+			openSubState(new states.substates.PauseSubState());
+		}
+
 		var hitThisFrame = [false, false, false, false];
 
 		for (i in strumLines) {
@@ -80,10 +105,10 @@ class PlayState extends MusicBeatState {
 					}
 				}
 				for (dir => bool in [
-					FlxG.keys.justPressed.W,
-					FlxG.keys.justPressed.F,
-					FlxG.keys.justPressed.J,
-					FlxG.keys.justPressed.O 
+					getKeyPress(0),
+					getKeyPress(1),
+					getKeyPress(2),
+					getKeyPress(3)
 				]) {
 					if (bool) {
 						var doPress = true;
@@ -105,10 +130,10 @@ class PlayState extends MusicBeatState {
 				}
 	
 				for (dir => bool in [
-					FlxG.keys.justReleased.W,
-					FlxG.keys.justReleased.F,
-					FlxG.keys.justReleased.J,
-					FlxG.keys.justReleased.O 
+					getKeyPress(0, true),
+					getKeyPress(1, true),
+					getKeyPress(2, true),
+					getKeyPress(3, true)
 				]) {
 					if (bool) {
 						i.members[dir].playAnim("static");
