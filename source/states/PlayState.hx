@@ -31,7 +31,12 @@ class PlayState extends MusicBeatState {
 		"E",
 		"F",
 		"K",
-		"O"
+		"O",
+		// Arrow Binds
+		"LEFT",
+		"DOWN",
+		"UP",
+		"RIGHT"
 	];
 
 	public static var songID:String;
@@ -45,7 +50,7 @@ class PlayState extends MusicBeatState {
 	public var notes:Array<Note> = [];
 
 	function getKeyPress(index:Int, isRelease:Bool = false) {
-		return (isRelease ? FlxG.keys.anyJustReleased : FlxG.keys.anyJustPressed)([FlxKey.fromString(keybinds[index].toUpperCase()), FlxKey.fromString(keybinds[index+4].toUpperCase())]);
+		return (isRelease ? FlxG.keys.anyJustReleased : FlxG.keys.anyJustPressed)([FlxKey.fromString(keybinds[index].toUpperCase()), FlxKey.fromString(keybinds[index+4].toUpperCase()), FlxKey.fromString(keybinds[index+4+4].toUpperCase())]);
 	}
 
 	override public function create()
