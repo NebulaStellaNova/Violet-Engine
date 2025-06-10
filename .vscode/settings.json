@@ -1,5 +1,10 @@
 {
 	"cSpell.words": [
-		"lscript"
-	]
+		"lscript",
+		"varient"
+	],
+	"editor.codeActionsOnSave": {
+		"source.organizeImports": "never",
+		"source.sortImports": "never"
+	}
 }
