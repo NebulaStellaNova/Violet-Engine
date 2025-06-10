@@ -11,6 +11,21 @@
       "version": null
     },
     {
+      "name": "hxWindowColorMode",
+      "type": "haxelib",
+      "version": null
+    },
+    {
+      "name": "hxcpp",
+      "type": "haxelib",
+      "version": null
+    },
+    {
+      "name": "hxcpp-debug-server",
+      "type": "haxelib",
+      "version": null
+    },
+    {
       "name": "linc_luajit",
       "type": "haxelib",
       "version": null
@@ -26,8 +41,8 @@
       "name": "rulescript",
       "type": "git",
       "dir": null,
-      "ref": "main",
-      "url": "https://github.com/Kriptel/RuleScript/"
+      "ref": "master",
+      "url": "https://github.com/Kriptel/RuleScript"
     }
   ]
 }
