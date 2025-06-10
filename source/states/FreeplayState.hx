@@ -56,7 +56,7 @@ class FreeplayState extends MusicBeatState {
             var songData = parseSongData(song);
             songDatas.push(songData);
 
-            
+            Conductor.loadSong(song);
 
             var text = new FlxText(0, 50*i, FlxG.width, songData.data.displayName, 40);
             text.alignment = 'center';
