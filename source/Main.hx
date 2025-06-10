@@ -1,5 +1,6 @@
 package;
 
+import backend.audio.Conductor;
 import flixel.util.FlxStringUtil;
 import flixel.FlxG;
 import flixel.FlxSprite;

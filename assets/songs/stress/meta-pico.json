@@ -1,0 +1,8 @@
+{
+	"displayName": "Stress Pico Mix",
+	"bpm": 178.0,
+	"icon": "tankman",
+	"color": "#F6B604",
+	"coopAllowed": true,
+	"opponentModeAllowed": true
+}

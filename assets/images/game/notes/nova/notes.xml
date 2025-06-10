@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Created with Funkin Packer v0.1.3 https://neeeoo.github.io/funkin-packer/
+-->
+<TextureAtlas imagePath="notes.png" width="316" height="316">
+	<SubTexture name="noteDown0000" x="1" y="1" width="157" height="154" frameX="-0" frameY="-0" frameWidth="157" frameHeight="154"/>
+	<SubTexture name="noteUp0000" x="158" y="161" width="157" height="154" frameX="-0" frameY="-0" frameWidth="157" frameHeight="154"/>
+	<SubTexture name="noteLeft0000" x="161" y="1" width="154" height="157" frameX="-0" frameY="-0" frameWidth="154" frameHeight="157"/>
+	<SubTexture name="noteRight0000" x="1" y="158" width="154" height="157" frameX="-0" frameY="-0" frameWidth="154" frameHeight="157"/>
+</TextureAtlas>

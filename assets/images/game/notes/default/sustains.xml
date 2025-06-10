@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TextureAtlas imagePath="sustains.png">
+	<!-- Created with Adobe Animate version 24.0.9.74 -->
+	<!-- http://www.adobe.com/products/animate.html -->
+	<SubTexture name="blue hold end0000" x="115" y="5" width="50" height="64"/>
+	<SubTexture name="blue hold piece0000" x="115" y="74" width="50" height="44"/>
+	<SubTexture name="green hold end0000" x="60" y="5" width="50" height="64"/>
+	<SubTexture name="green hold piece0000" x="60" y="74" width="50" height="44"/>
+	<SubTexture name="purple hold end0000" x="170" y="5" width="50" height="64"/>
+	<SubTexture name="purple hold piece0000" x="170" y="74" width="50" height="44"/>
+	<SubTexture name="red hold end0000" x="5" y="5" width="50" height="64"/>
+	<SubTexture name="red hold piece0000" x="5" y="74" width="50" height="44"/>
+</TextureAtlas>

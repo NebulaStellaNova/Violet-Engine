@@ -1,9 +1,12 @@
 package backend.audio;
 
+import backend.filesystem.Paths;
 import flixel.FlxG;
 import flixel.sound.FlxSound;
 import flixel.sound.FlxSoundGroup;
 import flixel.tweens.FlxTween;
+
+using StringTools;
 
 typedef AudioData = {
 	var artist:String;
@@ -34,6 +37,13 @@ typedef CheckpointTyping = {
  */
 @:access(flixel.system.frontEnds.SoundFrontEnd.loadHelper)
 class Conductor {
+
+	static var initialized:Bool = false;
+
+	public static var curMusic:String = null;
+
+	public static var _onComplete:Void->Void;
+
 	/**
 	 * Default/Current AudioData I suppose. - Nebula
 	 */
@@ -189,6 +199,8 @@ class Conductor {
 	public static var bpmChanges(default, null):Array<BPMChange> = [];
 
 	public static function init():Void {
+		if (initialized) return;
+		initialized = true;
 		soundGroup = new FlxSoundGroup();
 
 		audio = FlxG.sound.list.add(new FlxSound());
@@ -197,10 +209,11 @@ class Conductor {
 		FlxG.signals.preUpdate.add(update);
 		FlxG.signals.focusGained.add(onFocus);
 		FlxG.signals.focusLost.add(onFocusLost);
+
 	}
 
 	static var audioEnded:Bool = false;
-	inline static function onCompleteFunc(?_onComplete = null):Void {
+	inline static function onCompleteFunc():Void {
 		if (_onComplete != null) {
 			_onComplete();
 			_onComplete = null;
@@ -216,6 +229,25 @@ class Conductor {
 			else if (sound.group.sounds.contains(sound))
 				sound.group.remove(sound);
 		sound.destroy();
+	}
+
+
+	/**
+	 * Y'know, do the thing.
+	 */
+	inline public static function playMusic(path:String, forced:Bool = false):Void {
+		var splitPath = path.split("/");
+		var fileName = splitPath[splitPath.length-1];
+		if (curMusic == fileName && !forced) return;
+		curMusic = fileName;
+		trace(fileName);
+		if (Paths.fileExists(path + ".ogg")) {
+			loadMusic('$path.ogg');
+			play();
+		} else if (Paths.folderExists(path)) {
+			loadMusic('$path/$fileName.ogg');
+			play();
+		}
 	}
 
 	/**
@@ -275,7 +307,7 @@ class Conductor {
 	/**
 	 * Reset's the conductor.
 	 */
-	inline public static function reset():Void {
+	public static function reset():Void {
 		stop();
 		for (sound in extra)
 			destroySound(sound);
@@ -334,15 +366,24 @@ class Conductor {
 		if (audio == null)
 			audio = FlxG.sound.list.add(new FlxSound());
 
-		// audio.loadEmbedded(Assets.music(music));
+		audio.loadEmbedded(music);
 		FlxG.sound.loadHelper(audio, 1, soundGroup);
 		audio.persist = true;
+
+		if (Paths.fileExists(music.replace(".ogg", ".json"))) {
+			try {
+				data = Paths.parseJson(music.replace(".ogg", ".json"));
+			} catch (e:Dynamic) {
+				// do nothing
+			}
+		}
 
 		applyBPMChanges();
 
 		#if FLX_PITCH pitch = pitch; #end
 		if (afterLoad != null)
 			afterLoad(audio);
+
 	}
 
 	/**
@@ -351,12 +392,14 @@ class Conductor {
 	 * @param variant The variant of the song to play.
 	 * @param afterLoad Function that runs after the audio has loaded.
 	 */
-	public static function loadSong(song:String, variant:String = 'normal', ?afterLoad:FlxSound->Void):Void {
+	public static function loadSong(song:String, variant:String = '', ?afterLoad:FlxSound->Void):Void {
+		if (curMusic == song + (variant != '' ? '-$variant' : '')) return;
+		curMusic = song + (variant != '' ? '-$variant' : '');
 		reset();
 		if (audio == null)
 			audio = FlxG.sound.list.add(new FlxSound());
 
-		// audio.loadEmbedded(Assets.inst(song, variant));
+		audio.loadEmbedded('assets/songs/$song/song/${variant != '' ? '$variant/' : ''}Inst.ogg');
 		FlxG.sound.loadHelper(audio, 1, soundGroup);
 		audio.persist = true;
 
@@ -400,15 +443,15 @@ class Conductor {
 	 * @param afterLoad Function that runs after the audio has loaded.
 	 * @return `FlxSound` ~ Added vocal track.
 	 */
-	public static function addVocalTrack(song:String, suffix:String, variant:String = 'normal', ?afterLoad:FlxSound->Void):FlxSound {
-		var file:String = '';//Paths.vocal(song, suffix, variant);
-		/* if (!Paths.fileExists(file)) {
-			log('Failed to find ${suffix.isNullOrEmpty() ? 'base ' : ''}vocal track for song "$song"${variant == 'normal' ? '' : ', variant "$variant"'}${suffix.isNullOrEmpty() ? '' : ' with a suffix of "$suffix"'}.', WarningMessage);
+	public static function addVocalTrack(song:String, suffix:String = '', variant:String = '', ?afterLoad:FlxSound->Void):FlxSound {
+		var file:String = Paths.vocal(song, suffix, variant);
+		if (!Paths.fileExists(file)) {
+			//log('Failed to find ${suffix.isNullOrEmpty() ? 'base ' : ''}vocal track for song "$song"${variant == 'normal' ? '' : ', variant "$variant"'}${suffix.isNullOrEmpty() ? '' : ' with a suffix of "$suffix"'}.', WarningMessage);
 			return null;
-		} */
+		}
 		var vocals:FlxSound = FlxG.sound.list.add(new FlxSound());
 
-		// vocals.loadEmbedded(Assets.vocal(song, suffix, variant));
+		vocals.loadEmbedded(Paths.vocal(song, suffix, variant));
 		FlxG.sound.loadHelper(vocals, 1, soundGroup);
 		vocals.persist = true;
 
@@ -450,8 +493,8 @@ class Conductor {
 			prevTime = audio == null ? 0 : (audio.playing ? audio.time : time);
 			return;
 		} else { // jic
-			//if (audio.onComplete != onCompleteFunc)
-			//	audio.onComplete = onCompleteFunc;
+			if (audio.onComplete != onCompleteFunc)
+				audio.onComplete = onCompleteFunc;
 		}
 
 		if (!audio.playing && !autoSetTime)

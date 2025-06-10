@@ -1,0 +1,32 @@
+{
+    "offsets": {
+        "confirm": [
+            -25,
+            -25
+        ],
+        "sustains": [
+            0,
+            0
+        ],
+        "statics": [
+            -25,
+            -25
+        ],
+        "notes": [
+            -3,
+            -3
+        ],
+        "pressed": [
+            5,
+            5
+        ],
+        "splashes": [
+            25,
+            25
+        ]
+    },
+    "splashSkin": {
+        "overrideSongSkin": false,
+        "name": "default"
+    }
+}

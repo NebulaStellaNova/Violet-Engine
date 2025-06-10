@@ -1,5 +1,6 @@
 package backend;
 
+import backend.audio.Conductor;
 import backend.scripts.LuaScript;
 import backend.scripts.FunkinScript;
 import backend.filesystem.Paths;
@@ -23,6 +24,7 @@ class MusicBeatState extends FlxState {
 
     override public function create() {
 		super.create();
+		Conductor.init();
 			
 		var luaScriptPath = "assets/data/scripts/states/" + Main.className + ".lua";
 		var scriptPath = "assets/data/scripts/states/" + Main.className + ".hx";
@@ -45,6 +47,7 @@ class MusicBeatState extends FlxState {
         #end
 
 
+		Conductor.playMusic(Paths.music("freakyMenu"));
 		
 		//postCreate();
 
@@ -88,17 +91,20 @@ class MusicBeatState extends FlxState {
 	}
 
 	public function runEvent(func:String, event:Dynamic) {
+		if (stateScript == null) return event;
 		stateScript.call(func, [event]);
 		//stateLuaScript.call(func, [event]);
 		return event; 
 	}
 
 	public function call(func, ?params) {
+		if (stateScript == null) return;
 		stateScript.call(func, params ?? []);
 		//stateLuaScript.call(func, params ?? []);
 	}
 
 	public function set(what, value) {
+		if (stateScript == null) return;
 		stateScript.set(what, value);
 		//stateLuaScript.set(what, value);
 	}

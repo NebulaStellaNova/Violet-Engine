@@ -1,0 +1,23 @@
+[
+    {
+        "difficulty": "hard",
+        "color": "#FF0000"
+    },
+    {
+        "difficulty": "normal",
+        "color": "#FFFF00"
+    },
+    {
+        "difficulty": "easy",
+        "color": "#00FF00"
+    },
+    {
+        "difficulty": "erect",
+        "color": "#ff0099"
+    },
+    {
+        "difficulty": "nightmare",
+        "color": "#4219e6"
+    }
+    
+]

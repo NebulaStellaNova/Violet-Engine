@@ -15,6 +15,10 @@ class ClassData {
                     this.target = new MainMenuState();
                 case "CreditsState":
                     this.target = new CreditsState();
+                case "FreeplayState":
+                    this.target = new FreeplayState();
+                case "PlayState":
+                    this.target = new PlayState();
                 default:
                     log('Unknown State "${string.split(":")[1]}" returning to the Main Menu' , WarningMessage);
                     this.target = new MainMenuState();

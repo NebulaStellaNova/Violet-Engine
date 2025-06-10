@@ -1,6 +1,6 @@
 {
   "artist": "Nebula S. Nova & Kawai Sprite",
-  "songName": "Freaky Menu (LOFI Mix)",
+  "name": "Freaky Menu (LOFI Mix)",
   "bpm": 102,
-  "looped": true
+  "signature": [4, 4]
 }
