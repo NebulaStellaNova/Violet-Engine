@@ -33,7 +33,7 @@ class PlayState extends MusicBeatState {
 	public static var varient:String;
 	public static var difficulty:String;
 
-	public var hitWindow = 100;
+	public var hitWindow = 200; // MS
 
 	public var strumLines:Array<StrumLine> = [];
 
@@ -62,6 +62,7 @@ class PlayState extends MusicBeatState {
 	override public function update(elapsed:Float)
 	{
 		super.update(elapsed);
+		var realHitWindow = hitWindow/2;
 
 		if (FlxG.keys.justPressed.ENTER) {
             FlxG.state.persistentUpdate = false;
@@ -70,38 +71,38 @@ class PlayState extends MusicBeatState {
 		}
 
 		for (strumLine in strumLines) {
-			for (strum in strumLine.members) {
+			var hitThisFrame = [false, false, false, false];
+			for (dir => strum in strumLine.members) {
+				var doPress = true;
 				for (note in strum.notes) {
 					note.y = note.parentStrum.y - (0.45 * (Conductor.time - note.time) * note.scrollSpeed);
-					switch (strumLine.type) {
-						case PLAYER:
-							var hitNote:Bool = false;
-							if (note.alive) {
-								if (Conductor.time - note.time > hitWindow) {
+					if (note.alive) {
+						switch (strumLine.type) {
+							case PLAYER:
+								if (Conductor.time - note.time > realHitWindow) {
 									note.kill();
 									FlxG.sound.play(Paths.sound("miss/" + FlxG.random.int(1, 3)));
 								}
-								for (pressed in [for (i => _ in keybinds) getKeyPress(i)]) {
-									if (pressed) {
-										if (Conductor.time - note.time >= -hitWindow && Conductor.time - note.time <= hitWindow) {
-											hitNote = true;
-											note.kill();
-											strum.playAnim('confirm', true);
-										}
+								if (getKeyPress(dir) && !hitThisFrame[dir]) {
+									if (Conductor.time - note.time >= -realHitWindow && Conductor.time - note.time <= realHitWindow) {
+										note.kill();
+										doPress = false;
+										hitThisFrame[dir] = true;
+										strum.playAnim('confirm', true);
 									}
 								}
-							}
-							if (!hitNote)
-								strum.playAnim('pressed', true);
-							for (released in [for (i => _ in keybinds) getKeyPress(i, true)])
-								if (released)
+								if (getKeyPress(dir, true))
 									strum.playAnim('static', true);
-						default:
-							if (Conductor.time >= note.time && note.alive) {
-								note.kill();
-								strum.playAnim("confirm", true);
-							}
+							default:
+								if (Conductor.time >= note.time) {
+									note.kill();
+									strum.playAnim("confirm", true);
+								}
+						}
 					}
+				}
+				if (doPress && getKeyPress(dir) && strumLine.type == PLAYER) {
+					strum.playAnim('pressed');
 				}
 			}
 		}
