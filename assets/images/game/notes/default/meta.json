@@ -1,24 +1,24 @@
 {
     "offsets": {
         "confirm": [
-            -25,
-            -25
+            -40,
+            -40
         ],
         "sustains": [
             0,
             0
         ],
         "statics": [
-            -25,
-            -25
+            -40,
+            -40
         ],
         "notes": [
             -3,
             -3
         ],
         "pressed": [
-            5,
-            5
+            0,
+            0
         ],
         "splashes": [
             25,
