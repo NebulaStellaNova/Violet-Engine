@@ -1,0 +1,6 @@
+[
+    {
+        "state": "CreditsState",
+        "target": "source:CreditsState"
+    }
+]
