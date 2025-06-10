@@ -259,6 +259,7 @@ class Conductor {
 			for (sound in soundGroup.sounds)
 				sound.play(time);
 		playing = true;
+		resyncVocals();
 	}
 	/**
 	 * Play's the conductor audio from a specified time of your choosing.
@@ -293,6 +294,7 @@ class Conductor {
 		if (!autoSetTime)
 			soundGroup.resume();
 		playing = true;
+		resyncVocals(true);
 	}
 
 	/**
@@ -465,16 +467,17 @@ class Conductor {
 	static var _printResyncMessage(null, null):Bool = false;
 	/**
 	 * Resync's the extra tracks to the inst time when called.
+	 * @param force If true, it will force the vocals to resync.
 	 */
-	inline public static function resyncVocals():Void {
-		if (!playing && !autoSetTime) return;
+	inline public static function resyncVocals(force:Bool = false):Void {
+		if ((force || !playing) && !autoSetTime) return;
 		_printResyncMessage = false;
-		for (sound in extra) {
+		for (sound in soundGroup.sounds) {
 			// idea from psych
 			if (audio.time < sound.length) {
-				if (Math.abs(time - audio.time) > 25) {
+				if (force || Math.abs(time - sound.time) > 25) {
 					sound.pause();
-					sound.time = audio.time;
+					sound.time = time;
 					sound.play();
 					_printResyncMessage = true;
 				}
@@ -482,7 +485,7 @@ class Conductor {
 				sound.pause();
 		}
 		if (_printResyncMessage)
-			trace('Conductor resynced extra tracks to inst time.');
+			trace(force ? 'Manually resynced Conductor.' : 'Conductor resynced all tracks to it\'s time.');
 	}
 
 	public static function update():Void {
@@ -562,14 +565,12 @@ class Conductor {
 			if (_wasPlaying)
 				soundGroup.resume();
 		}
-		resyncVocals();
 	}
 	inline static function onFocusLost():Void {
 		if (FlxG.autoPause) {
 			_wasPlaying = playing;
 			soundGroup.pause();
 		}
-		resyncVocals();
 	}
 
 	/**
