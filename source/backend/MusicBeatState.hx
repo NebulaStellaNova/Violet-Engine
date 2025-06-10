@@ -25,7 +25,7 @@ class MusicBeatState extends FlxState {
     override public function create() {
 		super.create();
 		Conductor.init();
-			
+
 		var luaScriptPath = "assets/data/scripts/states/" + Main.className + ".lua";
 		var scriptPath = "assets/data/scripts/states/" + Main.className + ".hx";
 		if (Paths.fileExists(scriptPath)) {
@@ -48,7 +48,7 @@ class MusicBeatState extends FlxState {
 
 
 		Conductor.playMusic(Paths.music("freakyMenu"));
-		
+
 		//postCreate();
 
 	}
@@ -94,7 +94,7 @@ class MusicBeatState extends FlxState {
 		if (stateScript == null) return event;
 		stateScript.call(func, [event]);
 		//stateLuaScript.call(func, [event]);
-		return event; 
+		return event;
 	}
 
 	public function call(func, ?params) {

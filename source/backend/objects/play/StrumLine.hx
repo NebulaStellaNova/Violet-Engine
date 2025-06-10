@@ -1,7 +1,7 @@
 package backend.objects.play;
 
 import flixel.FlxG;
-import flixel.group.FlxSpriteGroup.FlxTypedSpriteGroup;
+import flixel.group.FlxSpriteGroup;
 
 class StrumLine extends FlxTypedSpriteGroup<Strum> {
     public var type:String = "opponent"; // player, spectator, opponent

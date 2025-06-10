@@ -21,7 +21,6 @@ typedef ChartData = {
 }
 
 class PlayState extends MusicBeatState {
-
 	public static var keybinds = [
 		// Main Keybinds
 		"W",
@@ -53,13 +52,11 @@ class PlayState extends MusicBeatState {
 	{
 		super.create();
 
-		
-
 		Conductor.curMusic = "";
 		Conductor.loadSong(songID);
-		
+
 		loadChart();
-		
+
 		Conductor.play();
 
 		Conductor._onComplete = ()->{
@@ -85,7 +82,7 @@ class PlayState extends MusicBeatState {
 	{
 		super.update(elapsed);
 
-		if (FlxG.keys.justPressed.ENTER) {		
+		if (FlxG.keys.justPressed.ENTER) {
             FlxG.state.persistentUpdate = false;
 			Conductor.pause();
 			openSubState(new states.substates.PauseSubState());
@@ -98,7 +95,6 @@ class PlayState extends MusicBeatState {
 				for (strum in i.members) {
 					for (note in strum.notes) {
 						if (Conductor.time - note.time > (hitWindow/2) && note.alive) {
-							//log("", )
 							note.kill();
 							FlxG.sound.play(Paths.sound("miss/" + FlxG.random.int(1, 3)));
 						}
@@ -128,7 +124,7 @@ class PlayState extends MusicBeatState {
 						}
 					}
 				}
-	
+
 				for (dir => bool in [
 					getKeyPress(0, true),
 					getKeyPress(1, true),
@@ -156,14 +152,13 @@ class PlayState extends MusicBeatState {
 				}
 			}
 		}
-		
+
 		for (note in notes) {
 			note.y = note.parentStrum.y - (0.45 * (Conductor.time - note.time) * note.scrollSpeed);
 		}
 	}
 
 	public function loadChart() {
-
 		var positions = [
 			"dad" => {
 				id: "opponent",
@@ -198,5 +193,4 @@ class PlayState extends MusicBeatState {
 			}
 		}
 	}
-
 }
