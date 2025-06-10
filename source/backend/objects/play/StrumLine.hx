@@ -3,17 +3,23 @@ package backend.objects.play;
 import flixel.FlxG;
 import flixel.group.FlxSpriteGroup;
 
-class StrumLine extends FlxTypedSpriteGroup<Strum> {
-    public var type:String = "opponent"; // player, spectator, opponent
+enum abstract UserType(String) from String to String {
+    var OPPONENT = 'opponent';
+    var PLAYER = 'player';
+    var SPECTATOR = 'spectator';
+}
 
-    public function new(length:Int, type:String = "opponent", position:Float = 0.5) {
+class StrumLine extends FlxTypedSpriteGroup<Strum> {
+    public var type:UserType;
+
+    public function new(length:Int, type:UserType = OPPONENT, position:Float = 0.5) {
         super();
         this.type = type;
         this.y = 20;
         for (i in 0...length) {
             var strum = new Strum(i % 4);
             strum.parent = this;
-            strum.x = (160 * 0.7)*i;
+            strum.x = Note.swagWidth*i;
             strum.scale.set(0.7, 0.7);
             strum.updateHitbox();
             this.add(strum);

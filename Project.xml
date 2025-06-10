@@ -35,9 +35,13 @@
 
 	<!-- _______________________________ Libraries ______________________________ -->
 
+	<haxelib name="openfl" />
+	<haxelib name="lime" />
 	<haxelib name="flixel" />
 	<haxelib name="lscript" />
+	<haxelib name="linc_luajit" />
 	<haxelib name="rulescript" />
+	<haxelib name="hscript" />
 	<haxelib name="hxWindowColorMode"/>
 
 	<!--In case you want to use the addons package-->
@@ -53,7 +57,7 @@
 
 	<!--Remove the legacy health system-->
 	<haxedef name="FLX_NO_HEALTH" />
-	
+
 	<!--Enable the Flixel core recording system-->
 	<!--<haxedef name="FLX_RECORD" />-->
 

@@ -5,6 +5,7 @@ import backend.audio.Conductor;
 import flixel.FlxG;
 import backend.objects.play.*;
 import backend.MusicBeatState;
+import flixel.util.FlxSort;
 
 typedef ChartStrumline = {
 	var notes:Array<Dynamic>;
@@ -21,8 +22,6 @@ typedef ChartData = {
 }
 
 class PlayState extends MusicBeatState {
-
-
 	public static var keybinds:Array<Array<String>> = [
 		["W", "E", "LEFT"],
 		["F", "F", "DOWN"],
@@ -34,7 +33,7 @@ class PlayState extends MusicBeatState {
 	public static var varient:String;
 	public static var difficulty:String;
 
-	public var hitWindow = 200;
+	public var hitWindow = 100;
 
 	public var strumLines:Array<StrumLine> = [];
 
@@ -52,31 +51,12 @@ class PlayState extends MusicBeatState {
 	override public function create()
 	{
 		super.create();
-
 		Conductor.curMusic = "";
 		Conductor.loadSong(songID);
-
 		loadChart();
 
+		Conductor._onComplete = () -> switchState(FreeplayState.new);
 		Conductor.play();
-
-		Conductor._onComplete = ()->{
-			switchState(FreeplayState.new);
-		}
-		/* for (i in strumLines) {
-			add(i);
-			for (strum in i.members) {
-				for (note in strum.notes) {
-					trace("Note Found!");
-					add(note);
-					notes.push(note);
-				}
-			}
-		} */
-		/* var note = new Note(strumLines[0].members[0], 0, 1000, 'default');
-		notes.push(note);
-		strumLines[0].members[0].add(note); */
-
 	}
 
 	override public function update(elapsed:Float)
@@ -89,74 +69,44 @@ class PlayState extends MusicBeatState {
 			openSubState(new states.substates.PauseSubState());
 		}
 
-		var hitThisFrame = [false, false, false, false];
-
-		for (i in strumLines) {
-			if (i.type == "player") {
-				for (strum in i.members) {
-					for (note in strum.notes) {
-						if (Conductor.time - note.time > (hitWindow/2) && note.alive) {
-							note.kill();
-							FlxG.sound.play(Paths.sound("miss/" + FlxG.random.int(1, 3)));
-						}
-					}
-				}
-				for (dir => bool in [
-					getKeyPress(0),
-					getKeyPress(1),
-					getKeyPress(2),
-					getKeyPress(3)
-				]) {
-					if (bool) {
-						var doPress = true;
-						if (!hitThisFrame[dir]) {
-							var strum = i.members[dir];
-							for (note in strum.notes) {
-								if (Conductor.time - note.time >= -(hitWindow/2) && Conductor.time - note.time <= (hitWindow/2)) {
+		for (strumLine in strumLines) {
+			for (strum in strumLine.members) {
+				for (note in strum.notes) {
+					note.y = note.parentStrum.y - (0.45 * (Conductor.time - note.time) * note.scrollSpeed);
+					switch (strumLine.type) {
+						case PLAYER:
+							var hitNote:Bool = false;
+							if (note.alive) {
+								if (Conductor.time - note.time > hitWindow) {
 									note.kill();
-									strum.playAnim("confirm");
-									doPress = false;
-									hitThisFrame[dir] = true;
+									FlxG.sound.play(Paths.sound("miss/" + FlxG.random.int(1, 3)));
+								}
+								for (pressed in [for (i => _ in keybinds) getKeyPress(i)]) {
+									if (pressed) {
+										if (Conductor.time - note.time >= -hitWindow && Conductor.time - note.time <= hitWindow) {
+											hitNote = true;
+											note.kill();
+											strum.playAnim('confirm', true);
+										}
+									}
 								}
 							}
-						}
-						if (doPress) {
-							i.members[dir].playAnim("pressed");
-						}
-					}
-				}
-
-				for (dir => bool in [
-					getKeyPress(0, true),
-					getKeyPress(1, true),
-					getKeyPress(2, true),
-					getKeyPress(3, true)
-				]) {
-					if (bool) {
-						i.members[dir].playAnim("static");
-					}
-				}
-			}
-		}
-
-		for (i in strumLines) {
-			for (strumLine in strumLines) {
-				if (strumLine.type == "opponent") {
-					for (dir=>strum in strumLine.members) {
-						for (note in strum.notes) {
+							if (!hitNote)
+								strum.playAnim('pressed', true);
+							for (released in [for (i => _ in keybinds) getKeyPress(i, true)])
+								if (released)
+									strum.playAnim('static', true);
+						default:
 							if (Conductor.time >= note.time && note.alive) {
 								note.kill();
-								i.members[dir].playAnim("confirm");
+								strum.playAnim("confirm", true);
 							}
-						}
 					}
 				}
 			}
 		}
 
-		for (note in notes) {
-			note.y = note.parentStrum.y - (0.45 * (Conductor.time - note.time) * note.scrollSpeed);
-		}
+		notes.sort((a:Note, b:Note) -> FlxSort.byValues(FlxSort.ASCENDING, a.time, b.time));
 	}
 
 	public function loadChart() {

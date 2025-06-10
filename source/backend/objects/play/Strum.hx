@@ -2,6 +2,7 @@ package backend.objects.play;
 
 import flixel.FlxG;
 import backend.filesystem.Paths;
+import flixel.util.FlxSort;
 
 class Strum extends NovaSprite {
     public var direction:Int = 0;
@@ -23,22 +24,27 @@ class Strum extends NovaSprite {
         this.addAnim('static', 'static$capped', skinData.offsets.statics);
         this.addAnim('confirm', '$direction confirm', skinData.offsets.confirm);
         this.addAnim('pressed', '$direction press', skinData.offsets.pressed);
-        
+
         this.animation.onFinish.add((name)->{
             if (name == "confirm") {
                 this.playAnim(this.parent.type == "player" ? "pressed" : "static");
             }
         });
-    
+
         this.playAnim('static');
         this.updateHitbox();
         this.skin = skin;
         this.direction = id;
     }
 
+    override function update(elapsed:Float) {
+        super.update(elapsed);
+        notes.sort((a:Note, b:Note) -> FlxSort.byValues(FlxSort.ASCENDING, a.time, b.time));
+    }
+
     public function add(note:Note) {
         this.notes.push(note);
-        note.x = this.parent.x + ((160 * 0.7)*direction);
+        note.x = this.parent.x + (Note.swagWidth*direction);
         note.y = this.parent.y;
         FlxG.state.add(note);
     }
