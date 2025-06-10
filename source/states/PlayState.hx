@@ -21,22 +21,13 @@ typedef ChartData = {
 }
 
 class PlayState extends MusicBeatState {
-	public static var keybinds = [
-		// Main Keybinds
-		"W",
-		"F",
-		"J",
-		"O",
-		// Alt Keybinds
-		"E",
-		"F",
-		"K",
-		"O",
-		// Arrow Binds
-		"LEFT",
-		"DOWN",
-		"UP",
-		"RIGHT"
+
+
+	public static var keybinds:Array<Array<String>> = [
+		["W", "E", "LEFT"],
+		["F", "F", "DOWN"],
+		["J", "K", "UP"],
+		["O", "O", "RIGHT"],
 	];
 
 	public static var songID:String;
@@ -50,7 +41,12 @@ class PlayState extends MusicBeatState {
 	public var notes:Array<Note> = [];
 
 	function getKeyPress(index:Int, isRelease:Bool = false) {
-		return (isRelease ? FlxG.keys.anyJustReleased : FlxG.keys.anyJustPressed)([FlxKey.fromString(keybinds[index].toUpperCase()), FlxKey.fromString(keybinds[index+4].toUpperCase()), FlxKey.fromString(keybinds[index+4+4].toUpperCase())]);
+		var pressed:Bool = false;
+		for (i in keybinds[index]) {
+			if ((isRelease ? FlxG.keys.anyJustReleased : FlxG.keys.anyJustPressed)([FlxKey.fromString(i.toUpperCase())]))
+				pressed = true;
+		}
+		return pressed;
 	}
 
 	override public function create()
