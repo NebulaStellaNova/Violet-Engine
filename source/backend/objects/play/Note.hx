@@ -20,8 +20,10 @@ class Note extends NovaSprite {
     override public function new(parent:Strum, id:Int, time:Float, skin:String) {
         super(0, 0, Paths.image('game/notes/$skin/notes'));
         skinData = Paths.parseJson('images/game/notes/$skin/meta');
+        
+        var globalOffset:Array<Float> = skinData.offsets.global != null ? [skinData.offsets.global[0], skinData.offsets.global[1]] : [0, 0];
         for (i=>direction in ["noteLeft", "noteDown", "noteUp", "noteRight"]) {
-            this.addAnim(directionStrings[i], direction, skinData.offsets.notes);
+            this.addAnim(directionStrings[i], direction, [skinData.offsets.notes[0]+globalOffset[0], skinData.offsets.notes[1]+globalOffset[1]]);
         }
         this.playAnim(directionStrings[id]);
         this.updateHitbox();

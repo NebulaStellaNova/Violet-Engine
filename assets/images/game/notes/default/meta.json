@@ -1,5 +1,9 @@
 {
     "offsets": {
+        "global": [
+            0,
+            0
+        ],
         "confirm": [
             -40,
             -40

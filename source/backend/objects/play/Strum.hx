@@ -21,9 +21,10 @@ class Strum extends NovaSprite {
         var dir = direction.split('');
         dir[0] = dir[0].toUpperCase();
         var capped = dir.join('');
-        this.addAnim('static', 'static$capped', skinData.offsets.statics);
-        this.addAnim('confirm', '$direction confirm', skinData.offsets.confirm);
-        this.addAnim('pressed', '$direction press', skinData.offsets.pressed);
+        var globalOffset:Array<Float> = skinData.offsets.global != null ? [skinData.offsets.global[0], skinData.offsets.global[1]] : [0, 0];
+        this.addAnim('static', 'static$capped', [skinData.offsets.statics[0]+globalOffset[0], skinData.offsets.statics[1]+globalOffset[1]]);
+        this.addAnim('confirm', '$direction confirm', [skinData.offsets.confirm[0]+globalOffset[0], skinData.offsets.confirm[1]+globalOffset[1]]);
+        this.addAnim('pressed', '$direction press', [skinData.offsets.pressed[0]+globalOffset[0], skinData.offsets.pressed[1]+globalOffset[1]]);
 
         this.animation.onFinish.add((name)->{
             if (name == "confirm") {

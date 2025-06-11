@@ -5,6 +5,7 @@ typedef SplashSkin = {
 }
 
 typedef SkinOffsets = {
+    var global:Array<Float>;
     var confirm:Array<Float>;
     var sustains:Array<Float>;
     var statics:Array<Float>;

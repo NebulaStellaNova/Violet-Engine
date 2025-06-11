@@ -11,18 +11,24 @@ import flixel.util.FlxStringUtil;
 import states.substates.DebugSubState;
 import flixel.system.debug.watch.Tracker;
 
+typedef GlobalVariables = {
+	var noteSkin:String;
+} 
+
 class MusicBeatState extends FlxState {
 
 	var debugSubState = null;
 
-	var stateScript:FunkinScript;
+	public var stateScript:FunkinScript;
+	public var globalVariables:GlobalVariables;
 
 	var defaultDebugVars:Array<String> = ["stateScript"];
-	var debugVars:Array<String> = [];
+	public var debugVars:Array<String> = [];
 	var ____________________ = "                  ";
 	//var stateLuaScript:LuaScript;
 
     override public function create() {
+		globalVariables = Paths.parseJson("globalVariables", "data/config");
 		super.create();
 		Conductor.init();
 

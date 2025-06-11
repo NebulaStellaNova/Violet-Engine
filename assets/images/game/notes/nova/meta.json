@@ -1,9 +1,12 @@
 {
-    "defaultAfterPress": true,
     "offsets": {
+        "global": [
+            -30,
+            0
+        ],
         "confirm": [
-            -27.5,
-            -25
+            -35,
+            -35
         ],
         "sustains": [
             0,
@@ -14,16 +17,16 @@
             0
         ],
         "notes": [
-            0,
-            0
+            -3,
+            -3
         ],
         "pressed": [
             3,
-            0
+            1
         ],
         "splashes": [
-            0,
-            0
+            -10,
+            10
         ]
     },
     "splashSkin": {

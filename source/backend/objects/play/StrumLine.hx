@@ -17,7 +17,7 @@ class StrumLine extends FlxTypedSpriteGroup<Strum> {
         this.type = type;
         this.y = 20;
         for (i in 0...length) {
-            var strum = new Strum(i % 4);
+            var strum = new Strum(i % 4, cast (FlxG.state, MusicBeatState).globalVariables.noteSkin);
             strum.parent = this;
             strum.x = Note.swagWidth*i;
             strum.scale.set(0.7, 0.7);

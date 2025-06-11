@@ -197,7 +197,7 @@ class PlayState extends MusicBeatState {
 		for (i=>strumline in chart.strumLines) {
 			Conductor.addVocalTrack(songID, strumline.characters[0]);
 			for (note in strumline.notes) {
-				var daNote = new Note(strumLines[i].members[note.id], note.id, note.time, 'default');
+				var daNote = new Note(strumLines[i].members[note.id], note.id, note.time, globalVariables.noteSkin);
 				daNote.visible = strumLines[i].visible;
 				notes.push(daNote);
 				strumLines[i].members[note.id].add(daNote);
