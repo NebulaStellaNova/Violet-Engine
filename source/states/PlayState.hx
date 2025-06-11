@@ -1,5 +1,7 @@
 package states;
 
+import utils.MathUtil;
+import flixel.text.FlxText;
 import backend.filesystem.Paths;
 import backend.audio.Conductor;
 import flixel.FlxG;
@@ -39,6 +41,13 @@ class PlayState extends MusicBeatState {
 
 	public var notes:Array<Note> = [];
 
+	public var accuracy:Null<Float>;
+	public var misses:Int = 0;
+
+
+	public var accuracyTxt:FlxText;
+	private var accuracies:Array<Float> = [];
+
 	function getKeyPress(index:Int, isRelease:Bool = false) {
 		var pressed:Bool = false;
 		for (i in keybinds[index]) {
@@ -51,12 +60,20 @@ class PlayState extends MusicBeatState {
 	override public function create()
 	{
 		super.create();
+		accuracyTxt = new FlxText(0, 0, FlxG.width/1.5, 'Misses: 0 | Accuracy: Unknown');
+		accuracyTxt.y = FlxG.height - 100;
+		accuracyTxt.size = 30;
+		accuracyTxt.alignment = 'center';
+		accuracyTxt.screenCenter(X);
+		add(accuracyTxt);
+		
 		Conductor.curMusic = "";
 		Conductor.loadSong(songID);
 		loadChart();
 
 		Conductor._onComplete = () -> switchState(FreeplayState.new);
 		Conductor.play();
+
 	}
 
 	override public function update(elapsed:Float)
@@ -70,6 +87,8 @@ class PlayState extends MusicBeatState {
 			openSubState(new states.substates.PauseSubState());
 		}
 
+		notes.sort((a:Note, b:Note) -> FlxSort.byValues(FlxSort.ASCENDING, a.time, b.time));
+
 		for (strumLine in strumLines) {
 			var hitThisFrame = [false, false, false, false];
 			for (dir => strum in strumLine.members) {
@@ -81,6 +100,7 @@ class PlayState extends MusicBeatState {
 							case PLAYER:
 								if (Conductor.time - note.time > realHitWindow) {
 									note.kill();
+									misses++;
 									FlxG.sound.play(Paths.sound("miss/" + FlxG.random.int(1, 3)));
 								}
 								if (getKeyPress(dir) && !hitThisFrame[dir]) {
@@ -89,10 +109,9 @@ class PlayState extends MusicBeatState {
 										doPress = false;
 										hitThisFrame[dir] = true;
 										strum.playAnim('confirm', true);
+										createRating(strum, realHitWindow-Math.abs(Conductor.time - note.time));
 									}
 								}
-								if (getKeyPress(dir, true))
-									strum.playAnim('static', true);
 							default:
 								if (Conductor.time >= note.time) {
 									note.kill();
@@ -104,10 +123,27 @@ class PlayState extends MusicBeatState {
 				if (doPress && getKeyPress(dir) && strumLine.type == PLAYER) {
 					strum.playAnim('pressed');
 				}
+				if (getKeyPress(dir, true) && strumLine.type == PLAYER)
+					strum.playAnim('static', true);
 			}
 		}
 
-		notes.sort((a:Note, b:Note) -> FlxSort.byValues(FlxSort.ASCENDING, a.time, b.time));
+		if (accuracy != null) {
+			accuracyTxt.text = 'Misses: $misses | Accuracy: $accuracy% [${Judgement.getRating(accuracy).toUpperCase()}]';
+		}
+		accuracyTxt.scale.set(MathUtil.lerp(accuracyTxt.scale.x, 1, 0.1), MathUtil.lerp(accuracyTxt.scale.y, 1, 0.1));
+	}
+
+	public function createRating(strum:Strum, percent:Float) {
+		//trace('Rating: ${Judgement.getRating(percent)}');
+		accuracies.push(Judgement.getAccuracy(percent));
+		var acc:Float = 0;
+		for (i in accuracies) {
+			acc += i;
+		}
+		accuracy = Math.round((acc/(accuracies.length))*100)/100;
+		accuracyTxt.scale.x += 0.05;
+		accuracyTxt.scale.y += 0.05;
 	}
 
 	public function loadChart() {

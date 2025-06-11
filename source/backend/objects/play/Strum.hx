@@ -48,4 +48,15 @@ class Strum extends NovaSprite {
         note.y = this.parent.y;
         FlxG.state.add(note);
     }
+
+    public function onHit(rating:String = "sick") {
+
+        if (rating == "sick" || rating == "good") {
+            
+        }
+
+        switch (rating) {
+
+        }        
+    }
 }
