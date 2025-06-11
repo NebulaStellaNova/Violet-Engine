@@ -129,8 +129,11 @@ class MainMenuState extends MusicBeatState {
 	}
 
     public function changeSelection(amt:Int) {
-        var event:SelectionEvent = runEvent("onChangeSelection", new SelectionEvent(FlxMath.wrap(curSelected + amt, 0, menuItems.length-1)));
-        if (event.cancelled) return;
+        var event:SelectionEvent = new SelectionEvent(FlxMath.wrap(curSelected + amt, 0, menuItems.length-1));
+        if (amt != 0) {
+            event = runEvent("onChangeSelection", new SelectionEvent(FlxMath.wrap(curSelected + amt, 0, menuItems.length-1)));
+            if (event.cancelled) return;
+        }
         if (amt != 0 && !event.soundCancelled) {
             FlxG.sound.play(Paths.sound("scroll", "menu"));
         }

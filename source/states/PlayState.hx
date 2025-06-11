@@ -10,6 +10,12 @@ import backend.objects.play.*;
 import backend.MusicBeatState;
 import flixel.util.FlxSort;
 
+typedef SongSaveData = {
+	var score:Int;
+	var accuracy:Float;
+	var misses:Int;
+}
+
 typedef ChartStrumline = {
 	var notes:Array<Dynamic>;
 	var position:String;
@@ -39,6 +45,7 @@ class PlayState extends MusicBeatState {
 
 	public var accuracy:Null<Float>;
 	public var misses:Int = 0;
+	public var score:Int = 0;
 
 
 	public var accuracyTxt:FlxText;
@@ -59,9 +66,9 @@ class PlayState extends MusicBeatState {
 
 		keybinds = cast NovaSave.get("keybinds");
 
-		accuracyTxt = new FlxText(0, 0, FlxG.width/1.5, 'Misses: 0 | Accuracy: Unknown');
+		accuracyTxt = new FlxText(0, 0, FlxG.width/1.5, 'Misses: 0 | Accuracy: Unknown | Score: 0');
 		accuracyTxt.y = FlxG.height - 100;
-		accuracyTxt.size = 30;
+		accuracyTxt.size = 20;
 		accuracyTxt.alignment = 'center';
 		accuracyTxt.screenCenter(X);
 		add(accuracyTxt);
@@ -70,9 +77,24 @@ class PlayState extends MusicBeatState {
 		Conductor.loadSong(songID);
 		loadChart();
 
-		Conductor._onComplete = () -> switchState(FreeplayState.new);
+		Conductor._onComplete = endSong;
 		Conductor.play();
 
+	}
+
+	public function endSong() {
+		var saveData:SongSaveData = {
+			score: score,
+			accuracy: accuracy,
+			misses: misses
+		}; // ik it's not needed stfu
+		
+		NovaSave.setIfNull(songID, saveData);
+		if (NovaSave.get(songID).accuracy < accuracy || NovaSave.get(songID).score < score) {
+			NovaSave.set(songID, saveData);
+		}
+		trace(NovaSave.get(songID));
+		switchState(FreeplayState.new);
 	}
 
 	override public function update(elapsed:Float)
@@ -104,11 +126,11 @@ class PlayState extends MusicBeatState {
 								}
 								if (getKeyPress(dir) && !hitThisFrame[dir]) {
 									if (Conductor.time - note.time >= -realHitWindow && Conductor.time - note.time <= realHitWindow) {
+										createRating(strum, note, realHitWindow-Math.abs(Conductor.time - note.time));
 										note.kill();
 										doPress = false;
 										hitThisFrame[dir] = true;
 										strum.playAnim('confirm', true);
-										createRating(strum, realHitWindow-Math.abs(Conductor.time - note.time));
 									}
 								}
 							default:
@@ -128,13 +150,15 @@ class PlayState extends MusicBeatState {
 		}
 
 		if (accuracy != null) {
-			accuracyTxt.text = 'Misses: $misses | Accuracy: $accuracy% [${Judgement.getRating(accuracy).toUpperCase()}]';
+			accuracyTxt.text = 'Misses: $misses | Accuracy: $accuracy% [${Judgement.getRating(accuracy).toUpperCase()}] | Score: $score';
 		}
 		accuracyTxt.scale.set(MathUtil.lerp(accuracyTxt.scale.x, 1, 0.1), MathUtil.lerp(accuracyTxt.scale.y, 1, 0.1));
 	}
 
-	public function createRating(strum:Strum, percent:Float) {
+	public function createRating(strum:Strum, note:Note, percent:Float) {
+		strum.onHit(Judgement.getRating(percent), note);
 		//trace('Rating: ${Judgement.getRating(percent)}');
+		score += Judgement.getScore(percent);
 		accuracies.push(Judgement.getAccuracy(percent));
 		var acc:Float = 0;
 		for (i in accuracies) {
@@ -157,7 +181,7 @@ class PlayState extends MusicBeatState {
 			},
 			"girlfriend" => {
 				id: "spectator",
-				pos: 0.50
+				pos: 0.75
 			},
 		];
 

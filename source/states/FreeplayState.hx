@@ -1,5 +1,7 @@
 package states;
 
+import flixel.util.FlxTimer;
+import apis.WindowsAPI;
 import backend.objects.NovaText;
 import backend.audio.Conductor;
 import utils.MathUtil;
@@ -167,12 +169,16 @@ class FreeplayState extends MusicBeatState {
         difficultyText.text = curDifficulty.toUpperCase(); 
 
         if (FlxG.keys.justPressed.ENTER) {
-            var playState = new PlayState();
-            PlayState.songID = songDatas[curSelected].id;
-            PlayState.difficulty = curDifficulty;
-            //+playState.loadChart();
-            //playState.varient = curDifficulty;
-            switchState(playState);
+            var string = 'Loading Song "${songDatas[curSelected].data.displayName}" on difficulty "$curDifficulty"';
+            //new FlxTimer().start(2, (e)->{
+                var playState = new PlayState();
+                PlayState.songID = songDatas[curSelected].id;
+                PlayState.difficulty = curDifficulty;
+                WindowsAPI.sendWindowsNotification("Loading Song...", string);
+                //+playState.loadChart();
+                //playState.varient = curDifficulty;
+                switchState(playState);
+            //});
         }
 
         if (FlxG.keys.justPressed.BACKSPACE) {

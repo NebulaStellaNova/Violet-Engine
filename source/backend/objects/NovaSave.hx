@@ -26,6 +26,10 @@ class NovaSave {
         }
     }
 
+    public static function has(variable:String):Bool {
+        return saveData.data.theData.exists(variable);
+    }
+
     public static function get(variable:String):Null<Dynamic> {
         if (saveData.data.theData.exists(variable)) {
             return saveData.data.theData.get(variable);

@@ -1,5 +1,6 @@
 package;
 
+import backend.filesystem.Paths;
 import backend.objects.NovaSave;
 import backend.audio.Conductor;
 import flixel.util.FlxStringUtil;
@@ -10,6 +11,7 @@ import backend.console.Logs;
 import flixel.FlxGame;
 import openfl.display.Sprite;
 import hxwindowmode.WindowColorMode;
+import backend.CrashHandler;
 
 class Main extends Sprite
 {
@@ -24,6 +26,7 @@ class Main extends Sprite
 
 	public function new()
 	{
+		CrashHandler.init();
 		super();
 		initEverything();
 		addChild(new FlxGame(1280, 720, MainMenuState, 60, 60, true, false));
@@ -38,6 +41,7 @@ class Main extends Sprite
 		});
 		FlxG.resetState();
 		WindowColorMode.setDarkMode();
+		apis.WindowsAPI.sendWindowsNotification("Test", "Test Desc");
 	}
 
 	inline function initEverything() {

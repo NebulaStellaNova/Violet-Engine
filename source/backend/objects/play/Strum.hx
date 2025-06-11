@@ -49,14 +49,21 @@ class Strum extends NovaSprite {
         FlxG.state.add(note);
     }
 
-    public function onHit(rating:String = "sick") {
+    public function onHit(rating:String = "sick", note:Note) {
 
         if (rating == "sick" || rating == "good") {
-            
+            var splash = new NovaSprite(0, 0, Paths.image('game/notes/${note.skinData.splashSkin.name}/splashes'));
+            var color = ["purple", "blue", "green", "red"][note.direction];
+            splash.addAnim("hit", 'note impact ${FlxG.random.int(1, 2)} ${color}', note.skinData.offsets.splashes);
+            splash.playAnim("hit", true);
+            splash.updateHitbox();
+            splash.x = this.getMidpoint().x - (splash.width/2);
+            splash.y = this.getMidpoint().y - (splash.height/2);
+            splash.animation.onFinish.add((name)->{
+                FlxG.state.remove(splash);
+                //splash.destroy();
+            });
+            FlxG.state.add(splash);
         }
-
-        switch (rating) {
-
-        }        
     }
 }

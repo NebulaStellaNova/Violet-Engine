@@ -24,6 +24,11 @@ class Paths {
     public static function font(path:String, ?directory:String):String { 
         return 'assets/fonts/${directory != null ? Path.addTrailingSlash(directory) : ""}$path';
     }
+
+    public static function xml(path:String, ?directory:String):String { 
+        return 'assets/${directory != null ? Path.addTrailingSlash(directory) : ""}$path.xml';
+    }
+
     public static function json(path:String, ?directory:String):String { 
         return 'assets/${directory != null ? Path.addTrailingSlash(directory) : ""}$path.json';
     }
