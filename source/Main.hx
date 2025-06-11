@@ -1,5 +1,6 @@
 package;
 
+import backend.objects.NovaSave;
 import backend.audio.Conductor;
 import flixel.util.FlxStringUtil;
 import flixel.FlxG;
@@ -12,6 +13,13 @@ import hxwindowmode.WindowColorMode;
 
 class Main extends Sprite
 {
+	public static var defaultKeybinds:Array<Array<String>> = [
+		["W", "E", "LEFT"],
+		["F", "F", "DOWN"],
+		["J", "K", "UP"],
+		["O", "O", "RIGHT"],
+	];
+
 	public static var className:String;
 
 	public function new()
@@ -19,6 +27,7 @@ class Main extends Sprite
 		super();
 		initEverything();
 		addChild(new FlxGame(1280, 720, MainMenuState, 60, 60, true, false));
+		initEverythingAfter();
 		addDebuggerStuff();
 		FlxG.signals.preStateCreate.add((state)->{
 			className = FlxStringUtil.getClassName(state, true);
@@ -34,12 +43,21 @@ class Main extends Sprite
 	inline function initEverything() {
 		Logs.init();
 		FlxSprite.defaultAntialiasing = true;
+		// NovaSave.setIfNull("hitWindow", 200);
+	}
+	inline function initEverythingAfter() {
+		NovaSave.init();
+		NovaSave.setIfNull("downscroll", false);
+		NovaSave.setIfNull("ghostTapping", true);
+		NovaSave.setIfNull("keybinds", defaultKeybinds);
 	}
 
 	inline function addDebuggerStuff() {
 		#if FLX_DEBUG
 		FlxG.game.debugger.console.registerFunction('resetState', () -> FlxG.resetState());
 		FlxG.game.debugger.console.registerFunction('openEditor', () -> FlxG.switchState(states.PonyCustomationState.new));
+		FlxG.game.debugger.console.registerFunction('setSaveData', NovaSave.set);
+		FlxG.game.debugger.console.registerFunction('getSaveData', NovaSave.get);
 		#end
 	}
 }

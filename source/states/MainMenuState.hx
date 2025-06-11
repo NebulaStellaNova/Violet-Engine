@@ -35,6 +35,11 @@ typedef MenuData = {
 
 class MainMenuState extends MusicBeatState {
 
+    public var watermarkTexts = [
+        "Nova Engine v0.1",
+        "THIS IS NOT A FORK"
+    ];
+
     public var curSelectedString:String = "";
     public var bgColorString:String = "";
 
@@ -109,7 +114,15 @@ class MainMenuState extends MusicBeatState {
         if (FlxG.keys.justPressed.ENTER) {
             pickSelection();
         }
-
+        watermarkTexts.sort(function(a, b):Int {
+            if(a.length < b.length) return -1;
+            else if(a.length > b.length) return 1;
+            else return 0;
+        });
+        leftWatermark.text = watermarkTexts.join("\n");
+        leftWatermark.updateHitbox();
+        leftWatermark.y = FlxG.height - leftWatermark.getHeight() - 5;
+        
         call("postUpdate", [elapsed]);
         call("onUpdatePost", [elapsed]);
 

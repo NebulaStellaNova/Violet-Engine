@@ -1,5 +1,6 @@
 package states;
 
+import backend.objects.NovaSave;
 import utils.MathUtil;
 import flixel.text.FlxText;
 import backend.filesystem.Paths;
@@ -24,12 +25,7 @@ typedef ChartData = {
 }
 
 class PlayState extends MusicBeatState {
-	public static var keybinds:Array<Array<String>> = [
-		["W", "E", "LEFT"],
-		["F", "F", "DOWN"],
-		["J", "K", "UP"],
-		["O", "O", "RIGHT"],
-	];
+	public static var keybinds:Array<Array<String>>;
 
 	public static var songID:String;
 	public static var varient:String;
@@ -60,13 +56,16 @@ class PlayState extends MusicBeatState {
 	override public function create()
 	{
 		super.create();
+
+		keybinds = cast NovaSave.get("keybinds");
+
 		accuracyTxt = new FlxText(0, 0, FlxG.width/1.5, 'Misses: 0 | Accuracy: Unknown');
 		accuracyTxt.y = FlxG.height - 100;
 		accuracyTxt.size = 30;
 		accuracyTxt.alignment = 'center';
 		accuracyTxt.screenCenter(X);
 		add(accuracyTxt);
-		
+
 		Conductor.curMusic = "";
 		Conductor.loadSong(songID);
 		loadChart();

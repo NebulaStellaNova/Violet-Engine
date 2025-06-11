@@ -174,6 +174,10 @@ class FreeplayState extends MusicBeatState {
             //playState.varient = curDifficulty;
             switchState(playState);
         }
+
+        if (FlxG.keys.justPressed.BACKSPACE) {
+            switchState(MainMenuState.new);
+        }
         //bg.color = MathUtil.colorLerp(bg.color, menuData.items[curSelected].color, 0.16);
         //bgColorString = JsonColor.fromInt(bg.color);
 
