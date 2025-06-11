@@ -578,14 +578,14 @@ class Conductor {
 	 * @param curStep The current step.
 	 */
 	inline public static function stepHit(curStep:Int):Void {
-		//
+		// cast (FlxG.state, MusicBeatState).stepHit(curStep);
 	}
 	/**
 	 * Runs when the next beat happens.
 	 * @param curBeat The current beat.
 	 */
 	inline public static function beatHit(curBeat:Int):Void {
-		//
+		// cast (FlxG.state, MusicBeatState).beatHit(curBeat);
 	}
 	/**
 	 * Runs when the next measure happens.

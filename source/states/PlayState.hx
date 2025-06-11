@@ -1,5 +1,11 @@
 package states;
 
+import flixel.FlxObject;
+import flixel.math.FlxPoint;
+import backend.objects.NovaSprite;
+import scripting.events.SongEvent;
+import backend.objects.play.game.Character;
+import flixel.FlxCamera;
 import backend.objects.NovaSave;
 import utils.MathUtil;
 import flixel.text.FlxText;
@@ -9,6 +15,7 @@ import flixel.FlxG;
 import backend.objects.play.*;
 import backend.MusicBeatState;
 import flixel.util.FlxSort;
+using StringTools;
 
 typedef SongSaveData = {
 	var score:Int;
@@ -23,25 +30,42 @@ typedef ChartStrumline = {
 	var characters:Array<String>;
 }
 
+typedef EventData = {
+	var params:Array<Dynamic>;
+	var name:String;
+	var time:Float;
+}
+
 typedef ChartData = {
 	var scrollSpeed:Float;
 	var strumLines:Array<ChartStrumline>;
 	var stage:String;
 	var noteTypes:Array<String>;
+	var events:Array<Dynamic>;
 }
 
 class PlayState extends MusicBeatState {
-	public static var keybinds:Array<Array<String>>;
 
+	
+	
+	public static var camGame:FlxCamera;
+	public static var camHUD:FlxCamera;
+	
+	public static var keybinds:Array<Array<String>>;
+	
 	public static var songID:String;
 	public static var varient:String;
 	public static var difficulty:String;
-
+	
+	public static var instance:PlayState; 
+	
 	public var hitWindow = 200; // MS
-
+	
 	public var strumLines:Array<StrumLine> = [];
-
+	public var characters:Array<Character> = []; // For easy access
+	public var events:Array<EventNote> = [];
 	public var notes:Array<Note> = [];
+	public var stage:Dynamic;
 
 	public var accuracy:Null<Float>;
 	public var misses:Int = 0;
@@ -50,6 +74,16 @@ class PlayState extends MusicBeatState {
 
 	public var accuracyTxt:FlxText;
 	private var accuracies:Array<Float> = [];
+
+	private var camFollowPoint:FlxPoint = new FlxPoint();
+
+	function formatScoreTxt(string:String, localAccuracy:Dynamic, localMisses:Float, localScore:Float, localRating:String) {
+		string = string.replace("$accuracy", '$localAccuracy');
+		string = string.replace("$misses", '$localMisses');
+		string = string.replace("$score", '$localScore');
+		string = string.replace("$rating", '$localRating');
+		return string;
+	}
 
 	function getKeyPress(index:Int, isRelease:Bool = false) {
 		var pressed:Bool = false;
@@ -64,13 +98,21 @@ class PlayState extends MusicBeatState {
 	{
 		super.create();
 
+		camGame = new FlxCamera();
+		FlxG.cameras.add(camGame, true);
+
+		camHUD = new FlxCamera();
+		camHUD.bgColor = 0x00000000; // No visible
+		FlxG.cameras.add(camHUD, false);
+
 		keybinds = cast NovaSave.get("keybinds");
 
-		accuracyTxt = new FlxText(0, 0, FlxG.width/1.5, 'Misses: 0 | Accuracy: Unknown | Score: 0');
+		accuracyTxt = new FlxText(0, 0, FlxG.width/1.5, formatScoreTxt(globalVariables.scoreTxt, "Unknown", 0, 0, "N/A"));
 		accuracyTxt.y = FlxG.height - 100;
 		accuracyTxt.size = 20;
 		accuracyTxt.alignment = 'center';
 		accuracyTxt.screenCenter(X);
+		accuracyTxt.cameras = [camHUD];
 		add(accuracyTxt);
 
 		Conductor.curMusic = "";
@@ -79,6 +121,24 @@ class PlayState extends MusicBeatState {
 
 		Conductor._onComplete = endSong;
 		Conductor.play();
+
+		instance = this;
+
+		if (stage == null) {
+			for (character in characters) {
+				switch (character.type) {
+					case "opponent":
+						character.x = -400;
+						character.y = 200 - character.height;
+					case "spectator":
+						character.x = 200;
+						character.y = 150 - character.height;
+					case "player":
+						character.x = 1100;
+						character.y = 200 - character.height;
+				}
+			}
+		}
 
 	}
 
@@ -136,6 +196,7 @@ class PlayState extends MusicBeatState {
 							default:
 								if (Conductor.time >= note.time) {
 									note.kill();
+									strum.onHit("ignore", note);
 									strum.playAnim("confirm", true);
 								}
 						}
@@ -150,9 +211,38 @@ class PlayState extends MusicBeatState {
 		}
 
 		if (accuracy != null) {
-			accuracyTxt.text = 'Misses: $misses | Accuracy: $accuracy% [${Judgement.getRating(accuracy).toUpperCase()}] | Score: $score';
+			accuracyTxt.text = formatScoreTxt(globalVariables.scoreTxt, accuracy, misses, score, Judgement.getRating(accuracy).toUpperCase()); //'Misses: $misses | Accuracy: $accuracy% [${Judgement.getRating(accuracy).toUpperCase()}] | Score: $score';
 		}
 		accuracyTxt.scale.set(MathUtil.lerp(accuracyTxt.scale.x, 1, 0.1), MathUtil.lerp(accuracyTxt.scale.y, 1, 0.1));
+		
+		for (event in events) {
+			if (Conductor.time > event.time && !event.ran) {
+				onEvent(event);
+			}
+		}
+		camGame.followLerp = 0.1;
+		var targetObject:FlxObject = new FlxObject();
+		targetObject.x = camFollowPoint.x;
+		targetObject.y = camFollowPoint.y;
+		camGame.target = targetObject;
+	}
+
+	public function onEvent(event:EventNote) {
+		trace(event.name + ', ' +  event.parameters);
+		var theEvent:SongEvent = new SongEvent(event.name, event.parameters);
+		theEvent = runEvent("onEvent", theEvent);
+		if (theEvent.cancelled) return;
+		event.ran = true;
+
+		switch (theEvent.name) {
+			case "Camera Movement":
+				camFollowPoint = new FlxPoint(0, 0);
+				camFollowPoint.x += strumLines[theEvent.parameters[0]].parentCharacters[0].cameraCenter.x;
+				camFollowPoint.y += strumLines[theEvent.parameters[0]].parentCharacters[0].cameraCenter.y;
+				camFollowPoint.x += strumLines[theEvent.parameters[0]].parentCharacters[0].x;
+				camFollowPoint.y += strumLines[theEvent.parameters[0]].parentCharacters[0].y;
+
+		}
 	}
 
 	public function createRating(strum:Strum, note:Note, percent:Float) {
@@ -186,12 +276,26 @@ class PlayState extends MusicBeatState {
 		];
 
 		var chart:ChartData = Paths.parseJson('songs/$songID/charts/$difficulty');
+		
+		if (chart.events != null)
+			for (event in chart.events) {
+				trace("Found Event: " + event);
+				events.push(new EventNote(event.name, event.time, event.params ?? []));
+			}
 		//trace(chart.strumLines);
 		for (i=>strumline in chart.strumLines) {
 			var strumLine = new StrumLine(4, positions.get(strumline.position).id, positions.get(strumline.position).pos);
 			strumLine.visible = strumline.visible ?? true;
+			strumLine.cameras = [camHUD];
 			add(strumLine);
 			strumLines.push(strumLine);
+
+			for (id in strumline.characters) {
+				var character = new Character(id, positions.get(strumline.position).id);
+				strumLine.addCharacter(character);
+				characters.push(character);
+				add(character);
+			}
 		}
 		Conductor.addVocalTrack(songID);
 		for (i=>strumline in chart.strumLines) {
@@ -199,8 +303,25 @@ class PlayState extends MusicBeatState {
 			for (note in strumline.notes) {
 				var daNote = new Note(strumLines[i].members[note.id], note.id, note.time, globalVariables.noteSkin);
 				daNote.visible = strumLines[i].visible;
+				daNote.cameras = [camHUD];
 				notes.push(daNote);
 				strumLines[i].members[note.id].add(daNote);
+			}
+		}
+	}
+
+	override function stepHit(step:Int) {
+		super.stepHit(step);
+		for (character in characters) {
+
+			if (character.singTimer == 0) {
+				if (step % (character.characterData.danceEvery ?? 4) == 0) {
+					character.dance();
+				}
+			}
+
+			if (character.singTimer > 0) {
+				character.singTimer--;
 			}
 		}
 	}

@@ -1,5 +1,8 @@
 package backend;
 
+import scripting.events.SelectionEvent;
+import scripting.events.SongEvent;
+import scripting.events.EventBase;
 import backend.audio.Conductor;
 import backend.scripts.LuaScript;
 import backend.scripts.FunkinScript;
@@ -13,9 +16,13 @@ import flixel.system.debug.watch.Tracker;
 
 typedef GlobalVariables = {
 	var noteSkin:String;
+	var scoreTxt:String; // Example "Misses: $misses | Accuracy: $accuracy | Score: $score"
 } 
 
 class MusicBeatState extends FlxState {
+
+	var previousStep:Int = -1;
+	var previousBeat:Int = -1;
 
 	var debugSubState = null;
 
@@ -68,6 +75,16 @@ class MusicBeatState extends FlxState {
 			call("onUpdate", [elapsed]);
 		}
 
+		if (previousStep != Conductor.curStep) {
+			stepHit(Conductor.curStep);
+			previousStep = Conductor.curStep;
+		}
+
+		if (previousBeat != Conductor.curBeat) {
+			beatHit(Conductor.curBeat);
+			previousBeat = Conductor.curBeat;
+		}
+
 		if (FlxG.keys.justPressed.F5) {
 			FlxG.resetState();
 		}
@@ -95,8 +112,7 @@ class MusicBeatState extends FlxState {
 		call("postCreate");
 		call("onCreatePost");
 	}
-
-	public function runEvent(func:String, event:Dynamic) {
+	public function runEvent(func:String, event:EventBase):Dynamic {
 		if (stateScript == null) return event;
 		stateScript.call(func, [event]);
 		//stateLuaScript.call(func, [event]);
@@ -128,5 +144,13 @@ class MusicBeatState extends FlxState {
 		}
 		if (!switched)
 			FlxG.switchState(targetClass);
+	}
+
+	public function stepHit(curStep:Int) {
+
+	}
+
+	public function beatHit(curBeat:Int) {
+
 	}
 }

@@ -26,6 +26,7 @@ class PauseSubState extends FlxSubState {
 
         for (i=>txt in options) {
             var text = new FlxText(0, 50 * i, 0, txt);
+            text.scrollFactor.set();
             text.setFormat(Paths.font("Tardling v1.1.ttf"), 40);
             text.screenCenter();
             text.y += 50 * (i-((options.length-1)/2));

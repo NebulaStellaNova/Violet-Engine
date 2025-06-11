@@ -45,10 +45,14 @@ class NovaSprite extends FlxSprite {
         this.offset.set(offsets.get(id)[0] ?? 0, offsets.get(id)[1] ?? 0);
     }
 
-    public function addAnim(name:String, prefix:String, ?offsets:Array<Float>, looped:Bool = false) {
-        this.animation.addByPrefix(name, prefix, 24, looped);
+    public function addAnim(name:String, prefix:String, ?offsets:Array<Float>, looped:Bool = false, fps:Int = 24) {
+        this.animation.addByPrefix(name, prefix, fps, looped);
         this.offsets.set(name, offsets != null ? [-offsets[0], -offsets[1]] : [0, 0]);
-        // log('Prefix: $prefix', LogMessage);
+    }
+
+    public function addAnimIndices(name:String, prefix:String, indices:Array<Int>, ?offsets:Array<Float>, looped:Bool = false, fps:Int = 24) {
+        this.animation.addByIndices(name, prefix, indices, "", fps, looped);
+        this.offsets.set(name, offsets != null ? [-offsets[0], -offsets[1]] : [0, 0]);
     }
 
 

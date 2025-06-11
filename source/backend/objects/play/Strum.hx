@@ -1,5 +1,6 @@
 package backend.objects.play;
 
+import states.PlayState;
 import flixel.FlxG;
 import backend.filesystem.Paths;
 import flixel.util.FlxSort;
@@ -64,7 +65,10 @@ class Strum extends NovaSprite {
                 FlxG.state.remove(splash);
                 //splash.destroy();
             });
+            splash.cameras = [PlayState.camHUD];
             FlxG.state.add(splash);
         }
+
+        this.parent.characterPlaySingAnim('sing${["LEFT", "DOWN", "UP", "RIGHT"][note.direction]}', true);
     }
 }
