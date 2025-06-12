@@ -1,5 +1,7 @@
 package backend.objects;
 
+import flixel.util.FlxStringUtil;
+import flixel.system.FlxAssets.FlxGraphicAsset;
 import haxe.display.Display.Package;
 import flixel.graphics.frames.FlxAtlasFrames;
 import backend.filesystem.Paths;
@@ -8,6 +10,9 @@ import flixel.FlxSprite;
 using StringTools;
 class NovaSprite extends FlxSprite {
 
+    public var filePath:String;
+    public var fileName:String;
+
     var animated:Bool = false;
 
     var offsets:Map<String, Array<Float>> = [];
@@ -15,11 +20,22 @@ class NovaSprite extends FlxSprite {
     public function new(x, y, ?path:String) {
         super(x, y);
         if (Paths.fileExists(path.replace(".png", ".xml"))) {
+            this.filePath = path;
+            this.fileName = Paths.getFileName(path);
             this.animated = true;
             this.frames = FlxAtlasFrames.fromSparrow(path, path.replace(".png", ".xml"));
         } else {
             this.loadGraphic(path);
         }
+    }
+
+    override function loadGraphic(graphic:FlxGraphicAsset, animated:Bool = false, frameWidth:Int = 0, frameHeight:Int = 0, unique:Bool = false, ?key:String):FlxSprite {
+        if (FlxStringUtil.getClassName(graphic) == "String") {
+            this.filePath = graphic;
+            this.fileName = Paths.getFileName(graphic);
+        }
+        return super.loadGraphic(graphic, animated, frameWidth, frameHeight, unique, key);
+
     }
 
     override public function update(elapsed:Float) {

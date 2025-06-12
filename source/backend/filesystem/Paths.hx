@@ -44,6 +44,12 @@ class Paths {
         return fileExists(inst(song, varient));
     }
 
+    public static function getFileName(path:String) {
+        var splitPath = path.split("/");
+        var splitName = splitPath[splitPath.length-1].split(".");
+        return splitName[0];
+    }
+
     public static function fileExists(path:String) {
         return FileSystem.exists(path);
     }

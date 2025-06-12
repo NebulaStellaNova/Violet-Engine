@@ -60,10 +60,10 @@ class FreeplayState extends MusicBeatState {
 
             //Conductor.loadSong(song);
 
-            var text = new FlxText(0, 50*i, FlxG.width, songData.data.displayName, 40);
+            var text = new FlxText(0, 90*i, FlxG.width, songData.data.displayName);
             text.alignment = 'center';
             text.ID = i;
-            text.setFormat(Paths.font("Tardling v1.1.ttf"), 40);
+            text.setFormat(Paths.font("Tardling v1.1.ttf"), 80);
             texts.add(text);
 
         }
