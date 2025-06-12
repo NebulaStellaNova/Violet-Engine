@@ -1,5 +1,6 @@
 package backend.filesystem;
 
+import utils.NovaUtil;
 import haxe.display.Display.Package;
 import haxe.Json;
 import sys.FileSystem;
@@ -114,6 +115,10 @@ class Paths {
             jsonString = readStringFromPath(json(path, directory));
         }
         return Json.parse(removeJsonComments(jsonString));
+    }
+
+    public static function parseJsonMap(path:String, ?directory:String) {
+        return NovaUtil.objectToMap(parseJson(path, directory));
     }
 
     public static function getSongList():Array<String> {
