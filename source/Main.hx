@@ -59,7 +59,7 @@ class Main extends Sprite
 	inline function addDebuggerStuff() {
 		#if FLX_DEBUG
 		FlxG.game.debugger.console.registerFunction('resetState', () -> FlxG.resetState());
-		FlxG.game.debugger.console.registerFunction('openEditor', () -> FlxG.switchState(states.PonyCustomationState.new));
+		FlxG.game.debugger.console.registerFunction('openEditor', () -> FlxG.switchState(states.PonyCustomizationState.new));
 		FlxG.game.debugger.console.registerFunction('setSaveData', NovaSave.set);
 		FlxG.game.debugger.console.registerFunction('getSaveData', NovaSave.get);
 		#end

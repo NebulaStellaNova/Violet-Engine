@@ -17,10 +17,9 @@ import flixel.system.debug.watch.Tracker;
 typedef GlobalVariables = {
 	var noteSkin:String;
 	var scoreTxt:String; // Example "Misses: $misses | Accuracy: $accuracy | Score: $score"
-} 
+}
 
 class MusicBeatState extends FlxState {
-
 	var previousStep:Int = -1;
 	var previousBeat:Int = -1;
 
@@ -34,7 +33,7 @@ class MusicBeatState extends FlxState {
 	var ____________________ = "                  ";
 	//var stateLuaScript:LuaScript;
 
-    override public function create() {
+	override public function create() {
 		globalVariables = Paths.parseJson("globalVariables", "data/config");
 		super.create();
 		Conductor.init();
@@ -52,18 +51,17 @@ class MusicBeatState extends FlxState {
 		}
 
 		#if FLX_DEBUG
-        //var trackerProfile = new TrackerProfile(MusicBeatState, defaultDebugVars.concat(debugVars).concat(["____________________"]), []);
-        //FlxG.debugger.addTrackerProfile(trackerProfile);
-        //FlxG.debugger.track(FlxG.state, "Current State");
+		//var trackerProfile = new TrackerProfile(MusicBeatState, defaultDebugVars.concat(debugVars).concat(["____________________"]), []);
+		//FlxG.debugger.addTrackerProfile(trackerProfile);
+		//FlxG.debugger.track(FlxG.state, "Current State");
 
 		FlxG.watch.add(this, "stateScript", "State HScript:");
-        #end
+		#end
 
 
 		Conductor.playMusic(Paths.music("freakyMenu"));
 
 		//postCreate();
-
 	}
 
 	override public function update(elapsed:Float)
@@ -147,10 +145,10 @@ class MusicBeatState extends FlxState {
 	}
 
 	public function stepHit(curStep:Int) {
-
+		//
 	}
 
 	public function beatHit(curBeat:Int) {
-
+		//
 	}
 }

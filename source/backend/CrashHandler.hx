@@ -7,12 +7,11 @@ import openfl.events.UncaughtErrorEvent;
 
 using StringTools;
 class CrashHandler {
-
 	@:access(FlxG.stage.__uncaughtErrorEvents)
 	public static function init() {
 		//Lib.current.loaderInfo.uncaughtErrorEvents.addEventListener(UncaughtErrorEvent.UNCAUGHT_ERROR, onError);
 		//Lib.current.loaderInfo.uncaughtErrorEvents.removeEventListener();
-    	Lib.current.loaderInfo.uncaughtErrorEvents.addEventListener("uncaughtError", onError);
+		Lib.current.loaderInfo.uncaughtErrorEvents.addEventListener("uncaughtError", onError);
 	}
 
 	public static function onError(e:UncaughtErrorEvent):Void {

@@ -49,22 +49,19 @@ typedef ChartData = {
 }
 
 class PlayState extends MusicBeatState {
-
-	
-	
 	public static var camGame:FlxCamera;
 	public static var camHUD:FlxCamera;
-	
+
 	public static var keybinds:Array<Array<String>>;
-	
+
 	public static var songID:String;
 	public static var varient:String;
 	public static var difficulty:String;
-	
-	public static var instance:PlayState; 
-	
+
+	public static var instance:PlayState;
+
 	public var hitWindow = 200; // MS
-	
+
 	public var strumLines:Array<StrumLine> = [];
 	public var characters:Array<Character> = []; // For easy access
 	public var events:Array<EventNote> = [];
@@ -74,7 +71,6 @@ class PlayState extends MusicBeatState {
 	public var accuracy:Null<Float>;
 	public var misses:Int = 0;
 	public var score:Int = 0;
-
 
 	public var accuracyTxt:FlxText;
 	private var accuracies:Array<Float> = [];
@@ -143,7 +139,6 @@ class PlayState extends MusicBeatState {
 				}
 			}
 		}
-
 	}
 
 	public function endSong() {
@@ -152,7 +147,7 @@ class PlayState extends MusicBeatState {
 			accuracy: accuracy,
 			misses: misses
 		}; // ik it's not needed stfu
-		
+
 		NovaSave.setIfNull(songID, saveData);
 		if (NovaSave.get(songID).accuracy < accuracy || NovaSave.get(songID).score < score) {
 			NovaSave.set(songID, saveData);
@@ -167,7 +162,7 @@ class PlayState extends MusicBeatState {
 		var realHitWindow = hitWindow/2;
 
 		if (FlxG.keys.justPressed.ENTER) {
-            FlxG.state.persistentUpdate = false;
+			FlxG.state.persistentUpdate = false;
 			Conductor.pause();
 			openSubState(new states.substates.PauseSubState());
 		}
@@ -215,7 +210,7 @@ class PlayState extends MusicBeatState {
 			accuracyTxt.text = formatScoreTxt(globalVariables.scoreTxt, accuracy, misses, score, Judgement.getRating(accuracy).toUpperCase()); //'Misses: $misses | Accuracy: $accuracy% [${Judgement.getRating(accuracy).toUpperCase()}] | Score: $score';
 		}
 		accuracyTxt.scale.set(MathUtil.lerp(accuracyTxt.scale.x, 1, 0.1), MathUtil.lerp(accuracyTxt.scale.y, 1, 0.1));
-		
+
 		for (event in events) {
 			if (Conductor.time > event.time && !event.ran) {
 				onEvent(event);
@@ -260,7 +255,7 @@ class PlayState extends MusicBeatState {
 		if (theEvent.cancelled) return;
 		note.kill();
 		if (theEvent.animCancelled) return;
-		
+
 		strum.playAnim('confirm', true);
 
 		switch (note.type) {
@@ -304,7 +299,7 @@ class PlayState extends MusicBeatState {
 		var chart:ChartData = Paths.parseJson('songs/$songID/charts/$difficulty');
 		if (chart.noteTypes == null)
 			chart.noteTypes = ["default"];
-		else 
+		else
 			chart.noteTypes.insert(0, "default");
 		trace(chart.noteTypes);
 
@@ -316,7 +311,7 @@ class PlayState extends MusicBeatState {
 			log("Failed to load chart! Error: Incorrect Chart Format.");
 			return;
 		}
-		
+
 		if (chart.events != null)
 			for (event in chart.events) {
 				trace("Found Event: " + event);

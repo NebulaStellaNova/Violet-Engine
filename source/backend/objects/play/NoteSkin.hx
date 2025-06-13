@@ -1,20 +1,20 @@
 package backend.objects.play;
 
 typedef SplashSkin = {
-    var name:String;
+	var name:String;
 }
 
 typedef SkinOffsets = {
-    var global:Array<Float>;
-    var confirm:Array<Float>;
-    var sustains:Array<Float>;
-    var statics:Array<Float>;
-    var notes:Array<Float>;
-    var pressed:Array<Float>;
-    var splashes:Array<Float>;
+	var global:Array<Float>;
+	var confirm:Array<Float>;
+	var sustains:Array<Float>;
+	var statics:Array<Float>;
+	var notes:Array<Float>;
+	var pressed:Array<Float>;
+	var splashes:Array<Float>;
 }
 
 typedef NoteSkin = {
-    var offsets:SkinOffsets;
-    var splashSkin:SplashSkin;
+	var offsets:SkinOffsets;
+	var splashSkin:SplashSkin;
 }
