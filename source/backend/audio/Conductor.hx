@@ -374,6 +374,7 @@ class Conductor {
 
 		if (Paths.fileExists(music.replace(".ogg", ".json"))) {
 			try {
+				trace("here");
 				data = Paths.parseJson(music.replace(".ogg", ".json"));
 			} catch (e:Dynamic) {
 				// do nothing

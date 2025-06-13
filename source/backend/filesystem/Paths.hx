@@ -1,5 +1,7 @@
 package backend.filesystem;
 
+import sys.io.File;
+import openfl.utils.AssetType;
 import utils.NovaUtil;
 import haxe.display.Display.Package;
 import haxe.Json;
@@ -52,7 +54,7 @@ class Paths {
     }
 
     public static function fileExists(path:String) {
-        return FileSystem.exists(path);
+        return FileSystem.exists(path) || lime.utils.Assets.exists(path) || openfl.Assets.exists(path);
     }
 
 	public static function folderExists(path:String):Bool
@@ -84,7 +86,8 @@ class Paths {
     */
     public static function readStringFromPath(path:String):String
     {
-        return sys.io.File.getContent(path);
+        var content = sys.io.File.getContent(path);
+        return content;
     }
 
     public static function removeJsonComments(str:String) {
@@ -112,7 +115,9 @@ class Paths {
         if (fileExists(json(path, directory)+"c")) {
             jsonString = readStringFromPath(json(path, directory)+"c");
         } else {
-            jsonString = readStringFromPath(json(path, directory));
+            var string = readStringFromPath(json(path, directory));
+            if (string != "")
+                jsonString = string;
         }
         return Json.parse(removeJsonComments(jsonString));
     }

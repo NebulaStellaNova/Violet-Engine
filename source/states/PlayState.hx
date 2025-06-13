@@ -42,6 +42,8 @@ typedef ChartData = {
 	var stage:String;
 	var noteTypes:Array<String>;
 	var events:Array<Dynamic>;
+	var warning:String;
+	var codenameChart:Bool;
 }
 
 class PlayState extends MusicBeatState {
@@ -276,6 +278,15 @@ class PlayState extends MusicBeatState {
 		];
 
 		var chart:ChartData = Paths.parseJson('songs/$songID/charts/$difficulty');
+
+		if (chart.warning == "File Not Found") {
+			log('Failed to load chart! Error: ${chart.warning}.', ErrorMessage);
+			return;
+		}
+		if (!chart.codenameChart) {
+			log("Failed to load chart! Error: Incorrect Chart Format.");
+			return;
+		}
 		
 		if (chart.events != null)
 			for (event in chart.events) {
