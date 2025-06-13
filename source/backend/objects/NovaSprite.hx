@@ -18,7 +18,8 @@ class NovaSprite extends FlxSprite {
 
 	public function new(x = 0.0, y = 0.0, ?path:String) {
 		super(x, y);
-		this.loadSprite(path);
+		if (path != null)
+			this.loadSprite(path);
 	}
 
 	public function loadSprite(path:String):NovaSprite {
