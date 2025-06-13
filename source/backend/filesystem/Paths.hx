@@ -86,19 +86,6 @@ class Paths {
 	*/
 	public static function readStringFromPath(path:String):String
 	{
-		var content = sys.io.File.getContent(path);
-		return content;
-	}
-
-	/**
-	* Read string file contents directly from a given path.
-	* Only works on desktop.
-	*
-	* @param path The path to the file.
-	* @return The file contents.
-	*/
-	public static function readStringFromPath(path:String):String
-	{
 		return sys.io.File.getContent(path);
 	}
 
