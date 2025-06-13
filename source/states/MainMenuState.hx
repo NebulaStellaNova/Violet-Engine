@@ -61,7 +61,7 @@ class MainMenuState extends MusicBeatState {
 
 		menuData = Json.parse(Paths.readStringFromPath("assets/data/config/menuData.json"));
 
-		bg = new NovaSprite(0, 0, Paths.image(menuData.background, menuData.directory));
+		bg = new NovaSprite(Paths.image(menuData.background, menuData.directory));
 		bg.setGraphicSize(FlxG.width, FlxG.height);
 		bg.updateHitbox();
 		bg.screenCenter();

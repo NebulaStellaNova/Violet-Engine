@@ -16,8 +16,12 @@ class NovaSprite extends FlxSprite {
 
 	var offsets:Map<String, Array<Float>> = [];
 
-	public function new(x, y, ?path:String) {
+	public function new(x = 0.0, y = 0.0, ?path:String) {
 		super(x, y);
+		this.loadSprite(path);
+	}
+
+	public function loadSprite(path:String):NovaSprite {
 		if (Paths.fileExists(path.replace(".png", ".xml"))) {
 			this.filePath = path;
 			this.fileName = Paths.getFileName(path);
@@ -26,15 +30,15 @@ class NovaSprite extends FlxSprite {
 		} else {
 			this.loadGraphic(path);
 		}
+		return this;
 	}
 
-	override function loadGraphic(graphic:FlxGraphicAsset, animated:Bool = false, frameWidth:Int = 0, frameHeight:Int = 0, unique:Bool = false, ?key:String):FlxSprite {
+	override function loadGraphic(graphic:FlxGraphicAsset, animated:Bool = false, frameWidth:Int = 0, frameHeight:Int = 0, unique:Bool = false, ?key:String):NovaSprite {
 		if (FlxStringUtil.getClassName(graphic) == "String") {
 			this.filePath = graphic;
 			this.fileName = Paths.getFileName(graphic);
 		}
-		return super.loadGraphic(graphic, animated, frameWidth, frameHeight, unique, key);
-
+		return cast super.loadGraphic(graphic, animated, frameWidth, frameHeight, unique, key);
 	}
 
 	override public function update(elapsed:Float) {

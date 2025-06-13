@@ -67,7 +67,7 @@ class FreeplayState extends MusicBeatState {
 
 		}
 
-		bg = new NovaSprite(0, 0, Paths.image("menuBGdesat", "menus/mainmenu"));
+		bg = new NovaSprite(Paths.image("menuBGdesat", "menus/mainmenu"));
 		bg.setGraphicSize(FlxG.width, FlxG.height);
 		bg.updateHitbox();
 		bg.screenCenter();

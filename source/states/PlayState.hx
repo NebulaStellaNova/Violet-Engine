@@ -25,8 +25,15 @@ typedef SongSaveData = {
 	var misses:Int;
 }
 
+typedef ChartNote = {
+	var id:Int;
+	var sLen:Float;
+	var time:Float;
+	var type:Int;
+}
+
 typedef ChartStrumline = {
-	var notes:Array<Dynamic>;
+	var notes:Array<ChartNote>;
 	var position:String;
 	var visible:Bool;
 	var characters:Array<String>;
