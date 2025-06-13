@@ -6,6 +6,7 @@ class Note extends NovaSprite {
     public static var swagWidth:Float = 160 * 0.7;
 
     public var direction:Int = 0;
+    public var typeID:Int = 0;
     public var type:String = "default";
     public var skin:String = "default";
     public var time:Float = 0;

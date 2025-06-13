@@ -68,7 +68,5 @@ class Strum extends NovaSprite {
             splash.cameras = [PlayState.camHUD];
             FlxG.state.add(splash);
         }
-
-        this.parent.characterPlaySingAnim('sing${["LEFT", "DOWN", "UP", "RIGHT"][note.direction]}', true);
     }
 }

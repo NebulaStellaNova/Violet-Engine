@@ -1,5 +1,7 @@
 package states;
 
+import backend.objects.play.StrumLine.UserType;
+import scripting.events.NoteHitEvent;
 import flixel.FlxObject;
 import flixel.math.FlxPoint;
 import backend.objects.NovaSprite;
@@ -189,17 +191,14 @@ class PlayState extends MusicBeatState {
 								if (getKeyPress(dir) && !hitThisFrame[dir]) {
 									if (Conductor.time - note.time >= -realHitWindow && Conductor.time - note.time <= realHitWindow) {
 										createRating(strum, note, realHitWindow-Math.abs(Conductor.time - note.time));
-										note.kill();
+										noteHit(note, strum, strumLine.type);
 										doPress = false;
 										hitThisFrame[dir] = true;
-										strum.playAnim('confirm', true);
 									}
 								}
 							default:
 								if (Conductor.time >= note.time) {
-									note.kill();
-									strum.onHit("ignore", note);
-									strum.playAnim("confirm", true);
+									noteHit(note, strum, strumLine.type);
 								}
 						}
 					}
@@ -247,6 +246,31 @@ class PlayState extends MusicBeatState {
 		}
 	}
 
+	public function noteHit(note:Note, strum:Strum, characterType:UserType) {
+		var theEvent:NoteHitEvent = new NoteHitEvent(note, note.type, strum, note.direction, characterType);
+		theEvent = runEvent("noteHit", theEvent);
+		switch (characterType) {
+			case PLAYER:
+				theEvent = runEvent("playerNoteHit", theEvent);
+			case OPPONENT:
+				theEvent = runEvent("opponentNoteHit", theEvent);
+			case SPECTATOR:
+				theEvent = runEvent("spectatorNoteHit", theEvent);
+		}
+		if (theEvent.cancelled) return;
+		note.kill();
+		if (theEvent.animCancelled) return;
+		
+		strum.playAnim('confirm', true);
+
+		switch (note.type) {
+			case "Alt Anim Note":
+				strum.parent.characterPlaySingAnim('sing${["LEFT", "DOWN", "UP", "RIGHT"][note.direction]}-alt', true);
+			default:
+				strum.parent.characterPlaySingAnim('sing${["LEFT", "DOWN", "UP", "RIGHT"][note.direction]}', true);
+		}
+	}
+
 	public function createRating(strum:Strum, note:Note, percent:Float) {
 		strum.onHit(Judgement.getRating(percent), note);
 		//trace('Rating: ${Judgement.getRating(percent)}');
@@ -278,6 +302,11 @@ class PlayState extends MusicBeatState {
 		];
 
 		var chart:ChartData = Paths.parseJson('songs/$songID/charts/$difficulty');
+		if (chart.noteTypes == null)
+			chart.noteTypes = ["default"];
+		else 
+			chart.noteTypes.insert(0, "default");
+		trace(chart.noteTypes);
 
 		if (chart.warning == "File Not Found") {
 			log('Failed to load chart! Error: ${chart.warning}.', ErrorMessage);
@@ -315,6 +344,13 @@ class PlayState extends MusicBeatState {
 				var daNote = new Note(strumLines[i].members[note.id], note.id, note.time, globalVariables.noteSkin);
 				daNote.visible = strumLines[i].visible;
 				daNote.cameras = [camHUD];
+				if (note.type != null) {
+					daNote.typeID = note.type;
+					trace(chart.noteTypes[note.type] + ", " + note.type + ", " + chart.noteTypes);
+					if (chart.noteTypes != null) {
+						daNote.type = chart.noteTypes[note.type];
+					}
+				}
 				notes.push(daNote);
 				strumLines[i].members[note.id].add(daNote);
 			}
