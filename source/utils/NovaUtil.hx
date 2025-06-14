@@ -1,5 +1,6 @@
 package utils;
 
+import flixel.util.FlxStringUtil;
 import flixel.util.FlxSpriteUtil;
 import flixel.util.FlxColor;
 import backend.objects.NovaSprite;
@@ -25,6 +26,18 @@ class NovaUtil {
 		var split = string.split("");
 		split[0] = split[0].toUpperCase();
 		return split.join("");
+	}
+
+	public static function isInt(object:Dynamic) {
+		return FlxStringUtil.getClassName(object, true) == "Int";
+	}
+
+	public static function isString(object:Dynamic) {
+		return FlxStringUtil.getClassName(object, true) == "String";
+	}
+	
+	public static function isFloat(object:Dynamic) {
+		return FlxStringUtil.getClassName(object, true) == "Float";
 	}
 
 

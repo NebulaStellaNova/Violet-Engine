@@ -1,5 +1,6 @@
 package backend;
 
+import backend.scripts.ScriptPack;
 import scripting.events.SelectionEvent;
 import scripting.events.SongEvent;
 import scripting.events.EventBase;
@@ -13,6 +14,7 @@ import flixel.FlxG;
 import flixel.util.FlxStringUtil;
 import states.substates.DebugSubState;
 import flixel.system.debug.watch.Tracker;
+import backend.scripts.LuaScript;
 
 typedef GlobalVariables = {
 	var noteSkin:String;
@@ -25,7 +27,8 @@ class MusicBeatState extends FlxState {
 
 	var debugSubState = null;
 
-	public var stateScript:FunkinScript;
+	//public var stateScript:FunkinScript;
+	public var stateScripts:ScriptPack = new ScriptPack();
 	public var globalVariables:GlobalVariables;
 
 	var defaultDebugVars:Array<String> = ["stateScript"];
@@ -41,14 +44,20 @@ class MusicBeatState extends FlxState {
 		var luaScriptPath = "assets/data/scripts/states/" + Main.className + ".lua";
 		var scriptPath = "assets/data/scripts/states/" + Main.className + ".hx";
 		if (Paths.fileExists(scriptPath)) {
-			stateScript = new FunkinScript(Paths.readStringFromPath(scriptPath));
-			call("create");
-			call("onCreate");
+			var stateScript = new FunkinScript(Paths.readStringFromPath(scriptPath));
+			stateScripts.call("create");
+			stateScripts.call("onCreate");
+			stateScripts.addScript(stateScript);
 			stateScript.superInstance = this;
 		}
 		if (Paths.fileExists(luaScriptPath)) {
-			//stateLuaScript = new LuaScript(Paths.readStringFromPath(luaScriptPath));
+			var stateLuaScript = new LuaScript(Paths.readStringFromPath(luaScriptPath));
+			stateLuaScript.call("create");
+			stateLuaScript.call("onCreate");
+			stateScripts.addScript(stateLuaScript);
+			stateLuaScript.parent = this;
 		}
+
 
 		#if FLX_DEBUG
 		//var trackerProfile = new TrackerProfile(MusicBeatState, defaultDebugVars.concat(debugVars).concat(["____________________"]), []);
@@ -68,10 +77,10 @@ class MusicBeatState extends FlxState {
 	{
 		super.update(elapsed);
 
-		if (stateScript != null) {
-			call("update", [elapsed]);
-			call("onUpdate", [elapsed]);
-		}
+		
+		call("update", [elapsed]);
+		call("onUpdate", [elapsed]);
+	
 
 		if (previousStep != Conductor.curStep) {
 			stepHit(Conductor.curStep);
@@ -111,21 +120,21 @@ class MusicBeatState extends FlxState {
 		call("onCreatePost");
 	}
 	public function runEvent<T:EventBase>(func:String, event:T):T {
-		if (stateScript == null) return event;
-		stateScript.call(func, [event]);
+		if (stateScripts == null) return event;
+		stateScripts.call(func, [event]);
 		//stateLuaScript.call(func, [event]);
 		return event;
 	}
 
 	public function call(func, ?params) {
-		if (stateScript == null) return;
-		stateScript.call(func, params ?? []);
+		if (stateScripts == null) return;
+		stateScripts.call(func, params ?? []);
 		//stateLuaScript.call(func, params ?? []);
 	}
 
 	public function set(what, value) {
-		if (stateScript == null) return;
-		stateScript.set(what, value);
+		if (stateScripts == null) return;
+		//stateScripts.set(what, value);
 		//stateLuaScript.set(what, value);
 	}
 
