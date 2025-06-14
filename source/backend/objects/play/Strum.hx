@@ -1,5 +1,8 @@
 package backend.objects.play;
 
+import flixel.util.FlxTimer;
+import flixel.group.FlxGroup;
+import flixel.util.typeLimit.OneOfTwo;
 import states.PlayState;
 import flixel.FlxG;
 import backend.filesystem.Paths;
@@ -7,18 +10,46 @@ import flixel.util.FlxSort;
 
 class Strum extends NovaSprite {
 	public var direction:Int = 0;
-	public var skin:String = "default";
+	public var skin(default, set):String;
 	public var extra:Map<String, Dynamic> = new Map<String, Dynamic>();
 	public var skinData:NoteSkin;
-	public var directionStrings:Array<String> = ["left", "down", "up", "right"];
-	public var notes:Array<Note> = [];
+	public var notes:FlxTypedGroup<Note>;
+	public var sustains:FlxTypedGroup<SustainNote>;
 	public var parent:StrumLine;
 
 	override public function new(id:Int, skin:String = 'default') {
-		super(0, 0, Paths.image('game/notes/$skin/strums'));
-		skinData = Paths.parseJson('images/game/notes/$skin/meta');
+		super();
 
-		var direction = directionStrings[id];
+		notes = new FlxTypedGroup<Note>();
+		sustains = new FlxTypedGroup<SustainNote>();
+
+		this.direction = id;
+		this.skin = skin;
+
+		this.animation.onFinish.add((name)->{
+			if (name == "confirm") {
+				this.playAnim(this.parent.type == "player" ? "pressed" : "static");
+			}
+		});
+	}
+
+	function set_skin(value:String):String {
+		if (skin != value)
+			reloadSkin(value);
+		return skin = value;
+	}
+
+	public function reloadSkin(?skin:String) {
+		var target = skin ?? this.skin;
+		if (!Paths.fileExists(Paths.json('images/game/notes/$skin/meta')))
+			target = 'default';
+		else if (!Paths.fileExists(Paths.image('game/notes/$skin/strums')))
+			target = 'default';
+
+		this.loadSprite(Paths.image('game/notes/$target/strums'));
+		skinData = Paths.parseJson('images/game/notes/$target/meta');
+
+		var direction = Note.directionStrings[this.direction];
 		var dir = direction.split('');
 		dir[0] = dir[0].toUpperCase();
 		var capped = dir.join('');
@@ -27,46 +58,50 @@ class Strum extends NovaSprite {
 		this.addAnim('confirm', '$direction confirm', [skinData.offsets.confirm[0]+globalOffset[0], skinData.offsets.confirm[1]+globalOffset[1]]);
 		this.addAnim('pressed', '$direction press', [skinData.offsets.pressed[0]+globalOffset[0], skinData.offsets.pressed[1]+globalOffset[1]]);
 
-		this.animation.onFinish.add((name)->{
-			if (name == "confirm") {
-				this.playAnim(this.parent.type == "player" ? "pressed" : "static");
-			}
-		});
-
 		this.playAnim('static');
+		this.scale.set(0.7, 0.7);
 		this.updateHitbox();
-		this.skin = skin;
-		this.direction = id;
 	}
 
 	override function update(elapsed:Float) {
 		super.update(elapsed);
-		notes.sort((a:Note, b:Note) -> FlxSort.byValues(FlxSort.ASCENDING, a.time, b.time));
+		notes.members.sort((a:Note, b:Note) -> FlxSort.byValues(FlxSort.ASCENDING, a.time, b.time));
+		sustains.members.sort((a:SustainNote, b:SustainNote) -> FlxSort.byValues(FlxSort.ASCENDING, a.time, b.time));
 	}
 
-	public function add(note:Note) {
-		this.notes.push(note);
-		note.x = this.parent.x + (Note.swagWidth*direction);
-		note.y = this.parent.y;
-		FlxG.state.add(note);
+	public function add(note:OneOfTwo<Note, SustainNote>) {
+		if (note is Note) {
+			var note:Note = cast note;
+			this.notes.add(note);
+			note.x = this.parent.strums.x + (Note.swagWidth*direction);
+			note.y = this.parent.strums.y;
+		} else if (note is SustainNote) {
+			var sustain:SustainNote = cast note;
+			this.sustains.add(note);
+			sustain.x = sustain.parentNote.x + (sustain.parentNote.width/2) - (sustain.width/2);
+			sustain.y = this.parent.strums.y;
+		}
 	}
 
-	public function onHit(rating:String = "sick", note:Note) {
-
-		if (rating == "sick" || rating == "good") {
-			var splash = new NovaSprite(0, 0, Paths.image('game/notes/${note.skinData.splashSkin.name}/splashes'));
-			var color = ["purple", "blue", "green", "red"][note.direction];
-			splash.addAnim("hit", 'note impact ${FlxG.random.int(1, 2)} ${color}', note.skinData.offsets.splashes);
+	public function onNoteHit(note:Note, rating:String = "sick") {
+		if (rating == "sick") {
+			var splash = parent.splashes.recycle(() -> new NovaSprite());
+			splash.loadSprite(Paths.image('game/notes/${note.skinData.splashSkin.name}/splashes'));
+			var skinData:NoteSkin = Paths.parseJson('images/game/notes/${note.skinData.splashSkin.name}/meta');
+			var globalOffset:Array<Float> = skinData.offsets.global ??= [0, 0];
+			splash.addAnim("hit", 'note impact ${FlxG.random.int(1, 2)} ${Note.colorStrings[note.direction]}', [globalOffset[0]+note.skinData.offsets.splashes[0], globalOffset[1]+note.skinData.offsets.splashes[1]]);
 			splash.playAnim("hit", true);
 			splash.updateHitbox();
-			splash.x = this.getMidpoint().x - (splash.width/2);
-			splash.y = this.getMidpoint().y - (splash.height/2);
-			splash.animation.onFinish.add((name)->{
-				FlxG.state.remove(splash);
-				//splash.destroy();
-			});
-			splash.cameras = [PlayState.camHUD];
-			FlxG.state.add(splash);
+			var midpoint = this.getMidpoint();
+			splash.x = midpoint.x - (splash.width/2);
+			splash.y = midpoint.y - (splash.height/2);
+			midpoint.put();
+			splash.animation.onFinish.add((name) -> splash.kill());
+			splash.cameras = this.cameras;
+
+			// force in front
+			parent.splashes.remove(splash);
+			parent.splashes.add(splash);
 		}
 	}
 }

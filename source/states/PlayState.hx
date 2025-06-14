@@ -1,5 +1,6 @@
 package states;
 
+import scripting.events.SustainHitEvent;
 import backend.objects.play.StrumLine.UserType;
 import scripting.events.NoteHitEvent;
 import flixel.FlxObject;
@@ -73,6 +74,7 @@ class PlayState extends MusicBeatState {
 	public var characters:Array<Character> = []; // For easy access
 	public var events:Array<EventNote> = [];
 	public var notes:Array<Note> = [];
+	public var sustains:Array<SustainNote> = [];
 	public var stage:Dynamic;
 
 	public var accuracy:Null<Float>;
@@ -92,10 +94,14 @@ class PlayState extends MusicBeatState {
 		return string;
 	}
 
-	function getKeyPress(index:Int, isRelease:Bool = false) {
+	function getKeyPress(index:Int, type:String = 'press') {
 		var pressed:Bool = false;
 		for (i in keybinds[index]) {
-			if ((isRelease ? FlxG.keys.anyJustReleased : FlxG.keys.anyJustPressed)([FlxKey.fromString(i.toUpperCase())]))
+			if ((switch (type) {
+				case 'release': FlxG.keys.anyJustReleased;
+				case 'held': FlxG.keys.anyPressed;
+				default: FlxG.keys.anyJustPressed;
+			})([FlxKey.fromString(i.toUpperCase())]))
 				pressed = true;
 		}
 		return pressed;
@@ -159,7 +165,7 @@ class PlayState extends MusicBeatState {
 		if (NovaSave.get(songID).accuracy < accuracy || NovaSave.get(songID).score < score) {
 			NovaSave.set(songID, saveData);
 		}
-		trace(NovaSave.get(songID));
+		// trace(NovaSave.get(songID));
 		switchState(FreeplayState.new);
 	}
 
@@ -175,40 +181,58 @@ class PlayState extends MusicBeatState {
 		}
 
 		notes.sort((a:Note, b:Note) -> FlxSort.byValues(FlxSort.ASCENDING, a.time, b.time));
+		sustains.sort((a:SustainNote, b:SustainNote) -> FlxSort.byValues(FlxSort.ASCENDING, a.time, b.time));
 
 		for (strumLine in strumLines) {
 			var hitThisFrame = [false, false, false, false];
-			for (dir => strum in strumLine.members) {
+			for (dir => strum in strumLine.strums.members) {
 				var doPress = true;
-				for (note in strum.notes) {
+				strum.notes.forEachAlive((note:Note) -> {
 					note.y = note.parentStrum.y - (0.45 * (Conductor.time - note.time) * note.scrollSpeed);
-					if (note.alive) {
-						switch (strumLine.type) {
-							case PLAYER:
-								if (Conductor.time - note.time > realHitWindow) {
-									note.kill();
-									misses++;
-									FlxG.sound.play(Paths.sound("miss/" + FlxG.random.int(1, 3)));
-								}
-								if (getKeyPress(dir) && !hitThisFrame[dir]) {
-									if (Conductor.time - note.time >= -realHitWindow && Conductor.time - note.time <= realHitWindow) {
-										createRating(strum, note, realHitWindow-Math.abs(Conductor.time - note.time));
-										noteHit(note, strum, strumLine.type);
-										doPress = false;
-										hitThisFrame[dir] = true;
-									}
-								}
-							default:
-								if (Conductor.time >= note.time) {
+					switch (strumLine.type) {
+						case PLAYER:
+							if (Conductor.time - note.time > realHitWindow) {
+								note.kill();
+								for (sustain in note.tail)
+									sustain.kill();
+								misses++;
+								FlxG.sound.play(Paths.sound("miss/" + FlxG.random.int(1, 3)));
+							}
+							if (note.alive && getKeyPress(dir) && !hitThisFrame[dir]) {
+								if (Conductor.time - note.time >= -realHitWindow && Conductor.time - note.time <= realHitWindow) {
+									createRating(strum, note, realHitWindow-Math.abs(Conductor.time - note.time));
 									noteHit(note, strum, strumLine.type);
+									doPress = false;
+									hitThisFrame[dir] = true;
 								}
-						}
+							}
+						default:
+							if (Conductor.time >= note.time)
+								noteHit(note, strum, strumLine.type);
 					}
-				}
+				});
+				strum.sustains.forEachAlive((sustain:SustainNote) -> {
+					sustain.y = sustain.parentStrum.y - (0.45 * (Conductor.time - sustain.time) * sustain.parentNote.scrollSpeed);
+					switch (strumLine.type) {
+						case PLAYER:
+							if (Conductor.time - sustain.time > realHitWindow) {
+								for (sustain in sustain.parentNote.tail)
+									sustain.kill();
+								misses++;
+								FlxG.sound.play(Paths.sound("miss/" + FlxG.random.int(1, 3)));
+							}
+							if (sustain.alive && getKeyPress(dir, 'held') /* && hitThisFrame[dir] */)
+								if (Conductor.time - sustain.time >= -realHitWindow /* && Conductor.time - sustain.time <= realHitWindow */)
+									sustainHit(sustain, strum, strumLine.type);
+						default:
+							if (Conductor.time >= sustain.time)
+								sustainHit(sustain, strum, strumLine.type);
+					}
+				});
 				if (doPress && getKeyPress(dir) && strumLine.type == PLAYER) {
 					strum.playAnim('pressed');
 				}
-				if (getKeyPress(dir, true) && strumLine.type == PLAYER)
+				if (getKeyPress(dir, 'release') && strumLine.type == PLAYER)
 					strum.playAnim('static', true);
 			}
 		}
@@ -231,7 +255,7 @@ class PlayState extends MusicBeatState {
 	}
 
 	public function onEvent(event:EventNote) {
-		trace(event.name + ', ' +  event.parameters);
+		// trace(event.name + ', ' +  event.parameters);
 		var theEvent:SongEvent = new SongEvent(event.name, event.parameters);
 		theEvent = runEvent("onEvent", theEvent);
 		if (theEvent.cancelled) return;
@@ -267,21 +291,42 @@ class PlayState extends MusicBeatState {
 
 		switch (note.type) {
 			case "Alt Anim Note":
-				strum.parent.characterPlaySingAnim('sing${["LEFT", "DOWN", "UP", "RIGHT"][note.direction]}-alt', true);
+				strum.parent.characterPlaySingAnim('sing${Note.directionStrings[note.direction].toUpperCase()}-alt', true);
 			default:
-				strum.parent.characterPlaySingAnim('sing${["LEFT", "DOWN", "UP", "RIGHT"][note.direction]}', true);
+				strum.parent.characterPlaySingAnim('sing${Note.directionStrings[note.direction].toUpperCase()}', true);
+		}
+	}
+	public function sustainHit(sustain:SustainNote, strum:Strum, characterType:UserType) {
+		var theEvent:SustainHitEvent = new SustainHitEvent(sustain, sustain.type, strum, sustain.direction, characterType);
+		theEvent = runEvent("sustainHit", theEvent);
+		switch (characterType) {
+			case PLAYER:
+				theEvent = runEvent("playerSustainHit", theEvent);
+			case OPPONENT:
+				theEvent = runEvent("opponentSustainHit", theEvent);
+			case SPECTATOR:
+				theEvent = runEvent("spectatorSustainHit", theEvent);
+		}
+		if (theEvent.cancelled) return;
+		sustain.kill();
+		if (theEvent.animCancelled) return;
+
+		strum.playAnim('confirm', true);
+
+		switch (sustain.type) {
+			case "Alt Anim Note":
+				strum.parent.characterPlaySingAnim('sing${Note.directionStrings[sustain.direction].toUpperCase()}-alt', true);
+			default:
+				strum.parent.characterPlaySingAnim('sing${Note.directionStrings[sustain.direction].toUpperCase()}', true);
 		}
 	}
 
 	public function createRating(strum:Strum, note:Note, percent:Float) {
-		strum.onHit(Judgement.getRating(percent), note);
-		//trace('Rating: ${Judgement.getRating(percent)}');
+		strum.onNoteHit(note, Judgement.getRating(percent));
 		score += Judgement.getScore(percent);
 		accuracies.push(Judgement.getAccuracy(percent));
 		var acc:Float = 0;
-		for (i in accuracies) {
-			acc += i;
-		}
+		for (i in accuracies) acc += i;
 		accuracy = Math.round((acc/(accuracies.length))*100)/100;
 		accuracyTxt.scale.x += 0.05;
 		accuracyTxt.scale.y += 0.05;
@@ -308,7 +353,7 @@ class PlayState extends MusicBeatState {
 			chart.noteTypes = ["default"];
 		else
 			chart.noteTypes.insert(0, "default");
-		trace(chart.noteTypes);
+		// trace(chart.noteTypes);
 
 		if (chart.warning == "File Not Found") {
 			log('Failed to load chart! Error: ${chart.warning}.', ErrorMessage);
@@ -321,7 +366,7 @@ class PlayState extends MusicBeatState {
 
 		if (chart.events != null)
 			for (event in chart.events) {
-				trace("Found Event: " + event);
+				// trace("Found Event: " + event);
 				events.push(new EventNote(event.name, event.time, event.params ?? []));
 			}
 		//trace(chart.strumLines);
@@ -343,18 +388,25 @@ class PlayState extends MusicBeatState {
 		for (i=>strumline in chart.strumLines) {
 			Conductor.addVocalTrack(songID, strumline.characters[0]);
 			for (note in strumline.notes) {
-				var daNote = new Note(strumLines[i].members[note.id], note.id, note.time, globalVariables.noteSkin);
+				var daNote = new Note(strumLines[i].strums.members[note.id], note.id, note.time, globalVariables.noteSkin);
 				daNote.visible = strumLines[i].visible;
-				daNote.cameras = [camHUD];
-				if (note.type != null) {
-					daNote.typeID = note.type;
-					trace(chart.noteTypes[note.type] + ", " + note.type + ", " + chart.noteTypes);
-					if (chart.noteTypes != null) {
-						daNote.type = chart.noteTypes[note.type];
-					}
-				}
+				daNote.typeID = note.type;
+				// trace(chart.noteTypes[note.type] + ", " + note.type + ", " + chart.noteTypes);
+				if (chart.noteTypes != null)
+					daNote.type = chart.noteTypes[note.type];
 				notes.push(daNote);
-				strumLines[i].members[note.id].add(daNote);
+				strumLines[i].strums.members[note.id].add(daNote);
+
+				var roundedLength:Int = Math.round(note.sLen / Conductor.stepTime); // not compatible with bpm changes yet
+				if (roundedLength > 0) {
+					for (susNote in 0...roundedLength) {
+						var sustain:SustainNote = new SustainNote(daNote, daNote.time + (Conductor.stepTime * susNote), susNote == (roundedLength - 1));
+						strumLines[i].strums.members[sustain.direction].add(sustain);
+						daNote.tail.push(sustain);
+						sustains.push(sustain);
+					}
+					daNote.reloadSkin();
+				}
 			}
 		}
 	}

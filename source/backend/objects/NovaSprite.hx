@@ -62,7 +62,8 @@ class NovaSprite extends FlxSprite {
 			this.updateHitbox();
 		} else
 			log('Uh Ooooh! No animation found with ID: $id', WarningMessage);
-		this.offset.set(offsets.get(id)[0] ?? 0, offsets.get(id)[1] ?? 0);
+		if (this.offsets.exists(id))
+			this.offset.set(offsets.get(id)[0] ?? 0, offsets.get(id)[1] ?? 0);
 	}
 
 	public function addAnim(name:String, prefix:String, ?offsets:Array<Float>, looped:Bool = false, fps:Int = 24) {

@@ -1,5 +1,6 @@
 package backend.objects.play;
 
+import flixel.group.FlxGroup;
 import backend.objects.play.game.Character;
 import flixel.FlxG;
 import flixel.group.FlxSpriteGroup;
@@ -10,23 +11,35 @@ enum abstract UserType(String) from String to String {
 	var SPECTATOR = 'spectator';
 }
 
-class StrumLine extends FlxTypedSpriteGroup<Strum> {
+class StrumLine extends FlxGroup {
 	public var type:UserType;
 	public var parentCharacters:Array<Character> = [];
 
+	public var strums:FlxTypedSpriteGroup<Strum>;
+	public var splashes:FlxTypedGroup<NovaSprite>;
+
 	public function new(length:Int, type:UserType = OPPONENT, position:Float = 0.5) {
 		super();
+		this.strums = new FlxTypedSpriteGroup<Strum>();
 		this.type = type;
-		this.y = 20;
+		this.strums.y = 20;
 		for (i in 0...length) {
-			var strum = new Strum(i % 4, cast (FlxG.state, MusicBeatState).globalVariables.noteSkin);
+			var strum = new Strum(i % 4, cast(FlxG.state, MusicBeatState).globalVariables.noteSkin);
 			strum.parent = this;
 			strum.x = Note.swagWidth*i;
 			strum.scale.set(0.7, 0.7);
 			strum.updateHitbox();
-			this.add(strum);
+			this.strums.add(strum);
 		}
-		this.x = (FlxG.width*position)-(this.width/2);
+		this.strums.x = (FlxG.width*position)-(this.strums.width/2);
+		this.add(this.strums);
+
+		for (strum in this.strums) {
+			this.add(strum.sustains);
+			this.add(strum.notes);
+		}
+		this.splashes = new FlxTypedGroup<NovaSprite>();
+		this.add(this.splashes);
 	}
 
 	public function addCharacter(character:Character) {
