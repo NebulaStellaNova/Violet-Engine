@@ -1,36 +1,58 @@
 {
-    "offsets": {
-        "global": [
-            -30,
-            0
-        ],
-        "confirm": [
-            -35,
-            -35
-        ],
-        "sustains": [
-            0,
-            0
-        ],
-        "statics": [
-            0,
-            0
-        ],
-        "notes": [
-            -3,
-            -3
-        ],
-        "pressed": [
-            3,
-            1
-        ],
-        "splashes": [
-            -10,
-            10
-        ]
-    },
-    "splashSkin": {
-        "overrideSongSkin": false,
-        "name": "default"
-    }
+	"offsets": {
+		"global": [
+			-30,
+			0
+		],
+		"confirm": [
+			-35,
+			-35
+		],
+		"sustains": [
+			0,
+			0
+		],
+		"statics": [
+			0,
+			0
+		],
+		"notes": [
+			-3,
+			-3
+		],
+		"pressed": [
+			3,
+			1
+		],
+		"splashes": [
+			-10,
+			10
+		],
+		"covers": {
+			"global": [
+				0,
+				0
+			],
+			"start": [
+				0,
+				0
+			],
+			"hold": [
+				0,
+				0
+			],
+			"end": [
+				0,
+				0
+			]
+		}
+	},
+	"splashSkin": {
+		"overrideSongSkin": false,
+		"name": "default"
+	},
+	"holdCoverSkin": {
+		"overrideSongSkin": false,
+		"name": "default"
+	}
 }

@@ -110,7 +110,7 @@ class MusicBeatState extends FlxState {
 		call("postCreate");
 		call("onCreatePost");
 	}
-	public function runEvent(func:String, event:EventBase):Dynamic {
+	public function runEvent<T:EventBase>(func:String, event:T):T {
 		if (stateScript == null) return event;
 		stateScript.call(func, [event]);
 		//stateLuaScript.call(func, [event]);

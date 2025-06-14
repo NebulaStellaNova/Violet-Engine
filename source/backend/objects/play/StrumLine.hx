@@ -16,6 +16,7 @@ class StrumLine extends FlxGroup {
 	public var parentCharacters:Array<Character> = [];
 
 	public var strums:FlxTypedSpriteGroup<Strum>;
+	public var holdcovers:FlxTypedGroup<NovaSprite>;
 	public var splashes:FlxTypedGroup<NovaSprite>;
 
 	public function new(length:Int, type:UserType = OPPONENT, position:Float = 0.5) {
@@ -38,6 +39,8 @@ class StrumLine extends FlxGroup {
 			this.add(strum.sustains);
 			this.add(strum.notes);
 		}
+		this.holdcovers = new FlxTypedGroup<NovaSprite>();
+		this.add(this.holdcovers);
 		this.splashes = new FlxTypedGroup<NovaSprite>();
 		this.add(this.splashes);
 	}

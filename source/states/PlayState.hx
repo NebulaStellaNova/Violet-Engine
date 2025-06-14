@@ -57,6 +57,8 @@ typedef ChartData = {
 }
 
 class PlayState extends MusicBeatState {
+	public var botplay:Bool = false;
+
 	public static var camGame:FlxCamera;
 	public static var camHUD:FlxCamera;
 
@@ -174,6 +176,11 @@ class PlayState extends MusicBeatState {
 		super.update(elapsed);
 		var realHitWindow = hitWindow/2;
 
+		if (FlxG.keys.justPressed.TAB) {
+			botplay = !botplay;
+			log('Botplay ${botplay ? 'Enabled' : 'Disabled'}', DebugMessage);
+		}
+
 		if (FlxG.keys.justPressed.ENTER) {
 			FlxG.state.persistentUpdate = false;
 			Conductor.pause();
@@ -189,64 +196,71 @@ class PlayState extends MusicBeatState {
 				var doPress = true;
 				strum.notes.forEachAlive((note:Note) -> {
 					note.y = note.parentStrum.y - (0.45 * (Conductor.time - note.time) * note.scrollSpeed);
-					switch (strumLine.type) {
-						case PLAYER:
-							if (Conductor.time - note.time > realHitWindow) {
-								note.kill();
-								for (sustain in note.tail)
-									sustain.kill();
-								misses++;
-								FlxG.sound.play(Paths.sound("miss/" + FlxG.random.int(1, 3)));
+					if (strumLine.type == PLAYER && !botplay) {
+						if (Conductor.time - note.time > realHitWindow) {
+							note.kill();
+							for (sustain in note.tail)
+								sustain.kill();
+							misses++;
+							FlxG.sound.play(Paths.sound("miss/" + FlxG.random.int(1, 3)));
+							if (strum.holdcover != null) {
+								strum.holdcover.kill();
+								strum.holdcover = null;
 							}
-							if (note.alive && getKeyPress(dir) && !hitThisFrame[dir]) {
-								if (Conductor.time - note.time >= -realHitWindow && Conductor.time - note.time <= realHitWindow) {
-									createRating(strum, note, realHitWindow-Math.abs(Conductor.time - note.time));
-									noteHit(note, strum, strumLine.type);
-									doPress = false;
-									hitThisFrame[dir] = true;
-								}
-							}
-						default:
-							if (Conductor.time >= note.time)
+						}
+						if (note.alive && getKeyPress(dir) && !hitThisFrame[dir]) {
+							if (Conductor.time - note.time >= -realHitWindow && Conductor.time - note.time <= realHitWindow) {
+								createRating(strum, note, realHitWindow-Math.abs(Conductor.time - note.time));
 								noteHit(note, strum, strumLine.type);
+								doPress = false;
+								hitThisFrame[dir] = true;
+							}
+						}
+					} else {
+						if (Conductor.time >= note.time) {
+							if (strumLine.type == PLAYER)
+								strum.onNoteHit(note);
+							noteHit(note, strum, strumLine.type);
+						}
 					}
 				});
 				strum.sustains.forEachAlive((sustain:SustainNote) -> {
 					sustain.y = sustain.parentStrum.y - (0.45 * (Conductor.time - sustain.time) * sustain.parentNote.scrollSpeed);
-					switch (strumLine.type) {
-						case PLAYER:
-							if (Conductor.time - sustain.time > realHitWindow) {
-								for (sustain in sustain.parentNote.tail)
-									sustain.kill();
-								misses++;
-								FlxG.sound.play(Paths.sound("miss/" + FlxG.random.int(1, 3)));
+					if (strumLine.type == PLAYER && !botplay) {
+						if (Conductor.time - sustain.time > realHitWindow) {
+							for (sustain in sustain.parentNote.tail)
+								sustain.kill();
+							misses++;
+							FlxG.sound.play(Paths.sound("miss/" + FlxG.random.int(1, 3)));
+							if (strum.holdcover != null) {
+								strum.holdcover.kill();
+								strum.holdcover = null;
 							}
-							if (sustain.alive && getKeyPress(dir, 'held') /* && hitThisFrame[dir] */)
-								if (Conductor.time - sustain.time >= -realHitWindow /* && Conductor.time - sustain.time <= realHitWindow */)
-									sustainHit(sustain, strum, strumLine.type);
-						default:
-							if (Conductor.time >= sustain.time)
+						}
+						if (sustain.alive && getKeyPress(dir, 'held') /* && hitThisFrame[dir] */)
+							if (Conductor.time - sustain.time >= -realHitWindow /* && Conductor.time - sustain.time <= realHitWindow */)
 								sustainHit(sustain, strum, strumLine.type);
+					} else {
+						if (Conductor.time >= sustain.time)
+							sustainHit(sustain, strum, strumLine.type);
 					}
 				});
-				if (doPress && getKeyPress(dir) && strumLine.type == PLAYER) {
-					strum.playAnim('pressed');
+				if (strumLine.type == PLAYER && !botplay) {
+					if (doPress && getKeyPress(dir))
+						strum.playAnim('pressed');
+					if (getKeyPress(dir, 'release'))
+						strum.playAnim('static', true);
 				}
-				if (getKeyPress(dir, 'release') && strumLine.type == PLAYER)
-					strum.playAnim('static', true);
 			}
 		}
 
-		if (accuracy != null) {
+		if (accuracy != null)
 			accuracyTxt.text = formatScoreTxt(globalVariables.scoreTxt, accuracy, misses, score, Judgement.getRating(accuracy).toUpperCase()); //'Misses: $misses | Accuracy: $accuracy% [${Judgement.getRating(accuracy).toUpperCase()}] | Score: $score';
-		}
 		accuracyTxt.scale.set(MathUtil.lerp(accuracyTxt.scale.x, 1, 0.1), MathUtil.lerp(accuracyTxt.scale.y, 1, 0.1));
 
-		for (event in events) {
-			if (Conductor.time > event.time && !event.ran) {
+		for (event in events)
+			if (Conductor.time > event.time && !event.ran)
 				onEvent(event);
-			}
-		}
 		camGame.followLerp = 0.1;
 		var targetObject:FlxObject = new FlxObject();
 		targetObject.x = camFollowPoint.x;
@@ -297,6 +311,7 @@ class PlayState extends MusicBeatState {
 		}
 	}
 	public function sustainHit(sustain:SustainNote, strum:Strum, characterType:UserType) {
+		strum.onSustainHit(sustain);
 		var theEvent:SustainHitEvent = new SustainHitEvent(sustain, sustain.type, strum, sustain.direction, characterType);
 		theEvent = runEvent("sustainHit", theEvent);
 		switch (characterType) {

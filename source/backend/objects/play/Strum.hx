@@ -1,9 +1,9 @@
 package backend.objects.play;
 
-import flixel.util.FlxTimer;
+import states.PlayState;
+import utils.NovaUtil;
 import flixel.group.FlxGroup;
 import flixel.util.typeLimit.OneOfTwo;
-import states.PlayState;
 import flixel.FlxG;
 import backend.filesystem.Paths;
 import flixel.util.FlxSort;
@@ -16,6 +16,7 @@ class Strum extends NovaSprite {
 	public var notes:FlxTypedGroup<Note>;
 	public var sustains:FlxTypedGroup<SustainNote>;
 	public var parent:StrumLine;
+	public var holdcover:NovaSprite;
 
 	override public function new(id:Int, skin:String = 'default') {
 		super();
@@ -28,7 +29,7 @@ class Strum extends NovaSprite {
 
 		this.animation.onFinish.add((name)->{
 			if (name == "confirm") {
-				this.playAnim(this.parent.type == "player" ? "pressed" : "static");
+				this.playAnim(this.parent.type == PLAYER && PlayState.instance != null && !PlayState.instance.botplay ? "pressed" : "static");
 			}
 		});
 	}
@@ -87,9 +88,9 @@ class Strum extends NovaSprite {
 		if (rating == "sick") {
 			var splash = parent.splashes.recycle(() -> new NovaSprite());
 			splash.loadSprite(Paths.image('game/notes/${note.skinData.splashSkin.name}/splashes'));
-			var skinData:NoteSkin = Paths.parseJson('images/game/notes/${note.skinData.splashSkin.name}/meta');
 			var globalOffset:Array<Float> = skinData.offsets.global ??= [0, 0];
-			splash.addAnim("hit", 'note impact ${FlxG.random.int(1, 2)} ${Note.colorStrings[note.direction]}', [globalOffset[0]+note.skinData.offsets.splashes[0], globalOffset[1]+note.skinData.offsets.splashes[1]]);
+			var skinData:NoteSkin = Paths.parseJson('images/game/notes/${note.skinData.splashSkin.name}/meta');
+			splash.addAnim("hit", 'note impact ${FlxG.random.int(1, 2)} ${Note.colorStrings[note.direction]}', [globalOffset[0]+skinData.offsets.splashes[0], globalOffset[1]+skinData.offsets.splashes[1]]);
 			splash.playAnim("hit", true);
 			splash.updateHitbox();
 			var midpoint = this.getMidpoint();
@@ -97,11 +98,73 @@ class Strum extends NovaSprite {
 			splash.y = midpoint.y - (splash.height/2);
 			midpoint.put();
 			splash.animation.onFinish.add((name) -> splash.kill());
-			splash.cameras = this.cameras;
+			splash.cameras = this.parent.cameras;
 
 			// force in front
 			parent.splashes.remove(splash);
 			parent.splashes.add(splash);
+		}
+
+		if (note.tail.length != 0 && holdcover == null) {
+			var cover = holdcover = parent.holdcovers.recycle(() -> new NovaSprite());
+			cover.loadSprite(Paths.image('game/notes/${note.skinData.holdCoverSkin.name}/holdcovers'));
+			var globalOffset:Array<Float> = skinData.offsets.global ??= [0, 0];
+			var skinData:NoteSkin = Paths.parseJson('images/game/notes/${note.skinData.holdCoverSkin.name}/meta');
+			var coverOffset:Array<Float> = skinData.offsets.covers.global ??= [0, 0];
+			cover.addAnim('start', 'holdCoverStart${NovaUtil.capitalizeFirstLetter(Note.colorStrings[note.direction])}', [globalOffset[0]+coverOffset[0]+skinData.offsets.covers.start[0], globalOffset[1]+coverOffset[1]+skinData.offsets.covers.start[1]]);
+			cover.addAnim('hold', 'holdCover${NovaUtil.capitalizeFirstLetter(Note.colorStrings[note.direction])}', [globalOffset[0]+coverOffset[0]+skinData.offsets.covers.hold[0], globalOffset[1]+coverOffset[1]+skinData.offsets.covers.hold[1]], true);
+			cover.addAnim('end', 'holdCoverEnd${NovaUtil.capitalizeFirstLetter(Note.colorStrings[note.direction])}', [globalOffset[0]+coverOffset[0]+skinData.offsets.covers.end[0], globalOffset[1]+coverOffset[1]+skinData.offsets.covers.end[1]]);
+			cover.playAnim('start', true);
+			cover.updateHitbox();
+			var midpoint = this.getMidpoint();
+			cover.x = midpoint.x - (cover.width/2);
+			cover.y = midpoint.y - (cover.height/2);
+			midpoint.put();
+			cover.animation.onFinish.add((name) -> {
+				switch (name) {
+					case 'start': cover.playAnim('hold', true);
+					case 'end': cover.kill();
+				}
+			});
+			cover.cameras = this.parent.cameras;
+
+			// force in front
+			parent.holdcovers.remove(cover);
+			parent.holdcovers.add(cover);
+		}
+	}
+	public function onSustainHit(sustain:SustainNote) {
+		if (sustain.isEnd && holdcover != null) {
+			if (this.parent.type == PLAYER && PlayState.instance != null && !PlayState.instance.botplay)
+				holdcover.playAnim('end', true);
+			else holdcover.kill();
+			holdcover = null;
+		} else if (!sustain.isEnd && holdcover == null) {
+			var cover = holdcover = parent.holdcovers.recycle(() -> new NovaSprite());
+			cover.loadSprite(Paths.image('game/notes/${sustain.skinData.holdCoverSkin.name}/holdcovers'));
+			var globalOffset:Array<Float> = skinData.offsets.global ??= [0, 0];
+			var skinData:NoteSkin = Paths.parseJson('images/game/notes/${sustain.skinData.holdCoverSkin.name}/meta');
+			var coverOffset:Array<Float> = skinData.offsets.covers.global ??= [0, 0];
+			cover.addAnim('start', 'holdCoverStart${NovaUtil.capitalizeFirstLetter(Note.colorStrings[sustain.direction])}', [globalOffset[0]+coverOffset[0]+skinData.offsets.covers.start[0], globalOffset[1]+coverOffset[1]+skinData.offsets.covers.start[1]]);
+			cover.addAnim('hold', 'holdCover${NovaUtil.capitalizeFirstLetter(Note.colorStrings[sustain.direction])}', [globalOffset[0]+coverOffset[0]+skinData.offsets.covers.hold[0], globalOffset[1]+coverOffset[1]+skinData.offsets.covers.hold[1]], true);
+			cover.addAnim('end', 'holdCoverEnd${NovaUtil.capitalizeFirstLetter(Note.colorStrings[sustain.direction])}', [globalOffset[0]+coverOffset[0]+skinData.offsets.covers.end[0], globalOffset[1]+coverOffset[1]+skinData.offsets.covers.end[1]]);
+			cover.playAnim('start', true);
+			cover.updateHitbox();
+			var midpoint = this.getMidpoint();
+			cover.x = midpoint.x - (cover.width/2);
+			cover.y = midpoint.y - (cover.height/2);
+			midpoint.put();
+			cover.animation.onFinish.add((name) -> {
+				switch (name) {
+					case 'start': cover.playAnim('hold', true);
+					case 'end': cover.kill();
+				}
+			});
+			cover.cameras = this.parent.cameras;
+
+			// force in front
+			parent.holdcovers.remove(cover);
+			parent.holdcovers.add(cover);
 		}
 	}
 }

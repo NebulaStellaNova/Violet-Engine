@@ -82,6 +82,8 @@ class SustainNote extends NovaSprite {
 
 		loadSprite(Paths.image('game/notes/$target/sustains'));
 		skinData = Paths.parseJson('images/game/notes/$target/meta');
+
+		animation.destroyAnimations();
 		var globalOffset:Array<Float> = skinData.offsets.global ??= [0, 0];
 		for (i=>color in Note.colorStrings) {
 			addAnim(Note.colorStrings[i] + ' piece', '$color hold piece', [skinData.offsets.sustains[0]+globalOffset[0], skinData.offsets.sustains[1]+globalOffset[1]]);

@@ -1,5 +1,6 @@
 package backend.objects.play;
 
+import utils.NovaUtil;
 import flixel.util.FlxSort;
 import backend.filesystem.Paths;
 
@@ -48,9 +49,8 @@ class Note extends NovaSprite {
 
 		animation.destroyAnimations();
 		var globalOffset:Array<Float> = skinData.offsets.global ??= [0, 0];
-		for (i=>direction in ["noteLeft", "noteDown", "noteUp", "noteRight"]) {
+		for (i=>direction in [for (dir in directionStrings) 'note${NovaUtil.capitalizeFirstLetter(dir)}'])
 			this.addAnim(directionStrings[i], direction, [skinData.offsets.notes[0]+globalOffset[0], skinData.offsets.notes[1]+globalOffset[1]]);
-		}
 		this.playAnim(directionStrings[this.direction]);
 		this.scale.set(0.7, 0.7);
 		this.updateHitbox();
