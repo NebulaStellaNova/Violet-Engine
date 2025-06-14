@@ -86,7 +86,7 @@ class SustainNote extends NovaSprite {
 		animation.destroyAnimations();
 		var globalOffset:Array<Float> = skinData.offsets.global ??= [0, 0];
 		for (i=>color in Note.colorStrings) {
-			addAnim(Note.colorStrings[i] + ' piece', '$color hold piece', [skinData.offsets.sustains[0]+globalOffset[0], skinData.offsets.sustains[1]+globalOffset[1]]);
+			addAnim(Note.colorStrings[i] + ' piece', '$color hold piece', [skinData.offsets.sustains[0]+globalOffset[0], -(skinData.offsets.sustains[1]+globalOffset[1])]);
 			addAnim(Note.colorStrings[i] + ' end', '$color hold end', [skinData.offsets.sustains[0]+globalOffset[0], skinData.offsets.sustains[1]+globalOffset[1]]);
 		}
 		playAnim(Note.colorStrings[this.direction] + (isEnd ? ' end' : ' piece'));

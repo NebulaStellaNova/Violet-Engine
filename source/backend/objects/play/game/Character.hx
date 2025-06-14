@@ -73,9 +73,9 @@ class Character extends Bopper {
 				animOffsets[1] *= -1;
 			switch (getAnimationType(anim)) {
 				case "indices":
-					this.addAnimIndices(anim.name, anim.prefix, anim.frameIndices, animOffsets, anim.looped, anim.frameRate ?? 24);
+					this.addAnimIndices(anim.name, anim.prefix, anim.frameIndices, animOffsets, anim.looped ?? false, anim.frameRate ?? 24);
 				case "prefix":
-					this.addAnim(anim.name, anim.prefix, animOffsets, anim.looped, anim.frameRate ?? 24);
+					this.addAnim(anim.name, anim.prefix, animOffsets, anim.looped ?? false, anim.frameRate ?? 24);
 				default:
 					log("How did this even run?", ErrorMessage);
 			}
@@ -100,7 +100,7 @@ class Character extends Bopper {
 
 	public function playSingAnim(id:String, suffix:String = "") {
 		this.playAnim('$id${suffix != "" ? '-$suffix' : ''}', true);
-		this.singTimer = Math.round(this.characterData.singTime/2);
+		this.singTimer = Math.round((this.characterData.singTime ?? 8)/2);
 	}
 
 }

@@ -1,5 +1,6 @@
 package states;
 
+import backend.objects.play.game.Stage;
 import scripting.events.SustainHitEvent;
 import backend.objects.play.StrumLine.UserType;
 import scripting.events.NoteHitEvent;
@@ -44,6 +45,7 @@ typedef EventData = {
 	var params:Array<Dynamic>;
 	var name:String;
 	var time:Float;
+	var type:Int;
 }
 
 typedef ChartData = {
@@ -77,7 +79,7 @@ class PlayState extends MusicBeatState {
 	public var events:Array<EventNote> = [];
 	public var notes:Array<Note> = [];
 	public var sustains:Array<SustainNote> = [];
-	public var stage:Dynamic;
+	public var stage:Stage;
 
 	public var accuracy:Null<Float>;
 	public var misses:Int = 0;
@@ -151,6 +153,26 @@ class PlayState extends MusicBeatState {
 					case "player":
 						character.x = 1100;
 						character.y = 200 - character.height;
+				}
+			}
+		} else {
+			for (character in characters) {
+				switch (character.type) {
+					case "opponent":
+						//character.updateHitbox();
+						character.x = stage.stageData.characters.dad.position[0];
+						character.y = stage.stageData.characters.dad.position[1] + character.frameHeight * character.scale.y * 2 - character.offset.y * 2;
+						//character.offset.y = character.frameHeight * character.scale.y - character.offset.y;
+						case "spectator":
+						//character.updateHitbox();
+						character.x = stage.stageData.characters.gf.position[0];
+						character.y = stage.stageData.characters.gf.position[1] + character.frameHeight * character.scale.y * 2 - character.offset.y * 2;
+						//character.offset.y = character.frameHeight * character.scale.y - character.offset.y;
+						case "player":
+						//character.updateHitbox();
+						character.x = stage.stageData.characters.bf.position[0];
+						character.y = stage.stageData.characters.bf.position[1] + character.frameHeight * character.scale.y * 2 - character.offset.y * 2;
+						//character.offset.y = character.frameHeight * character.scale.y - character.offset.y;
 				}
 			}
 		}
@@ -258,6 +280,10 @@ class PlayState extends MusicBeatState {
 			accuracyTxt.text = formatScoreTxt(globalVariables.scoreTxt, accuracy, misses, score, Judgement.getRating(accuracy).toUpperCase()); //'Misses: $misses | Accuracy: $accuracy% [${Judgement.getRating(accuracy).toUpperCase()}] | Score: $score';
 		accuracyTxt.scale.set(MathUtil.lerp(accuracyTxt.scale.x, 1, 0.1), MathUtil.lerp(accuracyTxt.scale.y, 1, 0.1));
 
+		if (botplay) {
+			accuracyTxt.text = "BOTPLAY";
+		}
+
 		for (event in events)
 			if (Conductor.time > event.time && !event.ran)
 				onEvent(event);
@@ -270,18 +296,30 @@ class PlayState extends MusicBeatState {
 
 	public function onEvent(event:EventNote) {
 		// trace(event.name + ', ' +  event.parameters);
-		var theEvent:SongEvent = new SongEvent(event.name, event.parameters);
+		var theEvent:SongEvent = new SongEvent(event.name, event.parameters, event.type);
 		theEvent = runEvent("onEvent", theEvent);
 		if (theEvent.cancelled) return;
 		event.ran = true;
 
+		var camMoveEvent = (theEvent:SongEvent)-> {
+			camFollowPoint = new FlxPoint(0, 0);
+			camFollowPoint.x += strumLines[theEvent.parameters[0]].parentCharacters[0].cameraCenter.x;
+			camFollowPoint.y += strumLines[theEvent.parameters[0]].parentCharacters[0].cameraCenter.y;
+			camFollowPoint.x += strumLines[theEvent.parameters[0]].parentCharacters[0].x;
+			camFollowPoint.y += strumLines[theEvent.parameters[0]].parentCharacters[0].y;
+		}
+
+		switch (theEvent.type) {
+			case 1:
+				camMoveEvent(theEvent);
+		}
+
 		switch (theEvent.name) {
 			case "Camera Movement":
-				camFollowPoint = new FlxPoint(0, 0);
-				camFollowPoint.x += strumLines[theEvent.parameters[0]].parentCharacters[0].cameraCenter.x;
-				camFollowPoint.y += strumLines[theEvent.parameters[0]].parentCharacters[0].cameraCenter.y;
-				camFollowPoint.x += strumLines[theEvent.parameters[0]].parentCharacters[0].x;
-				camFollowPoint.y += strumLines[theEvent.parameters[0]].parentCharacters[0].y;
+				camMoveEvent(theEvent);
+
+			case "Play Animation":
+				strumLines[theEvent.parameters[0]].characterPlayAnim(theEvent.parameters[1], true);
 
 		}
 	}
@@ -368,6 +406,11 @@ class PlayState extends MusicBeatState {
 			chart.noteTypes = ["default"];
 		else
 			chart.noteTypes.insert(0, "default");
+
+		if (chart.stage != null) {
+			stage = new Stage(chart.stage);
+			add(stage);
+		}
 		// trace(chart.noteTypes);
 
 		if (chart.warning == "File Not Found") {
@@ -382,7 +425,7 @@ class PlayState extends MusicBeatState {
 		if (chart.events != null)
 			for (event in chart.events) {
 				// trace("Found Event: " + event);
-				events.push(new EventNote(event.name, event.time, event.params ?? []));
+				events.push(new EventNote(event.name, event.time, event.params ?? [], event.type));
 			}
 		//trace(chart.strumLines);
 		for (i=>strumline in chart.strumLines) {
@@ -412,7 +455,7 @@ class PlayState extends MusicBeatState {
 				notes.push(daNote);
 				strumLines[i].strums.members[note.id].add(daNote);
 
-				var roundedLength:Int = Math.round(note.sLen / Conductor.stepTime); // not compatible with bpm changes yet
+				var roundedLength:Int = Math.floor(note.sLen / Conductor.stepTime); // not compatible with bpm changes yet
 				if (roundedLength > 0) {
 					for (susNote in 0...roundedLength) {
 						var sustain:SustainNote = new SustainNote(daNote, daNote.time + (Conductor.stepTime * susNote), susNote == (roundedLength - 1));

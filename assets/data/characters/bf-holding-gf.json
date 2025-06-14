@@ -3,6 +3,7 @@
   "name": "Boyfriend (Holding GF)",
   "assetPath": "characters/bfAndGF",
   "flipX": true,
+  "singTime": 8.0,
   "renderType": "multisparrow",
   "healthIcon": {
     "id": "bf"

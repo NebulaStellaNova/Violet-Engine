@@ -51,10 +51,14 @@ class StrumLine extends FlxGroup {
 		}
 	}
 
-	public function characterPlayAnim(id:String, forced:Bool = false) {
+	public function characterPlayAnim(id:String, forced:Bool = false, finishAnimation:String = "idle") {
 		// Code this
 		for (character in this.parentCharacters) {
 			character.playAnim(id, forced);
+			character.animation.onFinish.add((animName)->{
+				if (animName == id)
+					character.playAnim(finishAnimation, true);
+			});
 		}
 	}
 	public function characterPlaySingAnim(id:String, forced:Bool = false) {
