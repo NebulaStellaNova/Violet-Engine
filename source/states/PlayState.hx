@@ -1,11 +1,14 @@
 package states;
 
+import flixel.tweens.FlxTween;
+import utils.NovaUtil;
 import backend.objects.play.game.Stage;
 import scripting.events.SustainHitEvent;
 import backend.objects.play.StrumLine.UserType;
 import scripting.events.NoteHitEvent;
 import flixel.FlxObject;
 import flixel.math.FlxPoint;
+import flixel.util.FlxColorTransformUtil;
 import backend.objects.NovaSprite;
 import scripting.events.SongEvent;
 import backend.objects.play.game.Character;
@@ -217,23 +220,28 @@ class PlayState extends MusicBeatState {
 			for (dir => strum in strumLine.strums.members) {
 				var doPress = true;
 				strum.notes.forEachAlive((note:Note) -> {
-					note.y = note.parentStrum.y - (0.45 * (Conductor.time - note.time) * note.scrollSpeed);
+					if (!note.badHit)
+						note.y = note.parentStrum.y - (0.45 * (Conductor.time - note.time) * note.scrollSpeed);
 					if (strumLine.type == PLAYER && !botplay) {
 						if (Conductor.time - note.time > realHitWindow) {
-							note.kill();
 							for (sustain in note.tail)
 								sustain.kill();
-							misses++;
-							FlxG.sound.play(Paths.sound("miss/" + FlxG.random.int(1, 3)));
+							if (!note.badHit) {
+								note.kill();
+							}
+							if (note.canMiss && !note.badHit) {
+								misses++;
+								FlxG.sound.play(Paths.sound("miss/" + FlxG.random.int(1, 3)));
+							}
 							if (strum.holdcover != null) {
 								strum.holdcover.kill();
 								strum.holdcover = null;
 							}
 						}
-						if (note.alive && getKeyPress(dir) && !hitThisFrame[dir]) {
+						if (note.alive && getKeyPress(dir) && !hitThisFrame[dir] && note.canHit && !note.badHit) {
 							if (Conductor.time - note.time >= -realHitWindow && Conductor.time - note.time <= realHitWindow) {
 								createRating(strum, note, realHitWindow-Math.abs(Conductor.time - note.time));
-								noteHit(note, strum, strumLine.type);
+								noteHit(note, strum, strumLine.type, Judgement.getRating(realHitWindow-Math.abs(Conductor.time - note.time)));
 								doPress = false;
 								hitThisFrame[dir] = true;
 							}
@@ -324,7 +332,7 @@ class PlayState extends MusicBeatState {
 		}
 	}
 
-	public function noteHit(note:Note, strum:Strum, characterType:UserType) {
+	public function noteHit(note:Note, strum:Strum, characterType:UserType, ?rating:String) {
 		var theEvent:NoteHitEvent = new NoteHitEvent(note, note.type, strum, note.direction, characterType);
 		theEvent = runEvent("noteHit", theEvent);
 		switch (characterType) {
@@ -336,10 +344,28 @@ class PlayState extends MusicBeatState {
 				theEvent = runEvent("spectatorNoteHit", theEvent);
 		}
 		if (theEvent.cancelled) return;
-		note.kill();
+		if (rating == null) {
+			note.kill();
+		} else {
+			switch (rating) {
+				case "sick" | "good" | "bad":
+					note.kill();
+				default:
+					note.badHit = true;
+					FlxTween.tween(note, {y: note.y-300}, 0.5, {onComplete: (e)-> {
+						note.kill();
+					}});
+					NovaUtil.desaturateSprite(note, 0.5);
+
+					if (strum.holdcover != null)
+						strum.holdcover.kill();
+			}
+		}
 		if (theEvent.animCancelled) return;
 
-		strum.playAnim('confirm', true);
+		if (!note.badHit) {
+			strum.playAnim('confirm', true);
+		}
 
 		switch (note.type) {
 			case "Alt Anim Note":

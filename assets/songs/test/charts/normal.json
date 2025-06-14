@@ -3154,6 +3154,6 @@
         }
     ],
     "codenameChart": true,
-    "stage": "tank",
+    "stage": "mainStage",
     "noteTypes": []
 }

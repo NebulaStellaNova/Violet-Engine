@@ -9,6 +9,10 @@ class Note extends NovaSprite {
 	public static var colorStrings:Array<String> = ["purple", "blue", "green", "red"];
 	public static var swagWidth:Float = 160 * 0.7;
 
+	public var canHit:Bool = true;
+	public var canMiss:Bool = true;
+	public var badHit:Bool = false;
+
 	public var direction:Int = 0;
 	public var typeID:Int = 0;
 	public var type:String = "default";
