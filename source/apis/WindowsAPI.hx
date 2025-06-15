@@ -103,7 +103,15 @@ class WindowsAPI {
 	}
 
 	public static function openConsole() {
-		this.allocConsole();
-		this.clearScreen();
+		allocConsole();
+		clearScreen();
+		showConsole();
+	}
+
+	@:functionCode('
+		ShowWindow(GetConsoleWindow(), SW_SHOW);
+	')
+	public static function showConsole() {
+
 	}
 }
