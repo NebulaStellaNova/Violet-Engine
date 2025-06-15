@@ -77,8 +77,7 @@ class MusicBeatState extends FlxState {
 
 
 		if (FlxG.keys.justPressed.F2){
-			WindowsAPI.allocConsole();
-			WindowsAPI.clearScreen();
+			WindowsAPI.openConsole();
 		}
 
 		if (FlxG.keys.justPressed.F3){

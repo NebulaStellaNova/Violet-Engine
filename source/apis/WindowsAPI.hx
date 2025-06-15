@@ -101,4 +101,9 @@ class WindowsAPI {
 	public static function closeConsole() {
 
 	}
+
+	public static function openConsole() {
+		this.allocConsole();
+		this.clearScreen();
+	}
 }
