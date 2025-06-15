@@ -130,18 +130,7 @@ class CommandPrompt {
 					print("Error: secretCode requires exactly one argument.");
 				}
 			case "exit":
-				this.active = false;
-				print("Exiting game...");
-				if (args.length == 0) {
-					this.switchState("ExitState");
-				} else if (args.length == 1 && args[1] == "forced") {
-					print("Forcing game to close...");
-					Sys.exit(0);
-					print("Game closed.");
-				} else {
-					print("Warning: exit command only accepts 'forced' as an argument. Closing game...");
-					this.switchState("ExitState");
-				}
+				Sys.exit(0);
 			case "resetState":
 				if (args.length == 0) {
 					FlxG.resetState();
@@ -191,6 +180,7 @@ class CommandPrompt {
 		return [
 			"switchState" => "INFO: Switches the state.\n\tARGS: <statePath>",
 			"resetState" => "INFO: Resets the current state.",
+			"exit" => "INFO: Closes the game FULLY.",
 			"help" => "INFO: Shows this screen.\n\tARGS: <commandName:OptionalArg>"
 		];
 	}

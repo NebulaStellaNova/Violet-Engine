@@ -1,4 +1,4 @@
 package backend.scripts;
-import flixel.util.typeLimit.OneOfTwo;
+import flixel.util.typeLimit.OneOfThree;
 
-typedef Script = OneOfTwo<FunkinScript, LuaScript>;
+typedef Script = OneOfThree<FunkinScript, LuaScript, PythonScript>;

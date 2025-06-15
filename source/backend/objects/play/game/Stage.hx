@@ -1,5 +1,6 @@
 package backend.objects.play.game;
 
+import openfl.text.StageText;
 import backend.filesystem.Paths;
 import haxe.display.Display.Package;
 import flixel.group.FlxSpriteGroup.FlxTypedSpriteGroup;
@@ -59,6 +60,7 @@ class Stage extends FlxTypedSpriteGroup<StageProp> {
 
         if (!Paths.fileExists(Paths.json('data/stages/$id'))) {
             log('Stage Not Found With ID "$id"');
+            this.stageData = Paths.parseJson('data/stages/mainStage');
             return;
         }
         this.stageData = Paths.parseJson('data/stages/$id');

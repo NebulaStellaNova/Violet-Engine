@@ -500,7 +500,7 @@ class PlayState extends MusicBeatState {
 		for (character in characters) {
 
 			if (character.singTimer == 0) {
-				if (step % (character.characterData.danceEvery ?? 4) == 0) {
+				if (step % ((character.characterData.danceEvery ?? 1)*4) == 0) {
 					character.dance();
 				}
 			}
