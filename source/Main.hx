@@ -1,5 +1,6 @@
 package;
 
+import apis.WindowsAPI;
 import backend.filesystem.Paths;
 import backend.objects.NovaSave;
 import backend.audio.Conductor;
@@ -45,6 +46,8 @@ class Main extends Sprite
 
 		var commandPrompt = new backend.CommandPrompt();
         backend.Threader.runInThread(commandPrompt.start());
+
+		WindowsAPI.initConsole();
 	}
 
 	inline function initEverything() {

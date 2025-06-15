@@ -1,5 +1,8 @@
 package backend;
 
+import flixel.tweens.FlxTween;
+import flixel.util.FlxColor;
+import flixel.text.FlxText;
 import apis.WindowsAPI;
 import backend.scripts.ScriptPack;
 import scripting.events.SelectionEvent;
@@ -16,6 +19,8 @@ import flixel.util.FlxStringUtil;
 import states.substates.DebugSubState;
 import flixel.system.debug.watch.Tracker;
 import backend.scripts.LuaScript;
+import flixel.group.FlxGroup.FlxTypedGroup;
+using utils.ArrayUtil;
 
 typedef GlobalVariables = {
 	var noteSkin:String;
@@ -23,6 +28,9 @@ typedef GlobalVariables = {
 }
 
 class MusicBeatState extends FlxState {
+
+    public var debugTexts:FlxTypedGroup<FlxText> = new FlxTypedGroup();
+
 	var previousStep:Int = -1;
 	var previousBeat:Int = -1;
 	var previousMeasure:Int = -1;
@@ -68,9 +76,9 @@ class MusicBeatState extends FlxState {
 
 		Conductor.playMusic(Paths.music("freakyMenu"));
 
-		WindowsAPI.initConsole();
-
 		//postCreate();
+
+		add(debugTexts);
 	}
 
 	override public function update(elapsed:Float)
@@ -78,6 +86,11 @@ class MusicBeatState extends FlxState {
 		super.update(elapsed);
 
 		FlxG.autoPause = false;
+
+
+		if (FlxG.keys.justPressed.F1) {
+			debugPrint('Test ${FlxG.random.int()}');
+		}
 
 		if (FlxG.keys.justPressed.F2){
 			WindowsAPI.showConsole();
@@ -125,6 +138,13 @@ class MusicBeatState extends FlxState {
 			FlxG.state.persistentDraw = true;
 		}
 		#end
+
+		for (i => txt in debugTexts.members) {
+			txt.cameras = [FlxG.cameras.list.getLastOf()];
+			txt.y = (((debugTexts.members.length-1)-i) * 30)+10;
+		}
+		remove(debugTexts);
+		insert(FlxG.state.members.length, debugTexts);
 	}
 
 	public function postCreate() {
@@ -173,5 +193,23 @@ class MusicBeatState extends FlxState {
 	}
 	public function measureHit(curMeasure:Int) {
 		//
+	}
+
+	public function debugPrint(text:String, color:String = "WHITE") {
+		var txt:FlxText = new FlxText(10, 0, 0, text, 20);
+		txt.color = FlxColor.fromString(color);
+		txt.scrollFactor.set(0, 0);
+		txt.cameras = [FlxG.cameras.list.getLastOf()];
+		txt.y = (debugTexts.members.length * 30)+10;
+		txt.borderStyle = OUTLINE;
+		txt.borderSize = 2;
+		FlxTween.tween(txt, {alpha: 0}, 2, {startDelay: 3});
+		debugTexts.add(txt);
+		log(text, {
+			fileName: 'DebugPrint',//'$folderName:$fileName:$finalLine',
+			lineNumber: 0,
+			className: "",
+			methodName: ""
+		});
 	}
 }

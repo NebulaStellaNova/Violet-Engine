@@ -1,5 +1,6 @@
 package backend.scripts;
 
+import backend.scripts.psych.LuaCallbacks;
 import haxe.PosInfos;
 import flixel.sound.FlxSound;
 import flixel.group.FlxGroup.FlxTypedGroup;
@@ -22,6 +23,8 @@ class LuaScript extends LScript {
 
 	public var fileName:String;
 	public var folderName:String;
+
+	public var psychVariables:Map<String, Dynamic> = new Map();
 
 	public var blacklistImports:Array<Dynamic> = [
 		sys.io.File,
@@ -67,8 +70,9 @@ class LuaScript extends LScript {
 		finalCode += '\n' + Paths.readStringFromPath("assets/data/scripts/luaImports.lua");
 		super(finalCode);
 		this.print = (line:Int, s:String) -> {
+			//var finalLine:String = '${line != -1 ? '$line' : '?'}';
 			var info:PosInfos = {
-				fileName: '$folderName:$fileName',
+				fileName: '$folderName:$fileName',//'$folderName:$fileName:$finalLine',
 				lineNumber: line,
 				className: '$folderName:$fileName',
 				methodName: ""
@@ -123,6 +127,8 @@ class LuaScript extends LScript {
 		set('X', FlxAxes.X);
 		set('Y', FlxAxes.Y);
 		set('XY', FlxAxes.XY);
+
+		LuaCallbacks.applyPsychCallbacksToScript(this);
 
 		// Custom
 		//set('add', (object: FlxBasic) -> return FlxG.state.add(object));
