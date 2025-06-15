@@ -24,17 +24,16 @@ typedef GlobalVariables = {
 class MusicBeatState extends FlxState {
 	var previousStep:Int = -1;
 	var previousBeat:Int = -1;
+	var previousMeasure:Int = -1;
 
-	var debugSubState = null;
+	var debugSubState:DebugSubState;
 
-	//public var stateScript:FunkinScript;
 	public var stateScripts:ScriptPack = new ScriptPack();
 	public var globalVariables:GlobalVariables;
 
 	var defaultDebugVars:Array<String> = ["stateScript"];
 	public var debugVars:Array<String> = [];
 	var ____________________ = "                  ";
-	//var stateLuaScript:LuaScript;
 
 	override public function create() {
 		globalVariables = Paths.parseJson("globalVariables", "data/config");
@@ -45,17 +44,15 @@ class MusicBeatState extends FlxState {
 		var scriptPath = "assets/data/scripts/states/" + Main.className + ".hx";
 		if (Paths.fileExists(scriptPath)) {
 			var stateScript = new FunkinScript(Paths.readStringFromPath(scriptPath));
-			stateScripts.call("create");
-			stateScripts.call("onCreate");
+			stateScript.call("create");
+			stateScript.call("onCreate");
 			stateScripts.addScript(stateScript);
-			stateScript.superInstance = this;
 		}
 		if (Paths.fileExists(luaScriptPath)) {
 			var stateLuaScript = new LuaScript(Paths.readStringFromPath(luaScriptPath));
 			stateLuaScript.call("create");
 			stateLuaScript.call("onCreate");
 			stateScripts.addScript(stateLuaScript);
-			stateLuaScript.parent = this;
 		}
 
 
@@ -77,19 +74,22 @@ class MusicBeatState extends FlxState {
 	{
 		super.update(elapsed);
 
-		
+
 		call("update", [elapsed]);
 		call("onUpdate", [elapsed]);
-	
+
 
 		if (previousStep != Conductor.curStep) {
 			stepHit(Conductor.curStep);
 			previousStep = Conductor.curStep;
 		}
-
 		if (previousBeat != Conductor.curBeat) {
 			beatHit(Conductor.curBeat);
 			previousBeat = Conductor.curBeat;
+		}
+		if (previousMeasure != Conductor.curMeasure) {
+			measureHit(Conductor.curMeasure);
+			previousMeasure = Conductor.curMeasure;
 		}
 
 		if (FlxG.keys.justPressed.F5) {
@@ -156,8 +156,10 @@ class MusicBeatState extends FlxState {
 	public function stepHit(curStep:Int) {
 		//
 	}
-
 	public function beatHit(curBeat:Int) {
+		//
+	}
+	public function measureHit(curMeasure:Int) {
 		//
 	}
 }
