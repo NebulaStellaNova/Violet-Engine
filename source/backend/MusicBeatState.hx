@@ -1,5 +1,6 @@
 package backend;
 
+import apis.WindowsAPI;
 import backend.scripts.ScriptPack;
 import scripting.events.SelectionEvent;
 import scripting.events.SongEvent;
@@ -49,7 +50,7 @@ class MusicBeatState extends FlxState {
 			stateScripts.addScript(stateScript);
 		}
 		if (Paths.fileExists(luaScriptPath)) {
-			var stateLuaScript = new LuaScript(Paths.readStringFromPath(luaScriptPath));
+			var stateLuaScript = new LuaScript(luaScriptPath);
 			stateLuaScript.call("create");
 			stateLuaScript.call("onCreate");
 			stateScripts.addScript(stateLuaScript);
@@ -74,6 +75,15 @@ class MusicBeatState extends FlxState {
 	{
 		super.update(elapsed);
 
+
+		if (FlxG.keys.justPressed.F2){
+			WindowsAPI.allocConsole();
+			WindowsAPI.clearScreen();
+		}
+
+		if (FlxG.keys.justPressed.F3){
+			WindowsAPI.closeConsole();
+		}
 
 		call("update", [elapsed]);
 		call("onUpdate", [elapsed]);

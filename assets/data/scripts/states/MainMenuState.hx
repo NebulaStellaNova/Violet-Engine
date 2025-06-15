@@ -1,5 +1,5 @@
 function create() {
-    trace("Create");
+    trace("Nova Engine has HScript Support");
 }
 
 function postUpdate() {

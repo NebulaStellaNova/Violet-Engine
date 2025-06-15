@@ -1,5 +1,6 @@
 package backend.scripts;
 
+import haxe.PosInfos;
 import flixel.sound.FlxSound;
 import flixel.group.FlxGroup.FlxTypedGroup;
 import flixel.math.FlxMath;
@@ -14,9 +15,66 @@ import rulescript.RuleScript;
 import hxwindowmode.WindowColorMode;
 import lscript.LScript;
 
+using StringTools;
+using utils.ArrayUtil;
+
 class LuaScript extends LScript {
-	public function new(code:String, preset:Bool = true) {
-		super(code);
+
+	public var fileName:String;
+	public var folderName:String;
+
+	public var blacklistImports:Array<Dynamic> = [
+		sys.io.File,
+		sys.FileSystem
+	];
+
+	function importCheck(code:String, importString:String) {
+		var variations = [
+			'script:import("$importString")',
+			'script:import(\'$importString\')',
+			'script.import("$importString")',
+			'script.import(\'$importString\')'
+		];
+		for (i in variations) {
+			if (code.contains(i)) {
+				log('Blacklisted Lua Import "$importString"', ErrorMessage);
+				code.replace(i, "");
+			}
+		}
+		return code;
+	}
+
+	function checkForBlacklists(code:String):String {
+		for (theImport in blacklistImports) {
+			var importString:String = FlxStringUtil.getClassName(theImport);
+			code = importCheck(code, importString);
+		}
+		return code;
+	}
+
+	public function new(path:String, preset:Bool = true) {
+		var code:String = Paths.readStringFromPath(path);
+		this.fileName = path.split("/").getLastOf();
+		if (path.split("/").getFirstOf() == "mods") {
+			this.folderName = path.split("/")[1];
+		} else {
+			this.folderName = path.split("/").getFirstOf(); 
+		}
+		var finalCode = code;
+
+		finalCode = checkForBlacklists(finalCode);
+
+		finalCode += '\n' + Paths.readStringFromPath("assets/data/scripts/luaImports.lua");
+		super(finalCode);
+		this.print = (line:Int, s:String) -> {
+			var info:PosInfos = {
+				fileName: '$folderName:$fileName',
+				lineNumber: line,
+				className: '$folderName:$fileName',
+				methodName: ""
+			}
+			log(s, info);
+		}
 		if (preset) presetVariables();
 		this.execute();
 	}
@@ -67,13 +125,13 @@ class LuaScript extends LScript {
 		set('XY', FlxAxes.XY);
 
 		// Custom
-		set('add', (object: FlxBasic) -> return FlxG.state.add(object));
-		set('insert', (pos: Int, object: FlxBasic) -> return FlxG.state.insert(pos, object));
+		//set('add', (object: FlxBasic) -> return FlxG.state.add(object));
+		//set('insert', (pos: Int, object: FlxBasic) -> return FlxG.state.insert(pos, object));
 	}
 
 	public function call(func, ?params)
 		this.callFunc(func, params ?? []);
 
-	public function set(what, value)
+	public function set(what, value:Dynamic)
 		this.setVar(what, value);
 }
