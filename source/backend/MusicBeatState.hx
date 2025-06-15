@@ -28,7 +28,6 @@ typedef GlobalVariables = {
 }
 
 class MusicBeatState extends FlxState {
-
     public var debugTexts:FlxTypedGroup<FlxText> = new FlxTypedGroup();
 
 	var previousStep:Int = -1;
@@ -49,21 +48,14 @@ class MusicBeatState extends FlxState {
 		super.create();
 		Conductor.init();
 
-		var luaScriptPath = "assets/data/scripts/states/" + Main.className + ".lua";
-		var scriptPath = "assets/data/scripts/states/" + Main.className + ".hx";
-		if (Paths.fileExists(scriptPath)) {
-			var stateScript = new FunkinScript(scriptPath);
-			stateScript.call("create");
-			stateScript.call("onCreate");
-			stateScripts.addScript(stateScript);
-		}
-		if (Paths.fileExists(luaScriptPath)) {
-			var stateLuaScript = new LuaScript(luaScriptPath);
-			stateLuaScript.call("create");
-			stateLuaScript.call("onCreate");
-			stateScripts.addScript(stateLuaScript);
-		}
+		var scriptPath = 'assets/data/scripts/states/${Main.className}';
+		if (Paths.fileExists('$scriptPath.hx'))
+			stateScripts.addScript(new FunkinScript('$scriptPath.hx'));
+		if (Paths.fileExists('$scriptPath.lua'))
+			stateScripts.addScript(new LuaScript('$scriptPath.lua'));
 
+		stateScripts.call('create');
+		stateScripts.call('onCreate');
 
 		#if FLX_DEBUG
 		//var trackerProfile = new TrackerProfile(MusicBeatState, defaultDebugVars.concat(debugVars).concat(["____________________"]), []);
@@ -153,15 +145,12 @@ class MusicBeatState extends FlxState {
 	}
 	public function runEvent<T:EventBase>(func:String, event:T):T {
 		if (stateScripts == null) return event;
-		stateScripts.call(func, [event]);
-		//stateLuaScript.call(func, [event]);
-		return event;
+		return stateScripts.event(func, event);
 	}
 
-	public function call(func, ?params) {
-		if (stateScripts == null) return;
-		stateScripts.call(func, params ?? []);
-		//stateLuaScript.call(func, params ?? []);
+	public function call<T>(funcName:String, ?args:Array<Dynamic>, ?def:T):T {
+		if (stateScripts == null) return def;
+		return stateScripts.call(funcName, args, def);
 	}
 
 	public function set(what, value) {

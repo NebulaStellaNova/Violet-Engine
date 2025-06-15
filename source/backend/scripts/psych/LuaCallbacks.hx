@@ -1,7 +1,5 @@
 package backend.scripts.psych;
 
-import lscript.LScript;
-import flixel.text.FlxText;
 import states.PlayState;
 import flixel.FlxG;
 import backend.filesystem.Paths;
@@ -9,8 +7,6 @@ import flixel.util.FlxStringUtil;
 import backend.objects.NovaSprite;
 
 class LuaCallbacks {
-
-    
     public static function applyPsychCallbacksToScript(script:LuaScript) {
         script.set("loadGraphic", function(variable:String, image:String) {
             if (getVar(script, variable) != null) {
@@ -97,7 +93,7 @@ class LuaCallbacks {
                 cast (FlxG.state, MusicBeatState).debugPrint('Unknown Variable "$obj"', "RED");
             }
         });
-        
+
         script.set("getProperty", function(property:String):Dynamic {
             var daObj:Dynamic = getVar(script, property.split(".")[0]);
             for (i=>prop in property.split(".")) {
@@ -113,7 +109,7 @@ class LuaCallbacks {
             cast (FlxG.state, MusicBeatState).debugPrint('Unknown Property "$property"', "RED");
             return "";
         });
-        
+
         script.set("setProperty", function(property:String, value:Dynamic) {
             var daObj:Dynamic = getVar(script, property.split(".")[0]);
             for (i=>prop in property.split(".")) {

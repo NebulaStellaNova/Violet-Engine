@@ -1,7 +1,7 @@
 package backend.scripts;
 
-class PythonScript {
-    public function new() {
-        
-    }
+class PythonScript extends Script {
+	public function new(code:String) {
+		super(code);
+	}
 }

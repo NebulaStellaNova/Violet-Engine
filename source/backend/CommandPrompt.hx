@@ -1,15 +1,17 @@
 package backend;
-import flixel.group.FlxGroup.FlxTypedGroup;
+
 import flixel.FlxG;
+import haxe.to.Path;
+
 using StringTools;
-using utils.StringUtil;
-class GlobalResources
-{
+
+typedef Boolean = Bool;
+
+class GlobalResources {
 	public static var jsonFilePaths:Array<String> = [];
 }
-typedef Boolean = Bool;
-class CommandPrompt {
 
+class CommandPrompt {
     private var state:String;
     private var variables:Map<String, Dynamic>;
 	public var active:Boolean = true; //I thought it'd be funny to add this.
@@ -34,7 +36,7 @@ class CommandPrompt {
                 print("Exiting...");
 				//Main.closeGame();
 				Sys.exit(0);
-				print("Killing CommandHook...");	
+				print("Killing CommandHook...");
                 break;
             }
 
@@ -53,11 +55,11 @@ class CommandPrompt {
 		var parts = input.split(" ");
 		var command = parts[0];
 		var args = parts.slice(1);
-		
+
 		var combinedArgs:Array<String> = [];
 		var combinedArgsMap:Array<{position:Int, value:String}> = [];
 		var i = 0;
-		
+
 		while (i < args.length) {
 			var arg = args[i];
 			if (arg.startsWith("'") || arg.startsWith('"')) {
@@ -81,7 +83,7 @@ class CommandPrompt {
 			}
 			i++;
 		}
-		
+
 		// Reconstruct the args array using the combinedArgsMap
 		var finalArgs:Array<String> = [];
 		var mapIndex = 0;
@@ -111,12 +113,12 @@ class CommandPrompt {
 			}
 			return false;
 		}
-		
+
 		// Now finalArgs contains the correctly combined arguments
 		// You can proceed with using finalArgs as needed
-	
 
-		switch (command.removeLeadingSlash()) {
+
+		switch (Path.removeTrailingSlashes(command)) {
 			case "switchState":
 				if (args.length == 1) {
 					this.switchState(args[0]);
@@ -196,7 +198,7 @@ class CommandPrompt {
 	}
 
     private function secretCode(code:String):Void {
-		
+
         print("Secret code entered: " + code);
 		print("Not yet implemented.");
     }
@@ -205,4 +207,3 @@ class CommandPrompt {
         Sys.stdout().writeString(message + "\n");
     }
 }
-

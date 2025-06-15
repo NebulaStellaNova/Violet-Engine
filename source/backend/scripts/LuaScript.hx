@@ -1,32 +1,36 @@
 package backend.scripts;
 
-import backend.scripts.psych.LuaCallbacks;
 import haxe.PosInfos;
-import flixel.sound.FlxSound;
-import flixel.group.FlxGroup.FlxTypedGroup;
-import flixel.math.FlxMath;
-import backend.filesystem.Paths;
-import backend.objects.NovaSprite;
-import flixel.util.*;
-import flixel.tweens.*;
-import flixel.text.*;
 import flixel.*;
-import rulescript.parsers.HxParser;
-import rulescript.RuleScript;
+import flixel.group.FlxGroup;
+import flixel.group.FlxSpriteGroup;
+import flixel.math.FlxMath;
+import flixel.sound.FlxSound;
+import flixel.text.FlxText;
+import flixel.tweens.FlxTween;
+import flixel.util.FlxAxes;
+import flixel.util.FlxColor;
+import flixel.util.FlxStringUtil;
+import flixel.util.FlxTimer;
 import hxwindowmode.WindowColorMode;
 import lscript.LScript;
+import backend.filesystem.Paths;
+import backend.objects.NovaSprite;
 
 using StringTools;
 using utils.ArrayUtil;
 
-class LuaScript extends LScript {
+class LuaScript extends Script {
+	var internalScript:LScript;
 
-	public var fileName:String;
-	public var folderName:String;
+	override function set_parent(value:Dynamic):Dynamic
+		return internalScript.parent = value;
+	override function get_parent():Dynamic
+		return internalScript.parent;
 
-	public var psychVariables:Map<String, Dynamic> = new Map();
+	public var psychVariables:Map<String, Dynamic> = [];
 
-	public var blacklistImports:Array<Dynamic> = [
+	public var blacklistImports:Array<Class<Dynamic>> = [
 		sys.io.File,
 		sys.FileSystem
 	];
@@ -56,35 +60,26 @@ class LuaScript extends LScript {
 	}
 
 	public function new(path:String, preset:Bool = true) {
-		var code:String = Paths.readStringFromPath(path);
-		this.fileName = path.split("/").getLastOf();
-		if (path.split("/").getFirstOf() == "mods") {
-			this.folderName = path.split("/")[1];
-		} else {
-			this.folderName = path.split("/").getFirstOf(); 
-		}
-		var finalCode = code;
+		super(path);
+		scriptCode = checkForBlacklists(scriptCode);
+		scriptCode += '\n' + Paths.readStringFromPath("assets/data/scripts/luaImports.lua");
 
-		finalCode = checkForBlacklists(finalCode);
-
-		finalCode += '\n' + Paths.readStringFromPath("assets/data/scripts/luaImports.lua");
-		super(finalCode);
-		this.print = (line:Int, s:String) -> {
-			//var finalLine:String = '${line != -1 ? '$line' : '?'}';
+		internalScript = new LScript(scriptCode);
+		internalScript.print = (line:Int, s:String) -> {
 			var info:PosInfos = {
-				fileName: '$folderName:$fileName',//'$folderName:$fileName:$finalLine',
+				fileName: '$folderName/$fileName',
 				lineNumber: line,
-				className: '$folderName:$fileName',
+				className: '$folderName/$fileName',
 				methodName: ""
 			}
 			log(s, info);
 		}
-		if (preset) presetVariables();
-		this.execute();
+		initVars();
+		internalScript.execute();
 	}
 
-	public function presetVariables() {
-		// Thanks Zyflx
+	public function initVars() {
+		// Flixel
 		set('FlxG', FlxG);
 		set('FlxBasic', FlxBasic);
 		set('FlxObject', FlxObject);
@@ -94,9 +89,10 @@ class LuaScript extends LScript {
 		set('FlxTween', FlxTween);
 		set('FlxTimer', FlxTimer);
 		set('FlxMath', FlxMath);
-		set('FlxTypedGroup', FlxTypedGroup);
+		set('FlxGroup', FlxGroup);
+		set('FlxSpriteGroup', FlxSpriteGroup);
 		set('FlxSound', FlxSound);
-		set('FlxColor', { // maybe temporary????
+		set('FlxColor', {
 			TRANSPARENT: FlxColor.TRANSPARENT,
 			WHITE: FlxColor.WHITE,
 			GRAY: FlxColor.GRAY,
@@ -113,32 +109,33 @@ class LuaScript extends LScript {
 			MAGENTA: FlxColor.MAGENTA,
 			CYAN: FlxColor.CYAN
 		});
+		set('FlxAxes', {
+			X: FlxAxes.X,
+			Y: FlxAxes.Y,
+			XY: FlxAxes.XY
+		});
 
 		// Engine
-		// set('Controls', Controls.instance);
-		// set('Scoring', Scoring);
-		// set('Conductor', Conductor.instance);
-		// set('PlayState', PlayState);
-		//set('game', PlayState.current);
-		set('FunkinSprite', NovaSprite);
 		set('NovaSprite', NovaSprite);
 		set('Paths', Paths);
 		set('WindowColorMode', WindowColorMode);
 
-		set('X', FlxAxes.X);
-		set('Y', FlxAxes.Y);
-		set('XY', FlxAxes.XY);
-
-		LuaCallbacks.applyPsychCallbacksToScript(this);
+		backend.scripts.psych.LuaCallbacks.applyPsychCallbacksToScript(this);
 
 		// Custom
-		//set('add', (object: FlxBasic) -> return FlxG.state.add(object));
-		//set('insert', (pos: Int, object: FlxBasic) -> return FlxG.state.insert(pos, object));
+		/* set('add', (object:FlxBasic) -> return FlxG.state.add(object));
+		set('remove', (object:FlxBasic) -> return FlxG.state.remove(object));
+		set('insert', (pos:Int, object:FlxBasic) -> return FlxG.state.insert(pos, object));
+
+		set('trace', (value:Dynamic) -> log(value, internalScript.interp.posInfos()));
+		set('log', (value:Dynamic, type:backend.console.Logs.LogType = LogMessage) -> log(value, type, internalScript.interp.posInfos())); */
 	}
 
-	public function call(func, ?params)
-		this.callFunc(func, params ?? []);
+	override public function call<T>(funcName:String, ?args:Array<Dynamic>, ?def:T):T
+		return internalScript.callFunc(funcName, args ?? []) ?? def;
 
-	public function set(what, value:Dynamic)
-		this.setVar(what, value);
+	override public function set(variable:String, value:Dynamic)
+		internalScript.setVar(variable, value);
+	override public function get<T>(variable:String, ?def:T):T
+		return internalScript.getVar(variable) ?? def;
 }
