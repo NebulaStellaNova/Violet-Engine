@@ -27,8 +27,10 @@
     },
     {
       "name": "linc_luajit",
-      "type": "haxelib",
-      "version": null
+      "type": "git",
+      "dir": null,
+      "ref": "master",
+      "url": "https://github.com/nebulazorua/linc_luajit"
     },
     {
       "name": "lscript",

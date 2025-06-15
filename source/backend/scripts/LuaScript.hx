@@ -1,27 +1,29 @@
 package backend.scripts;
 
 import haxe.PosInfos;
-import flixel.sound.FlxSound;
-import flixel.group.FlxGroup.FlxTypedGroup;
-import flixel.math.FlxMath;
-import backend.filesystem.Paths;
-import backend.objects.NovaSprite;
-import flixel.util.*;
-import flixel.tweens.*;
-import flixel.text.*;
 import flixel.*;
-import rulescript.parsers.HxParser;
-import rulescript.RuleScript;
+import flixel.group.*;
+import flixel.math.*;
+import flixel.sound.*;
+import flixel.text.*;
+import flixel.tweens.*;
+import flixel.util.*;
 import hxwindowmode.WindowColorMode;
 import lscript.LScript;
+import rulescript.parsers.HxParser;
+import backend.filesystem.Paths;
+import backend.objects.NovaSprite;
 
 using StringTools;
 using utils.ArrayUtil;
 
-class LuaScript extends LScript {
+class LuaScript extends Script {
+	var internalScript:LScript;
 
-	public var fileName:String;
-	public var folderName:String;
+	override function set_parent(value:Dynamic):Dynamic
+		return internalScript.parent = value;
+	override function get_parent():Dynamic
+		return internalScript.parent;
 
 	public var blacklistImports:Array<Dynamic> = [
 		sys.io.File,
@@ -52,21 +54,13 @@ class LuaScript extends LScript {
 		return code;
 	}
 
-	public function new(path:String, preset:Bool = true) {
-		var code:String = Paths.readStringFromPath(path);
-		this.fileName = path.split("/").getLastOf();
-		if (path.split("/").getFirstOf() == "mods") {
-			this.folderName = path.split("/")[1];
-		} else {
-			this.folderName = path.split("/").getFirstOf(); 
-		}
-		var finalCode = code;
+	public function new(path:String) {
+		super(path);
+		scriptCode = checkForBlacklists(scriptCode);
+		scriptCode += '\n' + Paths.readStringFromPath("assets/data/scripts/luaImports.lua");
 
-		finalCode = checkForBlacklists(finalCode);
-
-		finalCode += '\n' + Paths.readStringFromPath("assets/data/scripts/luaImports.lua");
-		super(finalCode);
-		this.print = (line:Int, s:String) -> {
+		internalScript = new LScript(scriptCode);
+		internalScript.print = (line:Int, s:String) -> {
 			var info:PosInfos = {
 				fileName: '$folderName:$fileName',
 				lineNumber: line,
@@ -75,12 +69,12 @@ class LuaScript extends LScript {
 			}
 			log(s, info);
 		}
-		if (preset) presetVariables();
-		this.execute();
+		initVars();
+		internalScript.execute();
 	}
 
-	public function presetVariables() {
-		// Thanks Zyflx
+	function initVars() {
+		// Flixel
 		set('FlxG', FlxG);
 		set('FlxBasic', FlxBasic);
 		set('FlxObject', FlxObject);
@@ -90,48 +84,24 @@ class LuaScript extends LScript {
 		set('FlxTween', FlxTween);
 		set('FlxTimer', FlxTimer);
 		set('FlxMath', FlxMath);
-		set('FlxTypedGroup', FlxTypedGroup);
+		set('FlxTypedSpriteGroup', FlxSpriteGroup.FlxTypedSpriteGroup);
+		set('FlxTypedGroup', FlxGroup.FlxTypedGroup);
 		set('FlxSound', FlxSound);
-		set('FlxColor', { // maybe temporary????
-			TRANSPARENT: FlxColor.TRANSPARENT,
-			WHITE: FlxColor.WHITE,
-			GRAY: FlxColor.GRAY,
-			BLACK: FlxColor.BLACK,
-			GREEN: FlxColor.GREEN,
-			LIME: FlxColor.LIME,
-			YELLOW: FlxColor.YELLOW,
-			ORANGE: FlxColor.ORANGE,
-			RED: FlxColor.RED,
-			PURPLE: FlxColor.PURPLE,
-			BLUE: FlxColor.BLUE,
-			BROWN: FlxColor.BROWN,
-			PINK: FlxColor.PINK,
-			MAGENTA: FlxColor.MAGENTA,
-			CYAN: FlxColor.CYAN
-		});
+		set('FlxColor', Type.resolveClass('flixel.util.FlxColor_HSC'));
+		set('FlxAxes', Type.resolveClass('flixel.util.FlxAxes_HSC'));
 
 		// Engine
-		// set('Controls', Controls.instance);
-		// set('Scoring', Scoring);
-		// set('Conductor', Conductor.instance);
-		// set('PlayState', PlayState);
-		//set('game', PlayState.current);
 		set('NovaSprite', NovaSprite);
 		set('Paths', Paths);
 		set('WindowColorMode', WindowColorMode);
-
-		set('X', FlxAxes.X);
-		set('Y', FlxAxes.Y);
-		set('XY', FlxAxes.XY);
-
-		// Custom
-		//set('add', (object: FlxBasic) -> return FlxG.state.add(object));
-		//set('insert', (pos: Int, object: FlxBasic) -> return FlxG.state.insert(pos, object));
 	}
 
-	public function call(func, ?params)
-		this.callFunc(func, params ?? []);
+	override public function call<T>(funcName:String, ?args:Array<Dynamic>, ?def:T):T
+		return internalScript.callFunc(funcName, args ?? []) ?? def;
 
-	public function set(what, value:Dynamic)
-		this.setVar(what, value);
+	override public function set(variable:String, value:Dynamic)
+		internalScript.setVar(variable, value);
+	override public function get<T>(variable:String, ?def:T):T {
+		return internalScript.getVar(variable) ?? def;
+	}
 }

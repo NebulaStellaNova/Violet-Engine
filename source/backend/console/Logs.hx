@@ -3,6 +3,8 @@ package backend.console;
 import haxe.Log;
 import haxe.PosInfos;
 
+using utils.ArrayUtil;
+
 enum abstract LogType(String) from String to String {
 	var ErrorMessage = 'error';
 	var WarningMessage = 'warning';
@@ -23,7 +25,7 @@ class Logs {
 
 	public static function log(value:Dynamic, type:LogType = LogMessage, ?infos:PosInfos) {
 		var fileSplit = infos.fileName.split("/");
-		var fileName = fileSplit[fileSplit.length-1];
+		var fileName = fileSplit.getLastOf();
 		var finalOut:String = '';
 		var dataString:String = '[  ${fileName}:${infos.lineNumber}  ]';
 		switch (type) {

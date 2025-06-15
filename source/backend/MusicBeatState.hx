@@ -131,15 +131,12 @@ class MusicBeatState extends FlxState {
 	}
 	public function runEvent<T:EventBase>(func:String, event:T):T {
 		if (stateScripts == null) return event;
-		stateScripts.call(func, [event]);
-		//stateLuaScript.call(func, [event]);
-		return event;
+		return stateScripts.event(func, event);
 	}
 
-	public function call(func, ?params) {
-		if (stateScripts == null) return;
-		stateScripts.call(func, params ?? []);
-		//stateLuaScript.call(func, params ?? []);
+	public function call<T>(funcName:String, ?args:Array<Dynamic>, ?def:T):T {
+		if (stateScripts == null) return def;
+		return stateScripts.call(funcName, args, def);
 	}
 
 	public function set(what, value) {

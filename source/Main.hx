@@ -50,6 +50,7 @@ class Main extends Sprite
 		// NovaSave.setIfNull("hitWindow", 200);
 	}
 	inline function initEverythingAfter() {
+		FlxG.cameras.useBufferLocking = true;
 		NovaSave.init();
 		NovaSave.setIfNull("downscroll", false);
 		NovaSave.setIfNull("ghostTapping", true);
