@@ -2,9 +2,35 @@ package apis;
 
 import backend.filesystem.Paths;
 import sys.io.Process;
+import Std;
 
 using StringTools;
 
+@:buildXml('
+<target id="haxe">
+	<lib name="dwmapi.lib" if="windows" />
+	<lib name="shell32.lib" if="windows" />
+	<lib name="gdi32.lib" if="windows" />
+	<lib name="ole32.lib" if="windows" />
+	<lib name="uxtheme.lib" if="windows" />
+</target>
+')
+// majority is taken from microsofts doc
+@:cppFileCode('
+#include "mmdeviceapi.h"
+#include "combaseapi.h"
+#include <iostream>
+#include <Windows.h>
+#include <cstdio>
+#include <tchar.h>
+#include <dwmapi.h>
+#include <winuser.h>
+#include <Shlobj.h>
+#include <wingdi.h>
+#include <shellapi.h>
+#include <uxtheme.h>
+')
+@:dox(hide)
 class WindowsAPI {
 
 	public static var enableToast:Bool = false;
@@ -44,5 +70,35 @@ class WindowsAPI {
 
 		if (title != null && title != "" && desc != null && desc != "")
 			new Process(powershellCommand);
+	}
+
+	
+	@:functionCode('
+		// https://stackoverflow.com/questions/15543571/allocconsole-not-displaying-cout
+
+		if (!AllocConsole())
+			return;
+
+		freopen("CONIN$", "r", stdin);
+		freopen("CONOUT$", "w", stdout);
+		freopen("CONOUT$", "w", stderr);
+	')
+	public static function allocConsole() {
+	} 
+
+	@:functionCode('
+		system("CLS");
+		freopen("CONOUT$", "w", stdout);
+		std::cout<< "" <<std::flush;
+	')
+	public static function clearScreen() {
+
+	}
+
+	@:functionCode('
+		ShowWindow(GetConsoleWindow(), SW_HIDE);
+	')
+	public static function closeConsole() {
+
 	}
 }
