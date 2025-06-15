@@ -120,6 +120,7 @@ class LuaScript extends LScript {
 		// set('Conductor', Conductor.instance);
 		// set('PlayState', PlayState);
 		//set('game', PlayState.current);
+		set('FunkinSprite', NovaSprite);
 		set('NovaSprite', NovaSprite);
 		set('Paths', Paths);
 		set('WindowColorMode', WindowColorMode);
