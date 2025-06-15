@@ -101,4 +101,17 @@ class WindowsAPI {
 	public static function closeConsole() {
 
 	}
+
+	public static function openConsole() {
+		allocConsole();
+		clearScreen();
+		showConsole();
+	}
+
+	@:functionCode('
+		ShowWindow(GetConsoleWindow(), SW_SHOW);
+	')
+	public static function showConsole() {
+
+	}
 }
