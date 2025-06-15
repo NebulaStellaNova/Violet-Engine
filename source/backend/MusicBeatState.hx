@@ -44,7 +44,7 @@ class MusicBeatState extends FlxState {
 		var luaScriptPath = "assets/data/scripts/states/" + Main.className + ".lua";
 		var scriptPath = "assets/data/scripts/states/" + Main.className + ".hx";
 		if (Paths.fileExists(scriptPath)) {
-			var stateScript = new FunkinScript(Paths.readStringFromPath(scriptPath));
+			var stateScript = new FunkinScript(scriptPath);
 			stateScript.call("create");
 			stateScript.call("onCreate");
 			stateScripts.addScript(stateScript);
@@ -68,6 +68,8 @@ class MusicBeatState extends FlxState {
 
 		Conductor.playMusic(Paths.music("freakyMenu"));
 
+		WindowsAPI.initConsole();
+
 		//postCreate();
 	}
 
@@ -75,9 +77,10 @@ class MusicBeatState extends FlxState {
 	{
 		super.update(elapsed);
 
+		FlxG.autoPause = false;
 
 		if (FlxG.keys.justPressed.F2){
-			WindowsAPI.openConsole();
+			WindowsAPI.showConsole();
 		}
 
 		if (FlxG.keys.justPressed.F3){

@@ -42,6 +42,9 @@ class Main extends Sprite
 		FlxG.resetState();
 		WindowColorMode.setDarkMode();
 		apis.WindowsAPI.sendWindowsNotification("Test", "Test Desc");
+
+		var commandPrompt = new backend.CommandPrompt();
+        backend.Threader.runInThread(commandPrompt.start());
 	}
 
 	inline function initEverything() {

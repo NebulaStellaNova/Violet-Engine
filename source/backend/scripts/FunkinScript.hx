@@ -13,15 +13,20 @@ import rulescript.parsers.HxParser;
 import rulescript.RuleScript;
 import hxwindowmode.WindowColorMode;
 
+using StringTools;
+using utils.ArrayUtil;
 /**
- * @author @Zyflx
- * # THANKS - Nebula
+ * @author @Zyflx (mostly)
+ * @modified @NebulaStellaNova
  */
 class FunkinScript extends RuleScript {
-	private var scriptCode: String;
-	private var executed: Bool = false;
+	private var scriptCode:String;
+	private var executed:Bool = false;
+	public var fileName:String;
 
-	public function new(scriptCode: String, preset: Bool = true):Void {
+	public function new(path:String, preset:Bool = true):Void {
+		var scriptCode:String = Paths.readStringFromPath(path);
+		this.fileName = path.split("/").getLastOf();
 		super(null, new rulescript.parsers.HxParser());
 		this.scriptCode = scriptCode;
 		if(preset) presetVariables();
@@ -42,21 +47,21 @@ class FunkinScript extends RuleScript {
 		set('FlxTypedGroup', FlxTypedGroup);
 		set('FlxSound', FlxSound);
 		set('FlxColor', { // maybe temporary????
-			TRANSPARENT: FlxColor.TRANSPARENT,
-			WHITE: FlxColor.WHITE,
-			GRAY: FlxColor.GRAY,
-			BLACK: FlxColor.BLACK,
-			GREEN: FlxColor.GREEN,
-			LIME: FlxColor.LIME,
-			YELLOW: FlxColor.YELLOW,
-			ORANGE: FlxColor.ORANGE,
-			RED: FlxColor.RED,
-			PURPLE: FlxColor.PURPLE,
-			BLUE: FlxColor.BLUE,
-			BROWN: FlxColor.BROWN,
-			PINK: FlxColor.PINK,
-			MAGENTA: FlxColor.MAGENTA,
-			CYAN: FlxColor.CYAN
+			TRANSPARENT:FlxColor.TRANSPARENT,
+			WHITE:FlxColor.WHITE,
+			GRAY:FlxColor.GRAY,
+			BLACK:FlxColor.BLACK,
+			GREEN:FlxColor.GREEN,
+			LIME:FlxColor.LIME,
+			YELLOW:FlxColor.YELLOW,
+			ORANGE:FlxColor.ORANGE,
+			RED:FlxColor.RED,
+			PURPLE:FlxColor.PURPLE,
+			BLUE:FlxColor.BLUE,
+			BROWN:FlxColor.BROWN,
+			PINK:FlxColor.PINK,
+			MAGENTA:FlxColor.MAGENTA,
+			CYAN:FlxColor.CYAN
 		});
 
 		// Engine
@@ -74,12 +79,12 @@ class FunkinScript extends RuleScript {
 		set('XY', FlxAxes.XY);
 
 		// Custom
-		set('add', (object: FlxBasic) -> return FlxG.state.add(object));
-		set('insert', (pos: Int, object: FlxBasic) -> return FlxG.state.insert(pos, object));
+		set('add', (object:FlxBasic) -> return FlxG.state.add(object));
+		set('insert', (pos:Int, object:FlxBasic) -> return FlxG.state.insert(pos, object));
 	}
 
-	public function call(funcName: String, ?args: Array<Dynamic>):Dynamic {
-		final func: Dynamic = variables.get(funcName);
+	public function call(funcName:String, ?args:Array<Dynamic>):Dynamic {
+		final func:Dynamic = variables.get(funcName);
 		if(func == null) return null;
 
 		if(Reflect.isFunction(func))
@@ -88,11 +93,11 @@ class FunkinScript extends RuleScript {
 		return null;
 	}
 
-	public function set(variable: String, value: Dynamic):Void {
+	public function set(variable:String, value:Dynamic):Void {
 		variables.set(variable, value);
 	}
 
-	inline public function get(variable: String):Dynamic {
+	inline public function get(variable:String):Dynamic {
 		return variables.get(variable);
 	}
 

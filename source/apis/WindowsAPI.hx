@@ -102,10 +102,10 @@ class WindowsAPI {
 
 	}
 
-	public static function openConsole() {
+	public static function initConsole() {
 		allocConsole();
 		clearScreen();
-		showConsole();
+		closeConsole();
 	}
 
 	@:functionCode('
