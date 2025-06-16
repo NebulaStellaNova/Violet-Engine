@@ -1,8 +1,8 @@
 package backend;
 
 import flixel.FlxG;
-import haxe.to.Path;
 
+using utils.StringUtil;
 using StringTools;
 
 typedef Boolean = Bool;
@@ -117,8 +117,8 @@ class CommandPrompt {
 		// Now finalArgs contains the correctly combined arguments
 		// You can proceed with using finalArgs as needed
 
-
-		switch (Path.removeTrailingSlashes(command)) {
+		
+		switch (command.removeLeadingSlash()) {
 			case "switchState":
 				if (args.length == 1) {
 					this.switchState(args[0]);

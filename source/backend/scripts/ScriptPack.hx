@@ -26,12 +26,15 @@ class ScriptPack {
 		scripts.push(script);
 	}
 
-	public function call<T>(funcName:String, ?args:Array<Dynamic>, ?def:T):T {
+	public function call<T>(funcName:String, ?args:Array<Dynamic>, ?def:T):T {	
+		var returner:T = null;
 		for (script in scripts) {
 			if (script == null) continue;
-			return script.call(funcName, args);
+			var caller:T = script.call(funcName, args);
+			if (caller != null)
+				returner = caller;
 		}
-		return def;
+		return returner ?? def;
 	}
 	public function event<T:EventBase>(func:String, event:T):T {
 		for (script in scripts) {

@@ -1,5 +1,6 @@
 package;
 
+import haxe.ui.Toolkit;
 import apis.WindowsAPI;
 import backend.filesystem.Paths;
 import backend.objects.NovaSave;
@@ -49,7 +50,12 @@ class Main extends Sprite
 		var commandPrompt = new backend.CommandPrompt();
         backend.Threader.runInThread(commandPrompt.start());
 		commandPrompt.active = true;
+		initializeToolkit();
+	}
 
+	inline function initializeToolkit() {
+		Toolkit.init();
+    	Toolkit.theme = 'dark';
 	}
 
 	inline function initEverything() {

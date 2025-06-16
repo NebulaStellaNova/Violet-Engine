@@ -72,7 +72,7 @@ class LuaScript extends Script {
 				className: '$folderName/$fileName',
 				methodName: ""
 			}
-			log(s, info);
+			log(s, (s == "Nova Engine has LScript Support" ? SystemMessage : LogMessage), info);
 		}
 		initVars();
 		internalScript.execute();

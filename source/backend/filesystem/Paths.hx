@@ -12,36 +12,58 @@ using StringTools;
 
 class Paths {
 
+	public static var resourceFolder = "assets";
+
+	public static function modPath(path:String, isFolder:Bool = false) {
+		for (i in FileSystem.readDirectory("mods")) {
+			if (isFolder ? folderExists('mods/$i/$path') : fileExists('mods/$i/$path')) {
+				return 'mods/$i/$path';
+			}
+		}
+		return '$resourceFolder/$path';
+	}
+
+	public static function modPaths(path:String, isFolder:Bool = false) {
+		var pathArray:Array<String> = [];
+		for (i in FileSystem.readDirectory("mods")) {
+			if (isFolder ? folderExists('mods/$i/$path') : fileExists('mods/$i/$path')) {
+				pathArray.push('mods/$i/$path');
+			}
+		}
+		pathArray.push('$resourceFolder/$path');
+		return pathArray;
+	}
+
 	public static function music(path:String, ?directory:String):String {
-		return 'assets/music/${directory != null ? Path.addTrailingSlash(directory) : ""}$path';
+		return modPath('music/${directory != null ? Path.addTrailingSlash(directory) : ""}$path', true);
 	}
 
 	public static function sound(path:String, ?directory:String):String {
-		return 'assets/sounds/${directory != null ? Path.addTrailingSlash(directory) : ""}$path.ogg';
+		return modPath('sounds/${directory != null ? Path.addTrailingSlash(directory) : ""}$path.ogg');
 	}
 
 	public static function image(path:String, ?directory:String):String {
-		return 'assets/images/${directory != null ? Path.addTrailingSlash(directory) : ""}$path.png';
+		return modPath('images/${directory != null ? Path.addTrailingSlash(directory) : ""}$path.png');
 	}
 
 	public static function font(path:String, ?directory:String):String {
-		return 'assets/fonts/${directory != null ? Path.addTrailingSlash(directory) : ""}$path';
+		return modPath('fonts/${directory != null ? Path.addTrailingSlash(directory) : ""}$path');
 	}
 
 	public static function xml(path:String, ?directory:String):String {
-		return 'assets/${directory != null ? Path.addTrailingSlash(directory) : ""}$path.xml';
+		return modPath('${directory != null ? Path.addTrailingSlash(directory) : ""}$path.xml');
 	}
 
 	public static function json(path:String, ?directory:String):String {
-		return 'assets/${directory != null ? Path.addTrailingSlash(directory) : ""}$path.json';
+		return modPath('${directory != null ? Path.addTrailingSlash(directory) : ""}$path.json');
 	}
 
 	public static function vocal(song:String, suffix:String = '', varient:String = '') {
-		return 'assets/songs/$song/song/${varient != '' ? '$varient/' : ''}Voices${suffix != '' ? '-$suffix' : ''}.ogg';
+		return modPath('songs/$song/song/${varient != '' ? '$varient/' : ''}Voices${suffix != '' ? '-$suffix' : ''}.ogg');
 	}
 
 	public static function inst(song:String, varient:String = "") {
-		return 'assets/songs/$song/song/${varient != '' ? '$varient/' : ''}Inst.ogg';
+		return modPath('songs/$song/song/${varient != '' ? '$varient/' : ''}Inst.ogg');
 	}
 	public static function instExists(song:String, varient:String = "") {
 		return fileExists(inst(song, varient));
@@ -54,7 +76,7 @@ class Paths {
 	}
 
 	public static function fileExists(path:String) {
-		return FileSystem.exists(path) || lime.utils.Assets.exists(path) || openfl.Assets.exists(path);
+		return FileSystem.exists(path);
 	}
 
 	public static function folderExists(path:String):Bool

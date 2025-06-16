@@ -1,7 +1,9 @@
+package states.editors;
 
+import haxe.ui.containers.menus.MenuItem;
+import haxe.ui.containers.menus.Menu;
 import flixel.FlxG;
 import haxe.ui.containers.menus.MenuBar;
-import haxe.ui.*;
 
 import backend.MusicBeatState;
 class CharacterEditorState extends MusicBeatState {
@@ -14,5 +16,17 @@ class CharacterEditorState extends MusicBeatState {
         topBar = new MenuBar();
         topBar.width = FlxG.width;
         add(topBar);
+        
+        var fileMenu = new Menu();
+        fileMenu.text = "File";
+        topBar.addComponent(fileMenu);
+
+        var exitButton = new MenuItem();
+        exitButton.onClick = (e)->{
+            switchState(MainMenuState.new);
+        };
+        exitButton.text = "Exit";
+        fileMenu.addComponent(exitButton);
+
     }
 }

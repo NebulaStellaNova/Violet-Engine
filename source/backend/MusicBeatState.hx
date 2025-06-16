@@ -48,14 +48,18 @@ class MusicBeatState extends FlxState {
 		super.create();
 		Conductor.init();
 
-		var scriptPath = 'assets/data/scripts/states/${Main.className}';
-		if (Paths.fileExists('$scriptPath.hx'))
-			stateScripts.addScript(new FunkinScript('$scriptPath.hx'));
-		if (Paths.fileExists('$scriptPath.lua'))
-			stateScripts.addScript(new LuaScript('$scriptPath.lua'));
+		var scriptPath = 'data/scripts/states/${Main.className}';
+		for(i in Paths.modPaths(scriptPath)) {
+			if (Paths.fileExists('$i.hx')) {
+				stateScripts.addScript(new FunkinScript('$i.hx'));
+			}
+			if (Paths.fileExists('$i.lua')) {
+				stateScripts.addScript(new LuaScript('$i.lua'));
+			}
+		}
 
-		stateScripts.call('create');
-		stateScripts.call('onCreate');
+		call('create');
+		call('onCreate');
 
 		#if FLX_DEBUG
 		//var trackerProfile = new TrackerProfile(MusicBeatState, defaultDebugVars.concat(debugVars).concat(["____________________"]), []);

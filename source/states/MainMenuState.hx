@@ -1,5 +1,6 @@
 package states;
 
+import states.editors.CharacterEditorState;
 import backend.ClassData;
 import flixel.util.FlxTimer;
 import scripting.events.SelectionEvent;
@@ -121,6 +122,11 @@ class MainMenuState extends MusicBeatState {
 		leftWatermark.text = watermarkTexts.join("\n");
 		leftWatermark.updateHitbox();
 		leftWatermark.y = FlxG.height - leftWatermark.getHeight() - 5;
+
+
+		if (FlxG.keys.justPressed.F9) {
+			switchState(CharacterEditorState.new);
+		}
 
 		call("postUpdate", [elapsed]);
 		call("onUpdatePost", [elapsed]);
