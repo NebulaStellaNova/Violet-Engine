@@ -127,11 +127,7 @@ class FreeplayState extends MusicBeatState {
 		}
 		curSelected = event.selection;
 		if (amt != 0 || forceSong) {
-			if (Paths.instExists(songDatas[curSelected].id, curDifficulty)) {
-				Conductor.loadSong(songDatas[curSelected].id, curDifficulty);
-			} else {
-				Conductor.loadSong(songDatas[curSelected].id);
-			}
+			Conductor.loadSong(songDatas[curSelected].id);
 			Conductor.play();
 		}
 	}

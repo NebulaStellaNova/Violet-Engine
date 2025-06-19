@@ -46,7 +46,10 @@ class Character extends Bopper {
 
 	public function new(id:String, type:String = "opponent") {
 		this.type = type;
-		var jsonData = Paths.parseJson(id, "data/characters");
+		var jsonData = Paths.parseJson("bf", "data/characters");
+		if (Paths.fileExists(Paths.json(id, "data/characters"))) {
+			jsonData = Paths.parseJson(id, "data/characters");	
+		}
 		if (jsonData.danceEvery == null)
 			jsonData.danceEvery = 2;
 		

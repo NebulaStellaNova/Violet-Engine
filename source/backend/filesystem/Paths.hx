@@ -143,11 +143,29 @@ class Paths {
 		return Json.parse(removeJsonComments(jsonString));
 	}
 
+	public static function parseJsonEXT(path:String, ?directory:String):Dynamic {
+		var jsonString:String = "{\n\t\"warning\": \"File Not Found\"\n}";
+		if (fileExists(path +".jsonc")) {
+			jsonString = readStringFromPath(path +".jsonc");
+		} else {
+			var string = readStringFromPath(path +".json");
+			if (string != "")
+				jsonString = string;
+		}
+		return Json.parse(removeJsonComments(jsonString));
+	}
+
 	public static function parseJsonMap(path:String, ?directory:String) {
 		return NovaUtil.objectToMap(parseJson(path, directory));
 	}
 
 	public static function getSongList():Array<String> {
-		return parseJson("data/songList");
+		var songList:Array<String> = parseJson("data/songList");
+		for (i in FileSystem.readDirectory("mods")) {
+			if (fileExists('mods/$i/data/songList.json') || fileExists('mods/$i/data/songList.jsonc')) {
+				songList = songList.concat(parseJsonEXT('mods/$i/data/songList'));
+			}
+		}
+		return songList;
 	}
 }

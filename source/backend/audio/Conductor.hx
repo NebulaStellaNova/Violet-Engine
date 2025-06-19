@@ -1,5 +1,6 @@
 package backend.audio;
 
+import openfl.media.Sound;
 import backend.filesystem.Paths;
 import flixel.FlxG;
 import flixel.sound.FlxSound;
@@ -368,9 +369,13 @@ class Conductor {
 		if (audio == null)
 			audio = FlxG.sound.list.add(new FlxSound());
 
-		audio.loadEmbedded(music);
-		FlxG.sound.loadHelper(audio, 1, soundGroup);
-		audio.persist = true;
+		if (Paths.fileExists(music)) {
+			audio.loadEmbedded(Sound.fromFile(music));
+			FlxG.sound.loadHelper(audio, 1, soundGroup);
+			audio.persist = true;
+		} else {
+			log('Could not find sound asset with path "$music"', ErrorMessage);
+		}
 
 		if (Paths.fileExists(music.replace(".ogg", ".json"))) {
 			try {
@@ -401,9 +406,15 @@ class Conductor {
 		if (audio == null)
 			audio = FlxG.sound.list.add(new FlxSound());
 
-		audio.loadEmbedded('assets/songs/$song/song/${variant != '' ? '$variant/' : ''}Inst.ogg');
-		FlxG.sound.loadHelper(audio, 1, soundGroup);
-		audio.persist = true;
+		
+		if (Paths.fileExists(Paths.modPath('songs/$song/song/${variant != '' ? '$variant/' : ''}Inst.ogg'))) {
+			audio.loadEmbedded(Sound.fromFile(Paths.modPath('songs/$song/song/${variant != '' ? '$variant/' : ''}Inst.ogg')));
+			FlxG.sound.loadHelper(audio, 1, soundGroup);
+			audio.persist = true;
+		} else {
+			log('Could not find sound asset with path "${Paths.modPath('songs/$song/song/${variant != '' ? '$variant/' : ''}Inst.ogg')}"', ErrorMessage);
+		}
+
 
 		applyBPMChanges();
 
@@ -453,9 +464,13 @@ class Conductor {
 		}
 		var vocals:FlxSound = FlxG.sound.list.add(new FlxSound());
 
-		vocals.loadEmbedded(Paths.vocal(song, suffix, variant));
-		FlxG.sound.loadHelper(vocals, 1, soundGroup);
-		vocals.persist = true;
+		if (Paths.fileExists(Paths.vocal(song, suffix, variant))) {
+			vocals.loadEmbedded(Sound.fromFile(Paths.vocal(song, suffix, variant)));
+			FlxG.sound.loadHelper(vocals, 1, soundGroup);
+			vocals.persist = true;
+		} else {
+			log('Could not find vocal track for song "$song" with suffix "$suffix"', ErrorMessage);
+		}
 
 		#if FLX_PITCH vocals.pitch = pitch; #end
 		extra.push(vocals);

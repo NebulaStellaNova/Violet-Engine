@@ -42,6 +42,7 @@ typedef ChartStrumline = {
 	var position:String;
 	var visible:Bool;
 	var characters:Array<String>;
+	var vocalsSuffix:String;
 }
 
 typedef EventData = {
@@ -470,7 +471,7 @@ class PlayState extends MusicBeatState {
 		}
 		Conductor.addVocalTrack(songID);
 		for (i=>strumline in chart.strumLines) {
-			Conductor.addVocalTrack(songID, strumline.characters[0]);
+			Conductor.addVocalTrack(songID, strumline.vocalsSuffix ?? strumline.characters[0]);
 			for (note in strumline.notes) {
 				var daNote = new Note(strumLines[i].strums.members[note.id], note.id, note.time, globalVariables.noteSkin);
 				daNote.visible = strumLines[i].visible;
