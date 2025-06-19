@@ -1,0 +1,14 @@
+{
+    "title": "Example Mod",
+    "description": "Example Mod Folder",
+    "contributors": [
+        {
+            "name": "Nebula S. Nova",
+            "color": "#FF00FF",
+            "roles": "Coder",
+            "icon": "nebula",
+            "url": "https://www.youtube.com/@ChinosModded"
+        }
+    ],
+    "mod_verson": "0.1.0"
+}
