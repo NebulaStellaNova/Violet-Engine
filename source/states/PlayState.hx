@@ -67,6 +67,7 @@ class PlayState extends MusicBeatState {
 
 	public static var camGame:FlxCamera;
 	public static var camHUD:FlxCamera;
+	public static var camOther:FlxCamera;
 
 	public static var keybinds:Array<Array<String>>;
 
@@ -125,6 +126,11 @@ class PlayState extends MusicBeatState {
 		camHUD = new FlxCamera();
 		camHUD.bgColor = 0x00000000; // No visible
 		FlxG.cameras.add(camHUD, false);
+
+
+		camOther = new FlxCamera();
+		camOther.bgColor = 0x00000000; // No visible
+		FlxG.cameras.add(camOther, false);
 
 		keybinds = cast NovaSave.get("keybinds");
 
@@ -210,7 +216,7 @@ class PlayState extends MusicBeatState {
 		if (FlxG.keys.justPressed.ENTER) {
 			FlxG.state.persistentUpdate = false;
 			Conductor.pause();
-			openSubState(new states.substates.PauseSubState());
+			openSubState(new states.substates.PauseSubState(camOther));
 		}
 
 		notes.sort((a:Note, b:Note) -> FlxSort.byValues(FlxSort.ASCENDING, a.time, b.time));

@@ -1,5 +1,8 @@
 package states.substates;
 
+import flixel.FlxSprite;
+import flixel.FlxCamera;
+import flixel.util.FlxColor;
 import flixel.math.FlxMath;
 import backend.MusicBeatState;
 import backend.filesystem.Paths;
@@ -11,17 +14,32 @@ import flixel.FlxG;
 import flixel.FlxSubState;
 
 class PauseSubState extends FlxSubState {
-	var items:Array<FlxText> = [];
-	var options:Array<String> = [
+	public var bg:FlxSprite;
+	public var items:Array<FlxText> = [];
+	public var options:Array<String> = [
 		"Resume",
-		"Restart",
+		//"Restart",
 		"Exit"
 	];
 
-	var curSelected:Int = 0;
+	public var curSelected:Int = 0;
+
+	public var cam:FlxCamera;
+
+	public function new(cam:FlxCamera) {
+		this.cam = cam;
+		super();
+	}
 
 	override function create() {
 		super.create();
+
+		bg = new NovaSprite().makeGraphic(FlxG.width, FlxG.height, FlxColor.BLACK);
+		bg.screenCenter();
+		bg.alpha = 0.5;
+		bg.scrollFactor.set();
+		bg.cameras = [this.cam];
+		add(bg);
 
 		for (i=>txt in options) {
 			var text = new FlxText(0, 50 * i, 0, txt);
@@ -30,6 +48,7 @@ class PauseSubState extends FlxSubState {
 			text.screenCenter();
 			text.y += 50 * (i-((options.length-1)/2));
 			text.ID = i;
+			text.cameras = [this.cam];
 			items.push(text);
 			add(text);
 		}

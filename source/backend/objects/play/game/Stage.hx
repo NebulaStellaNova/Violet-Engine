@@ -59,7 +59,7 @@ class Stage extends FlxTypedSpriteGroup<StageProp> {
         super();
 
         if (!Paths.fileExists(Paths.json('data/stages/$id'))) {
-            log('Stage Not Found With ID "$id"');
+            log('Stage Not Found With ID "$id"', ErrorMessage);
             this.stageData = Paths.parseJson('data/stages/mainStage');
             return;
         }

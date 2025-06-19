@@ -16,7 +16,7 @@ class NovaSprite extends FlxSprite {
 
 	var offsets:Map<String, Array<Float>> = [];
 
-	public function new(x = 0.0, y = 0.0, ?path:String) {
+	public function new(x:Float = 0.0, y:Float = 0.0, ?path:String) {
 		super(x, y);
 		if (path != null)
 			this.loadSprite(path);
