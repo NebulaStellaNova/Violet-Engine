@@ -15,6 +15,7 @@
     },
     {
       "name": "shoot1",
+      "alias": "singLEFT",
       "prefix": "Pico shoot 1",
       "offsets": [0, 0]
     },
@@ -27,6 +28,7 @@
     },
     {
       "name": "shoot2",
+      "alias": "singDOWN",
       "prefix": "Pico shoot 2",
       "offsets": [-1, -128]
     },
@@ -39,6 +41,7 @@
     },
     {
       "name": "shoot3",
+      "alias": "singUP",
       "prefix": "Pico shoot 3",
       "offsets": [412, -64]
     },
@@ -51,6 +54,7 @@
     },
     {
       "name": "shoot4",
+      "alias": "singRIGHT",
       "prefix": "Pico shoot 4",
       "offsets": [439, -19]
     },

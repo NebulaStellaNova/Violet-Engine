@@ -14,6 +14,7 @@ typedef CharacterIcon = {
 
 typedef CharacterAnimation = {
 	var name:String;
+	var alias:String;
 	var prefix:String;
 	var frameIndices:Array<Int>;
 	var assetPath:String;
@@ -81,8 +82,14 @@ class Character extends Bopper {
 			switch (getAnimationType(anim)) {
 				case "indices":
 					this.addAnimIndices(anim.name, anim.prefix, anim.frameIndices, animOffsets, anim.looped ?? false, anim.frameRate ?? 24);
+					if (anim.alias != null) {
+						this.addAnimIndices(anim.alias, anim.prefix, anim.frameIndices, animOffsets, anim.looped ?? false, anim.frameRate ?? 24);
+					}
 				case "prefix":
 					this.addAnim(anim.name, anim.prefix, animOffsets, anim.looped ?? false, anim.frameRate ?? 24);
+					if (anim.alias != null) {
+						this.addAnim(anim.alias, anim.prefix, animOffsets, anim.looped ?? false, anim.frameRate ?? 24);
+					}
 				default:
 					log("How did this even run?", ErrorMessage);
 			}
