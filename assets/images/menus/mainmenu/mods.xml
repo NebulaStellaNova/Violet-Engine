@@ -1,0 +1,20 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TextureAtlas imagePath="mods.png">
+	<!-- Created with Adobe Animate version 24.0.9.74 -->
+	<!-- http://www.adobe.com/products/animate.html -->
+	<SubTexture name="mods basic0000" x="359" y="160" width="296" height="125"/>
+	<SubTexture name="mods basic0001" x="359" y="160" width="296" height="125"/>
+	<SubTexture name="mods basic0002" x="359" y="160" width="296" height="125"/>
+	<SubTexture name="mods basic0003" x="359" y="160" width="296" height="125"/>
+	<SubTexture name="mods basic0004" x="359" y="160" width="296" height="125"/>
+	<SubTexture name="mods basic0005" x="359" y="160" width="296" height="125"/>
+	<SubTexture name="mods basic0006" x="660" y="160" width="296" height="125"/>
+	<SubTexture name="mods basic0007" x="660" y="160" width="296" height="125"/>
+	<SubTexture name="mods basic0008" x="660" y="160" width="296" height="125"/>
+	<SubTexture name="mods basic0009" x="660" y="160" width="296" height="125"/>
+	<SubTexture name="mods basic0010" x="660" y="160" width="296" height="125"/>
+	<SubTexture name="mods basic0011" x="660" y="160" width="296" height="125"/>
+	<SubTexture name="mods white0000" x="5" y="160" width="349" height="147" frameX="-3" frameY="-1" frameWidth="356" frameHeight="150"/>
+	<SubTexture name="mods white0001" x="366" y="5" width="355" height="150" frameX="0" frameY="0" frameWidth="356" frameHeight="150"/>
+	<SubTexture name="mods white0002" x="5" y="5" width="356" height="150"/>
+</TextureAtlas>

@@ -23,6 +23,17 @@
 			"color": "#ff4242"
 		},
 		{
+			"id": "mods",
+			"item": "mods",
+			"scale": 1,
+			"animations": {
+				"idle": "basic",
+				"selected": "white"
+			},
+			"state": "source:ModMenuState",
+			"color": "#ffff00"
+		},
+		{
 			"id": "credits",
 			"item": "credits",
 			"animations": {

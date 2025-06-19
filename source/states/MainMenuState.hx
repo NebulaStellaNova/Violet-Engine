@@ -24,6 +24,7 @@ typedef MenuItem = {
 	var id:String;
 	var item:String;
 	var state:String;
+	var scale:Float;
 	var color:JsonColor;
 	var animations:MenuAnimations;
 }
@@ -62,11 +63,15 @@ class MainMenuState extends MusicBeatState {
 
 		menuData = Json.parse(Paths.readStringFromPath("assets/data/config/menuData.json"));
 
+		var mult:Float = 1/(menuData.items.length-1);
 		bg = new NovaSprite(Paths.image(menuData.background, menuData.directory));
 		bg.setGraphicSize(FlxG.width, FlxG.height);
+		bg.scale.x += mult;
+		bg.scale.y += mult;
 		bg.updateHitbox();
 		bg.screenCenter();
 		bg.color = menuData.items[curSelected].color;
+		bg.scrollFactor.set(0, mult);
 		add(bg);
 
 		for (i=>daItem in menuData.items) {
@@ -74,7 +79,10 @@ class MainMenuState extends MusicBeatState {
 			item.addAnim("selected", daItem.item + " " + daItem.animations.selected, true);
 			item.addAnim("static", daItem.item + " " + daItem.animations.idle, true);
 			item.playAnim("static");
+			item.scale.set(daItem.scale ?? 1, daItem.scale ?? 1);
 			item.updateHitbox();
+			item.centerOrigin();
+			item.centerOffsets();
 			item.screenCenter(X);
 			menuItems.push(item);
 			add(item);
@@ -82,6 +90,7 @@ class MainMenuState extends MusicBeatState {
 
 		leftWatermark = new NovaText(10, 0, "Nova Engine v0.1", 20);
 		leftWatermark.y = FlxG.height - leftWatermark.getHeight() - 5;
+		leftWatermark.scrollFactor.set();
 		//leftWatermark.setFormat(Paths.font("Tardling v1.1.ttf"), 20);
 		add(leftWatermark);
 
@@ -92,6 +101,7 @@ class MainMenuState extends MusicBeatState {
 		FlxG.game.debugger.console.registerFunction('setSelectionColor', setSelectionColor);
 		FlxG.game.debugger.console.registerFunction('changeSelection', changeSelection);
 		#end
+		FlxG.camera.followLerp = 0.1;
 	}
 
 	function uiCheck() {
@@ -144,6 +154,9 @@ class MainMenuState extends MusicBeatState {
 		}
 		curSelected = event.selection;
 		for (i => item in menuItems) {
+			if (i == curSelected) {
+				FlxG.camera.target = item;
+			}
 			item.playAnim(i == curSelected ? "selected" : "static");
 			item.updateHitbox();
 			item.screenCenter(X);
