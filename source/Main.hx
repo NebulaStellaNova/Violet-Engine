@@ -51,6 +51,8 @@ class Main extends Sprite
         backend.Threader.runInThread(commandPrompt.start());
 		commandPrompt.active = true;
 		initializeToolkit();
+
+		FlxG.stage.window.onClose.add(WindowsAPI.closeConsole);
 	}
 
 	inline function initializeToolkit() {

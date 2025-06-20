@@ -93,7 +93,7 @@ class MusicBeatState extends FlxState {
 		}
 
 		if (FlxG.keys.justPressed.F3){
-			WindowsAPI.closeConsole();
+			WindowsAPI.hideConsole();
 		}
 
 		call("update", [elapsed]);

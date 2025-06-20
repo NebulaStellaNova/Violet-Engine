@@ -29,6 +29,7 @@ using StringTools;
 #include <wingdi.h>
 #include <shellapi.h>
 #include <uxtheme.h>
+#include <cstdlib>
 ')
 @:dox(hide)
 class WindowsAPI {
@@ -98,20 +99,27 @@ class WindowsAPI {
 	@:functionCode('
 		ShowWindow(GetConsoleWindow(), SW_HIDE);
 	')
-	public static function closeConsole() {
+	public static function hideConsole() {
 
 	}
 
 	public static function initConsole() {
 		allocConsole();
 		clearScreen();
-		closeConsole();
+		hideConsole();
 	}
 
 	@:functionCode('
 		ShowWindow(GetConsoleWindow(), SW_SHOW);
 	')
 	public static function showConsole() {
+
+	}
+
+	@:functionCode('
+		FreeConsole();
+	')
+	public static function closeConsole() {
 
 	}
 }
