@@ -1,0 +1,16 @@
+{   
+    "title": "Example Mod", // My engine supports .json and .jsonc, when it checks for json it also checks for jsonc
+    "description": "Example Mod Folder",
+    "tag": "example", // qol, weeks, songs, example, characters, enhancements
+    "contributors": [
+        {
+            "name": "Nebula S. Nova",
+            "color": "#FF00FF",
+            "roles": "Coder",
+            "icon": "nebula",
+            "url": "https://www.youtube.com/@ChinosModded"
+        }
+    ],
+    "mod_enabled": false,
+    "mod_version": "0.1.0" // Unlike V-Slice, this can be whatever you want
+}

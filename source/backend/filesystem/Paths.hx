@@ -1,5 +1,6 @@
 package backend.filesystem;
 
+import backend.modding.ModMeta;
 import sys.io.File;
 import openfl.utils.AssetType;
 import utils.NovaUtil;
@@ -14,10 +15,22 @@ class Paths {
 
 	public static var resourceFolder = "assets";
 
+	public static function checkModEnabled(modID:String):Bool {
+		if (fileExists('mods/$modID/novamod_meta.json') || fileExists('mods/$modID/novamod_meta.jsonc')) {
+			var metaData:ModMeta = parseJsonEXT('mods/$modID/novamod_meta');
+			return metaData.mod_enabled ?? true;
+		} else if (folderExists('mods/$modID')) {
+			log('Invalid or missing "novamod_meta.json(c)" for mod "$modID"', ErrorMessage);
+		}
+		return false;
+	}
+
 	public static function modPath(path:String, isFolder:Bool = false) {
 		for (i in FileSystem.readDirectory("mods")) {
-			if (isFolder ? folderExists('mods/$i/$path') : fileExists('mods/$i/$path')) {
-				return 'mods/$i/$path';
+			if (checkModEnabled(i)) {
+				if (isFolder ? folderExists('mods/$i/$path') : fileExists('mods/$i/$path')) {
+					return 'mods/$i/$path';
+				}
 			}
 		}
 		return '$resourceFolder/$path';
@@ -26,8 +39,10 @@ class Paths {
 	public static function modPaths(path:String, isFolder:Bool = false) {
 		var pathArray:Array<String> = [];
 		for (i in FileSystem.readDirectory("mods")) {
-			if (isFolder ? folderExists('mods/$i/$path') : fileExists('mods/$i/$path')) {
-				pathArray.push('mods/$i/$path');
+			if (checkModEnabled(i)) {
+				if (isFolder ? folderExists('mods/$i/$path') : fileExists('mods/$i/$path')) {
+					pathArray.push('mods/$i/$path');
+				}
 			}
 		}
 		pathArray.push('$resourceFolder/$path');
@@ -116,9 +131,14 @@ class Paths {
 		var string = "";
 		var isComment = false;
 		var i = 0;
+		var isString = false;
 		for (char in split) {
-			if (char == "/" && split[i+1] == "/") {
-				isComment = true;
+			if (char == '"') {
+				isString = !isString;
+			} else if (!isString) {
+				if (char == "/" && split[i+1] == "/") {
+					isComment = true;
+				}
 			}
 			if (!isComment) {
 				string += char;
@@ -162,8 +182,10 @@ class Paths {
 	public static function getSongList():Array<String> {
 		var songList:Array<String> = parseJson("data/songList");
 		for (i in FileSystem.readDirectory("mods")) {
-			if (fileExists('mods/$i/data/songList.json') || fileExists('mods/$i/data/songList.jsonc')) {
-				songList = songList.concat(parseJsonEXT('mods/$i/data/songList'));
+			if (checkModEnabled(i)) {
+				if (fileExists('mods/$i/data/songList.json') || fileExists('mods/$i/data/songList.jsonc')) {
+					songList = songList.concat(parseJsonEXT('mods/$i/data/songList'));
+				}
 			}
 		}
 		return songList;
