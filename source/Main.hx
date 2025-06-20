@@ -52,7 +52,10 @@ class Main extends Sprite
 		commandPrompt.active = true;
 		initializeToolkit();
 
-		FlxG.stage.window.onClose.add(WindowsAPI.closeConsole);
+		FlxG.stage.window.onClose.add(()->{
+			log("Console Closed.", SystemMessage);
+			WindowsAPI.closeConsole();
+		});
 	}
 
 	inline function initializeToolkit() {

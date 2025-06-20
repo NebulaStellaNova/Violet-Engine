@@ -85,6 +85,7 @@ class WindowsAPI {
 		freopen("CONOUT$", "w", stderr);
 	')
 	public static function allocConsole() {
+		log("Console Allocated/Attached.", SystemMessage);
 	} 
 
 	@:functionCode('
@@ -93,33 +94,32 @@ class WindowsAPI {
 		std::cout<< "" <<std::flush;
 	')
 	public static function clearScreen() {
-
+		log("Console Cleared.", SystemMessage);
 	}
 
 	@:functionCode('
 		ShowWindow(GetConsoleWindow(), SW_HIDE);
 	')
 	public static function hideConsole() {
-
+		log("Console Hidden.", SystemMessage);
 	}
 
 	public static function initConsole() {
 		allocConsole();
 		clearScreen();
 		hideConsole();
+		log("Console Initiated.", SystemMessage);
 	}
 
 	@:functionCode('
 		ShowWindow(GetConsoleWindow(), SW_SHOW);
 	')
 	public static function showConsole() {
-
+		log("Console Shown.", SystemMessage);
 	}
 
 	@:functionCode('
 		FreeConsole();
 	')
-	public static function closeConsole() {
-
-	}
+	public static function closeConsole() {}
 }
