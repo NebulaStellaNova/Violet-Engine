@@ -57,12 +57,12 @@ class Paths {
 		return modPath('sounds/${directory != null ? Path.addTrailingSlash(directory) : ""}$path.ogg');
 	}
 
-	public static function image(path:String, ?directory:String):String {
-		return modPath('images/${directory != null ? Path.addTrailingSlash(directory) : ""}$path.png');
+	public static function image(path:String, ?directory:String, ext:String = "png"):String {
+		return modPath('images/${directory != null ? Path.addTrailingSlash(directory) : ""}$path.$ext');
 	}
 
-	public static function font(path:String, ?directory:String):String {
-		return modPath('fonts/${directory != null ? Path.addTrailingSlash(directory) : ""}$path');
+	public static function font(path:String, ?directory:String, ext:String = ""):String {
+		return modPath('fonts/${directory != null ? Path.addTrailingSlash(directory) : ""}${path != "" ? '.$ext' : ""}');
 	}
 
 	public static function xml(path:String, ?directory:String):String {
