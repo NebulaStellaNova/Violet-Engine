@@ -28,6 +28,7 @@ typedef CharacterAnimation = {
 // V-Slice Characters.
 typedef CharacterData = {
 	var name:String;
+	var offsets:Array<Int>;
 	var renderType:String;
 	var assetPath:String;
 	var flipX:Bool;
@@ -54,6 +55,10 @@ class Character extends Bopper {
 		if (jsonData.danceEvery == null)
 			jsonData.danceEvery = 2;
 		
+		/* if (jsonData.offsets != null) {
+			this.offset.set(jsonData.offsets[0] ?? 0, jsonData.offsets[1] ?? 0);
+		} */
+
 		characterData = jsonData;
 		var imagePath = Paths.image(characterData.assetPath);
 		super(0, 0, Paths.image(characterData.assetPath));

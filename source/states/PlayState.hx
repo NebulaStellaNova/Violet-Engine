@@ -170,20 +170,20 @@ class PlayState extends MusicBeatState {
 				switch (character.type) {
 					case "opponent":
 						//character.updateHitbox();
-						character.x = stage.stageData.characters.dad.position[0];
-						character.y = stage.stageData.characters.dad.position[1] + character.frameHeight * character.scale.y * 2 - character.offset.y * 2;
+						character.x = stage.stageData.characters.dad.position[0] - (character.width / 2);
+						character.y = stage.stageData.characters.dad.position[1];
 						character.zIndex = stage.stageData.characters.dad.zIndex;
 						//character.offset.y = character.frameHeight * character.scale.y - character.offset.y;
 						case "spectator":
 						//character.updateHitbox();
-						character.x = stage.stageData.characters.gf.position[0];
-						character.y = stage.stageData.characters.gf.position[1] + character.frameHeight * character.scale.y * 2 - character.offset.y * 2;
+						character.x = stage.stageData.characters.gf.position[0] - (character.width / 2);
+						character.y = stage.stageData.characters.gf.position[1];
 						character.zIndex = stage.stageData.characters.gf.zIndex;
 						//character.offset.y = character.frameHeight * character.scale.y - character.offset.y;
 						case "player":
 						//character.updateHitbox();
-						character.x = stage.stageData.characters.bf.position[0];
-						character.y = stage.stageData.characters.bf.position[1] + character.frameHeight * character.scale.y * 2 - character.offset.y * 2;
+						character.x = stage.stageData.characters.bf.position[0] - (character.width / 2);
+						character.y = stage.stageData.characters.bf.position[1];
 						character.zIndex = stage.stageData.characters.bf.zIndex;
 						//character.offset.y = character.frameHeight * character.scale.y - character.offset.y;
 				}
