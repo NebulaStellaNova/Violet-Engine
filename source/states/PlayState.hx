@@ -172,18 +172,41 @@ class PlayState extends MusicBeatState {
 						//character.updateHitbox();
 						character.x = stage.stageData.characters.dad.position[0];
 						character.y = stage.stageData.characters.dad.position[1] + character.frameHeight * character.scale.y * 2 - character.offset.y * 2;
+						character.zIndex = stage.stageData.characters.dad.zIndex;
 						//character.offset.y = character.frameHeight * character.scale.y - character.offset.y;
 						case "spectator":
 						//character.updateHitbox();
 						character.x = stage.stageData.characters.gf.position[0];
 						character.y = stage.stageData.characters.gf.position[1] + character.frameHeight * character.scale.y * 2 - character.offset.y * 2;
+						character.zIndex = stage.stageData.characters.gf.zIndex;
 						//character.offset.y = character.frameHeight * character.scale.y - character.offset.y;
 						case "player":
 						//character.updateHitbox();
 						character.x = stage.stageData.characters.bf.position[0];
 						character.y = stage.stageData.characters.bf.position[1] + character.frameHeight * character.scale.y * 2 - character.offset.y * 2;
+						character.zIndex = stage.stageData.characters.bf.zIndex;
 						//character.offset.y = character.frameHeight * character.scale.y - character.offset.y;
 				}
+			}
+		}
+		addCharacters();
+		refresh();
+	}
+
+	public function addCharacters() {
+		for (character in characters) {
+			if (character.type == SPECTATOR) {
+				add(character);
+			}
+		}
+		for (character in characters) {
+			if (character.type == PLAYER) {
+				add(character);
+			}
+		}
+		for (character in characters) {
+			if (character.type == OPPONENT) {
+				add(character);
 			}
 		}
 	}
@@ -472,7 +495,7 @@ class PlayState extends MusicBeatState {
 				var character = new Character(id, positions.get(strumline.position).id);
 				strumLine.addCharacter(character);
 				characters.push(character);
-				add(character);
+				//add(character);
 			}
 		}
 		Conductor.addVocalTrack(songID);

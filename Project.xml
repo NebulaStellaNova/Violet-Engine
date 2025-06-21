@@ -34,6 +34,9 @@
 	<assets path="assets"/>
 	<assets path='mods' rename='mods' embed='false'/>
 
+	<!-- ________________________________ Macros ________________________________ -->
+	<haxeflag name="--macro" value="addMetadata('@:build(utils.macro.FlxMacro.buildFlxBasic())', 'flixel.FlxBasic')" />
+
 	<!-- _______________________________ Libraries ______________________________ -->
 
 	<haxelib name="openfl" />

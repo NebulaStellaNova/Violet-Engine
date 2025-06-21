@@ -1,5 +1,7 @@
 package backend;
 
+import flixel.util.FlxSort;
+import utils.SortUtil;
 import flixel.tweens.FlxTween;
 import flixel.util.FlxColor;
 import flixel.text.FlxText;
@@ -141,6 +143,10 @@ class MusicBeatState extends FlxState {
 		}
 		remove(debugTexts);
 		insert(FlxG.state.members.length, debugTexts);
+	}
+
+	public function refresh() {
+		sort(SortUtil.byZIndex, FlxSort.ASCENDING);
 	}
 
 	public function postCreate() {
