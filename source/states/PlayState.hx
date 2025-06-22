@@ -1,5 +1,6 @@
 package states;
 
+import flixel.group.FlxGroup.FlxTypedGroup;
 import backend.scripts.LuaScript;
 import backend.scripts.FunkinScript;
 import backend.scripts.ScriptPack;
@@ -84,7 +85,7 @@ class PlayState extends MusicBeatState {
 
 	public var hitWindow = 200; // MS
 
-	public var strumLines:Array<StrumLine> = [];
+	public var strumLines:FlxTypedGroup<StrumLine> = new FlxTypedGroup();
 	public var characters:Array<Character> = []; // For easy access
 	public var events:Array<EventNote> = [];
 	public var notes:Array<Note> = [];
@@ -168,6 +169,7 @@ class PlayState extends MusicBeatState {
 			}
 		}
 
+		stateScripts.parent = this;
 		for (i in scriptsToAdd) {
 			if (i.endsWith(".hx")) {
 				this.stateScripts.addScript(new FunkinScript(i));
@@ -203,8 +205,7 @@ class PlayState extends MusicBeatState {
 		Conductor.loadSong(songID);
 		loadChart();
 
-		Conductor._onComplete = endSong;
-		Conductor.play();
+		startSong();
 
 		instance = this;
 
@@ -247,6 +248,8 @@ class PlayState extends MusicBeatState {
 			}
 		}
 		addCharacters();
+		call("postCreate");
+		call("onCreatePost");
 		refresh();
 	}
 
@@ -293,6 +296,13 @@ class PlayState extends MusicBeatState {
 		}
 		// trace(NovaSave.get(songID));
 		switchState(FreeplayState.new);
+	}
+
+	public function startSong() {
+		call("onSongStart");
+		call("onStartSong"); // Screw needing to type it a certain way
+		Conductor._onComplete = endSong;
+		Conductor.play();
 	}
 
 	override public function update(elapsed:Float)
@@ -410,10 +420,10 @@ class PlayState extends MusicBeatState {
 
 		var camMoveEvent = (theEvent:SongEvent)-> {
 			camFollowPoint = new FlxPoint(0, 0);
-			camFollowPoint.x += strumLines[theEvent.parameters[0]].parentCharacters[0].cameraCenter.x;
-			camFollowPoint.y += strumLines[theEvent.parameters[0]].parentCharacters[0].cameraCenter.y;
-			camFollowPoint.x += strumLines[theEvent.parameters[0]].parentCharacters[0].x;
-			camFollowPoint.y += strumLines[theEvent.parameters[0]].parentCharacters[0].y;
+			camFollowPoint.x += strumLines.members[theEvent.parameters[0]].parentCharacters[0].cameraCenter.x;
+			camFollowPoint.y += strumLines.members[theEvent.parameters[0]].parentCharacters[0].cameraCenter.y;
+			camFollowPoint.x += strumLines.members[theEvent.parameters[0]].parentCharacters[0].x;
+			camFollowPoint.y += strumLines.members[theEvent.parameters[0]].parentCharacters[0].y;
 		}
 
 		switch (theEvent.type) {
@@ -426,7 +436,7 @@ class PlayState extends MusicBeatState {
 				camMoveEvent(theEvent);
 
 			case "Play Animation":
-				strumLines[theEvent.parameters[0]].characterPlayAnim(theEvent.parameters[1], true);
+				strumLines.members[theEvent.parameters[0]].characterPlayAnim(theEvent.parameters[1], true);
 
 		}
 	}
@@ -434,6 +444,7 @@ class PlayState extends MusicBeatState {
 	public function noteHit(note:Note, strum:Strum, characterType:UserType, ?rating:String) {
 		var theEvent:NoteHitEvent = new NoteHitEvent(note, note.type, strum, note.direction, characterType);
 		theEvent = runEvent("noteHit", theEvent);
+		strum.parent.onHit.dispatch(theEvent);
 		switch (characterType) {
 			case PLAYER:
 				theEvent = runEvent("playerNoteHit", theEvent);
@@ -558,7 +569,7 @@ class PlayState extends MusicBeatState {
 			strumLine.visible = strumline.visible ?? true;
 			strumLine.cameras = [camHUD];
 			add(strumLine);
-			strumLines.push(strumLine);
+			strumLines.add(strumLine);
 
 			for (id in strumline.characters) {
 				var character = new Character(id, positions.get(strumline.position).id);
@@ -571,20 +582,20 @@ class PlayState extends MusicBeatState {
 		for (i=>strumline in chart.strumLines) {
 			Conductor.addVocalTrack(songID, strumline.vocalsSuffix ?? strumline.characters[0]);
 			for (note in strumline.notes) {
-				var daNote = new Note(strumLines[i].strums.members[note.id], note.id, note.time, globalVariables.noteSkin);
-				daNote.visible = strumLines[i].visible;
+				var daNote = new Note(strumLines.members[i].strums.members[note.id], note.id, note.time, globalVariables.noteSkin);
+				daNote.visible = strumLines.members[i].visible;
 				daNote.typeID = note.type;
 				// trace(chart.noteTypes[note.type] + ", " + note.type + ", " + chart.noteTypes);
 				if (chart.noteTypes != null)
 					daNote.type = chart.noteTypes[note.type];
 				notes.push(daNote);
-				strumLines[i].strums.members[note.id].add(daNote);
+				strumLines.members[i].strums.members[note.id].add(daNote);
 
 				var roundedLength:Int = Math.floor(note.sLen / Conductor.stepTime); // not compatible with bpm changes yet
 				if (roundedLength > 0) {
 					for (susNote in 0...roundedLength) {
 						var sustain:SustainNote = new SustainNote(daNote, daNote.time + (Conductor.stepTime * susNote), susNote == (roundedLength - 1));
-						strumLines[i].strums.members[sustain.direction].add(sustain);
+						strumLines.members[i].strums.members[sustain.direction].add(sustain);
 						daNote.tail.push(sustain);
 						sustains.push(sustain);
 					}

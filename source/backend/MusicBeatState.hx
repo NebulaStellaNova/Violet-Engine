@@ -1,5 +1,6 @@
 package backend;
 
+import sys.thread.Condition;
 import flixel.util.FlxSort;
 import utils.SortUtil;
 import flixel.tweens.FlxTween;
@@ -90,6 +91,13 @@ class MusicBeatState extends FlxState {
 	override public function update(elapsed:Float)
 	{
 		super.update(elapsed);
+
+		curBeat = Conductor.curBeat;
+		curStep = Conductor.curStep;
+		curMeasure = Conductor.curMeasure;
+		beat = Conductor.curBeat;
+		step = Conductor.curBeat;
+		measure = Conductor.curBeat;
 
 		FlxG.autoPause = false;
 

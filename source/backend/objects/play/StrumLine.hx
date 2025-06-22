@@ -4,6 +4,8 @@ import flixel.group.FlxGroup;
 import backend.objects.play.game.Character;
 import flixel.FlxG;
 import flixel.group.FlxSpriteGroup;
+import flixel.util.FlxSignal.FlxTypedSignal;
+import scripting.events.NoteHitEvent;
 
 enum abstract UserType(String) from String to String {
 	var OPPONENT = 'opponent';
@@ -12,6 +14,18 @@ enum abstract UserType(String) from String to String {
 }
 
 class StrumLine extends FlxGroup {
+
+	// ============= CNE SUPPORT ============= \\
+	
+	/**
+	 * Signal that triggers whenever a note is hit. Similar to onPlayerHit and onDadHit, except strumline specific.
+	 * To add a listener, do
+	 * `strumLine.onHit.add(function(e:NoteHitEvent) {});`
+	 */
+	public var onHit:FlxTypedSignal<NoteHitEvent->Void> = new FlxTypedSignal<NoteHitEvent->Void>();
+	
+	// ======================================= \\
+	
 	public var type:UserType;
 	public var parentCharacters:Array<Character> = [];
 
