@@ -26,6 +26,13 @@ class ScriptPack {
 		scripts.push(script);
 	}
 
+	public function set(what:String, to:Dynamic) {
+		for (script in scripts) {
+			if (script == null) continue;
+			script.set(what, to);
+		}
+	}
+
 	public function call<T>(funcName:String, ?args:Array<Dynamic>, ?def:T):T {	
 		var returner:T = null;
 		for (script in scripts) {

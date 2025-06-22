@@ -1,5 +1,8 @@
 package states;
 
+import backend.scripts.LuaScript;
+import backend.scripts.FunkinScript;
+import backend.scripts.ScriptPack;
 import flixel.tweens.FlxTween;
 import utils.NovaUtil;
 import backend.objects.play.game.Stage;
@@ -23,6 +26,7 @@ import backend.objects.play.*;
 import backend.MusicBeatState;
 import flixel.util.FlxSort;
 using StringTools;
+using utils.ArrayUtil;
 
 typedef SongSaveData = {
 	var score:Int;
@@ -65,16 +69,17 @@ typedef ChartData = {
 class PlayState extends MusicBeatState {
 	public var botplay:Bool = false;
 
+	
 	public static var camGame:FlxCamera;
 	public static var camHUD:FlxCamera;
 	public static var camOther:FlxCamera;
-
+	
 	public static var keybinds:Array<Array<String>>;
-
+	
 	public static var songID:String;
 	public static var varient:String;
 	public static var difficulty:String;
-
+	
 	public static var instance:PlayState;
 
 	public var hitWindow = 200; // MS
@@ -94,6 +99,10 @@ class PlayState extends MusicBeatState {
 	private var accuracies:Array<Float> = [];
 
 	private var camFollowPoint:FlxPoint = new FlxPoint();
+
+	public var dad:Character;
+	public var boyfriend:Character;
+	public var girlfriend:Character;
 
 	function formatScoreTxt(string:String, localAccuracy:Dynamic, localMisses:Float, localScore:Float, localRating:String) {
 		string = string.replace("$accuracy", '$localAccuracy');
@@ -119,6 +128,35 @@ class PlayState extends MusicBeatState {
 	override public function create()
 	{
 		super.create();
+
+		trace(songID);
+		var scriptsToAdd = [];
+		var foldersToCheck = [
+			'data/scripts/songs', 
+			'data/scripts/songs/$songID',
+			'songs',
+			'songs/$songID/scripts'
+		];
+		for (modID in Paths.getModList()) {
+			for (folder in foldersToCheck) {
+				if (Paths.folderExists('mods/$modID/$folder')) {
+					for (script in Paths.readFolder('mods/$modID/$folder')) {
+						if (script.endsWith(".hx") || script.endsWith(".lua")) {
+							scriptsToAdd.push('mods/$modID/$folder/$script');
+						}
+					}
+				}
+			}
+		}
+
+		for (i in scriptsToAdd) {
+			if (i.endsWith(".hx")) {
+				this.stateScripts.addScript(new FunkinScript(i));
+			} else if (i.endsWith(".lua")) {
+				this.stateScripts.addScript(new LuaScript(i));
+			}
+		}
+		trace('Scripts To Add: $scriptsToAdd');
 
 		camGame = new FlxCamera();
 		FlxG.cameras.add(camGame, true);
@@ -196,16 +234,28 @@ class PlayState extends MusicBeatState {
 	public function addCharacters() {
 		for (character in characters) {
 			if (character.type == SPECTATOR) {
+				if (girlfriend == null) {
+					girlfriend = character;
+					set('girlfriend', character);
+				}
 				add(character);
 			}
 		}
 		for (character in characters) {
 			if (character.type == PLAYER) {
+				if (boyfriend == null) {
+					boyfriend = character;
+					set('boyfriend', character);
+				}
 				add(character);
 			}
 		}
 		for (character in characters) {
 			if (character.type == OPPONENT) {
+				if (dad == null) {
+					dad = character;
+					set('dad', character);
+				}
 				add(character);
 			}
 		}

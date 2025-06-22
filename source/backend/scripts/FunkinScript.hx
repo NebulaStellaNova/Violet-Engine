@@ -18,6 +18,7 @@ import backend.objects.NovaSprite;
 
 using StringTools;
 using utils.ArrayUtil;
+using utils.MathUtil;
 /**
  * @author @Zyflx (mostly)
  * @modified @NebulaStellaNova
@@ -93,6 +94,8 @@ class FunkinScript extends Script {
 
 		set('trace', (value:Dynamic) -> log(value, internalScript.interp.posInfos()));
 		set('log', (value:Dynamic, type:backend.console.Logs.LogType = LogMessage) -> log(value, type, internalScript.interp.posInfos()));
+
+        set('lerp', MathUtil.lerp);
 	}
 
 	override public function call<T>(funcName:String, ?args:Array<Dynamic>, ?def:T):T {

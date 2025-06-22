@@ -32,6 +32,14 @@ typedef GlobalVariables = {
 class MusicBeatState extends FlxState {
     public var debugTexts:FlxTypedGroup<FlxText> = new FlxTypedGroup();
 
+	public var curBeat:Int = 0;
+	public var curStep:Int = 0;
+	public var curMeasure:Int = 0;
+
+	public var beat:Int = 0;
+	public var step:Int = 0;
+	public var measure:Int = 0;
+
 	var previousStep:Int = -1;
 	var previousBeat:Int = -1;
 	var previousMeasure:Int = -1;
@@ -163,9 +171,9 @@ class MusicBeatState extends FlxState {
 		return stateScripts.call(funcName, args, def);
 	}
 
-	public function set(what, value) {
+	public function set(what:String, value:Dynamic) {
 		if (stateScripts == null) return;
-		//stateScripts.set(what, value);
+		stateScripts.set(what, value);
 		//stateLuaScript.set(what, value);
 	}
 
@@ -184,14 +192,17 @@ class MusicBeatState extends FlxState {
 			FlxG.switchState(targetClass);
 	}
 
-	public function stepHit(curStep:Int) {
-		//
+	public function stepHit(theStep:Int) {
+		curStep = theStep;
+		step = theStep;
 	}
-	public function beatHit(curBeat:Int) {
-		//
+	public function beatHit(theBeat:Int) {
+		curBeat = theBeat;
+		beat = theBeat;
 	}
-	public function measureHit(curMeasure:Int) {
-		//
+	public function measureHit(theMeasure:Int) {
+		curMeasure = theMeasure;
+		measure = theMeasure;
 	}
 
 	public function debugPrint(text:String, color:String = "WHITE") {
