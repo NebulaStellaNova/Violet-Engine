@@ -1,5 +1,12 @@
 package backend;
 
+import backend.filesystem.Paths;
+import apis.WindowsAPI;
+import flixel.system.debug.console.ConsoleUtil;
+import lime.app.Application;
+import haxe.io.Path;
+import sys.io.File;
+import sys.FileSystem;
 import flixel.FlxG;
 import haxe.CallStack;
 import openfl.Lib;
@@ -7,46 +14,88 @@ import openfl.events.UncaughtErrorEvent;
 
 using StringTools;
 class CrashHandler {
-	@:access(FlxG.stage.__uncaughtErrorEvents)
+
+	public static var SEPERATOR = "=====================";
+	public static var NEWLINE = "\n";
+
 	public static function init() {
 		//Lib.current.loaderInfo.uncaughtErrorEvents.addEventListener(UncaughtErrorEvent.UNCAUGHT_ERROR, onError);
-		//Lib.current.loaderInfo.uncaughtErrorEvents.removeEventListener();
-		Lib.current.loaderInfo.uncaughtErrorEvents.addEventListener("uncaughtError", onError);
+		Lib.current.loaderInfo.uncaughtErrorEvents.addEventListener(UncaughtErrorEvent.UNCAUGHT_ERROR, onCrash);
 	}
 
-	public static function onError(e:UncaughtErrorEvent):Void {
-		trace("ran this");
-		var errMsg:String = '';
+	public static function onCrash(e:UncaughtErrorEvent):Void
+	{
+		
+		var errMsg:String = "";
 		var path:String;
 		var callStack:Array<StackItem> = CallStack.exceptionStack(true);
 		var dateNow:String = Date.now().toString();
 
-		dateNow = dateNow.replace(' ', '_');
-		dateNow = dateNow.replace(':', '\'');
+		dateNow = dateNow.replace(" ", "_");
+		dateNow = dateNow.replace(":", "'");
 
-		//path = './crash/Imaginative_$dateNow.txt';
+		path = "./crash/" + "NovaEngine_" + dateNow + ".txt";
 
-		for (stackItem in callStack) {
-			switch (stackItem) {
-				case FilePos(_, file, line, _):
-					errMsg += '$file (line $line)\n';
+		for (stackItem in callStack)
+		{
+			switch (stackItem)
+			{
+				case FilePos(s, file, line, column):
+					errMsg += file + " (line " + line + ")\n";
 				default:
-					log(stackItem, ErrorMessage);
+					Sys.println(stackItem);
 			}
 		}
 
-		errMsg += '\nUncaught Error: $e.error\n\n> Crash Handler written by: Nebula S. Nova';
 
-		/* if (!FileSystem.exists('./crash/'))
-			FileSystem.createDirectory('./crash/');
+		var currentState:String = 'No state loaded';
+		if (FlxG.state != null) {
+			var currentStateCls:Null<Class<Dynamic>> = Type.getClass(FlxG.state);
+			if (currentStateCls != null) {
+				currentState = Type.getClassName(currentStateCls) ?? 'No state loaded';
+			}
+		}
 
-		File.saveContent(path, errMsg + '\n'); */
+		var crashLines:Array<String> = [
+			SEPERATOR,
+			'Nova Engine Crash Report',
+			SEPERATOR,
+			NEWLINE,
+			'Flixel Current State: ${currentState}',
+			'Error: ' + e.error,
+			NEWLINE,
+			'Crash Dump Saved In: ${Path.normalize(path)}',
+			NEWLINE,	
+			SEPERATOR,
+			"Mods Loaded:"
+		];
+		for (i in Paths.getModList()) {
+			crashLines.push(' - $i');
+		}
 
-		log(errMsg, ErrorMessage);
-		apis.WindowsAPI.sendWindowsNotification("Error!", errMsg);
-		//log('Crash dump saved in ${FilePath.normalize(path)}', ErrorMessage);
+		errMsg = crashLines.join('\n');
 
-		//FlxWindow.direct.self.alert(errMsg, 'Error!');
-		cast (FlxG.state, MusicBeatState).switchState(new states.MainMenuState());
+		/* errMsg += "\nUncaught Error: " + e.error;
+		// remove if you're modding and want the crash log message to contain the link
+		// please remember to actually modify the link for the github page to report the issues to.
+		//#if officialBuild
+		//errMsg += "\nPlease report this error to the GitHub page: https://github.com/ShadowMario/FNF-PsychEngine";
+		//#end
+		errMsg += "\n\n> Crash Handler written by: sqirra-rng"; */
+
+		if (!FileSystem.exists("./crash/"))
+			FileSystem.createDirectory("./crash/");
+
+		File.saveContent(path, errMsg + "\n");
+
+		Sys.println(errMsg);
+		Sys.println("Crash dump saved in " + Path.normalize(path));
+		
+		Application.current.window.alert(errMsg, "Error!");
+		
+		WindowsAPI.closeConsole();
+		Sys.exit(1);
 	}
+
+
 }

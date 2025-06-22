@@ -61,8 +61,8 @@ class Paths {
 		return modPath('images/${directory != null ? Path.addTrailingSlash(directory) : ""}$path.$ext');
 	}
 
-	public static function font(path:String, ?directory:String, ext:String = ""):String {
-		return modPath('fonts/${directory != null ? Path.addTrailingSlash(directory) : ""}${path != "" ? '.$ext' : ""}');
+	public static function font(path:String, ?directory:String):String {
+		return modPath('fonts/${directory != null ? Path.addTrailingSlash(directory) : ""}$path');
 	}
 
 	public static function xml(path:String, ?directory:String):String {
@@ -189,5 +189,15 @@ class Paths {
 			}
 		}
 		return songList;
+	}
+
+	public static function getModList() {
+		var modList:Array<String> = [];
+		for (i in FileSystem.readDirectory("mods")) {
+			if (checkModEnabled(i)) {
+				modList.push(i);
+			}
+		}
+		return modList;
 	}
 }

@@ -19,6 +19,8 @@ class ClassData {
 					this.target = new FreeplayState();
 				case "PlayState":
 					this.target = new PlayState();
+				case "ModMenuState":
+					this.target = new ModMenuState();
 				default:
 					log('Unknown State "${string.split(":")[1]}" returning to the Main Menu' , WarningMessage);
 					this.target = new MainMenuState();

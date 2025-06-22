@@ -28,10 +28,10 @@ class Main extends Sprite
 
 	public function new()
 	{
-		CrashHandler.init();
 		super();
 		initEverything();
 		addChild(new FlxGame(1280, 720, MainMenuState, 60, 60, true, false));
+		CrashHandler.init();
 		initEverythingAfter();
 		addDebuggerStuff();
 		FlxG.signals.preStateCreate.add((state)->{
