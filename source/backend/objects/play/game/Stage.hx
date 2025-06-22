@@ -76,4 +76,8 @@ class Stage extends FlxTypedSpriteGroup<StageProp> {
         return new StageProp('unknown', 0, 0);
     }
 
+    public function getSprite(id:String):StageProp {
+        return getProp(id);
+    }
+
 }

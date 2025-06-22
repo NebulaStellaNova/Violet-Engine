@@ -2,6 +2,8 @@ package backend.objects.play;
 
 import backend.filesystem.Paths;
 
+import flixel.math.FlxRect;
+
 class SustainNote extends NovaSprite {
 	public var direction(get, set):Int;
 	inline function get_direction():Int
@@ -93,4 +95,29 @@ class SustainNote extends NovaSprite {
 		this.scale.x = 0.7;
 		this.updateHitbox();
 	}
+
+	public function clipToStrumNote(myStrum:Strum)
+    {
+		
+		var swagRect:FlxRect = clipRect;
+		if (swagRect == null)
+			swagRect = new FlxRect(0, 0, frameWidth, frameHeight);
+
+		/* if (myStrum.downScroll)
+		{
+			if (y - offset.y * scale.y + height >= myStrum.getMidpoint().y)
+			{
+				swagRect.width = frameWidth;
+			swagRect.height = (myStrum.getMidpoint().y - y) / scale.y;
+				swagRect.y = frameHeight - swagRect.height;
+			}
+		}
+		else  */if (y + offset.y * scale.y <= myStrum.getMidpoint().y)
+		{
+			swagRect.y = (myStrum.getMidpoint().y - y) / scale.y;
+			swagRect.width = width / scale.x;
+			swagRect.height = (height / scale.y) - swagRect.y;
+		}
+		this.clipRect = swagRect;
+    }
 }

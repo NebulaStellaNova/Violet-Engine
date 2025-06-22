@@ -22,6 +22,7 @@ import flixel.util.FlxStringUtil;
 import states.substates.DebugSubState;
 import flixel.system.debug.watch.Tracker;
 import backend.scripts.LuaScript;
+import backend.scripts.PythonScript;
 import flixel.group.FlxGroup.FlxTypedGroup;
 using utils.ArrayUtil;
 
@@ -36,6 +37,10 @@ class MusicBeatState extends FlxState {
 	public var curBeat:Int = 0;
 	public var curStep:Int = 0;
 	public var curMeasure:Int = 0;
+
+	public var curBeatFloat:Float = 0;
+	public var curStepFloat:Float = 0;
+	public var curMeasureFloat:Float = 0;
 
 	public var beat:Int = 0;
 	public var step:Int = 0;
@@ -67,6 +72,9 @@ class MusicBeatState extends FlxState {
 			if (Paths.fileExists('$i.lua')) {
 				stateScripts.addScript(new LuaScript('$i.lua'));
 			}
+			if (Paths.fileExists('$i.py')) {
+				stateScripts.addScript(new PythonScript('$i.py'));
+			}
 		}
 
 		call('create');
@@ -95,6 +103,9 @@ class MusicBeatState extends FlxState {
 		curBeat = Conductor.curBeat;
 		curStep = Conductor.curStep;
 		curMeasure = Conductor.curMeasure;
+		curBeatFloat = Conductor.curBeatFloat;
+		curStepFloat = Conductor.curStepFloat;
+		curMeasureFloat = Conductor.curMeasureFloat;
 		beat = Conductor.curBeat;
 		step = Conductor.curBeat;
 		measure = Conductor.curBeat;

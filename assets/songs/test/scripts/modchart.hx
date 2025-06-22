@@ -1,23 +1,24 @@
 function create() {
-	importScript("data/scripts/pixel");
-	pixelNotesForBF = false;
-	enablePixelUI = true;
-	enableCameraHacks = false;
-	playCutscenes = true;
+	//importScript("data/scripts/pixel");
+	// pixelNotesForBF = false;
+	// enablePixelUI = true;
+	// enableCameraHacks = false;
+	// playCutscenes = true;
 }
 
 function postCreate() {
-	for(i in 0...6) {
+	/* for(i in 0...6) {
 		var name = "tank" + Std.string(i);
 		stage.getSprite(name).visible = false;
-	}
+	} */
 }
 
-function postUpdate(elapsed) {
+function update(elapsed) {
 	for(s in strumLines) {
-		for(i in 0...4) {
-			var n = s.members[i];
-			n.angle = Math.sin(curBeatFloat + (i * 0.45)) * 35;
+		for(i=>n in s.members) {
+			if (n.angle != null) {
+				n.angle = Math.sin(curBeatFloat + (i * 0.45)) * 35;
+			}
 		}
 	}
 

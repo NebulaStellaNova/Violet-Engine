@@ -31,8 +31,8 @@ class FunkinScript extends Script {
 	override function get_parent():Dynamic
 		return internalScript.superInstance;
 
-	public function new(path:String):Void {
-		super(path);
+	public function new(path:String, isCode:Bool = false):Void {
+		super(path, isCode);
 		internalScript = new RuleScript();
 		internalScript.scriptName = '$folderName/$fileName';
 		initVars();

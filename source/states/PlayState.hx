@@ -1,5 +1,6 @@
 package states;
 
+import backend.scripts.PythonScript;
 import flixel.group.FlxGroup.FlxTypedGroup;
 import backend.scripts.LuaScript;
 import backend.scripts.FunkinScript;
@@ -141,7 +142,7 @@ class PlayState extends MusicBeatState {
 		for (folder in foldersToCheck) {
 			if (Paths.folderExists('assets/$folder')) {
 				for (script in Paths.readFolder('assets/$folder')) {
-					if (script.endsWith(".hx") || script.endsWith(".lua")) {
+					if (script.endsWith(".hx") || script.endsWith(".lua") || script.endsWith(".py")) {
 						if (!Paths.readStringFromPath('assets/$folder/$script').contains("scriptDisabled = true")) {
 							scriptsToAdd.push('assets/$folder/$script');
 						} else {
@@ -156,7 +157,7 @@ class PlayState extends MusicBeatState {
 				for (folder in foldersToCheck) {
 					if (Paths.folderExists('mods/$modID/$folder')) {
 						for (script in Paths.readFolder('mods/$modID/$folder')) {
-							if (script.endsWith(".hx") || script.endsWith(".lua")) {
+							if (script.endsWith(".hx") || script.endsWith(".lua") || script.endsWith(".py")) {
 								if (!Paths.readStringFromPath('mods/$modID/$folder/$script').contains("scriptDisabled = true")) {
 									scriptsToAdd.push('mods/$modID/$folder/$script');
 								} else {
@@ -175,6 +176,8 @@ class PlayState extends MusicBeatState {
 				this.stateScripts.addScript(new FunkinScript(i));
 			} else if (i.endsWith(".lua")) {
 				this.stateScripts.addScript(new LuaScript(i));
+			} else if (i.endsWith(".py")) {
+				this.stateScripts.addScript(new PythonScript(i));
 			}
 		}
 		trace('Scripts To Add: $scriptsToAdd');
@@ -329,6 +332,10 @@ class PlayState extends MusicBeatState {
 			for (dir => strum in strumLine.strums.members) {
 				var doPress = true;
 				strum.notes.forEachAlive((note:Note) -> {
+					var distance:Float = (0.45 * (Conductor.time - note.time) * note.scrollSpeed);
+					var angelDir = (note.parentStrum.angle+90+180) * Math.PI / 180;
+					note.angle = note.parentStrum.angle;
+					note.x = (Math.cos(angelDir) * distance) + note.parentStrum.x;
 					if (!note.badHit)
 						note.y = note.parentStrum.y - (0.45 * (Conductor.time - note.time) * note.scrollSpeed);
 					if (strumLine.type == PLAYER && !botplay) {
@@ -364,6 +371,11 @@ class PlayState extends MusicBeatState {
 					}
 				});
 				strum.sustains.forEachAlive((sustain:SustainNote) -> {
+					var distance:Float = (0.45 * (Conductor.time - sustain.time) * sustain.parentNote.scrollSpeed);
+					var angelDir = (sustain.parentStrum.angle+90+180) * Math.PI / 180;
+					sustain.angle = sustain.parentStrum.angle;
+					sustain.x = (Math.cos(angelDir) * distance) + sustain.parentStrum.x;
+
 					sustain.y = sustain.parentStrum.y - (0.45 * (Conductor.time - sustain.time) * sustain.parentNote.scrollSpeed);
 					if (strumLine.type == PLAYER && !botplay) {
 						if (Conductor.time - sustain.time > realHitWindow) {
@@ -377,7 +389,7 @@ class PlayState extends MusicBeatState {
 							}
 						}
 						if (sustain.alive && getKeyPress(dir, 'held') /* && hitThisFrame[dir] */)
-							if (Conductor.time - sustain.time >= -realHitWindow /* && Conductor.time - sustain.time <= realHitWindow */)
+							if (Conductor.time >= sustain.time/* Conductor.time - sustain.time  >= -realHitWindow && Conductor.time - sustain.time <= realHitWindow */)
 								sustainHit(sustain, strum, strumLine.type);
 					} else {
 						if (Conductor.time >= sustain.time)
@@ -488,6 +500,8 @@ class PlayState extends MusicBeatState {
 		strum.onSustainHit(sustain);
 		var theEvent:SustainHitEvent = new SustainHitEvent(sustain, sustain.type, strum, sustain.direction, characterType);
 		theEvent = runEvent("sustainHit", theEvent);
+		
+		sustain.clipToStrumNote(strum);
 		switch (characterType) {
 			case PLAYER:
 				theEvent = runEvent("playerSustainHit", theEvent);

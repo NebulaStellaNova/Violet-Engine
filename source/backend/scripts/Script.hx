@@ -18,12 +18,14 @@ class Script implements IFlxDestroyable {
 	function get_parent():Dynamic
 		return null;
 
-	public function new(path:String) {
-		var code:String = Paths.readStringFromPath(path);
-		var filePath = path.split("/");
-		this.fileName = filePath.pop();
-		if (filePath.getFirstOf() == "mods") this.folderName = filePath[1];
-		else this.folderName = filePath.getFirstOf();
+	public function new(path:String, isCode:Bool = false) {
+		var code:String = !isCode ? Paths.readStringFromPath(path) : path;
+		if (!isCode) {
+			var filePath = path.split("/");
+			this.fileName = filePath.pop();
+			if (filePath.getFirstOf() == "mods") this.folderName = filePath[1];
+			else this.folderName = filePath.getFirstOf();
+		}
 		this.scriptCode = code;
 	}
 
