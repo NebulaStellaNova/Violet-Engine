@@ -137,12 +137,31 @@ class PlayState extends MusicBeatState {
 			'songs',
 			'songs/$songID/scripts'
 		];
+		for (folder in foldersToCheck) {
+			if (Paths.folderExists('assets/$folder')) {
+				for (script in Paths.readFolder('assets/$folder')) {
+					if (script.endsWith(".hx") || script.endsWith(".lua")) {
+						if (!Paths.readStringFromPath('assets/$folder/$script').contains("scriptDisabled = true")) {
+							scriptsToAdd.push('assets/$folder/$script');
+						} else {
+							trace('Script Disabled "$script"');
+						}
+					}
+				}
+			}
+		}
 		for (modID in Paths.getModList()) {
-			for (folder in foldersToCheck) {
-				if (Paths.folderExists('mods/$modID/$folder')) {
-					for (script in Paths.readFolder('mods/$modID/$folder')) {
-						if (script.endsWith(".hx") || script.endsWith(".lua")) {
-							scriptsToAdd.push('mods/$modID/$folder/$script');
+			if (Paths.checkModEnabled(modID)) {
+				for (folder in foldersToCheck) {
+					if (Paths.folderExists('mods/$modID/$folder')) {
+						for (script in Paths.readFolder('mods/$modID/$folder')) {
+							if (script.endsWith(".hx") || script.endsWith(".lua")) {
+								if (!Paths.readStringFromPath('mods/$modID/$folder/$script').contains("scriptDisabled = true")) {
+									scriptsToAdd.push('mods/$modID/$folder/$script');
+								} else {
+									trace('Script Disabled "$script"');
+								}
+							}
 						}
 					}
 				}
