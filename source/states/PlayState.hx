@@ -643,5 +643,9 @@ class PlayState extends MusicBeatState {
 		for (i in sustains) {
 			i.revive();
 		}
+
+		for (i in events) {
+			i.ran = false;
+		}
 	}
 }
