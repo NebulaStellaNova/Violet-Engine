@@ -634,4 +634,14 @@ class PlayState extends MusicBeatState {
 			}
 		}
 	}
+	
+	public function restartSong() {
+		Conductor.restart();
+		for (i in notes) {
+			i.revive();
+		}
+		for (i in sustains) {
+			i.revive();
+		}
+	}
 }

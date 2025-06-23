@@ -610,6 +610,17 @@ class Conductor {
 		//
 	}
 
+	inline public static function restart():Void {
+		//reset();
+		stop();
+		audio.time = 0;
+		for (i in extra) {
+			i.time = 0;
+		}
+		prevTime = time = curStepFloat = curStep = curBeat = curMeasure = 0;
+		play();
+	} 
+
 	/**
 	 * Changes the current BPM of this part of the song.
 	 * @param bpm New "beats per minute" number.

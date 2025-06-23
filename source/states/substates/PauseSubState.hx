@@ -1,5 +1,7 @@
 package states.substates;
 
+import flixel.tweens.FlxEase;
+import flixel.tweens.FlxTween;
 import flixel.FlxSprite;
 import flixel.FlxCamera;
 import flixel.util.FlxColor;
@@ -18,7 +20,7 @@ class PauseSubState extends FlxSubState {
 	public var items:Array<FlxText> = [];
 	public var options:Array<String> = [
 		"Resume",
-		//"Restart",
+		"Restart",
 		"Exit"
 	];
 
@@ -80,6 +82,13 @@ class PauseSubState extends FlxSubState {
 				FlxG.state.persistentUpdate = true;
 				Conductor.resume();
 				close();
+			case "Restart":
+				FlxG.state.persistentUpdate = true;
+				close();
+				FlxTween.tween(Conductor, { time: Conductor.time - 4000 }, 1, { ease: FlxEase.sineIn, onComplete: (t) -> {
+					PlayState.instance.restartSong();
+				}});
+				
 			case "Exit":
 				cast (FlxG.state, MusicBeatState).switchState(new FreeplayState());
 		}
