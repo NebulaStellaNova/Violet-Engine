@@ -612,7 +612,7 @@ class PlayState extends MusicBeatState {
 				notes.push(daNote);
 				strumLines.members[i].strums.members[note.id].add(daNote);
 
-				var roundedLength:Int = Math.floor(note.sLen / Conductor.stepTime); // not compatible with bpm changes yet
+				var roundedLength:Int = Math.ceil(note.sLen / Conductor.stepTime); // not compatible with bpm changes yet
 				if (roundedLength > 0) {
 					for (susNote in 0...roundedLength) {
 						var sustain:SustainNote = new SustainNote(daNote, daNote.time + (Conductor.stepTime * susNote), susNote == (roundedLength - 1));
