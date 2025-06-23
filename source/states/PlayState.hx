@@ -313,6 +313,12 @@ class PlayState extends MusicBeatState {
 		super.update(elapsed);
 		var realHitWindow = hitWindow/2;
 
+		if (curBeat < 1) {
+			for (i in events) {
+				i.ran = false;
+			}
+		}
+
 		if (FlxG.keys.justPressed.TAB) {
 			botplay = !botplay;
 			log('Botplay ${botplay ? 'Enabled' : 'Disabled'}', DebugMessage);
@@ -414,7 +420,7 @@ class PlayState extends MusicBeatState {
 		}
 
 		for (event in events)
-			if (Conductor.time > event.time && !event.ran)
+			if (Conductor.time >= event.time && !event.ran)
 				onEvent(event);
 		camGame.followLerp = 0.1;
 		var targetObject:FlxObject = new FlxObject();
