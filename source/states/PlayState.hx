@@ -420,8 +420,9 @@ class PlayState extends MusicBeatState {
 		}
 
 		for (event in events)
-			if (Conductor.time >= event.time && !event.ran)
+			if (Conductor.time >= Math.floor(event.time) && !event.ran)
 				onEvent(event);
+	
 		camGame.followLerp = 0.1;
 		var targetObject:FlxObject = new FlxObject();
 		targetObject.x = camFollowPoint.x;
