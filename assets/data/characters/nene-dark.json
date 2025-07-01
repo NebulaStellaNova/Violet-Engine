@@ -4,6 +4,7 @@
   "assetPath": "characters/nene_dark",
   "startingAnimation": "danceRight",
   "offsets": [0, -100],
+  "danceEvery": 2,
   "animations": [
     {
       "name": "danceLeft",

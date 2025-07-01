@@ -4,6 +4,7 @@
   "assetPath": "characters/neneChristmas/neneChristmas",
   "startingAnimation": "danceRight",
   "offsets": [0, -100],
+  "danceEvery": 2,
   "animations": [
     {
       "name": "danceLeft",

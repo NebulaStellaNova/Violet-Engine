@@ -4,6 +4,7 @@
   "assetPath": "characters/Nene",
   "startingAnimation": "danceRight",
   "renderType": "multisparrow",
+  "danceEvery": 2,
   "offsets": [0, -100],
   "animations": [
     {

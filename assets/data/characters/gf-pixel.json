@@ -3,6 +3,7 @@
   "name": "Girlfriend (Pixel)",
   "assetPath": "characters/gfPixel",
   "startingAnimation": "danceRight",
+  "danceEvery": 2,
   "isPixel": true,
   "scale": 6,
   "animations": [

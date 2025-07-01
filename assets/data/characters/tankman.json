@@ -2,7 +2,7 @@
   "version": "1.0.0",
   "renderType": "multisparrow",
   "offsets": [0, -50],
-  "danceEvery": 1,
+  "danceEvery": 2,
   "scale": 1,
   "name": "Tankman",
   "flipX": true,

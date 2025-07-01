@@ -4,6 +4,7 @@
   "renderType": "sparrow",
   "assetPath": "characters/gf_dark",
   "startingAnimation": "danceRight",
+  "danceEvery": 2,
   "healthIcon": {
     "id": "gf",
     "flipX": false

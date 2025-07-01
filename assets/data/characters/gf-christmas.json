@@ -3,6 +3,7 @@
   "name": "Girlfriend (Christmas)",
   "assetPath": "characters/gfChristmas",
   "startingAnimation": "danceLeft",
+  "danceEvery": 2,
   "animations": [
     {
       "name": "danceLeft",

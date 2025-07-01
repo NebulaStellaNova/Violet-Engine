@@ -4,6 +4,7 @@
   "assetPath": "characters/nenePixel/nenePixel",
   "startingAnimation": "danceRight",
   "isPixel": true,
+  "danceEvery": 2,
   "scale": 6,
   "animations": [
     {
