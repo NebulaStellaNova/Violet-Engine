@@ -4,7 +4,7 @@ var tankSpeed:Float = FlxG.random.float(5, 7);
 var tankX:Float = 400;
 
 function create() {
-    var clouds = getNamedProp('clouds');
+    var clouds = stage.getNamedProp('clouds');
     clouds.active = true;
     clouds.x = FlxG.random.int(-700, -100);
     clouds.y = FlxG.random.int(-20, 20);
@@ -18,7 +18,7 @@ function update(elapsed) {
     var daAngleOffset:Float = 1;
     tankAngle += elapsed * tankSpeed;
 
-    var tankRolling = getNamedProp('tankRolling');
+    var tankRolling = stage.getNamedProp('tankRolling');
     tankRolling.angle = tankAngle - 90 + 15;
     tankRolling.x = tankX + Math.cos(FlxAngle.asRadians((tankAngle * daAngleOffset) + 180)) * 1500;
     tankRolling.y = 1300 + Math.sin(FlxAngle.asRadians((tankAngle * daAngleOffset) + 180)) * 1100;
