@@ -1,5 +1,7 @@
 package states;
 
+import flixel.util.FlxColor;
+import backend.objects.TardlingText;
 import flixel.util.FlxTimer;
 import apis.WindowsAPI;
 import backend.objects.NovaText;
@@ -47,7 +49,7 @@ class FreeplayState extends MusicBeatState {
 	var songList:Array<String> = Paths.getSongList();
 	var songDatas:Array<SongInstance> = [];
 
-	var texts:FlxTypedGroup<FlxText> = new FlxTypedGroup<FlxText>();
+	var texts:FlxTypedGroup<TardlingText> = new FlxTypedGroup<TardlingText>();
 
 	override public function create()
 	{
@@ -59,10 +61,11 @@ class FreeplayState extends MusicBeatState {
 
 			//Conductor.loadSong(song);
 
-			var text = new FlxText(0, 90*i, FlxG.width, songData.data.displayName);
-			text.alignment = 'center';
+			var text = new TardlingText(0, 90*i, FlxG.width, songData.data.displayName);
 			text.ID = i;
-			text.setFormat(Paths.font("Tardling v1.1.ttf"), 80);
+			text.setFormat(Paths.font("Tardling v1.1.ttf"), 80, FlxColor.WHITE, 'center');
+			text.fillColor = FlxColor.WHITE;
+			text.outlineColor = FlxColor.BLACK;
 			texts.add(text);
 
 		}
@@ -158,7 +161,7 @@ class FreeplayState extends MusicBeatState {
 		for (i in texts) {
 			i.alpha = i.ID == curSelected ? 1 : 0.5;
 			if (i.ID == curSelected) {
-				FlxG.camera.target = i;
+				FlxG.camera.target = i.fill;
 			}
 		}
 		difficultyText.text = curDifficulty.toUpperCase();
