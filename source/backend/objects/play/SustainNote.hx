@@ -48,6 +48,8 @@ class SustainNote extends NovaSprite {
 
 	public var isEnd:Bool;
 
+	public var hit:Bool = false;
+
 	override public function new(parent:Note, time:Float, isEnd:Bool = false) {
 		super();
 
@@ -96,12 +98,13 @@ class SustainNote extends NovaSprite {
 		this.updateHitbox();
 	}
 
-	public function clipToStrumNote(myStrum:Strum)
+	public function clipToStrumNote()
     {
 		
 		var swagRect:FlxRect = clipRect;
 		if (swagRect == null)
 			swagRect = new FlxRect(0, 0, frameWidth, frameHeight);
+
 
 		/* if (myStrum.downScroll)
 		{
@@ -112,9 +115,9 @@ class SustainNote extends NovaSprite {
 				swagRect.y = frameHeight - swagRect.height;
 			}
 		}
-		else  */if (y + offset.y * scale.y <= myStrum.getMidpoint().y)
+		else  */if (y + offset.y * scale.y <= parentStrum.y)
 		{
-			swagRect.y = (myStrum.getMidpoint().y - y) / scale.y;
+			swagRect.y = ((parentStrum.y - y) / scale.y);
 			swagRect.width = width / scale.x;
 			swagRect.height = (height / scale.y) - swagRect.y;
 		}

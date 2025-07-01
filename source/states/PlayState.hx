@@ -394,7 +394,7 @@ class PlayState extends MusicBeatState {
 
 					sustain.y = sustain.parentStrum.y - (0.45 * (Conductor.time - sustain.time) * sustain.parentNote.scrollSpeed);
 					if (strumLine.type == PLAYER && !botplay) {
-						if (Conductor.time - sustain.time > realHitWindow) {
+						if (Conductor.time - sustain.time > realHitWindow && !sustain.hit) {
 							for (sustain in sustain.parentNote.tail)
 								sustain.kill();
 							misses++;
@@ -405,10 +405,10 @@ class PlayState extends MusicBeatState {
 							}
 						}
 						if (sustain.alive && getKeyPress(dir, 'held') /* && hitThisFrame[dir] */)
-							if (Conductor.time >= sustain.time/* Conductor.time - sustain.time  >= -realHitWindow && Conductor.time - sustain.time <= realHitWindow */)
+							if (Conductor.time >= sustain.time/* Conductor.time - sustain.time  >= -realHitWindow && Conductor.time - sustain.time <= realHitWindow */ && !sustain.hit)
 								sustainHit(sustain, strum, strumLine.type);
 					} else {
-						if (Conductor.time >= sustain.time)
+						if (Conductor.time >= sustain.time && !sustain.hit)
 							sustainHit(sustain, strum, strumLine.type);
 					}
 				});
@@ -442,6 +442,13 @@ class PlayState extends MusicBeatState {
 
 		if (curStep <= 0) {
 			onEvent(new EventNote("Camera Movement", 0, [0]));
+		}
+
+		for (sustain in sustains) {
+			sustain.clipToStrumNote();
+			if (sustain.clipRect.height < 1) {
+				sustain.kill();
+			}
 		}
 	}
 
@@ -524,8 +531,6 @@ class PlayState extends MusicBeatState {
 		strum.onSustainHit(sustain);
 		var theEvent:SustainHitEvent = new SustainHitEvent(sustain, sustain.type, strum, sustain.direction, characterType);
 		theEvent = runEvent("sustainHit", theEvent);
-		
-		sustain.clipToStrumNote(strum);
 		switch (characterType) {
 			case PLAYER:
 				theEvent = runEvent("playerSustainHit", theEvent);
@@ -535,7 +540,8 @@ class PlayState extends MusicBeatState {
 				theEvent = runEvent("spectatorSustainHit", theEvent);
 		}
 		if (theEvent.cancelled) return;
-		sustain.kill();
+		sustain.hit = true;
+		//sustain.kill();
 		if (theEvent.animCancelled) return;
 
 		strum.playAnim('confirm', true);
@@ -674,6 +680,8 @@ class PlayState extends MusicBeatState {
 			i.revive();
 		}
 		for (i in sustains) {
+			i.hit = false;
+			i.clipRect = null;
 			i.revive();
 		}
 
