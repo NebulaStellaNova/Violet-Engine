@@ -1,5 +1,6 @@
 package states;
 
+import flixel.util.FlxColor;
 import states.editors.CharacterEditorState;
 import backend.ClassData;
 import flixel.util.FlxTimer;
@@ -90,6 +91,7 @@ class MainMenuState extends MusicBeatState {
 
 		leftWatermark = new NovaText(10, 0, "Nova Engine v0.1", 20);
 		leftWatermark.y = FlxG.height - leftWatermark.getHeight() - 5;
+		leftWatermark.setFormat(Paths.font("vcr.ttf"), 40);
 		leftWatermark.scrollFactor.set();
 		//leftWatermark.setFormat(Paths.font("Tardling v1.1.ttf"), 20);
 		add(leftWatermark);
@@ -132,6 +134,10 @@ class MainMenuState extends MusicBeatState {
 			else if(a.length > b.length) return 1;
 			else return 0;
 		});
+
+		leftWatermark.borderStyle = OUTLINE;
+		leftWatermark.borderColor = FlxColor.BLACK;
+		leftWatermark.borderSize = 3;
 		leftWatermark.text = watermarkTexts.join("\n");
 		leftWatermark.updateHitbox();
 		leftWatermark.y = FlxG.height - leftWatermark.getHeight() - 5;

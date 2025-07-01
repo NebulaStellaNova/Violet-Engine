@@ -98,6 +98,10 @@ class FunkinScript extends Script {
 		set('log', (value:Dynamic, type:backend.console.Logs.LogType = LogMessage) -> log(value, type, internalScript.interp.posInfos()));
 
         set('lerp', MathUtil.lerp);
+
+		set("debugPrint", function(text:Dynamic = '', color:String = 'WHITE') {
+            cast (FlxG.state, MusicBeatState).debugPrint(text, color);
+        });
 	}
 
 	override public function call<T>(funcName:String, ?args:Array<Dynamic>, ?def:T):T {
