@@ -8,6 +8,7 @@ import flixel.FlxG;
 import backend.filesystem.Paths;
 import flixel.util.FlxSort;
 
+using StringTools;
 class Strum extends NovaSprite {
 	public var direction:Int = 0;
 	public var skin(default, set):String;
@@ -47,17 +48,60 @@ class Strum extends NovaSprite {
 		else if (!Paths.fileExists(Paths.image('game/notes/$skin/strums')))
 			target = 'default';
 
-		this.loadSprite(Paths.image('game/notes/$target/strums'));
 		skinData = Paths.parseJson('images/game/notes/$target/meta');
+		this.loadSprite(Paths.image('${skinData.animations.strum.assetPath.replace("./", 'game/notes/$target/')}'));
 
 		var direction = Note.directionStrings[this.direction];
 		var dir = direction.split('');
 		dir[0] = dir[0].toUpperCase();
 		var capped = dir.join('');
-		var globalOffset:Array<Float> = skinData.offsets.global != null ? [skinData.offsets.global[0], skinData.offsets.global[1]] : [0, 0];
-		this.addAnim('static', 'static$capped', [skinData.offsets.statics[0]+globalOffset[0], skinData.offsets.statics[1]+globalOffset[1]]);
-		this.addAnim('confirm', '$direction confirm', [skinData.offsets.confirm[0]+globalOffset[0], skinData.offsets.confirm[1]+globalOffset[1]]);
-		this.addAnim('pressed', '$direction press', [skinData.offsets.pressed[0]+globalOffset[0], skinData.offsets.pressed[1]+globalOffset[1]]);
+		//var globalOffset:Array<Float> = skinData.offsets.global != null ? [skinData.offsets.global[0], skinData.offsets.global[1]] : [0, 0];
+
+		var staticData = switch (this.direction) {
+			case 1:
+				skinData.animations.strum.idle.down;
+			case 2:
+				skinData.animations.strum.idle.up;
+			case 3:
+				skinData.animations.strum.idle.right;
+			case _:
+				skinData.animations.strum.idle.left;
+		}
+
+		var pressData = switch (this.direction) {
+			case 1:
+				skinData.animations.strum.pressed.down;
+			case 2:
+				skinData.animations.strum.pressed.up;
+			case 3:
+				skinData.animations.strum.pressed.right;
+			case _:
+				skinData.animations.strum.pressed.left;
+		}
+
+		var confirmData = switch (this.direction) {
+			case 1:
+				skinData.animations.strum.confirm.down;
+			case 2:
+				skinData.animations.strum.confirm.up;
+			case 3:
+				skinData.animations.strum.confirm.right;
+			case _:
+				skinData.animations.strum.confirm.left;
+		}
+
+		this.addAnim('static', staticData.prefix, [
+			staticData.offsets[0]+skinData.animations.strum.idle.global.offsets[0], 
+			staticData.offsets[1]+skinData.animations.strum.idle.global.offsets[1]
+		]);
+		this.addAnim('confirm', confirmData.prefix, [
+			confirmData.offsets[0]+skinData.animations.strum.confirm.global.offsets[0], 
+			confirmData.offsets[1]+skinData.animations.strum.confirm.global.offsets[1]
+		]);
+		this.addAnim('pressed', pressData.prefix, [
+			pressData.offsets[0]+skinData.animations.strum.pressed.global.offsets[0], 
+			pressData.offsets[1]+skinData.animations.strum.pressed.global.offsets[1]
+		]);
 
 		this.playAnim('static');
 		this.scale.set(0.7, 0.7);

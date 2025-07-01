@@ -1,8 +1,10 @@
 package backend.objects.play;
 
+import backend.objects.play.NoteSkin.BaseAnimation;
 import utils.NovaUtil;
 import flixel.util.FlxSort;
 import backend.filesystem.Paths;
+using StringTools;
 
 class Note extends NovaSprite {
 	public static var directionStrings:Array<String> = ["left", "down", "up", "right"];
@@ -45,16 +47,26 @@ class Note extends NovaSprite {
 		var target = skin ?? this.skin;
 		if (!Paths.fileExists(Paths.json('images/game/notes/$skin/meta')))
 			target = 'default';
-		else if (!Paths.fileExists(Paths.image('game/notes/$skin/notes')))
-			target = 'default';
 
-		this.loadSprite(Paths.image('game/notes/$target/notes'));
 		skinData = Paths.parseJson('images/game/notes/$target/meta');
+		this.loadSprite(Paths.image('${skinData.animations.note.base.global.assetPath.replace("./", 'game/notes/$target/')}'));
 
 		animation.destroyAnimations();
-		var globalOffset:Array<Float> = skinData.offsets.global ??= [0, 0];
-		for (i=>direction in [for (dir in directionStrings) 'note${NovaUtil.capitalizeFirstLetter(dir)}'])
-			this.addAnim(directionStrings[i], direction, [skinData.offsets.notes[0]+globalOffset[0], skinData.offsets.notes[1]+globalOffset[1]]);
+		var globalOffset:Array<Float> = skinData.animations.note.base.global.offsets ??= [0, 0];
+		var noteAnim:BaseAnimation = switch (this.direction) {
+			case 0:
+				skinData.animations.note.base.left;
+			case 1:
+				skinData.animations.note.base.down;
+			case 2:
+				skinData.animations.note.base.up;
+			case 3:
+				skinData.animations.note.base.right;
+			case _:
+				skinData.animations.note.base.left;
+		}
+		//for (i=>direction in [for (dir in directionStrings) noteAnim.prefix])
+		this.addAnim(directionStrings[this.direction], noteAnim.prefix, [noteAnim.offsets[0]+globalOffset[0], noteAnim.offsets[1]+globalOffset[1]]);
 		this.playAnim(directionStrings[this.direction]);
 		this.scale.set(0.7, 0.7);
 		this.updateHitbox();

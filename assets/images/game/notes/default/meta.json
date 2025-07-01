@@ -4,25 +4,9 @@
 			0,
 			0
 		],
-		"confirm": [
-			-40,
-			-40
-		],
 		"sustains": [
 			52,
-			65
-		],
-		"statics": [
-			-40,
-			-40
-		],
-		"notes": [
-			-3,
-			-3
-		],
-		"pressed": [
-			0,
-			0
+			75
 		],
 		"splashes": [
 			-10,
@@ -54,5 +38,228 @@
 	"holdCoverSkin": {
 		"overrideSongSkin": false,
 		"name": "default"
+	},
+	"animations": {
+		"note": {
+			"base": {
+				"global": {
+					"assetPath": "./notes",
+					"offsets": [
+						-3,
+						-3
+					]
+				},
+				"left": {
+					"prefix": "noteLeft",
+					"offsets": [ 0, 0 ]
+				},
+				"down": {
+					"prefix": "noteDown",
+					"offsets": [ 0, 0 ]
+				},
+				"up": {
+					"prefix": "noteUp",
+					"offsets": [ 0, 0 ]
+				},
+				"right": {
+					"prefix": "noteRight",
+					"offsets": [ 0, 0 ]
+				}
+			},
+			"sustain": {
+				"global": {
+					"assetPath": "./sustains",
+					"pieceSuffix": " piece",
+					"endSuffix": " end",
+					"offsets": [
+						52,
+						75
+					]
+				},
+				"left": {
+					"prefix": "purple hold",
+					"offsets": [ 0, 0 ]
+				},
+				"down": {
+					"prefix": "blue hold",
+					"offsets": [ 0, 0 ]
+				},
+				"up": {
+					"prefix": "green hold",
+					"offsets": [ 0, 0 ]
+				},
+				"right": {
+					"prefix": "red hold",
+					"offsets": [ 0, 0 ]
+				}
+			}
+		},
+		"strum": {
+			"assetPath": "./strums",
+			"idle": {
+				"global": {
+					"offsets": [
+						-40,
+						-40 
+					]
+				},
+				"left": {
+					"prefix": "staticLeft",
+					"offsets": [ 0, 0 ]
+				},
+				"down": {
+					"prefix": "staticDown",
+					"offsets": [ 0, 0 ]
+				},
+				"up": {
+					"prefix": "staticUp",
+					"offsets": [ 0, 0 ]
+				},
+				"right": {
+					"prefix": "staticRight",
+					"offsets": [ 0, 0 ]
+				}
+			},
+			"confirm": {
+				"global": {
+					"offsets": [
+						-40,
+						-40 
+					]
+				},
+				"left": {
+					"prefix": "left confirm",
+					"offsets": [ 0, 0 ]
+				},
+				"down": {
+					"prefix": "down confirm",
+					"offsets": [ 0, 0 ]
+				},
+				"up": {
+					"prefix": "up confirm",
+					"offsets": [ 0, 0 ]
+				},
+				"right": {
+					"prefix": "right confirm",
+					"offsets": [ 0, 0 ]
+				}
+			},
+			"pressed": {
+				"global": {
+					"offsets": [
+						0,
+						0 
+					]
+				},
+				"left": {
+					"prefix": "left press",
+					"offsets": [ 0, 0 ]
+				},
+				"down": {
+					"prefix": "down press",
+					"offsets": [ 0, 0 ]
+				},
+				"up": {
+					"prefix": "up press",
+					"offsets": [ 0, 0 ]
+				},
+				"right": {
+					"prefix": "right press",
+					"offsets": [ 0, 0 ]
+				}
+			}
+		},
+		"cover": {
+			"global": {
+				"assetPath": "./holdcovers",
+				"offsets": [
+					-15,
+					40
+				]
+			},
+			"start": {
+				"left": {
+					"prefix": "holdCoverStartPurple",
+					"offsets": [ 0, 0 ]
+				},
+				"down": {
+					"prefix": "holdCoverStartBlue",
+					"offsets": [ 0, 0 ]
+				},
+				"up": {
+					"prefix": "holdCoverStartGreen",
+					"offsets": [ 0, 0 ]
+				},
+				"right": {
+					"prefix": "holdCoverStartRed",
+					"offsets": [ 0, 0 ]
+				}
+			},
+			"hold": {
+				"left": {
+					"prefix": "holdCoverPurple",
+					"offsets": [ 0, 0 ]
+				},
+				"down": {
+					"prefix": "holdCoverBlue",
+					"offsets": [ 0, 0 ]
+				},
+				"up": {
+					"prefix": "holdCoverGreen",
+					"offsets": [ 0, 0 ]
+				},
+				"right": {
+					"prefix": "holdCoverRed",
+					"offsets": [ 0, 0 ]
+				}
+			},
+			"pop": {
+				"left": {
+					"prefix": "holdCoverEndPurple",
+					"offsets": [ 0, 0 ]
+				},
+				"down": {
+					"prefix": "holdCoverEndBlue",
+					"offsets": [ 0, 0 ]
+				},
+				"up": {
+					"prefix": "holdCoverEndGreen",
+					"offsets": [ 0, 0 ]
+				},
+				"right": {
+					"prefix": "holdCoverEndRed",
+					"offsets": [ 0, 0 ]
+				}
+			}
+		},
+		"splash": {
+			"global": {
+				"assetPath": "./splashes",
+				"varients": 2,
+				"offsets": [
+					-10,
+					-10
+				]
+			},
+			"base": {
+				"left": {
+					"prefix": "note impact {varient} purple",
+					"offsets": [ 0, 0 ]
+				},
+				"down": {
+					"prefix": "note impact {varient} blue",
+					"offsets": [ 0, 0 ]
+				},
+				"up": {
+					"prefix": "note impact {varient} green",
+					"offsets": [ 0, 0 ]
+				},
+				"right": {
+					"prefix": "note impact {varient} red",
+					"offsets": [ 0, 0 ]
+				}
+			}
+			
+		}
 	}
 }
