@@ -2,6 +2,7 @@ package backend.scripts;
 
 import backend.filesystem.Paths;
 using utils.ArrayUtil;
+using utils.StringUtil;
 
 class PythonScript extends FunkinScript {
 
@@ -28,32 +29,22 @@ class PythonScript extends FunkinScript {
         var finalString:String = "";
         var lineNumber:Int = 1;
         var funcCount:Int = 0;
-        for (line in rawLines) {
+        for (i=>line in rawLines) {
             var skip:Bool = false;
-            var keys:Array<String> = ["def", "if", "else", "while", "try", "except"];
-            var isF:Bool = false;
-            for (key in keys) {
-                if (StringTools.startsWith(StringTools.trim(line), key)) {
-                    isF = true;
-                }
-            }
-            if (funcCount != 0 && !(StringTools.startsWith(line, "\t") || StringTools.startsWith(line, "    "))) {
-            //if (funcCount != 0 && isF) {
+            if (funcCount != 0 && !(StringTools.startsWith(line, "\t") || StringTools.startsWith(line, "    ") || StringTools.startsWith(rawLines[i+1], "\t") || StringTools.startsWith(rawLines[i+1], "    "))) {
                 funcCount--;
                 finalString += "}\n";
                 skip = true;
             }
             var lineSplit = StringTools.trim(line).split('');
-            //trace(lineSplit);
             if (lineSplit[lineSplit.length-1] == ":") {
                 funcCount++;
-                var daFunc = StringTools.trim(line);
-                daFunc = StringTools.replace(daFunc, "def", "function");
-                daFunc = StringTools.replace(daFunc, ":", "{\n");
+                var daFunc:String = StringTools.trim(line);
+                daFunc = daFunc.replaceOutsideString("def", "function");
+                daFunc = daFunc.replaceOutsideString(":", "{\n");
                 finalString += daFunc;
             } else if (!skip && lineSplit != []) {
                 var daLine = StringTools.trim(line);
-                //daLine = StringTools.replace(daLine, "print(", "print(\"" + lineNumber + ": \" + ");
                 if (daLine + ";\n" != ";\n") {
                     finalString += daLine + ";\n";
                 }
@@ -61,8 +52,8 @@ class PythonScript extends FunkinScript {
             lineNumber++;
         }
 
-        finalString = StringTools.replace(finalString, "except", "catch");
-        finalString = StringTools.replace(finalString, "#", "//");
+        finalString = finalString.replaceOutsideString("except", "catch");
+        finalString = finalString.replaceOutsideString("#", "//");
 
 		return finalString;
         //trace(finalString);
