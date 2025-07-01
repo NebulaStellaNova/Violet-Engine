@@ -1,5 +1,6 @@
 package backend;
 
+import states.substates.TransitionSubState;
 import states.ModState;
 import sys.thread.Condition;
 import flixel.util.FlxSort;
@@ -104,6 +105,8 @@ class MusicBeatState extends FlxState {
 		//postCreate();
 
 		add(debugTexts);
+
+		openSubState(new TransitionSubState("in", ()->{}));
 	}
 
 	override public function update(elapsed:Float)
@@ -152,9 +155,6 @@ class MusicBeatState extends FlxState {
 			previousMeasure = Conductor.curMeasure;
 		}
 
-		if (FlxG.keys.justPressed.F5) {
-			FlxG.resetState();
-		}
 		if (FlxG.keys.justPressed.F4) {
 			switchState(new ClassData("source:MainMenuState").target);
 		}
@@ -207,18 +207,21 @@ class MusicBeatState extends FlxState {
 	}
 
 	public function switchState(targetClass:Dynamic) {
-		var redirects:Array<Dynamic> = Paths.parseJson("stateRedirects", "data/config");
-		var className = FlxStringUtil.getClassName(targetClass, true);
-		var switched = false;
-		for (i in redirects) {
-			if (i.state == className) {
-				log('Redirecting State "$className" to "${FlxStringUtil.getClassName(new ClassData(i.target).target, true)}"', DebugMessage);
-				FlxG.switchState(new ClassData(i.target).target);
-				switched = true;
+		closeSubState();
+		openSubState(new TransitionSubState("out", ()->{
+			var redirects:Array<Dynamic> = Paths.parseJson("stateRedirects", "data/config");
+			var className = FlxStringUtil.getClassName(targetClass, true);
+			var switched = false;
+			for (i in redirects) {
+				if (i.state == className) {
+					log('Redirecting State "$className" to "${FlxStringUtil.getClassName(new ClassData(i.target).target, true)}"', DebugMessage);
+					FlxG.switchState(new ClassData(i.target).target);
+					switched = true;
+				}
 			}
-		}
-		if (!switched)
-			FlxG.switchState(targetClass);
+			if (!switched)
+				FlxG.switchState(targetClass);
+		}));
 	}
 
 	public function stepHit(theStep:Int) {

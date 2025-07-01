@@ -83,4 +83,13 @@ class Main extends Sprite
 		FlxG.game.debugger.console.registerFunction('getSaveData', NovaSave.get);
 		#end
 	}
+
+	override function __update(o, e) {
+		super.__update(o, e);
+		
+		if (FlxG.keys.justPressed.F5) {
+			FlxG.state.closeSubState();
+			FlxG.resetState();
+		}
+	}
 }

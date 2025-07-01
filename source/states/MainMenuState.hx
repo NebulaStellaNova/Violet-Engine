@@ -44,7 +44,7 @@ class MainMenuState extends MusicBeatState {
 	public var curSelectedString:String = "";
 	public var bgColorString:String = "";
 
-	public var curSelected:Int = 0;
+	public static var curSelected:Int = 0;
 
 	public var menuData:MenuData;
 
@@ -101,6 +101,9 @@ class MainMenuState extends MusicBeatState {
 		FlxG.game.debugger.console.registerFunction('setSelectionColor', setSelectionColor);
 		FlxG.game.debugger.console.registerFunction('changeSelection', changeSelection);
 		#end
+		
+		changeSelection(uiCheck());
+		FlxG.camera.snapToTarget();
 		FlxG.camera.followLerp = 0.1;
 	}
 
