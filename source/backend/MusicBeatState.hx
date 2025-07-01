@@ -1,5 +1,6 @@
 package backend;
 
+import states.ModState;
 import sys.thread.Condition;
 import flixel.util.FlxSort;
 import utils.SortUtil;
@@ -59,12 +60,21 @@ class MusicBeatState extends FlxState {
 	public var debugVars:Array<String> = [];
 	var ____________________ = "                  ";
 
+	private function getScriptName() {
+		/* if (FlxG.state.stateName != "") {
+			return FlxG.state.stateName;
+		} else { */
+			return Main.className;
+		// }
+	}
+
 	override public function create() {
+		LuaScript.psychVariables = [];
 		globalVariables = Paths.parseJson("globalVariables", "data/config");
 		super.create();
 		Conductor.init();
 
-		var scriptPath = 'data/scripts/states/${Main.className}';
+		var scriptPath = 'data/scripts/states/${getScriptName()}';
 		for(i in Paths.modPaths(scriptPath)) {
 			if (Paths.fileExists('$i.hx')) {
 				stateScripts.addScript(new FunkinScript('$i.hx'));

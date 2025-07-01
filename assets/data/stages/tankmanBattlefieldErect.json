@@ -64,5 +64,5 @@
     },
     "gf": { "zIndex": 100, "position": [800.5, 775], "cameraOffsets": [0, 0] }
   },
-  "directory": "week7"
+  "directory": "stages/week7"
 }

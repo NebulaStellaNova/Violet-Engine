@@ -1,5 +1,6 @@
 package backend.scripts;
 
+import flixel.math.FlxAngle;
 import flixel.*;
 import flixel.group.FlxGroup;
 import flixel.group.FlxSpriteGroup;
@@ -47,6 +48,7 @@ class FunkinScript extends Script {
 	function initVars():Void {
 		// Flixel
 		importClass('FlxG', FlxG);
+		importClass('FlxAngle', FlxAngle);
 		importClass('FlxBasic', FlxBasic);
 		importClass('FlxObject', FlxObject);
 		importClass('FlxSprite', FlxSprite);

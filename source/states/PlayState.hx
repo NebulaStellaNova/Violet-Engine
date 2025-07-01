@@ -106,6 +106,8 @@ class PlayState extends MusicBeatState {
 	public var boyfriend:Character;
 	public var girlfriend:Character;
 
+	public var scriptsToAdd:Array<String> = [];
+
 	function formatScoreTxt(string:String, localAccuracy:Dynamic, localMisses:Float, localScore:Float, localRating:String) {
 		string = string.replace("$accuracy", '$localAccuracy');
 		string = string.replace("$misses", '$localMisses');
@@ -132,7 +134,6 @@ class PlayState extends MusicBeatState {
 		super.create();
 
 		trace(songID);
-		var scriptsToAdd = [];
 		var foldersToCheck = [
 			'data/scripts/songs', 
 			'data/scripts/songs/$songID',
@@ -170,7 +171,7 @@ class PlayState extends MusicBeatState {
 			}
 		}
 
-		stateScripts.parent = this;
+		stateScripts.parent = instance;
 		for (i in scriptsToAdd) {
 			if (i.endsWith(".hx")) {
 				this.stateScripts.addScript(new FunkinScript(i));
@@ -233,22 +234,31 @@ class PlayState extends MusicBeatState {
 						//character.updateHitbox();
 						character.x = stage.stageData.characters.dad.position[0] - (character.width / 2);
 						character.y = stage.stageData.characters.dad.position[1];
+						character.cameraOffset.x += stage.stageData.characters.dad.cameraOffsets[0];
+						character.cameraOffset.y += stage.stageData.characters.dad.cameraOffsets[1];
 						character.zIndex = stage.stageData.characters.dad.zIndex;
 						//character.offset.y = character.frameHeight * character.scale.y - character.offset.y;
 						case "spectator":
 						//character.updateHitbox();
 						character.x = stage.stageData.characters.gf.position[0] - (character.width / 2);
 						character.y = stage.stageData.characters.gf.position[1];
+						character.cameraOffset.x += stage.stageData.characters.gf.cameraOffsets[0];
+						character.cameraOffset.y += stage.stageData.characters.gf.cameraOffsets[1];
 						character.zIndex = stage.stageData.characters.gf.zIndex;
 						//character.offset.y = character.frameHeight * character.scale.y - character.offset.y;
 						case "player":
 						//character.updateHitbox();
 						character.x = stage.stageData.characters.bf.position[0] - (character.width / 2);
-						character.y = stage.stageData.characters.bf.position[1];
+						character.y = stage.stageData.characters.bf.position[1] + (character.height / 2);
+						character.cameraOffset.x += stage.stageData.characters.bf.cameraOffsets[0];
+						character.cameraOffset.y += stage.stageData.characters.bf.cameraOffsets[1];
 						character.zIndex = stage.stageData.characters.bf.zIndex;
 						//character.offset.y = character.frameHeight * character.scale.y - character.offset.y;
 				}
 			}
+		}
+		for (character in characters) {
+			character.y -= (FlxG.width/2);
 		}
 		addCharacters();
 		call("postCreate");
@@ -419,15 +429,20 @@ class PlayState extends MusicBeatState {
 			accuracyTxt.text = "BOTPLAY";
 		}
 
-		for (event in events)
+		for (event in events) {
 			if (Conductor.time >= Math.floor(event.time) && !event.ran)
 				onEvent(event);
+		}
 	
 		camGame.followLerp = 0.1;
 		var targetObject:FlxObject = new FlxObject();
 		targetObject.x = camFollowPoint.x;
 		targetObject.y = camFollowPoint.y;
 		camGame.target = targetObject;
+
+		if (curStep <= 0) {
+			onEvent(new EventNote("Camera Movement", 0, [0]));
+		}
 	}
 
 	public function onEvent(event:EventNote) {
@@ -441,6 +456,8 @@ class PlayState extends MusicBeatState {
 			camFollowPoint = new FlxPoint(0, 0);
 			camFollowPoint.x += strumLines.members[theEvent.parameters[0]].parentCharacters[0].cameraCenter.x;
 			camFollowPoint.y += strumLines.members[theEvent.parameters[0]].parentCharacters[0].cameraCenter.y;
+			camFollowPoint.x += strumLines.members[theEvent.parameters[0]].parentCharacters[0].cameraOffset.x;
+			camFollowPoint.y += strumLines.members[theEvent.parameters[0]].parentCharacters[0].cameraOffset.y;
 			camFollowPoint.x += strumLines.members[theEvent.parameters[0]].parentCharacters[0].x;
 			camFollowPoint.y += strumLines.members[theEvent.parameters[0]].parentCharacters[0].y;
 		}
@@ -566,7 +583,16 @@ class PlayState extends MusicBeatState {
 
 		if (chart.stage != null) {
 			stage = new Stage(chart.stage);
-			add(stage);
+			this.stateScripts.parent = this;
+			for (i in stage.scriptsToAdd) {
+				this.stateScripts.addScript(i);
+			}
+			for (i in stage) {
+				i.cameras = [camGame];
+				i.scrollFactor.x = i.data.scroll[0];
+				i.scrollFactor.y = i.data.scroll[1];
+			}
+			//add(stage);
 		}
 		// trace(chart.noteTypes);
 

@@ -1,5 +1,6 @@
 package backend.scripts;
 
+import flixel.math.FlxAngle;
 import haxe.PosInfos;
 import flixel.*;
 import flixel.group.FlxGroup;
@@ -28,7 +29,7 @@ class LuaScript extends Script {
 	override function get_parent():Dynamic
 		return internalScript.parent;
 
-	public var psychVariables:Map<String, Dynamic> = [];
+	public static var psychVariables:Map<String, Dynamic> = [];
 
 	public var blacklistImports:Array<Class<Dynamic>> = [
 		sys.io.File,
@@ -81,6 +82,7 @@ class LuaScript extends Script {
 	public function initVars() {
 		// Flixel
 		set('FlxG', FlxG);
+		set('FlxAngle', FlxAngle);
 		set('FlxBasic', FlxBasic);
 		set('FlxObject', FlxObject);
 		set('FlxSprite', FlxSprite);

@@ -43,6 +43,7 @@ class Character extends Bopper {
 	public var type:String = "opponent"; // Used for flipx if player
 
 	public var cameraCenter:FlxPoint = new FlxPoint();
+	public var cameraOffset:FlxPoint = new FlxPoint();
 
 	public var characterData:CharacterData;
 
@@ -57,11 +58,14 @@ class Character extends Bopper {
 		
 		/* if (jsonData.offsets != null) {
 			this.offset.set(jsonData.offsets[0] ?? 0, jsonData.offsets[1] ?? 0);
-		} */
-
+			} */
+			
 		characterData = jsonData;
 		var imagePath = Paths.image(characterData.assetPath);
 		super(0, 0, Paths.image(characterData.assetPath));
+
+		this.globalOffset.x = characterData.offsets != null ? characterData.offsets[0] : 0;
+		this.globalOffset.y = characterData.offsets != null ? characterData.offsets[1] : 0;
 
 		var texture:FlxAtlasFrames = FlxAtlasFrames.fromSparrow(imagePath, imagePath.replace(".png", ".xml"));
 		if (characterData.renderType == "multisparrow") {

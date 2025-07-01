@@ -1,5 +1,6 @@
 package backend.objects;
 
+import flixel.math.FlxPoint;
 import flixel.util.FlxStringUtil;
 import flixel.system.FlxAssets.FlxGraphicAsset;
 import haxe.display.Display.Package;
@@ -15,6 +16,8 @@ class NovaSprite extends FlxSprite {
 	var animated:Bool = false;
 
 	var offsets:Map<String, Array<Float>> = [];
+
+	public var globalOffset:FlxPoint = new FlxPoint();
 
 	public function new(x:Float = 0.0, y:Float = 0.0, ?path:String) {
 		super(x, y);
@@ -51,6 +54,7 @@ class NovaSprite extends FlxSprite {
 			} else {
 				this.offset.set(0, 0);
 			}
+			this.offset.set(this.offset.x - globalOffset.x, this.offset.y - globalOffset.y);
 		}
 	}
 
@@ -62,8 +66,10 @@ class NovaSprite extends FlxSprite {
 			this.updateHitbox();
 		} else
 			log('Uh Ooooh! No animation found with ID: $id', WarningMessage);
-		if (this.offsets.exists(id))
+		if (this.offsets.exists(id)) {
 			this.offset.set(offsets.get(id)[0] ?? 0, offsets.get(id)[1] ?? 0);
+			this.offset.set(this.offset.x - globalOffset.x, this.offset.y - globalOffset.y);
+		}
 	}
 
 	public function addAnim(name:String, prefix:String, ?offsets:Array<Float>, looped:Bool = false, fps:Int = 24) {

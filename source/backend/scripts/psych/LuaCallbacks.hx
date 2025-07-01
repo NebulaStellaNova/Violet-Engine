@@ -147,10 +147,10 @@ class LuaCallbacks {
     }
 
     public static function getVar(script:LuaScript, field:String) {
-        return script.psychVariables.get(field);
+        return LuaScript.psychVariables.get(field);
     }
 
     public static function setVar(script:LuaScript, field:String, value:Dynamic) {
-        script.psychVariables.set(field, value);
+        LuaScript.psychVariables.set(field, value);
     }
 }
