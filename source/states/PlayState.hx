@@ -1,5 +1,6 @@
 package states;
 
+import flixel.util.FlxColor;
 import backend.scripts.PythonScript;
 import flixel.group.FlxGroup.FlxTypedGroup;
 import backend.scripts.LuaScript;
@@ -29,6 +30,7 @@ import backend.MusicBeatState;
 import flixel.util.FlxSort;
 using StringTools;
 using utils.ArrayUtil;
+
 
 typedef SongSaveData = {
 	var score:Int;
@@ -79,7 +81,7 @@ class PlayState extends MusicBeatState {
 	public static var keybinds:Array<Array<String>>;
 	
 	public static var songID:String;
-	public static var varient:String;
+	public static var varient:String = "";
 	public static var difficulty:String;
 	
 	public static var instance:PlayState;
@@ -108,11 +110,26 @@ class PlayState extends MusicBeatState {
 
 	public var scriptsToAdd:Array<String> = [];
 
+	function ratingColor(ratingString:String) {
+		switch (ratingString.toLowerCase()) {
+			case "sick":
+				return '<blue>$ratingString<blue>';
+			case "good":
+				return '<green>$ratingString<green>';
+			case "bad":
+				return '<orange>$ratingString<orange>';
+			case "shit":
+				return '<red>$ratingString<red>';
+			default:
+				return '<gray>$ratingString<gray>';
+		}
+	}
+
 	function formatScoreTxt(string:String, localAccuracy:Dynamic, localMisses:Float, localScore:Float, localRating:String) {
 		string = string.replace("$accuracy", '$localAccuracy');
 		string = string.replace("$misses", '$localMisses');
 		string = string.replace("$score", '$localScore');
-		string = string.replace("$rating", '$localRating');
+		string = string.replace("$rating", ratingColor(localRating));
 		return string;
 	}
 
@@ -202,12 +219,13 @@ class PlayState extends MusicBeatState {
 		accuracyTxt.y = FlxG.height - 100;
 		accuracyTxt.size = 20;
 		accuracyTxt.alignment = 'center';
+		accuracyTxt.setFormat(Paths.font("vcr.ttf"), 20);
 		accuracyTxt.screenCenter(X);
 		accuracyTxt.cameras = [camHUD];
 		add(accuracyTxt);
 
 		Conductor.curMusic = "";
-		Conductor.loadSong(songID);
+		Conductor.loadSong(songID, varient);
 		loadChart();
 
 		startSong();
@@ -422,9 +440,24 @@ class PlayState extends MusicBeatState {
 			}
 		}
 
-		if (accuracy != null)
+		if (accuracy != null) {
 			accuracyTxt.text = formatScoreTxt(globalVariables.scoreTxt, accuracy, misses, score, Judgement.getRating(accuracy).toUpperCase()); //'Misses: $misses | Accuracy: $accuracy% [${Judgement.getRating(accuracy).toUpperCase()}] | Score: $score';
+		}
+		accuracyTxt.applyMarkup(accuracyTxt.text,
+			[
+				new FlxTextFormatMarkerPair(new FlxTextFormat(0xFF00F7FF), "<blue>"),
+				new FlxTextFormatMarkerPair(new FlxTextFormat(0xFF00FF2A), "<green>"),
+				new FlxTextFormatMarkerPair(new FlxTextFormat(0xFFFFC400), "<orange>"),
+				new FlxTextFormatMarkerPair(new FlxTextFormat(0xFFFF0000), "<red>"),
+				new FlxTextFormatMarkerPair(new FlxTextFormat(0xFF747474), "<gray>")
+			]
+		);
 		accuracyTxt.scale.set(MathUtil.lerp(accuracyTxt.scale.x, 1, 0.1), MathUtil.lerp(accuracyTxt.scale.y, 1, 0.1));
+		accuracyTxt.borderStyle = OUTLINE;
+		accuracyTxt.borderColor = FlxColor.BLACK;
+		accuracyTxt.borderSize = 2;
+		accuracyTxt.y = FlxG.height - accuracyTxt.height - 20;
+		
 
 		if (botplay) {
 			accuracyTxt.text = "BOTPLAY";
@@ -482,8 +515,11 @@ class PlayState extends MusicBeatState {
 		switch (theEvent.name) {
 			case "Camera Movement":
 				camMoveEvent(theEvent);
-
 			case "Play Animation":
+				strumLines.members[theEvent.parameters[0]].parentCharacters[theEvent.parameters[1]].doBop = false;
+				strumLines.members[theEvent.parameters[0]].parentCharacters[theEvent.parameters[1]].animation.finishCallback = (anim)->{
+					strumLines.members[theEvent.parameters[0]].parentCharacters[theEvent.parameters[1]].doBop = true;
+				} 
 				strumLines.members[theEvent.parameters[0]].characterPlayAnim(theEvent.parameters[1], true);
 
 		}
@@ -586,7 +622,7 @@ class PlayState extends MusicBeatState {
 			},
 		];
 
-		var chart:ChartData = Paths.parseJson('songs/$songID/charts/$difficulty');
+		var chart:ChartData = Paths.parseJson('songs/$songID/charts/${varient != "" ? '$varient/' : ""}$difficulty');
 		if (chart.noteTypes == null)
 			chart.noteTypes = ["default"];
 		else
@@ -638,7 +674,7 @@ class PlayState extends MusicBeatState {
 		}
 		Conductor.addVocalTrack(songID);
 		for (i=>strumline in chart.strumLines) {
-			Conductor.addVocalTrack(songID, strumline.vocalsSuffix ?? strumline.characters[0]);
+			Conductor.addVocalTrack(songID, strumline.vocalsSuffix ?? strumline.characters[0], varient);
 			for (note in strumline.notes) {
 				var daNote = new Note(strumLines.members[i].strums.members[note.id], note.id, note.time, globalVariables.noteSkin);
 				daNote.visible = strumLines.members[i].visible;
@@ -668,7 +704,7 @@ class PlayState extends MusicBeatState {
 		for (character in characters) {
 
 			if (character.singTimer == 0) {
-				if (step % ((character.characterData.danceEvery ?? 2)*2) == 0) {
+				if (step % ((character.characterData.danceEvery ?? 2)*2) == 0 && character.doBop) {
 					character.dance();
 				}
 			}
@@ -693,5 +729,10 @@ class PlayState extends MusicBeatState {
 		for (i in events) {
 			i.ran = false;
 		}
+	}
+
+	override function destroy() {
+		super.destroy();
+		varient = "";
 	}
 }

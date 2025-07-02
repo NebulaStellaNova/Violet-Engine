@@ -458,6 +458,7 @@ class Conductor {
 	 */
 	public static function addVocalTrack(song:String, suffix:String = '', variant:String = '', ?afterLoad:FlxSound->Void):FlxSound {
 		var file:String = Paths.vocal(song, suffix, variant);
+		trace(file);
 		if (!Paths.fileExists(file)) {
 			//log('Failed to find ${suffix.isNullOrEmpty() ? 'base ' : ''}vocal track for song "$song"${variant == 'normal' ? '' : ', variant "$variant"'}${suffix.isNullOrEmpty() ? '' : ' with a suffix of "$suffix"'}.', WarningMessage);
 			return null;

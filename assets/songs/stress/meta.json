@@ -5,5 +5,10 @@
 	"color": "#F6B604",
 	"coopAllowed": true,
 	"opponentModeAllowed": true,
-	"variations": ["pico"]
+	"variations": ["pico"],
+	"difficulties": [
+		"EASY",
+		"NORMAL",
+		"HARD"
+	]
 }

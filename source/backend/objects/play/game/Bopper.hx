@@ -2,6 +2,8 @@ package backend.objects.play.game;
 
 class Bopper extends NovaSprite {
 
+	public var doBop:Bool = true;
+	
 	public var parent:MusicBeatState;
 
 	public var singTimer:Int = 0;

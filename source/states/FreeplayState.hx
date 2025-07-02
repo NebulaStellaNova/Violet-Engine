@@ -171,6 +171,7 @@ class FreeplayState extends MusicBeatState {
 			//new FlxTimer().start(2, (e)->{
 				var playState = new PlayState();
 				PlayState.songID = songDatas[curSelected].id;
+				//PlayState.varient = "pico";
 				PlayState.difficulty = curDifficulty;
 				WindowsAPI.sendWindowsNotification("Loading Song...", string);
 				//+playState.loadChart();
