@@ -56,6 +56,8 @@ class Main extends Sprite
 			log("Console Closed.", SystemMessage);
 			WindowsAPI.closeConsole();
 		});
+
+		lime.app.Application.current.window.focus();
 	}
 
 	inline function initializeToolkit() {

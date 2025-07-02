@@ -30,7 +30,7 @@ class SustainNote extends NovaSprite {
 		return parentNote.skin = value;
 
 	public var time:Float = 0;
-	public var extra:Map<String, Dynamic> = new Map<String, Dynamic>();
+	// public var extra:Map<String, Dynamic> = new Map<String, Dynamic>();
 	public var strumlineID(get, set):Int;
 	inline function get_strumlineID():Int
 		return parentNote.strumlineID;

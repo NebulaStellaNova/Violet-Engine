@@ -171,7 +171,7 @@ class PlayState extends MusicBeatState {
 			}
 		}
 
-		stateScripts.parent = instance;
+		this.stateScripts.parent = this;
 		for (i in scriptsToAdd) {
 			if (i.endsWith(".hx")) {
 				this.stateScripts.addScript(new FunkinScript(i));
@@ -181,6 +181,7 @@ class PlayState extends MusicBeatState {
 				this.stateScripts.addScript(new PythonScript(i));
 			}
 		}
+		this.stateScripts.call("new", [this]);
 		trace('Scripts To Add: $scriptsToAdd');
 
 		camGame = new FlxCamera();
@@ -442,6 +443,7 @@ class PlayState extends MusicBeatState {
 
 		if (curStep <= 0) {
 			onEvent(new EventNote("Camera Movement", 0, [0]));
+			camGame.snapToTarget();
 		}
 
 		for (sustain in sustains) {
@@ -450,6 +452,9 @@ class PlayState extends MusicBeatState {
 				sustain.kill();
 			}
 		}
+
+		this.stateScripts.call("postUpdate", [elapsed]);
+		this.stateScripts.call("onUpdatePost", [elapsed]);
 	}
 
 	public function onEvent(event:EventNote) {

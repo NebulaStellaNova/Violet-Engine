@@ -12,7 +12,7 @@ using StringTools;
 class Strum extends NovaSprite {
 	public var direction:Int = 0;
 	public var skin(default, set):String;
-	public var extra:Map<String, Dynamic> = new Map<String, Dynamic>();
+	//public var extra:Map<String, Dynamic> = new Map<String, Dynamic>();
 	public var skinData:NoteSkin;
 	public var notes:FlxTypedGroup<Note>;
 	public var sustains:FlxTypedGroup<SustainNote>;

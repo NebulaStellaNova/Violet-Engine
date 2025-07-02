@@ -26,7 +26,7 @@ class Note extends NovaSprite {
 	}
 
 	public var time:Float = 0;
-	public var extra:Map<String, Dynamic> = new Map<String, Dynamic>();
+	// public var extra:Map<String, Dynamic> = new Map<String, Dynamic>();
 	public var sustainLength:Float = 0;
 	public var tail:Array<SustainNote> = [];
 	public var strumlineID:Int = 0;
