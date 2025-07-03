@@ -32,7 +32,7 @@ typedef LaunchParams = {
 class Main extends Sprite
 {
 
-	private var launchParameters:LaunchParams = Paths.parseJson('data/launchParameters');
+	private var launchParameters:LaunchParams = Paths.parseJson('data/config/launchParameters');
 
 	public static var defaultKeybinds:Array<Array<String>> = [
 		["W", "E", "LEFT"],

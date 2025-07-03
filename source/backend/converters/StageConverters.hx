@@ -82,7 +82,7 @@ class StageConverters {
                             flipY: false,
                             animType: "sparrow",
                             animations: [],
-                            startingAnimation: "idle",
+                            startingAnimation: null,
                             danceEvery: 0
                         }
                         template.props.push(prop);
