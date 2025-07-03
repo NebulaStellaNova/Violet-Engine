@@ -59,7 +59,7 @@ class FreeplayState extends MusicBeatState {
 			var songData = parseSongData(song);
 			songDatas.push(songData);
 
-			//Conductor.loadSong(song);
+			Conductor.loadSong(song);
 
 			var text = new TardlingText(0, 90*i, FlxG.width, songData.data.displayName);
 			text.ID = i;
