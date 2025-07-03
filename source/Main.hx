@@ -1,5 +1,6 @@
 package;
 
+import backend.Assets;
 import lime.system.System;
 import haxe.ui.layouts.Layout;
 import haxe.ui.parsers.ui.LayoutInfo;
@@ -27,6 +28,7 @@ typedef LaunchParams = {
 	var drawFPS:Int;
 	var skipSplash:Bool;
 	var startFullscreen:Bool;
+	var windowTitle:String;
 }
 
 class Main extends Sprite
@@ -60,6 +62,8 @@ class Main extends Sprite
 	inline function initEverything() {
 		Logs.init();
 		FlxSprite.defaultAntialiasing = true;
+		backend.Assets.init();
+		//Assets.init();
 		// NovaSave.setIfNull("hitWindow", 200);
 	}
 	inline function initEverythingAfter() {
@@ -95,6 +99,7 @@ class Main extends Sprite
 		lime.app.Application.current.window.focus();
 		lime.app.Application.current.window.width = Math.round(1280*(launchParameters.width/1280));
 		lime.app.Application.current.window.height = Math.round(720*(launchParameters.height/720));
+		openfl.Lib.application.window.title = launchParameters.windowTitle;
 
 	}
 

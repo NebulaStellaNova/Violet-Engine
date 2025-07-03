@@ -46,7 +46,7 @@ class StageConverters {
                     case 'bf':
                         template.characters.bf.zIndex = i;
                         template.characters.bf.position[0] = Std.parseFloat(node.get('x'));
-                        template.characters.bf.position[1] = Std.parseFloat(node.get('y'));
+                        template.characters.bf.position[1] = Std.parseFloat(node.get('y')) + (flixel.FlxG.height);
                         template.characters.bf.cameraOffsets[0] = Std.parseFloat(node.get('camxoffset') ?? "0");
                         template.characters.bf.cameraOffsets[1] = Std.parseFloat(node.get('camyoffset') ?? "0");
                     case 'dad':
@@ -54,13 +54,13 @@ class StageConverters {
                         template.characters.dad.position[0] = Std.parseFloat(node.get('x'));
                         template.characters.dad.position[1] = Std.parseFloat(node.get('y'));
                         template.characters.dad.cameraOffsets[0] = Std.parseFloat(node.get('camxoffset') ?? "0");
-                        template.characters.dad.cameraOffsets[1] = Std.parseFloat(node.get('camyoffset') ?? "0");
+                        template.characters.dad.cameraOffsets[1] = Std.parseFloat(node.get('camyoffset') ?? "0") + (flixel.FlxG.height);
                     case 'gf':
                         template.characters.gf.zIndex = i;
                         template.characters.gf.position[0] = Std.parseFloat(node.get('x'));
                         template.characters.gf.position[1] = Std.parseFloat(node.get('y'));
                         template.characters.gf.cameraOffsets[0] = Std.parseFloat(node.get('camxoffset') ?? "0");
-                        template.characters.gf.cameraOffsets[1] = Std.parseFloat(node.get('camyoffset') ?? "0");
+                        template.characters.gf.cameraOffsets[1] = Std.parseFloat(node.get('camyoffset') ?? "0") + (flixel.FlxG.height);
                     case 'sprite':
                         var prop:PropData = {
                             zIndex: i,

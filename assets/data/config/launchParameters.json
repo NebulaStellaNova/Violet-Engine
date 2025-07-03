@@ -5,5 +5,6 @@
     "updateFPS": 60,
     "drawFPS": 60,
     "skipSplash": true,
-    "startFullscreen": false
+    "startFullscreen": false,
+    "windowTitle": "Friday Night Funkin': Nova Engine"
 }

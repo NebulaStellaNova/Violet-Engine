@@ -408,7 +408,7 @@ class Conductor {
 
 		
 		if (Paths.fileExists(Paths.modPath('songs/$song/song/${variant != '' ? '$variant/' : ''}Inst.ogg'))) {
-			audio.loadEmbedded(Sound.fromFile(Paths.modPath('songs/$song/song/${variant != '' ? '$variant/' : ''}Inst.ogg')));
+			audio.loadEmbedded(Paths.modPath('songs/$song/song/${variant != '' ? '$variant/' : ''}Inst.ogg'));
 			FlxG.sound.loadHelper(audio, 1, soundGroup);
 			audio.persist = true;
 		} else {
@@ -466,7 +466,7 @@ class Conductor {
 		var vocals:FlxSound = FlxG.sound.list.add(new FlxSound());
 
 		if (Paths.fileExists(Paths.vocal(song, suffix, variant))) {
-			vocals.loadEmbedded(Sound.fromFile(Paths.vocal(song, suffix, variant)));
+			vocals.loadEmbedded(Paths.vocal(song, suffix, variant));
 			FlxG.sound.loadHelper(vocals, 1, soundGroup);
 			vocals.persist = true;
 		} else {

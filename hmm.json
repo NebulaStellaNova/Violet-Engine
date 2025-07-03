@@ -11,6 +11,11 @@
       "version": null
     },
     {
+      "name": "discord-rpc",
+      "type": "haxelib",
+      "version": null
+    },
+    {
       "name": "hxWindowColorMode",
       "type": "haxelib",
       "version": null
