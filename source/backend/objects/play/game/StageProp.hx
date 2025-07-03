@@ -11,6 +11,7 @@ class StageProp extends NovaSprite {
     public var data:PropData;
 
     public function new(data:PropData, parent:Stage) {
+        trace(Paths.image((parent.stageData.directory != null ? parent.stageData.directory + "/" : "") + data.assetPath));
         super(data.position[0], data.position[0], Paths.image((parent.stageData.directory != null ? parent.stageData.directory + "/" : "") + data.assetPath));
         this.data = data;
         this.scale.set(data.scale[0], data.scale[1]);

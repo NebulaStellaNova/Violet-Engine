@@ -1,0 +1,9 @@
+{
+    "width": 1280,
+    "height": 720,
+    "startingState": "source:MainMenuState",
+    "updateFPS": 60,
+    "drawFPS": 60,
+    "skipSplash": true,
+    "startFullscreen": false
+}

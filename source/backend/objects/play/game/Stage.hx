@@ -1,5 +1,6 @@
 package backend.objects.play.game;
 
+import backend.converters.StageConverters;
 import backend.scripts.Script;
 import backend.scripts.PythonScript;
 import backend.scripts.LuaScript;
@@ -67,12 +68,18 @@ class Stage extends FlxTypedSpriteGroup<StageProp> {
     public function new(id:String) {
         super();
 
-        if (!Paths.fileExists(Paths.json('data/stages/$id'))) {
-            log('Stage Not Found With ID "$id"', ErrorMessage);
-            this.stageData = Paths.parseJson('data/stages/mainStage');
-            return;
+        var stageFound = false;
+        if (Paths.fileExists(Paths.json('data/stages/$id'))) {
+            this.stageData = Paths.parseJson('data/stages/$id');
+            stageFound = true;
+        } else if (Paths.fileExists(Paths.xml('data/stages/$id'))) {
+            this.stageData = StageConverters.fromCNE(Xml.parse(Paths.readStringFromPath(Paths.xml('data/stages/$id'))));
+            stageFound = true;
         }
-        this.stageData = Paths.parseJson('data/stages/$id');
+        if (!stageFound) {
+            log('Stage Not Found With ID "$id" using default stage.', ErrorMessage);
+            this.stageData = Paths.parseJson('data/stages/mainStage');
+        }
 
 		var foldersToCheck = [
 			'data/scripts/stages',

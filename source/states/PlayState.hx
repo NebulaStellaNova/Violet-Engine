@@ -337,6 +337,8 @@ class PlayState extends MusicBeatState {
 		Conductor.play();
 	}
 
+	private var prevText:String = '';
+
 	override public function update(elapsed:Float)
 	{
 		super.update(elapsed);
@@ -441,17 +443,29 @@ class PlayState extends MusicBeatState {
 		}
 
 		if (accuracy != null) {
-			accuracyTxt.text = formatScoreTxt(globalVariables.scoreTxt, accuracy, misses, score, Judgement.getRating(accuracy).toUpperCase()); //'Misses: $misses | Accuracy: $accuracy% [${Judgement.getRating(accuracy).toUpperCase()}] | Score: $score';
+			//accuracyTxt.text = formatScoreTxt(globalVariables.scoreTxt, accuracy, misses, score, Judgement.getRating(accuracy).toUpperCase()); //'Misses: $misses | Accuracy: $accuracy% [${Judgement.getRating(accuracy).toUpperCase()}] | Score: $score';
+			if (prevText != formatScoreTxt(globalVariables.scoreTxt, accuracy, misses, score, Judgement.getRating(accuracy).toUpperCase())) {
+				prevText = formatScoreTxt(globalVariables.scoreTxt, accuracy, misses, score, Judgement.getRating(accuracy).toUpperCase());
+				accuracyTxt.applyMarkup(formatScoreTxt(globalVariables.scoreTxt, accuracy, misses, score, Judgement.getRating(accuracy).toUpperCase()), [
+					new FlxTextFormatMarkerPair(new FlxTextFormat(0xFF00F7FF), "<blue>"),
+					new FlxTextFormatMarkerPair(new FlxTextFormat(0xFF00FF2A), "<green>"),
+					new FlxTextFormatMarkerPair(new FlxTextFormat(0xFFFFC400), "<orange>"),
+					new FlxTextFormatMarkerPair(new FlxTextFormat(0xFFFF0000), "<red>"),
+					new FlxTextFormatMarkerPair(new FlxTextFormat(0xFF747474), "<gray>")
+				]);
+			}
+		} else {
+			if (prevText != formatScoreTxt(globalVariables.scoreTxt, "Unknown", 0, 0, "N/A")) {
+				prevText = formatScoreTxt(globalVariables.scoreTxt, "Unknown", 0, 0, "N/A");
+				accuracyTxt.applyMarkup(formatScoreTxt(globalVariables.scoreTxt, "Unknown", 0, 0, "N/A"), [
+					new FlxTextFormatMarkerPair(new FlxTextFormat(0xFF00F7FF), "<blue>"),
+					new FlxTextFormatMarkerPair(new FlxTextFormat(0xFF00FF2A), "<green>"),
+					new FlxTextFormatMarkerPair(new FlxTextFormat(0xFFFFC400), "<orange>"),
+					new FlxTextFormatMarkerPair(new FlxTextFormat(0xFFFF0000), "<red>"),
+					new FlxTextFormatMarkerPair(new FlxTextFormat(0xFF747474), "<gray>")
+				]);
+			}
 		}
-		accuracyTxt.applyMarkup(accuracyTxt.text,
-			[
-				new FlxTextFormatMarkerPair(new FlxTextFormat(0xFF00F7FF), "<blue>"),
-				new FlxTextFormatMarkerPair(new FlxTextFormat(0xFF00FF2A), "<green>"),
-				new FlxTextFormatMarkerPair(new FlxTextFormat(0xFFFFC400), "<orange>"),
-				new FlxTextFormatMarkerPair(new FlxTextFormat(0xFFFF0000), "<red>"),
-				new FlxTextFormatMarkerPair(new FlxTextFormat(0xFF747474), "<gray>")
-			]
-		);
 		accuracyTxt.scale.set(MathUtil.lerp(accuracyTxt.scale.x, 1, 0.1), MathUtil.lerp(accuracyTxt.scale.y, 1, 0.1));
 		accuracyTxt.borderStyle = OUTLINE;
 		accuracyTxt.borderColor = FlxColor.BLACK;
