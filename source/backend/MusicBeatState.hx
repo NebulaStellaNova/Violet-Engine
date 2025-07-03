@@ -1,5 +1,6 @@
 package backend;
 
+import utils.StringUtil;
 import states.substates.TransitionSubState;
 import states.ModState;
 import sys.thread.Condition;
@@ -62,11 +63,11 @@ class MusicBeatState extends FlxState {
 	var ____________________ = "                  ";
 
 	private function getScriptName() {
-		/* if (FlxG.state.stateName != "") {
-			return FlxG.state.stateName;
-		} else { */
+		if (FlxStringUtil.getClassName(Type.getClass(FlxG.state), true) == "ModState" && ModState.stateName != "") {
+			return ModState.stateName;
+		} else {
 			return Main.className;
-		// }
+		}
 	}
 
 	override public function create() {
@@ -75,6 +76,7 @@ class MusicBeatState extends FlxState {
 		super.create();
 		Conductor.init();
 
+		trace(getScriptName());
 		var scriptPath = 'data/scripts/states/${getScriptName()}';
 		for(i in Paths.modPaths(scriptPath)) {
 			if (Paths.fileExists('$i.hx')) {

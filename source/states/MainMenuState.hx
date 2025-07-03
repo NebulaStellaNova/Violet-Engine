@@ -62,7 +62,7 @@ class MainMenuState extends MusicBeatState {
 		debugVars = ["curSelected"];
 		super.create();
 
-		menuData = Json.parse(Paths.readStringFromPath("assets/data/config/menuData.json"));
+		menuData = Paths.parseJson("data/config/menuData");
 
 		var mult:Float = 1/(menuData.items.length-1);
 		bg = new NovaSprite(Paths.image(menuData.background, menuData.directory));

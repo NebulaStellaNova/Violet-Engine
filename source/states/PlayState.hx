@@ -338,7 +338,7 @@ class PlayState extends MusicBeatState {
 	}
 
 	public function applyAccuracyMarkup(text:String) {
-		accuracyTxt.applyMarkup(formatScoreTxt(, accuracy, misses, score, Judgement.getRating(accuracy).toUpperCase()), [
+		accuracyTxt.applyMarkup(formatScoreTxt(text, accuracy, misses, score, Judgement.getRating(accuracy).toUpperCase()), [
 			new FlxTextFormatMarkerPair(new FlxTextFormat(0xFF00F7FF), "<blue>"),
 			new FlxTextFormatMarkerPair(new FlxTextFormat(0xFF00FF2A), "<green>"),
 			new FlxTextFormatMarkerPair(new FlxTextFormat(0xFFFFC400), "<orange>"),
@@ -529,9 +529,9 @@ class PlayState extends MusicBeatState {
 				camMoveEvent(theEvent);
 			case "Play Animation":
 				strumLines.members[theEvent.parameters[0]].parentCharacters[theEvent.parameters[1]].doBop = false;
-				strumLines.members[theEvent.parameters[0]].parentCharacters[theEvent.parameters[1]].animation.finishCallback = (anim)->{
+				strumLines.members[theEvent.parameters[0]].parentCharacters[theEvent.parameters[1]].animation.onFinish.addOnce((anim)->{
 					strumLines.members[theEvent.parameters[0]].parentCharacters[theEvent.parameters[1]].doBop = true;
-				} 
+				});
 				strumLines.members[theEvent.parameters[0]].characterPlayAnim(theEvent.parameters[1], true);
 
 		}

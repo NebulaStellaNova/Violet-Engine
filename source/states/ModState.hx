@@ -3,10 +3,12 @@ package states;
 import backend.MusicBeatState;
 
 class ModState extends MusicBeatState {
-    public var stateName:String = "";
+    public static var stateName:String = "";
 
     public function new(name) {
-        this.stateName = name;
+        if (name != null) {
+            stateName = name;
+        }
         super();
     }
 }

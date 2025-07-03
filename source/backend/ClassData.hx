@@ -25,6 +25,8 @@ class ClassData {
 					log('Unknown State "${string.split(":")[1]}" returning to the Main Menu' , WarningMessage);
 					this.target = new MainMenuState();
 			}
+		} else if (this.type == "mod") {
+			this.target = new ModState(string.split(":")[1]);
 		}
 	}
 }
