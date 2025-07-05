@@ -1,42 +1,57 @@
+name: Builds
 
-name: Windows Build
 on:
   push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
   workflow_dispatch:
+
 jobs:
-  build:
-    name: Windows Build
+
+  windows:
     permissions: write-all
     runs-on: windows-latest
+
     steps:
-      - name: Pulling the new commit
-        uses: actions/checkout@v2
-      - name: Setting up Haxe
-        uses: krdlab/setup-haxe@v1
+      - name: Checking Latest Commit
+        uses: actions/checkout@main
+        with:
+          submodules: true
+
+      - name: Setup Haxe
+        uses: krdlab/setup-haxe@master
         with:
           haxe-version: 4.3.7
-      - name: Restore existing build cache for faster compilation
+
+      - name: Run Cache
         uses: actions/cache@v3
         with:
-          key: cache-build-windows
+          # not caching the bin folder to prevent asset duplication and stuff like that
+          key: windows-build-cache
           path: |
             .haxelib/
-            export/release/windows/haxe/
-            export/release/windows/obj/
-          restore-keys: |
-            cache-build-windows
-      - name: Installing/Updating libraries
-        run: |
-          haxe -cp commandline -D analyzer-optimize --run Main setup -s
-      - name: Building the game
-        run: |
-          haxelib run lime test windows
-      - name: Uploading artifact (entire build)
-        uses: actions/upload-artifact@v4
+            export/build/windows/haxe/
+            export/build/windows/obj/
+          restore-keys: windows-build-cache
+
+      - name: Install Libraries
+        run: haxe -cp commandline -D analyzer-optimize --run Main
+
+      - name: Compile Engine
+        run: haxelib run lime build windows -final
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@main
         with:
-          name: Nova Engine
-          path: export/windows/bin
-      - name: Clearing already existing cache
+          name: Windows
+          path: export/build/windows/bin
+          overwrite: true
+          include-hidden-files: true
+          if-no-files-found: error
+
+      - name: Clearing Cache
         uses: actions/github-script@v6
         with:
           script: |
@@ -45,24 +60,24 @@ jobs:
               repo: context.repo.repo,
             })
             for (const cache of caches.data.actions_caches) {
-              if (cache.key == "cache-build-windows") {
+              if (cache.key == 'windows-build-cache') {
                 console.log('Clearing ' + cache.key + '...')
                 await github.rest.actions.deleteActionsCacheById({
                   owner: context.repo.owner,
                   repo: context.repo.repo,
                   cache_id: cache.id,
                 })
-                console.log("Cache cleared.")
+                console.log('Cache cleared.')
               }
             }
-      - name: Uploading new cache
+
+      - name: Run New Cache
         uses: actions/cache@v3
         with:
-          # caching again since for some reason it doesnt work with the first post cache shit
-          key: cache-build-windows
+          # not caching the bin folder to prevent asset duplication and stuff like that
+          key: windows-build-cache
           path: |
             .haxelib/
-            export/release/windows/haxe/
-            export/release/windows/obj/
-          restore-keys: |
-            cache-build-windows
+            export/build/windows/haxe/
+            export/build/windows/obj/
+          restore-keys: windows-build-cache
