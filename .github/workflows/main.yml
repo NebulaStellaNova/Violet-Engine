@@ -30,7 +30,7 @@ jobs:
           haxe -cp commandline -D analyzer-optimize --run Main setup -s
       - name: Building the game
         run: |
-          haxelib run lime build windows
+          lime test windows
       - name: Uploading artifact (entire build)
         uses: actions/upload-artifact@v4
         with:
