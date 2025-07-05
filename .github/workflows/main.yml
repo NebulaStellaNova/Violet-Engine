@@ -32,8 +32,8 @@ jobs:
           key: windows-build-cache
           path: |
             .haxelib/
-            export/build/windows/haxe/
-            export/build/windows/obj/
+            export/windows/haxe/
+            export/windows/obj/
           restore-keys: windows-build-cache
 
       - name: Install Libraries
@@ -46,7 +46,7 @@ jobs:
         uses: actions/upload-artifact@main
         with:
           name: Windows
-          path: export/build/windows/bin
+          path: export/windows/bin
           overwrite: true
           include-hidden-files: true
           if-no-files-found: error
@@ -78,6 +78,6 @@ jobs:
           key: windows-build-cache
           path: |
             .haxelib/
-            export/build/windows/haxe/
-            export/build/windows/obj/
+            export/windows/haxe/
+            export/windows/obj/
           restore-keys: windows-build-cache
