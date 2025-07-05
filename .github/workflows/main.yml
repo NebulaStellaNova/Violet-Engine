@@ -37,7 +37,7 @@ jobs:
           restore-keys: windows-build-cache
 
       - name: Install Libraries
-        run: haxe -cp commandline -D analyzer-optimize --run Main
+        run: haxe -cp commandline -D analyzer-optimize --run Main setup
 
       - name: Compile Engine
         run: haxelib run lime build windows -final
