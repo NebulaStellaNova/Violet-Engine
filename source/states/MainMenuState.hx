@@ -38,7 +38,7 @@ typedef MenuData = {
 
 class MainMenuState extends MusicBeatState {
 	public var watermarkTexts = [
-		"Nova Engine v0.1",
+		"Violet Engine v0.1",
 		"THIS IS NOT A FORK"
 	];
 

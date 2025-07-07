@@ -256,4 +256,10 @@ class MusicBeatState extends FlxState {
 			methodName: ""
 		});
 	}
+
+	override function destroy() {
+		FlxG.bitmap.clearUnused();
+		FlxG.bitmap.clearCache();
+		super.destroy();
+	}
 }

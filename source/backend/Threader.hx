@@ -12,7 +12,7 @@ class Threader {
     public static macro function runInThread(expr:Expr, ?sleepDuration:Float = 0, ?name:String = ""):Expr {
         var sleepExpr = Context.makeExpr(sleepDuration, Context.currentPos());
         var nameExpr = Context.makeExpr(name, Context.currentPos());
-        trace("Preparing a threaded section of code:" + expr + " with sleep duration: " + sleepDuration + " and name: " + name);
+        //trace("Preparing a threaded section of code:" + expr + " with sleep duration: " + sleepDuration + " and name: " + name);
         return macro {
             #if sys
             var thrd = sys.thread.Thread.create(function() {
