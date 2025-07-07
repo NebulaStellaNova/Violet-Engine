@@ -12,8 +12,8 @@
 	<git name="linc_luajit" url="https://github.com/nebulazorua/linc_luajit" ref="master"/>
 	<git name="lscript" url="https://github.com/SrtHero278/lscript" ref="main"/>
 	<git name="rulescript" url="https://github.com/Kriptel/RuleScript" ref="master"/>
-	<git name="haxeui-core" url="https://github.com/haxeui/haxeui-core" ref="07fc7aa8098deaea633b0726d01f83eb4ef8a832"/>
-	<git name="haxeui-flixel" url="https://github.com/haxeui/haxeui-flixel" ref="b899a4c7d7318c5ff2b1bb645fbc73728fad1ac9"/>
+	<git name="haxeui-core" url="https://github.com/haxeui/haxeui-core"/>
+	<git name="haxeui-flixel" url="https://github.com/haxeui/haxeui-flixel"/>
 
 	<!-- Other Libraries -->
 	<lib name="hxcpp" skipDeps="true" />
