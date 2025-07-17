@@ -34,7 +34,7 @@ class CrashHandler {
 		dateNow = dateNow.replace(" ", "_");
 		dateNow = dateNow.replace(":", "'");
 
-		path = "./crash/" + "NovaEngine_" + dateNow + ".txt";
+		path = "./crash/" + "VioletEngine_" + dateNow + ".txt";
 
 		for (stackItem in callStack)
 		{
