@@ -1,5 +1,8 @@
 package states;
 
+import flixel.FlxBasic;
+import flixel.FlxSprite;
+import flixel.FlxObject;
 import flixel.util.FlxColor;
 import states.editors.CharacterEditorState;
 import backend.ClassData;
@@ -57,6 +60,9 @@ class MainMenuState extends MusicBeatState {
 
 	public var canSelect:Bool = true;
 
+	public var menuAlignment:String = "left";
+	public var watermarkAlignment:String = "right";
+
 	override public function create()
 	{
 		debugVars = ["curSelected"];
@@ -84,7 +90,7 @@ class MainMenuState extends MusicBeatState {
 			item.updateHitbox();
 			item.centerOrigin();
 			item.centerOffsets();
-			item.screenCenter(X);
+			//item.screenCenter(X);
 			menuItems.push(item);
 			add(item);
 		}
@@ -93,6 +99,13 @@ class MainMenuState extends MusicBeatState {
 		leftWatermark.y = FlxG.height - leftWatermark.getHeight() - 5;
 		leftWatermark.setFormat(Paths.font("vcr.ttf"), 40);
 		leftWatermark.scrollFactor.set();
+		leftWatermark.alignment = watermarkAlignment;
+		switch (watermarkAlignment) {
+			case "right":
+				leftWatermark.x = FlxG.width - leftWatermark.getWidth();
+			default:
+				leftWatermark.x = 10;
+		}
 		//leftWatermark.setFormat(Paths.font("Tardling v1.1.ttf"), 20);
 		add(leftWatermark);
 
@@ -164,11 +177,21 @@ class MainMenuState extends MusicBeatState {
 		curSelected = event.selection;
 		for (i => item in menuItems) {
 			if (i == curSelected) {
-				FlxG.camera.target = item;
+				var daTarget:FlxObject = new FlxObject();
+				daTarget.x = (FlxG.width/2);
+				daTarget.y = item.y;
+				FlxG.camera.target = daTarget;
 			}
 			item.playAnim(i == curSelected ? "selected" : "static");
 			item.updateHitbox();
-			item.screenCenter(X);
+			switch (menuAlignment) {
+				case "center":
+					item.screenCenter(X);
+				case "left":
+					item.x = 20;
+				case "right":
+					item.x = FlxG.width - item.width - 20;
+			}
 		}
 		curSelectedString = menuData.items[curSelected].item;
 	}
