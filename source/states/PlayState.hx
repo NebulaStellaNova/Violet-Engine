@@ -260,7 +260,7 @@ class PlayState extends MusicBeatState {
 						character.cameraOffset.y += stage.stageData.characters.dad.cameraOffsets[1];
 						character.zIndex = stage.stageData.characters.dad.zIndex;
 						//character.offset.y = character.frameHeight * character.scale.y - character.offset.y;
-						case "spectator":
+					case "spectator":
 						//character.updateHitbox();
 						character.x = stage.stageData.characters.gf.position[0] - (character.width / 2);
 						character.y = stage.stageData.characters.gf.position[1];
@@ -268,7 +268,7 @@ class PlayState extends MusicBeatState {
 						character.cameraOffset.y += stage.stageData.characters.gf.cameraOffsets[1];
 						character.zIndex = stage.stageData.characters.gf.zIndex;
 						//character.offset.y = character.frameHeight * character.scale.y - character.offset.y;
-						case "player":
+					case "player":
 						//character.updateHitbox();
 						character.x = stage.stageData.characters.bf.position[0] - (character.width / 2);
 						character.y = stage.stageData.characters.bf.position[1] + (character.height / 2);
