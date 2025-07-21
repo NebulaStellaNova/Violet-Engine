@@ -110,8 +110,6 @@ class Strum extends NovaSprite {
 
 	override function update(elapsed:Float) {
 		super.update(elapsed);
-		notes.members.sort((a:Note, b:Note) -> FlxSort.byValues(FlxSort.ASCENDING, a.time, b.time));
-		sustains.members.sort((a:SustainNote, b:SustainNote) -> FlxSort.byValues(FlxSort.ASCENDING, a.time, b.time));
 	}
 
 	public function add(note:OneOfTwo<Note, SustainNote>) {
@@ -126,6 +124,8 @@ class Strum extends NovaSprite {
 			sustain.x = sustain.parentNote.x + (sustain.parentNote.width/2) - (sustain.width/2);
 			sustain.y = this.parent.strums.y;
 		}
+		notes.members.sort((a:Note, b:Note) -> FlxSort.byValues(FlxSort.ASCENDING, a.time, b.time));
+		sustains.members.sort((a:SustainNote, b:SustainNote) -> FlxSort.byValues(FlxSort.ASCENDING, a.time, b.time));
 	}
 
 	public function onNoteHit(note:Note, rating:String = "sick") {

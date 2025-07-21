@@ -216,13 +216,16 @@ class PlayState extends MusicBeatState {
 		keybinds = cast NovaSave.get("keybinds");
 
 		accuracyTxt = new FlxText(0, 0, FlxG.width/1.5, formatScoreTxt(globalVariables.scoreTxt, "Unknown", 0, 0, "N/A"));
-		accuracyTxt.y = FlxG.height - 100;
-		accuracyTxt.size = 20;
-		accuracyTxt.alignment = 'center';
-		accuracyTxt.setFormat(Paths.font("vcr.ttf"), 20);
+		accuracyTxt.setFormat(Paths.font("vcr.ttf"), 20, FlxColor.WHITE, CENTER, OUTLINE, FlxColor.BLACK);
+		accuracyTxt.borderSize = 2;
+		accuracyTxt.y = FlxG.height - accuracyTxt.height - 20;
 		accuracyTxt.screenCenter(X);
 		accuracyTxt.cameras = [camHUD];
 		add(accuracyTxt);
+
+		if (botplay) {
+			accuracyTxt.text = "BOTPLAY";
+		}
 
 		Conductor.curMusic = "";
 		Conductor.loadSong(songID, varient);
@@ -352,7 +355,6 @@ class PlayState extends MusicBeatState {
 	override public function update(elapsed:Float)
 	{
 		super.update(elapsed);
-		var realHitWindow = hitWindow/2;
 
 		if (curBeat < 1) {
 			for (i in events) {
@@ -371,13 +373,11 @@ class PlayState extends MusicBeatState {
 			openSubState(new states.substates.PauseSubState(camOther));
 		}
 
-		notes.sort((a:Note, b:Note) -> FlxSort.byValues(FlxSort.ASCENDING, a.time, b.time));
-		sustains.sort((a:SustainNote, b:SustainNote) -> FlxSort.byValues(FlxSort.ASCENDING, a.time, b.time));
-
 		for (strumLine in strumLines) {
 			var hitThisFrame = [false, false, false, false];
 			for (dir => strum in strumLine.strums.members) {
 				var doPress = true;
+				var realHitWindow = hitWindow / 2;
 				strum.notes.forEachAlive((note:Note) -> {
 					var distance:Float = (0.45 * (Conductor.time - note.time) * note.scrollSpeed);
 					var angelDir = (note.parentStrum.angle+90+180) * Math.PI / 180;
@@ -464,16 +464,8 @@ class PlayState extends MusicBeatState {
 				applyAccuracyMarkup(formatScoreTxt(globalVariables.scoreTxt, "Unknown", 0, 0, "N/A"));
 			}
 		}
-		accuracyTxt.scale.set(MathUtil.lerp(accuracyTxt.scale.x, 1, 0.1), MathUtil.lerp(accuracyTxt.scale.y, 1, 0.1));
-		accuracyTxt.borderStyle = OUTLINE;
-		accuracyTxt.borderColor = FlxColor.BLACK;
-		accuracyTxt.borderSize = 2;
-		accuracyTxt.y = FlxG.height - accuracyTxt.height - 20;
-		
 
-		if (botplay) {
-			accuracyTxt.text = "BOTPLAY";
-		}
+		accuracyTxt.scale.set(MathUtil.lerp(accuracyTxt.scale.x, 1, 0.1), MathUtil.lerp(accuracyTxt.scale.y, 1, 0.1));
 
 		for (event in events) {
 			if (Conductor.time >= Math.floor(event.time) && !event.ran)
