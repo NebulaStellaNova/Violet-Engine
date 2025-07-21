@@ -108,10 +108,6 @@ class Strum extends NovaSprite {
 		this.updateHitbox();
 	}
 
-	override function update(elapsed:Float) {
-		super.update(elapsed);
-	}
-
 	public function add(note:OneOfTwo<Note, SustainNote>) {
 		if (note is Note) {
 			var note:Note = cast note;
