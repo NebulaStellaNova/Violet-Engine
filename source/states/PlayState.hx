@@ -416,6 +416,7 @@ class PlayState extends MusicBeatState {
 							noteHit(note, strum, strumLine.type);
 						}
 					}
+					note.visible = note.y <= FlxG.width;
 				});
 				strum.sustains.forEachAlive((sustain:SustainNote) -> {
 					var distance:Float = (0.45 * (Conductor.time - sustain.time) * sustain.parentNote.scrollSpeed);

@@ -258,8 +258,9 @@ class MusicBeatState extends FlxState {
 	}
 
 	override function destroy() {
-		FlxG.bitmap.clearUnused();
-		FlxG.bitmap.clearCache();
+		/* FlxG.bitmap.clearUnused();
+		FlxG.bitmap.clearCache(); */
 		super.destroy();
+		/* cpp.vm.Gc.run(false); */
 	}
 }

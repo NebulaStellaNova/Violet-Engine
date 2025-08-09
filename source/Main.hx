@@ -1,5 +1,6 @@
 package;
 
+import states.MenuState;
 import backend.Assets;
 import lime.system.System;
 import haxe.ui.layouts.Layout;
@@ -34,6 +35,8 @@ typedef LaunchParams = {
 class Main extends Sprite
 {
 
+	public static var framerateSprite:backend.openfl.Framerate;
+
 	private var launchParameters:LaunchParams = Paths.parseJson('data/config/launchParameters');
 
 	public static var defaultKeybinds:Array<Array<String>> = [
@@ -50,6 +53,7 @@ class Main extends Sprite
 		super();
 		initEverything();
 		addChild(new FlxGame(launchParameters.width, launchParameters.height, new ClassData(launchParameters.startingState).target, launchParameters.updateFPS, launchParameters.drawFPS, launchParameters.skipSplash, launchParameters.startFullscreen));
+		addChild(framerateSprite = new backend.openfl.Framerate());
 		CrashHandler.init();
 		initEverythingAfter();
 	}

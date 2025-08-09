@@ -40,5 +40,24 @@ class NovaUtil {
 		return FlxStringUtil.getClassName(object, true) == "Float";
 	}
 
+	private static var sizeLabels:Array<String> = ["B", "KB", "MB", "GB", "TB"];
+
+	// Thank you cne :D
+	public static function getSizeString(size:Float):String {
+		var rSize:Float = size;
+		var label:Int = 0;
+		var len = sizeLabels.length;
+		while(rSize >= 1024 && label < len-1) {
+			label++;
+			rSize /= 1024;
+		}
+		return Std.int(rSize) + ((label <= 1) ? "" : "." + addZeros(Std.string(Std.int((rSize % 1) * 100)), 2)) + sizeLabels[label];
+	}
+
+	
+	public static inline function addZeros(str:String, num:Int) {
+		while(str.length < num) str = '0${str}';
+		return str;
+	}
 
 }
