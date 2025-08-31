@@ -93,4 +93,9 @@ class NovaSprite extends FlxSprite {
 		returner.loadSprite(this.filePath);
 		return returner;
 	}
+
+	/* public function destroy() {
+		this.kill();
+		return;
+	} */
 }
