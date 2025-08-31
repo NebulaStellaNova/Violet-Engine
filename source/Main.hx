@@ -64,6 +64,7 @@ class Main extends Sprite
 	}
 
 	inline function initEverything() {
+		Cache.init();
 		Logs.init();
 		FlxSprite.defaultAntialiasing = true;
 		backend.Assets.init();

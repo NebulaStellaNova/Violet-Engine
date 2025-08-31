@@ -21,8 +21,14 @@ class NovaSprite extends FlxSprite {
 
 	public function new(x:Float = 0.0, y:Float = 0.0, ?path:String) {
 		super(x, y);
-		if (path != null)
-			this.loadSprite(path);
+		if (path != null) {
+			if (backend.Cache.spriteCache.exists(path)) {
+				return backend.Cache.spriteCache.get(path);
+			} else {
+				this.loadSprite(path);
+				backend.Cache.spriteCache.set(path, this.clone());
+			}
+		}
 	}
 
 	public function loadSprite(path:String):NovaSprite {
@@ -80,5 +86,11 @@ class NovaSprite extends FlxSprite {
 	public function addAnimIndices(name:String, prefix:String, indices:Array<Int>, ?offsets:Array<Float>, looped:Bool = false, fps:Int = 24) {
 		this.animation.addByIndices(name, prefix, indices, "", fps, looped);
 		this.offsets.set(name, offsets != null ? [-offsets[0], -offsets[1]] : [0, 0]);
+	}
+
+	public function clone():NovaSprite {
+		var returner = new NovaSprite();
+		returner.loadSprite(this.filePath);
+		return returner;
 	}
 }
