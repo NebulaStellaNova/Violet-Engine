@@ -1,9 +1,10 @@
 package violet.states;
 
+import violet.backend.StateBackend;
 import violet.backend.filesystem.Paths;
 import violet.backend.objects.NovaSprite;
 
-class TitleState extends flixel.FlxState { // for now
+class TitleState extends StateBackend {
 
 	public var bootAnimation:NovaSprite;
 
