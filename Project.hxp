@@ -75,10 +75,6 @@ class EngineAsset {
 	static final editWindowBorderColor:CompilerFlag = 'EDIT_WINDOW_BORDER_COLOR';
 
 	/**
-	 * States if the engine has a version ID.
-	 */
-	static final knowsVersionID:CompilerFlag = 'KNOWS_VERSION_ID';
-	/**
 	 * States if the engine can tell when a new version is available.
 	 */
 	static final checkForUpdates:CompilerFlag = 'CHECK_FOR_UPDATES';
@@ -153,13 +149,14 @@ class EngineAsset {
 		if (FileSystem.exists('./.haxelib'))
 			setenv('HAXEPATH', './.haxelib');
 
+		for (i in [8, 16, 32, 64, 128, 256, 512])
+			addIcon('./art/icon$i.png', i);
 		addIcon('./art/iconOG.png');
 
 		/* Define Setup */
-		// knowsVersionID.enable();
-		if ((isRelease() && knowsVersionID.exists()) && !isDebug())
+		if (isRelease())
 			checkForUpdates.enable();
-		// modSupport.enable();
+		modSupport.enable();
 		// scriptSupport.enable();
 
 		// usesAnimateAtlas.enable();
@@ -256,11 +253,11 @@ class EngineAsset {
 		// chart converter
 		addHaxelib('moonchart');
 
-		if ( canHaxeScript.exists()) addHaxelib('rulescript',     'git');
+		if ( canHaxeScript.exists()) addHaxelib('rulescript');
 		if ( canLuaScript .exists()) addHaxelib('lscript',        'git');
 		if (  discordRPC  .exists()) addHaxelib('discord-rpc');
-		if (allowVideos   .exists()) addHaxelib('hxvlc',          'git');
-		if (knowsVersionID.exists()) addHaxelib('thx.semver');
+		if (allowVideos   .exists()) addHaxelib('hxvlc');
+		addHaxelib('thx.semver');
 
 		if (editWindowBorderColor.exists())
 			addHaxelib('hxWindowColorMode');

@@ -1,11 +1,8 @@
 package;
 
-#if KNOWS_VERSION_ID
 import thx.semver.Version;
-#end
 
 class Main extends openfl.display.Sprite {
-	#if KNOWS_VERSION_ID
 	/**
 	 * The current version of the engine.
 	 */
@@ -14,7 +11,6 @@ class Main extends openfl.display.Sprite {
 	 * The latest version of the engine.
 	 */
 	public static var latestVersion(default, null):Version;
-	#end
 	#if CHECK_FOR_UPDATES
 	/**
 	 * If true a new update was released for the engine!
@@ -41,10 +37,8 @@ class Main extends openfl.display.Sprite {
 		// write this
 		#end
 
-		#if KNOWS_VERSION_ID
-		engineVersion = lime.app.Application.meta.get('version');
+		engineVersion = lime.app.Application.current.meta.get('version');
 		latestVersion = engineVersion;
-		#end
 
 		addChild(new flixel.FlxGame(1280, 720, violet.states.InitialState));
 		addChild(new openfl.display.FPS(FlxColor.WHITE));

@@ -7,6 +7,9 @@ class InitialState extends flixel.FlxState { // for now
 
 		super.create();
 
+		#if MOD_SUPPORT
+		Modding.init();
+		#end
 		#if CHECK_FOR_UPDATES
 		// write this
 		#end

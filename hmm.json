@@ -52,8 +52,10 @@
     },
     {
       "name": "json2object",
-      "type": "haxelib",
-      "version": null
+      "type": "git",
+      "dir": null,
+      "ref": "master",
+      "url": "https://github.com/FunkinCrew/json2object"
     },
     {
       "name": "lscript",
@@ -69,6 +71,11 @@
     },
     {
       "name": "rulescript",
+      "type": "haxelib",
+      "version": null
+    },
+    {
+      "name": "thx.semver",
       "type": "haxelib",
       "version": null
     }

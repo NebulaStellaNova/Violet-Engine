@@ -1,14 +1,10 @@
 package violet.backend.objects;
 
-import violet.backend.filesystem.Paths;
-import flixel.math.FlxPoint;
-import flixel.util.FlxStringUtil;
-import flixel.system.FlxAssets.FlxGraphicAsset;
-import haxe.display.Display.Package;
-import flixel.graphics.frames.FlxAtlasFrames;
-// import backend.filesystem.Paths;
 import flixel.FlxSprite;
-import sys.FileSystem;
+import flixel.graphics.frames.FlxAtlasFrames;
+import flixel.math.FlxPoint;
+import flixel.system.FlxAssets.FlxGraphicAsset;
+import flixel.util.FlxStringUtil;
 
 using StringTools;
 class NovaSprite extends FlxSprite {
@@ -23,13 +19,12 @@ class NovaSprite extends FlxSprite {
 
 	public function new(x:Float = 0.0, y:Float = 0.0, ?path:String) {
 		super(x, y);
-		if (path != null) {
+		if (path != null)
 			this.loadSprite(path);
-		}
 	}
 
 	public function loadSprite(path:String):NovaSprite {
-		if (FileSystem.exists(path.replace(".png", ".xml"))) {
+		if (Paths.fileExists(path.replace(".png", ".xml"))) {
 			this.filePath = path;
 			this.fileName = Paths.getFileName(path);
 			this.animated = true;
