@@ -1,17 +1,27 @@
 {
   "dependencies": [
     {
+      "name": "discord-rpc",
+      "type": "haxelib",
+      "version": null
+    },
+    {
       "name": "flixel",
       "type": "haxelib",
       "version": null
     },
     {
-      "name": "hmm",
+      "name": "flixel-addons",
       "type": "haxelib",
       "version": null
     },
     {
-      "name": "discord-rpc",
+      "name": "flixel-animate",
+      "type": "haxelib",
+      "version": null
+    },
+    {
+      "name": "hmm",
       "type": "haxelib",
       "version": null
     },
@@ -31,11 +41,19 @@
       "version": null
     },
     {
-      "name": "linc_luajit",
-      "type": "git",
-      "dir": null,
-      "ref": "master",
-      "url": "https://github.com/nebulazorua/linc_luajit"
+      "name": "hxp",
+      "type": "haxelib",
+      "version": null
+    },
+    {
+      "name": "hxvlc",
+      "type": "haxelib",
+      "version": null
+    },
+    {
+      "name": "json2object",
+      "type": "haxelib",
+      "version": null
     },
     {
       "name": "lscript",
@@ -45,25 +63,14 @@
       "url": "https://github.com/SrtHero278/lscript"
     },
     {
+      "name": "moonchart",
+      "type": "haxelib",
+      "version": null
+    },
+    {
       "name": "rulescript",
-      "type": "git",
-      "dir": null,
-      "ref": "master",
-      "url": "https://github.com/Kriptel/RuleScript"
-    },
-    {
-      "name": "haxeui-core",
-      "type": "git",
-      "dir": null,
-      "ref": "07fc7aa8098deaea633b0726d01f83eb4ef8a832",
-      "url": "https://github.com/haxeui/haxeui-core"
-    },
-    {
-      "name": "haxeui-flixel",
-      "type": "git",
-      "dir": null,
-      "ref": "b899a4c7d7318c5ff2b1bb645fbc73728fad1ac9",
-      "url": "https://github.com/haxeui/haxeui-flixel"
+      "type": "haxelib",
+      "version": null
     }
   ]
 }

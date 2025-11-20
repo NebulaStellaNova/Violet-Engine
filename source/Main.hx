@@ -1,128 +1,54 @@
 package;
 
-import states.MenuState;
-import backend.Assets;
-import lime.system.System;
-import haxe.ui.layouts.Layout;
-import haxe.ui.parsers.ui.LayoutInfo;
-import backend.ClassData;
-import haxe.ui.Toolkit;
-import apis.WindowsAPI;
-import backend.filesystem.Paths;
-import backend.objects.NovaSave;
-import backend.audio.Conductor;
-import flixel.util.FlxStringUtil;
-import flixel.FlxG;
-import flixel.FlxSprite;
-import states.MainMenuState;
-import backend.console.Logs;
-import flixel.FlxGame;
-import openfl.display.Sprite;
-import hxwindowmode.WindowColorMode;
-import backend.CrashHandler;
+#if KNOWS_VERSION_ID
+import thx.semver.Version;
+#end
 
-typedef LaunchParams = {
-	var width:Int;
-	var height:Int;
-	var startingState:String;
-	var updateFPS:Int;
-	var drawFPS:Int;
-	var skipSplash:Bool;
-	var startFullscreen:Bool;
-	var windowTitle:String;
-}
+class Main extends openfl.display.Sprite {
+	#if KNOWS_VERSION_ID
+	/**
+	 * The current version of the engine.
+	 */
+	public static var engineVersion(default, null):Version;
+	/**
+	 * The latest version of the engine.
+	 */
+	public static var latestVersion(default, null):Version;
+	#end
+	#if CHECK_FOR_UPDATES
+	/**
+	 * If true a new update was released for the engine!
+	 */
+	public static var updateAvailable(default, null):Bool = false;
+	#end
 
-class Main extends Sprite
-{
+	public function new() {
+		violet.backend.CrashHandler.init();
 
-	public static var framerateSprite:backend.openfl.Framerate;
-
-	private var launchParameters:LaunchParams = Paths.parseJson('data/config/launchParameters');
-
-	public static var defaultKeybinds:Array<Array<String>> = [
-		["W", "E", "LEFT"],
-		["F", "F", "DOWN"],
-		["J", "K", "UP"],
-		["O", "O", "RIGHT"],
-	];
-
-	public static var className:String;
-
-	public function new()
-	{
 		super();
-		initEverything();
-		addChild(new FlxGame(launchParameters.width, launchParameters.height, new ClassData(launchParameters.startingState).target, launchParameters.updateFPS, launchParameters.drawFPS, launchParameters.skipSplash, launchParameters.startFullscreen));
-		addChild(framerateSprite = new backend.openfl.Framerate());
-		CrashHandler.init();
-		initEverythingAfter();
-	}
 
-	inline function initializeToolkit() {
-		Toolkit.init();
-    	Toolkit.theme = 'dark';
-	}
-
-	inline function initEverything() {
-		Cache.init();
-		Logs.init();
-		FlxSprite.defaultAntialiasing = true;
-		backend.Assets.init();
-		//Assets.init();
-		// NovaSave.setIfNull("hitWindow", 200);
-	}
-	inline function initEverythingAfter() {
-		NovaSave.init();
-		NovaSave.setIfNull("downscroll", false);
-		NovaSave.setIfNull("ghostTapping", true);
-		NovaSave.setIfNull("keybinds", defaultKeybinds);
-
-		addDebuggerStuff();
-		FlxG.signals.preStateCreate.add((state)->{
-			className = FlxStringUtil.getClassName(state, true);
-			#if FLX_DEBUG
-			FlxG.watch.add(Main, "className", 'Current State:');
-			#end
-			//log(className, DebugMessage);
-		});
-		FlxG.resetState();
-		WindowColorMode.setDarkMode();
-		apis.WindowsAPI.sendWindowsNotification("Test", "Test Desc");
-		
-		WindowsAPI.initConsole();
-		
-		var commandPrompt = new backend.CommandPrompt();
-        backend.Threader.runInThread(commandPrompt.start());
-		commandPrompt.active = true;
-		initializeToolkit();
-
-		FlxG.stage.window.onClose.add(()->{
-			log("Console Closed.", SystemMessage);
-			WindowsAPI.closeConsole();
-		});
-
-		lime.app.Application.current.window.focus();
-		lime.app.Application.current.window.width = Math.round(1280*(launchParameters.width/1280));
-		lime.app.Application.current.window.height = Math.round(720*(launchParameters.height/720));
-		openfl.Lib.application.window.title = launchParameters.windowTitle;
-
-	}
-
-	inline function addDebuggerStuff() {
-		#if FLX_DEBUG
-		FlxG.game.debugger.console.registerFunction('resetState', () -> FlxG.resetState());
-		FlxG.game.debugger.console.registerFunction('openEditor', () -> FlxG.switchState(states.PonyCustomizationState.new));
-		FlxG.game.debugger.console.registerFunction('setSaveData', NovaSave.set);
-		FlxG.game.debugger.console.registerFunction('getSaveData', NovaSave.get);
+		moonchart.Moonchart.DEFAULT_DIFF = 'normal';
+		moonchart.Moonchart.CASE_SENSITIVE_DIFFS = moonchart.Moonchart.SPACE_SENSITIVE_DIFFS = false;
+		#if EDIT_WINDOW_BORDER_COLOR
+		hxwindowmode.WindowColorMode.setDarkMode();
+		hxwindowmode.WindowColorMode.setWindowCornerType(1);
+		hxwindowmode.WindowColorMode.redrawWindowHeader();
 		#end
-	}
+		#if ALLOW_VIDEOS
+		hxvlc.util.Handle.init();
+		#end
+		#if DISCORD_RICH_PRESENCE
+		// write this
+		#end
 
-	override function __update(o, e) {
-		super.__update(o, e);
-		
-		if (FlxG.keys.justPressed.F5) {
-			FlxG.state.closeSubState();
-			FlxG.resetState();
-		}
+		#if KNOWS_VERSION_ID
+		engineVersion = lime.app.Application.meta.get('version');
+		latestVersion = engineVersion;
+		#end
+
+		addChild(new flixel.FlxGame(1280, 720, violet.states.InitialState));
+		addChild(new openfl.display.FPS(FlxColor.WHITE));
+		FlxG.game.focusLostFramerate = 30;
+		FlxG.mouse.useSystemCursor = true;
 	}
 }

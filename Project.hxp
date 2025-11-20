@@ -1,0 +1,632 @@
+import haxe.io.Path;
+import sys.FileSystem;
+import sys.io.Process;
+import hxp.*;
+import lime.tools.*;
+
+using StringTools;
+
+class EngineAsset {
+	/**
+	 * The key name of the item should be the final path!
+	 */
+	public static var mapping:Map<String, EngineAsset> = new Map<String, EngineAsset>();
+
+	public var path:String;
+	public var rename:String;
+	public var library:String;
+	public var embed:Bool;
+
+	public function new(path:String, ?rename:String, ?library:String, embed:Bool = false) {
+		this.path = path;
+		this.rename = rename;
+		this.library = library;
+		this.embed = embed;
+	}
+}
+
+/**
+ * This project instead used a hxp file instead of a xml!
+ * This makes it easier to organize everything imo.
+ *
+ * Note: Based from base games hxp file.
+ */
+@:nullSafety class Project extends HXProject {
+	// Basic variables.
+	/**
+	 * The current engine version.
+	 * Remember to update this when a new engine version releases.
+	 */
+	static final engineVersion:String = '0.0.1';
+	/**
+	 * The starting window title.
+	 * Although slightly mananaged by the `FlxWindow` class I'm still having this here.
+	 */
+	static final windowTitle:String = 'Friday Night Funkin\': Violet Engine';
+	/**
+	 * The name of the executable file when the game complies.
+	 */
+	static final exeFileName:String = 'Violet Engine';
+	/**
+	 * The directory path**s** to the source code.
+	 */
+	static final sourceCodeDirectories:Array<String> = ['./source'];
+	/**
+	 * The class path to the preloader class.
+	 */
+	static final preloaderClassPath:String = 'flixel.system.FlxPreloader';
+	/**
+	 * The package name.
+	 */
+	static final packageName:String = 'nebula.stella.nova';
+	/**
+	 * The class path to the main class.
+	 */
+	static final mainClassPath:String = 'Main';
+	/**
+	 * The company name.
+	 */
+	static final companyName:String = 'NebulaStellaNova';
+
+	// Compiler flags.
+	/**
+	 * States if the engine can set the window border color.
+	 */
+	static final editWindowBorderColor:CompilerFlag = 'EDIT_WINDOW_BORDER_COLOR';
+
+	/**
+	 * States if the engine has a version ID.
+	 */
+	static final knowsVersionID:CompilerFlag = 'KNOWS_VERSION_ID';
+	/**
+	 * States if the engine can tell when a new version is available.
+	 */
+	static final checkForUpdates:CompilerFlag = 'CHECK_FOR_UPDATES';
+
+	/**
+	 * States if the engine has modding support.
+	 */
+	static final modSupport:CompilerFlag = 'MOD_SUPPORT';
+	/**
+	 * States if the engine has animate atlas support.
+	 */
+	static final usesAnimateAtlas:CompilerFlag = 'ANIMATE_SUPPORT';
+
+	/**
+	 * States if the engine has scripting support.
+	 */
+	static final scriptSupport:CompilerFlag = 'SCRIPT_SUPPORT';
+	/**
+	 * States if the engine has haxe scripting support.
+	 */
+	static final canHaxeScript:CompilerFlag = 'CAN_HAXE_SCRIPT';
+	/**
+	 * States if the engine has lua scripting support.
+	 */
+	static final canLuaScript:CompilerFlag = 'CAN_LUA_SCRIPT';
+	/**
+	 * States if the engine can do scripted states.
+	 */
+	static final scriptedStates:CompilerFlag = 'SCRIPTED_STATES';
+	/**
+	 * States if haxe scripting can do custom classes.
+	 */
+	static final customClasses:CompilerFlag = 'CUSTOM_CLASSES';
+	/**
+	 * States if dead code elimination will be disabled.
+	 */
+	static final disableDCE:CompilerFlag = 'DISABLE_DCE';
+
+	/**
+	 * States if the engine allows shaders at all.
+	 */
+	static final allowShaders:CompilerFlag = 'ALLOW_SHADERS';
+
+	/**
+	 * States if the engine can connect with discord's rich presence system.
+	 */
+	static final discordRPC:CompilerFlag = 'DISCORD_RICH_PRESENCE';
+
+	/**
+	 * States if the engine allows videos at all.
+	 */
+	static final allowVideos:CompilerFlag = 'ALLOW_VIDEOS';
+
+	override public function new() {
+		super();
+
+		CompilerFlag.init(this);
+
+		if (hasDefine('web') || hasDefine('html5')) {
+			error('None of that thank you! I don\'t want people using the engine for web ports. If you don\'t remember, there used to be so many that base game wasn\'t first in search results!');
+			return;
+		} else if (isDesktop() || isMobile()) {
+			if (isMac()) { // fix for compiling on mac
+				setDefine('mac');
+				setDefine('macos');
+			}
+		} else {
+			error('Hey this engine only works on desktop and mobile devices!');
+			return;
+		}
+
+		if (FileSystem.exists('./.haxelib'))
+			setenv('HAXEPATH', './.haxelib');
+
+		addIcon('./art/iconOG.png');
+
+		/* Define Setup */
+		// knowsVersionID.enable();
+		if ((isRelease() && knowsVersionID.exists()) && !isDebug())
+			checkForUpdates.enable();
+		// modSupport.enable();
+		// scriptSupport.enable();
+
+		// usesAnimateAtlas.enable();
+
+		// script related
+		if (scriptSupport.exists()) {
+			canHaxeScript.enable();
+			canLuaScript.enable();
+
+			disableDCE.enable();
+			scriptedStates.enable();
+			if (canHaxeScript.exists())
+				customClasses.enable();
+
+			info('Scripting was enabled.');
+		}
+		if (hasDefine('cpp')) {
+			// if (isDesktop())
+			// 	discordRPC.enable();
+			// if (isDesktop() || isMobile())
+			// 	allowVideos.enable();
+		}
+		if (discordRPC.exists())
+			setHaxedef('DISCORD_DISABLE_IO_THREAD');
+		allowShaders.enable();
+		// if (isWindows()) editWindowBorderColor.enable();
+		/* Define Setup */
+
+		/* App Setup */
+		meta.title = windowTitle;
+		meta.version = engineVersion;
+		meta.packageName = packageName;
+		meta.company = companyName;
+		app.main = mainClassPath;
+		app.file = exeFileName;
+		app.preloader = preloaderClassPath;
+		/* App Setup */
+
+		/* Window Settings */
+		window.fps = 60;
+		setDefine('InitialWidth', '${window.width = 1280}');
+		setDefine('InitialHeight', '${window.height = 720}');
+		window.background = 0xFF000000;
+		window.allowHighDPI = window.hardware = window.resizable = true;
+		window.vsync = window.fullscreen = false;
+		window.allowShaders = allowShaders.exists();
+
+		window.orientation = Orientation.LANDSCAPE;
+
+		if (isMobile()) {
+			window.fullscreen = true;
+			window.resizable = false;
+		}
+		/* Window Settings */
+
+		/* Path Settings */
+		// if (isDesktop())
+		// 	addAsset('./extras/alsoft.txt', './${isMac() ? 'Resources/' : ''}plugins/alsoft.${isWindows() ? 'ini' : 'conf'}');
+
+		var buildFolder:String = 'build';
+		if (!isRelease() && isDebug()) buildFolder = 'debug';
+		else if (isRelease() && !isDebug()) buildFolder = 'release';
+		else if (isRelease() && isDebug()) buildFolder = 'test';
+		app.path = './export/$buildFolder';
+
+		for (path in sourceCodeDirectories)
+			sources.push(path);
+
+		var excludeList:Array<String> = [''];
+		// addAssetLibrary('default', false, true); addAssetLibrary('mods');
+		addAssetPath('./assets', './assets', ['*'], excludeList);
+		if (modSupport.exists()) addAssetPath('./mods', './mods', ['*'], excludeList);
+		/* Path Settings */
+
+		/* Libraries */
+		// required for flixel, don't put below flixel, causes weird issues
+		addHaxelib('openfl');
+		addHaxelib('lime');
+
+		// the game engine
+		addHaxelib('flixel');
+		addHaxelib('flixel-addons');
+
+		if (usesAnimateAtlas.exists())
+			addHaxelib('flixel-animate');
+
+		// json parsing
+		addHaxelib('json2object', 'git');
+
+		// debugging
+		if (isDesktop() && isDebug())
+			addHaxelib('hxcpp-debug-server');
+
+		// chart converter
+		addHaxelib('moonchart');
+
+		if ( canHaxeScript.exists()) addHaxelib('rulescript',     'git');
+		if ( canLuaScript .exists()) addHaxelib('lscript',        'git');
+		if (  discordRPC  .exists()) addHaxelib('discord-rpc');
+		if (allowVideos   .exists()) addHaxelib('hxvlc',          'git');
+		if (knowsVersionID.exists()) addHaxelib('thx.semver');
+
+		if (editWindowBorderColor.exists())
+			addHaxelib('hxWindowColorMode');
+		/* Libraries */
+
+		if (!isDebug())
+			setHaxedef('FLX_NO_DEBUG');
+
+		// may add one
+		setHaxedef('FLX_NO_FOCUS_LOST_SCREEN');
+
+		if (disableDCE.exists())
+			addHaxeFlag('-dce no');
+
+		setHaxedef('message.reporting', 'pretty');
+		setHaxedef('message.log-format', 'pretty');
+		if (allowVideos.exists())
+			setHaxedef('HXVLC_NO_SHARE_DIRECTORY');
+		if (canHaxeScript.exists())
+			setHaxedef('hscriptPos');
+		if (isRelease() && !isDebug())
+			setHaxedef('analyzer-optimize');
+
+		// truly push assets
+		for (setAsset in EngineAsset.mapping) {
+			var asset = new Asset(setAsset.path ?? '', setAsset.rename ?? '', null, /* isDebug() ? false : */ setAsset.embed);
+			@:nullSafety(Off) asset.library = setAsset.library ?? 'default';
+			assets.push(asset);
+		}
+	}
+
+	/**
+	 * If true your compiling on desktop.
+	 */
+	inline public function isDesktop():Bool
+		return hasDefine('desktop');
+	/**
+	 * If true your compiling on mobile.
+	 */
+	inline public function isMobile():Bool
+		return hasDefine('mobile');
+
+	/**
+	 * If true your compiling on a 32 bit system.
+	 */
+	inline public function is32Bit():Bool
+		return architectures.contains(Architecture.X86);
+	/**
+	 * If true your compiling on a 64 bit system.
+	 */
+	inline public function is64Bit():Bool
+		return architectures.contains(Architecture.X64);
+
+
+	/**
+	 * If true your compiling on windows.
+	 */
+	inline public function isWindows():Bool
+		return hasDefine('windows');
+	/**
+	 * If true your compiling on mac.
+	 */
+	inline public function isMac():Bool
+		return hasDefine('mac') || hasDefine('macos');
+	/**
+	 * If true your compiling on linux.
+	 */
+	inline public function isLinux():Bool
+		return hasDefine('linux');
+
+	/**
+	 * If true your compiling on android.
+	 */
+	inline public function isAndroid():Bool
+		return targetFlags.exists('android');
+	/**
+	 * If true your compiling on ios.
+	 */
+	inline public function isIOS():Bool
+		return targetFlags.exists('ios');
+
+	/**
+	 * If true your compiling on a release build.
+	 */
+	inline public function isRelease():Bool
+		return hasDefine('release');
+	/**
+	 * If true your compiling on a debug build.
+	 */
+	inline public function isDebug():Bool
+		return hasDefine('debug');
+
+	/**
+	 * Set's a haxedef.
+	 * @param name The haxedef key.
+	 * @param value The value of the haxedef.
+	 */
+	inline public function setHaxedef(name:String, ?value:String):Void {
+		info('Set haxedef "$name"${value == null ? '' : ' value of "$value"'}.');
+		haxedefs.set(name, value ?? '');
+	}
+	/**
+	 * Get's information from a haxedef.
+	 * @param name The haxedef key.
+	 * @return The value of the haxedef.
+	 */
+	inline public function getHaxedef(name:String):Null<Dynamic>
+		return haxedefs.get(name);
+	/**
+	 * Unset's a haxedef.
+	 * @param name The haxedef key.
+	 */
+	inline public function unsetHaxedef(name:String):Void
+		if (hasHaxedef(name)) {
+			info('Unset haxedef "$name".');
+			haxedefs.remove(name);
+		}
+	/**
+	 * Check's if a haxedef exists.
+	 * @param name The haxedef key.
+	 * @return If true the define exists.
+	 */
+	inline public function hasHaxedef(name:String):Bool
+		return haxedefs.exists(name);
+
+	/**
+	 * Set's a define.
+	 * @param name The define key.
+	 * @param value The value of the define.
+	 */
+	inline public function setDefine(name:String, ?value:String):Void {
+		info('Set define "$name"${value == null ? '' : ' value of "$value"'}.');
+		defines.set(name, value ?? '');
+		haxedefs.set(name, value ?? '');
+		environment.set(name, value ?? '');
+	}
+	/**
+	 * Get's information from a define.
+	 * @param name The define key.
+	 * @return The value of the define.
+	 */
+	inline public function getDefine(name:String):Null<Dynamic>
+		return defines.get(name);
+	/**
+	 * Unset's a define.
+	 * @param name The define key.
+	 */
+	inline public function unsetDefine(name:String):Void
+		if (hasDefine(name)) {
+			info('Unset define "$name".');
+			defines.remove(name);
+			haxedefs.remove(name);
+			environment.remove(name);
+		}
+	/**
+	 * Check's if a define exists.
+	 * @param name The define key.
+	 * @return If true the define exists.
+	 */
+	inline public function hasDefine(name:String):Bool
+		return defines.exists(name);
+
+	/**
+	 * Add a library to the list of dependencies for the project.
+	 * @param name The name of the library to add.
+	 * @param version The version of the library to add. Optional.
+	 */
+	inline public function addHaxelib(name:String, ?version:LibraryVersion):Void {
+		var addLib:Bool = !FileSystem.exists('./.haxelib');
+		if (!addLib)
+			if (name != null && version != null)
+				addLib = FileSystem.exists('./.haxelib/$name/$version');
+			else if (name != null && version == null)
+				addLib = FileSystem.exists('./.haxelib/$name');
+		if (addLib) {
+			info('Added library "$name"${version == null ? '' : ' version "$version"'}.');
+			haxelibs.push(new Haxelib(name, version));
+		}
+	}
+
+	/**
+	 * Add a `haxeflag` to the project.
+	 * @param value The flag.
+	 */
+	inline public function addHaxeFlag(value:String):Void
+		haxeflags.push(value);
+	/**
+	 * Call a Haxe build macro.
+	 * @param value The macro.
+	 */
+	inline public function addHaxeMacro(value:String):Void
+		addHaxeFlag('--macro $value');
+
+	/**
+	 * Add an icon to the project.
+	 * @param icon The path to the icon.
+	 * @param size The size of the icon, optional.
+	 */
+	inline public function addIcon(icon:String, ?size:Int):Void
+		icons.push(new Icon(icon, size));
+	/**
+	 * Add an asset to the game build.
+	 * @param path The path the asset is located at.
+	 * @param rename The path the asset should be placed.
+	 * @param force If true if the game find that the file already exists then it will replace that file.
+	 * @param library The asset library to add the asset to. `null` = "default"
+	 * @param embed Whether to embed the asset in the executable.
+	 */
+	inline public function addAsset(path:String, ?rename:String, force:Bool = false, ?library:String, embed:Bool = false):Void
+		if (!EngineAsset.mapping.exists(rename ?? path) || force)
+			EngineAsset.mapping.set(rename ?? path, new EngineAsset(Path.normalize(path), @:nullSafety(Off) Path.normalize(rename), library, embed));
+
+	/**
+	 * Add an entire path of assets to the game build.
+	 * @param path The path the assets are located at.
+	 * @param rename The path the assets should be placed.
+	 * @param force If true if the game find that the file already exists then it will replace that file.
+	 * @param library The asset library to add the assets to. `null` = "default"
+	 * @param include An optional array to include specific asset names.
+	 * @param exclude An optional array to exclude specific asset names.
+	 * @param embed Whether to embed the assets in the executable.
+	 */
+	public function addAssetPath(path:String, ?rename:String, force:Bool = false, ?library:String, ?include:Array<String>, ?exclude:Array<String>, embed:Bool = false):Void {
+		// Argument parsing.
+		if (path == '')
+			return;
+
+		if (include == null)
+			include = [];
+
+		if (exclude == null)
+			exclude = [];
+
+		var targetPath:String = Path.normalize(rename ?? path);
+
+		// Validate path.
+		if (!FileSystem.exists(path)) {
+			error('Could not find asset path "$path".');
+			return;
+		} else if (!FileSystem.isDirectory(path)) {
+			error('Could not parse asset path "$path", expected a directory.');
+			return;
+		} /* else
+			info('Found asset path "$path".'); */
+
+		if (FileSystem.isDirectory(path) || FileSystem.exists(path))
+			for (file in FileSystem.readDirectory(path)) {
+				if (FileSystem.isDirectory('$path/$file')) {
+					// Attempt to recursively add all assets in the directory.
+					if (filter(file, ['*'], exclude)) {
+						var renamedFolder:String = file;
+						var willEmbed:Bool = file == 'embed';
+
+						if (willEmbed)
+							renamedFolder = '';
+						else if (file == '!embed')
+							renamedFolder = 'embed';
+						if (embed)
+							willEmbed = embed;
+
+						addAssetPath('$path/$file', '${Path.addTrailingSlash(targetPath)}$renamedFolder', force, library, include, exclude, willEmbed);
+					}
+				} else if (FileSystem.exists('$path/$file'))
+					if (filter(file, include, exclude)) {
+						var folderEmbedded:Bool = false;
+						var renamedFile:String = file;
+						var willEmbed:Bool = Path.extension(Path.withoutExtension(file)) == 'embed';
+
+						if (willEmbed) {
+							folderEmbedded = path.split('/').contains('embed');
+							renamedFile = '${Path.withoutExtension(Path.withoutExtension(file))}.${Path.extension(file)}';
+						} else if (Path.extension(Path.withoutExtension(file)) == '!embed')
+							renamedFile = '${Path.withoutExtension(Path.withoutExtension(file))}.embed.${Path.extension(file)}';
+						if (embed)
+							willEmbed = embed;
+
+						if (folderEmbedded) info('File "$path/$file" is already in an "embed" folder. Embedding denied.');
+						else addAsset('$path/$file', '${Path.addTrailingSlash(targetPath)}$renamedFile', force, willEmbed);
+					}
+			}
+	}
+
+	/**
+	 * Add an asset library to the game build.
+	 * @param name The name of the library.
+	 * @param embed
+	 * @param preload
+	 */
+	inline public function addAssetLibrary(name:String, embed:Bool = false, preload:Bool = false):Void
+		libraries.push(new Library('', name, null, embed, preload, false, ''));
+
+	/**
+	 * Display an error message. This should stop the build process.
+	 */
+	inline public function error(message:String):Void
+		Log.error('$message');
+
+	/**
+	 * Display an info message. This should not interfere with the build process.
+	 */
+	inline public function info(message:String):Void
+		if (command != 'display')
+			Log.info('[INFO] $message');
+}
+
+abstract LibraryVersion(String) from String to String {
+	@:from inline public static function fromArray(from:Array<Int>):LibraryVersion
+		return from.join(',');
+}
+
+/**
+ * An object representing a compiler flag, which can be enabled or disabled.
+ * Includes features such as automatic generation of compile defines.
+ */
+abstract CompilerFlag(String) {
+	static var parentProject(default, null):Project;
+	static var list:Array<String> = [];
+
+	public static function init(project:Project):Void {
+		parentProject = project;
+
+		for (tag in list) {
+			var flag:CompilerFlag = tag;
+			if (parentProject.hasDefine(tag) && !flag.exists())
+				flag.enable();
+		}
+
+		if (parentProject.hasDefine('tracy')) {
+			new CompilerFlag('TRACY_DEBUGGER').enable();
+			parentProject.unsetDefine('tracy');
+		}
+	}
+
+	inline public function new(input:String)
+		if (!list.contains(this = input))
+			list.push(this);
+
+	@:from inline public static function fromString(input:String):CompilerFlag
+		return new CompilerFlag(input);
+
+	/**
+	 * Enable this compiler flag by setting the appropriate compile define.
+	 * @param value The flag value.
+	 */
+	inline public function enable(?value:String):Void
+		if (!exists())
+			parentProject.setDefine(this, value);
+	/**
+	 * Enable this compiler flag by setting the appropriate compile define.
+	 * @param value The flag value.
+	 */
+	inline public function softEnable(?value:String):Void
+		if (!exists())
+			parentProject.setHaxedef(this, value);
+	/**
+	 * Disable this compiler flag by removing the appropriate compile define.
+	 */
+	inline public function disable():Void
+		if (parentProject.hasDefine(this))
+			parentProject.unsetDefine(this);
+		else if (exists()) // looks gross but makes sense
+			parentProject.unsetHaxedef(this);
+
+	/**
+	 * Query if this compiler flag exists.
+	 */
+	inline public function exists():Bool
+		return parentProject.hasHaxedef(this);
+}

@@ -1,0 +1,80 @@
+package violet.backend;
+
+import haxe.CallStack;
+import haxe.io.Path;
+import sys.FileSystem;
+import sys.io.File;
+import lime.app.Application;
+import openfl.Lib;
+import openfl.events.UncaughtErrorEvent;
+
+using StringTools;
+
+class CrashHandler {
+	static var SEPERATOR = '=====================';
+
+	public static function init():Void {
+		//Lib.current.loaderInfo.uncaughtErrorEvents.addEventListener(UncaughtErrorEvent.UNCAUGHT_ERROR, onError);
+		Lib.current.loaderInfo.uncaughtErrorEvents.addEventListener(UncaughtErrorEvent.UNCAUGHT_ERROR, onCrash);
+	}
+
+	static function onCrash(e:UncaughtErrorEvent):Void {
+		var path:String = './crash/VioletEngine_${Date.now().toString().replace(' ', '_').replace(':', "'")}.txt';
+
+		var errMsg:String = '';
+		var callStack:Array<StackItem> = CallStack.exceptionStack(true);
+		for (stackItem in callStack) {
+			switch (stackItem) {
+				case FilePos(s, file, line, column):
+					errMsg += '$file (line $line)\n';
+				default: Sys.println(stackItem);
+			}
+		}
+
+		var currentState:String = 'No state loaded';
+		if (FlxG.state != null) {
+			var currentStateCls:Null<Class<Dynamic>> = Type.getClass(FlxG.state);
+			if (currentStateCls != null) {
+				currentState = Type.getClassName(currentStateCls) ?? 'No state loaded';
+			}
+		}
+
+		var crashLines:Array<String> = [
+			SEPERATOR,
+			'Nova Engine Crash Report',
+			SEPERATOR,
+			'\n',
+			'Flixel Current State: ${currentState}',
+			'Error: ' + e.error,
+			'\n',
+			'Crash Dump Saved In: ${Path.normalize(path)}',
+			'\n',
+			SEPERATOR
+			// 'Mods Loaded:'
+		];
+		// for (i in Paths.getModList()) {
+		// 	crashLines.push(' - $i');
+		// }
+		errMsg = crashLines.join('\n');
+
+		/* errMsg += '\nUncaught Error: ' + e.error;
+		// remove if you're modding and want the crash log message to contain the link
+		// please remember to actually modify the link for the github page to report the issues to.
+		//#if officialBuild
+		//errMsg += '\nPlease report this error to the GitHub page: https://github.com/ShadowMario/FNF-PsychEngine';
+		//#end
+		errMsg += '\n\n> Crash Handler written by: sqirra-rng'; */
+
+		if (!FileSystem.exists('./crash/'))
+			FileSystem.createDirectory('./crash/');
+
+		File.saveContent(path, '$errMsg\n');
+
+		Sys.println(errMsg);
+		Sys.println('Crash dump saved in ${Path.normalize(path)}.');
+
+		Application.current.window.alert(errMsg, 'Error!');
+
+		Sys.exit(1);
+	}
+}

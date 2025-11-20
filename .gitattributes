@@ -1,1 +1,2 @@
-*.jsonc linguist-language=json
+* text=auto eol=lf
+*.hxp linguist-language=haxe

@@ -1,10 +1,15 @@
 {
 	"cSpell.words": [
-		"lscript",
-		"varient"
+		"hxwindowmode",
+		"lscript"
 	],
-	"editor.codeActionsOnSave": {
-		"source.organizeImports": "never",
-		"source.sortImports": "never"
-	}
+
+	"files.associations": {
+		"*.hxp": "haxe",
+		"*.json": "jsonc",
+	},
+	"files.autoGuessEncoding": true,
+	"files.enableTrash": true, // YOU'LL THANK ME LATER!!!
+	"files.trimFinalNewlines": true,
+	"files.trimTrailingWhitespace": true
 }
