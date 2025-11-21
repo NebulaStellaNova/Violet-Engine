@@ -2,7 +2,7 @@ package violet.backend;
 
 class StateBackend extends flixel.FlxState {
     public var usesLoadingScreen = false;
-    public var stuffToLoad:Array<Void->Void> = [];
+    public var stuffToLoad:Array<Dynamic> = [];
 
     override public function add(objORcall:Dynamic) {
         if (usesLoadingScreen) {
