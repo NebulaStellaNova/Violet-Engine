@@ -11,13 +11,13 @@ class Paths {
 		if (startFromRoot) return path;
 		var rootPaths:Array<String> = ['assets/'].concat(#if MOD_SUPPORT Modding.activeModsIds #else [] #end);
 		for (root in rootPaths)
-			if (folderExists('$root/$path', true) || fileExists('$root/$path', true))
+			// if (folderExists('$root/$path', true) || fileExists('$root/$path', true))
 				return Path.normalize('$root/$path');
 		return '';
 	}
 
 	inline public static function font(path:String, directory:String = ''):String
-		return root([Path.removeTrailingSlashes(directory), 'fonts', '$path'].join('/'));
+        return file(path, [directory, 'fonts'].join('/'));
 
 	inline public static function image(path:String, directory:String = '', ext:String = 'png'):String
 		return root([Path.removeTrailingSlashes(directory), 'images', '$path.$ext'].join('/'));
@@ -29,9 +29,8 @@ class Paths {
 		return root([Path.removeTrailingSlashes(directory), 'music', '$path.$ext'].join('/'));
 
 	inline public static function file(path:String, directory:String = '', ext:String = 'txt'):String {
-		var isRoot:Bool = directory == 'root';
-		var targetPath:String = isRoot ? '$path.$ext' : [Path.removeTrailingSlashes(directory), '$path.$ext'].join('/');
-		return root(targetPath, isRoot);
+		return root([Path.removeTrailingSlashes(directory == 'root' ? '' : directory), '$path.$ext'].join('/'), directory == 'root');
+		// return [Path.removeTrailingSlashes(directory == 'root' ? directory : ''), '$path.$ext'].join('/');
 	}
 
 	inline public static function fileExists(path:String, startFromRoot:Bool = false):Bool
@@ -42,4 +41,5 @@ class Paths {
 
 	inline public static function readFolder(path:String, startFromRoot:Bool = false):Array<String>
 		return FileSystem.readDirectory(Path.removeTrailingSlashes(root(path, startFromRoot)));
+
 }
