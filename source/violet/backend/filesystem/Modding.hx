@@ -2,7 +2,7 @@
 package violet.backend.filesystem;
 
 import json2object.JsonParser;
-import thx.semver.Version;
+// import thx.semver.Version;
 
 typedef ModContributor = {
 	var name:String;
@@ -12,15 +12,14 @@ typedef ModContributor = {
 	var ?url:String;
 }
 
-typedef RawModMeta = {
+typedef ModMeta = {
+	@:jignored var ?folder:String;
+	var id:String;
 	var title:String;
 	var ?description:String;
 	var tag:String;
 	var ?contributors:Array<ModContributor>;
-	var version:Version;
-}
-typedef ModMeta = RawModMeta & {
-	var id:String;
+	// @:alias('mod_version') var version:Version;
 }
 
 class Modding {
