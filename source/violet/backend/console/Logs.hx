@@ -37,6 +37,12 @@ enum abstract LogType(String) from String to String {
 }
 
 class Logs {
+	public static var WARNING_COLOR:String = ConsoleColors.YELLOW;
+	public static var SYSTEM_COLOR:String = ConsoleColors.BLUE;
+	public static var ERROR_COLOR:String = ConsoleColors.RED;
+	public static var DEBUG_COLOR:String = ConsoleColors.DARKGREEN;
+	public static var LOG_COLOR:String = ConsoleColors.LIGHTGRAY;
+
 	public static var nativeTrace:(Dynamic, ?PosInfos)->Void;
 
 	public static function init() {
@@ -83,15 +89,15 @@ class Logs {
 		var dataString:String = '[  ${fileName}:${infos.lineNumber}  ]';
 		switch (type) {
 			case ErrorMessage:
-				finalOut +=       '${ConsoleColors.RED}[   ERROR   ] -> $dataString:${ConsoleColors.RESET} $value';
+				finalOut +=   '${ERROR_COLOR}[   ERROR   ] -> $dataString:${ConsoleColors.RESET} $value';
 			case WarningMessage:
-				finalOut +=    '${ConsoleColors.YELLOW}[  WARNING  ] -> $dataString:${ConsoleColors.RESET} $value';
+				finalOut += '${WARNING_COLOR}[  WARNING  ] -> $dataString:${ConsoleColors.RESET} $value';
 			case SystemMessage:
-				finalOut +=      '${ConsoleColors.BLUE}[    SYS    ] -> $dataString:${ConsoleColors.RESET} $value';
+				finalOut +=  '${SYSTEM_COLOR}[    SYS    ] -> $dataString:${ConsoleColors.RESET} $value';
 			case DebugMessage:
-				finalOut += '${ConsoleColors.DARKGREEN}[   DEBUG   ] -> $dataString:${ConsoleColors.RESET} $value';
+				finalOut +=   '${DEBUG_COLOR}[   DEBUG   ] -> $dataString:${ConsoleColors.RESET} $value';
 			default:
-				finalOut += '${ConsoleColors.LIGHTGRAY}[    LOG    ] -> $dataString:${ConsoleColors.RESET} $value';
+				finalOut +=     '${LOG_COLOR}[    LOG    ] -> $dataString:${ConsoleColors.RESET} $value';
 		}
 		Sys.println(formatString(finalOut) + ConsoleColors.RESET);
 	}
