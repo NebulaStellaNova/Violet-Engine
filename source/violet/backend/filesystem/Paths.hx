@@ -4,34 +4,42 @@ import haxe.io.Path;
 import sys.FileSystem;
 
 class Paths {
-
-	public static var SHARED:String = "shared";
-
 	inline public static function getFileName(path:String, startFromRoot:Bool = false)
-		return Path.withoutExtension(Path.withoutDirectory(startFromRoot ? path : root(path)));
+		return Path.withoutExtension(Path.withoutDirectory(root(path, startFromRoot)));
 
-	public static function root(path:String):String
-		return Path.normalize('assets/$path'); // will also handle mods at a later date
+	public static function root(path:String, startFromRoot:Bool = false):String {
+		if (startFromRoot) return path;
+		var rootPaths:Array<String> = ['assets/'].concat(#if MOD_SUPPORT Modding.activeModsIds #else [] #end);
+		for (root in rootPaths)
+			if (folderExists('$root/$path', true) || fileExists('$root/$path', true))
+				return Path.normalize('$root/$path');
+		return '';
+	}
 
-	inline public static function image(path:String, directory:String = '', ext:String = 'png'):String {
+	inline public static function font(path:String, directory:String = ''):String
+		return root([Path.removeTrailingSlashes(directory), 'fonts', '$path'].join('/'));
+
+	inline public static function image(path:String, directory:String = '', ext:String = 'png'):String
 		return root([Path.removeTrailingSlashes(directory), 'images', '$path.$ext'].join('/'));
-	}
 
-	inline public static function sound(path:String, directory:String = '', ext:String = 'ogg'):String {
+	inline public static function sound(path:String, directory:String = '', ext:String = 'ogg'):String
 		return root([Path.removeTrailingSlashes(directory), 'sounds', '$path.$ext'].join('/'));
-	}
 
-	inline public static function music(path:String, directory:String = '', ext:String = 'ogg'):String {
+	inline public static function music(path:String, directory:String = '', ext:String = 'ogg'):String
 		return root([Path.removeTrailingSlashes(directory), 'music', '$path.$ext'].join('/'));
+
+	inline public static function file(path:String, directory:String = '', ext:String = 'txt'):String {
+		var isRoot:Bool = directory == 'root';
+		var targetPath:String = isRoot ? '$path.$ext' : [Path.removeTrailingSlashes(directory), '$path.$ext'].join('/');
+		return root(targetPath, isRoot);
 	}
 
 	inline public static function fileExists(path:String, startFromRoot:Bool = false):Bool
-		return FileSystem.exists(startFromRoot ? path : root(path));
+		return FileSystem.exists(root(path, startFromRoot));
 
-	inline public static function folderExists(path:String, startFromRoot:Bool = false):Bool {
-		return FileSystem.isDirectory(Path.removeTrailingSlashes(startFromRoot ? path : root(path)));
-	}
+	inline public static function folderExists(path:String, startFromRoot:Bool = false):Bool
+		return FileSystem.isDirectory(Path.removeTrailingSlashes(root(path, startFromRoot)));
 
-	public static function readFolder(path:String, startFromRoot:Bool = false):Array<String>
-		return FileSystem.readDirectory(Path.removeTrailingSlashes(startFromRoot ? path : root(path)));
+	inline public static function readFolder(path:String, startFromRoot:Bool = false):Array<String>
+		return FileSystem.readDirectory(Path.removeTrailingSlashes(root(path, startFromRoot)));
 }
