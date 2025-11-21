@@ -1,7 +1,8 @@
 package violet.backend.utils;
 
+import lime.text.harfbuzz.HB;
 import haxe.Json;
-
+using StringTools;
 class ParseUtil {
 	public static function json(path:String, directory:String = ''):Dynamic
 		return Json.parse(removeJsonComments(FileUtil.getFileContent(Paths.json(path, directory))));
@@ -29,5 +30,46 @@ class ParseUtil {
 			i++;
 		}
 		return string;
+	}
+
+	/**
+	 * Correctly formats JSON files for export :D
+	 */
+	public static function stringifyJson(jsonObject:Dynamic) {
+		var string = jsonObject is String ? jsonObject : Json.stringify(jsonObject, null, "\t");
+		string = string.trim();
+		string = string.replace("    ", "\t");
+		var finalStr = "";
+		var inArray = false;
+		var taber = "";
+		for (i=>char in string.split("")) {
+			var split = finalStr.split("");
+			var realI = finalStr.length;
+
+			inArray = i != 0 ? (char == "[" ? true : (char == "]" ? false : inArray)) : inArray;
+			inArray = i != 0 ? (char == "{" ? false : (char == "}" ? true : inArray)) : inArray;
+
+			if (char == "\t") taber += "\t";
+
+			var combined = split[realI-2] + split[realI-1] + char;
+
+			if (combined == "[ {" || combined == ", {") {
+				char = "\n" + taber + char;
+			}
+
+			if (combined == "} ]") {
+				char = "\n" + taber.substr(taber.length - 1) + char;
+			}
+
+			if (char == "\n") taber = "";
+
+			if (inArray && char == "\n") char = " ";
+			if (inArray && char == "\t") char = "";
+
+			finalStr += char;
+		}
+		finalStr = finalStr.replace("[ {", "[\n{");
+		finalStr = finalStr.replace("}, {", "},\n{");
+		return finalStr;
 	}
 }
