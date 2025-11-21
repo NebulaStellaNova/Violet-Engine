@@ -16,22 +16,24 @@ class Paths {
 		return '';
 	}
 
-	inline public static function font(path:String, directory:String = ''):String
-        return file(path, [directory, 'fonts'].join('/'));
+	inline public static function font(path:String, directory:String = '', ext:String = 'ttf'):String
+        return file(path, [directory, 'fonts'].join('/'), ext);
 
 	inline public static function image(path:String, directory:String = '', ext:String = 'png'):String
-		return root([Path.removeTrailingSlashes(directory), 'images', '$path.$ext'].join('/'));
+        return file(path, [directory, 'images'].join('/'), ext);
 
 	inline public static function sound(path:String, directory:String = '', ext:String = 'ogg'):String
-		return root([Path.removeTrailingSlashes(directory), 'sounds', '$path.$ext'].join('/'));
+        return file(path, [directory, 'sounds'].join('/'), ext);
 
 	inline public static function music(path:String, directory:String = '', ext:String = 'ogg'):String
-		return root([Path.removeTrailingSlashes(directory), 'music', '$path.$ext'].join('/'));
+        return file(path, [directory, 'music'].join('/'), ext);
 
-	inline public static function file(path:String, directory:String = '', ext:String = 'txt'):String {
-		return root([Path.removeTrailingSlashes(directory == 'root' ? '' : directory), '$path.$ext'].join('/'), directory == 'root');
-		// return [Path.removeTrailingSlashes(directory == 'root' ? directory : ''), '$path.$ext'].join('/');
-	}
+	inline public static function json(path:String, directory:String = '', ext:String = 'json'):String
+        return file(path, directory, ext);
+
+	inline public static function file(path:String, directory:String = '', ext:String = 'txt'):String
+		return root([Path.removeTrailingSlashes(Path.removeTrailingSlashes(directory) == 'root' ? '' : directory), '$path.$ext'].join('/'), Path.removeTrailingSlashes(directory) == 'root');
+
 
 	inline public static function fileExists(path:String, startFromRoot:Bool = false):Bool
 		return FileSystem.exists(root(path, startFromRoot));
