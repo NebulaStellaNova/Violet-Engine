@@ -9,9 +9,9 @@ class Paths {
 
 	public static function root(path:String, startFromRoot:Bool = false):String {
 		if (startFromRoot) return path;
-		var rootPaths:Array<String> = ['assets/'].concat(#if MOD_SUPPORT Modding.activeModsIds #else [] #end);
+		var rootPaths:Array<String> = ['assets'].concat(#if MOD_SUPPORT [for (meta in Modding.getActiveMods()) meta.folder] #else [] #end);
 		for (root in rootPaths)
-			// if (folderExists('$root/$path', true) || fileExists('$root/$path', true))
+			if (folderExists('$root/$path', true) || fileExists('$root/$path', true))
 				return Path.normalize('$root/$path');
 		return '';
 	}
@@ -32,7 +32,7 @@ class Paths {
         return file(path, directory, ext);
 
 	inline public static function file(path:String, directory:String = '', ext:String = 'txt'):String
-		return root([Path.removeTrailingSlashes(Path.removeTrailingSlashes(directory) == 'root' ? '' : directory), '$path.$ext'].join('/'), Path.removeTrailingSlashes(directory) == 'root');
+		return root((directory == 'root' ? ['$path.$ext'] : [Path.removeTrailingSlashes(directory), '$path.$ext']).join('/'), directory == 'root');
 
 
 	inline public static function fileExists(path:String, startFromRoot:Bool = false):Bool
@@ -43,5 +43,4 @@ class Paths {
 
 	inline public static function readFolder(path:String, startFromRoot:Bool = false):Array<String>
 		return FileSystem.readDirectory(Path.removeTrailingSlashes(root(path, startFromRoot)));
-
 }
