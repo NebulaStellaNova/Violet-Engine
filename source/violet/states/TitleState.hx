@@ -12,8 +12,8 @@ class TitleState extends StateBackend {
 		super.create();
 
 		bootAnimation = new NovaSprite(Paths.image("menus/titlescreen/bootAnimation"));
-		bootAnimation.addAnim("boot", "animation", [0, 0], 40, false);
-		bootAnimation.playAnim("boot");
+		bootAnimation.addAnim("boot", "animation", 40);
+		bootAnimation.playAnim("boot", true);
 		bootAnimation.scale.set(0.7, 0.7);
 		add(bootAnimation);
 	}
