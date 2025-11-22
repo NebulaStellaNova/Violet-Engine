@@ -40,7 +40,7 @@ class Logs {
 	public static var WARNING_COLOR:String = ConsoleColors.YELLOW;
 	public static var SYSTEM_COLOR:String = ConsoleColors.BLUE;
 	public static var ERROR_COLOR:String = ConsoleColors.RED;
-	public static var DEBUG_COLOR:String = ConsoleColors.DARKGREEN;
+	public static var DEBUG_COLOR:String = ConsoleColors.GREEN;
 	public static var LOG_COLOR:String = ConsoleColors.LIGHTGRAY;
 
 	public static var nativeTrace:(Dynamic, ?PosInfos)->Void;

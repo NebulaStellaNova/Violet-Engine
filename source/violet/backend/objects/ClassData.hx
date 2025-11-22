@@ -2,10 +2,12 @@ package violet.backend.objects;
 
 import violet.states.*;
 import violet.states.menus.*;
+import violet.states.menus.substates.*;
 
 class ClassData {
 	public var type:String;
 	public var target:Dynamic;
+    public var isSubState:Bool = false;
 
 	public function new(string:String) {
 		this.type = string.split(":")[0];
@@ -20,9 +22,10 @@ class ClassData {
 				case "FreeplayState":
 					this.target = new FreeplayState();
 				case "PlayState":
-					this.target = new PlayState();
-				case "ModMenuState":
-					this.target = new ModMenuState(); */
+					this.target = new PlayState(); */
+				case "ModMenuSubState":
+					this.target = new ModMenuSubState();
+                    this.isSubState = true;
 				default:
 					trace('error:Unknown State "${string.split(":")[1]}" returning to the Main Menu');
 			}

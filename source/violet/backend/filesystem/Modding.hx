@@ -1,6 +1,9 @@
 #if MOD_SUPPORT
 package violet.backend.filesystem;
 
+import violet.backend.objects.NovaSprite;
+import haxe.display.Display.CompletionResponse;
+
 import flixel.FlxSprite;
 import json2object.JsonParser;
 import thx.semver.Version;
@@ -27,7 +30,8 @@ typedef ModMeta = {
 
 class Modding {
 	public static function init():Void {
-		trace(availableMods = [
+		trace("debug:Initializing Modding System...");
+		(availableMods = [
 			for (path in Paths.readFolder('mods', true)) {
 				if (!Paths.fileExists('mods/$path/novamod_meta.json', true)) continue;
 				var meta:ModMeta = new JsonParser<ModMeta>().fromJson(ParseUtil.removeJsonComments(FileUtil.getFileContent('mods/$path/novamod_meta.json')), 'mods/$path/novamod_meta.json');
@@ -38,7 +42,11 @@ class Modding {
 			}
 		]);
 		if (Paths.fileExists('mods/active-mods.txt', true))
-			trace(activeModsIds = FileUtil.getFileContent('mods/active-mods.txt').split('\n').filter(id -> return getMod(id) != null));
+			(activeModsIds = FileUtil.getFileContent('mods/active-mods.txt').split('\n').filter(id -> return getMod(id) != null));
+
+		for (i in availableMods) {
+			trace('debug:Found mod "${i.title}" with id "${i.id}"');
+		}
 	}
 
 	public static var availableMods(default, null):Array<ModMeta> = [];
@@ -55,9 +63,10 @@ class Modding {
 		return [for (id in activeModsIds) getMod(id)];
 }
 
-class ModIcon extends FlxSprite {
+class ModIcon extends NovaSprite {
 	override public function new(modId:String) {
-		super(violet.backend.filesystem.Cache.image('mods/$modId/novamod_icon', 'root'));
+		// super(violet.backend.filesystem.Cache.image('mods/$modId/novamod_icon', 'root'));
+		super(Paths.file('mods/$modId/novamod_icon', 'root', 'png'));
 	}
 }
 #end
