@@ -43,8 +43,31 @@ class Main extends openfl.display.Sprite {
 		latestVersion = engineVersion;
 
 		addChild(new flixel.FlxGame(1280, 720, violet.states.InitialState));
-		addChild(new openfl.display.FPS(FlxColor.WHITE));
+		var fpsCounter:openfl.display.FPS = new openfl.display.FPS(10, 10, FlxColor.WHITE);
+		fpsCounter.setTextFormat(new openfl.text.TextFormat(30));
+		fpsCounter.width = FlxG.width;
+		addChild(fpsCounter);
 		FlxG.game.focusLostFramerate = 30;
 		FlxG.mouse.useSystemCursor = true;
+	}
+
+	public static function switchState(targetClass:Dynamic) {
+        if (targetClass is flixel.FlxState) {
+            FlxG.switchState(targetClass);
+        }
+		FlxG.state.closeSubState();
+        var redirects:Array<Dynamic> = violet.backend.utils.ParseUtil.json("stateRedirects", "data/config");
+        var className = flixel.util.FlxStringUtil.getClassName(targetClass, true);
+        var switched = false;
+        for (i in redirects) {
+            if (i.state == className) {
+                trace('debug:Redirecting State "$className" to "${flixel.util.FlxStringUtil.getClassName(new violet.backend.objects.ClassData(i.target).target, true)}"');
+                FlxG.switchState(new violet.backend.objects.ClassData(i.target).target);
+                switched = true;
+            }
+        }
+        if (!switched)
+            FlxG.switchState(targetClass);
+
 	}
 }

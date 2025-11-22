@@ -8,6 +8,7 @@ import violet.backend.utils.FileUtil;
 import animate.FlxAnimateFrames;
 #end
 
+using StringTools;
 class Paths {
 	public static function init():Void {
 		#if ANIMATE_SUPPORT
@@ -59,7 +60,7 @@ class Paths {
 		return file(path, directory, ext);
 
 	inline public static function file(path:String, directory:String = '', ?ext:String):String
-		return root((directory == 'root' ? ['$path${ext == null ? '' : '.$ext'}'] : [Path.removeTrailingSlashes(directory), '$path${ext == null ? '' : '.$ext'}']).join('/'), directory == 'root');
+		return root((directory == 'root' ? ['$path${ext == null || path.endsWith('.$ext') ? '' : '.$ext'}'] : [Path.removeTrailingSlashes(directory), '$path${ext == null || path.endsWith('.$ext') ? '' : '.$ext'}']).join('/'), directory == 'root');
 
 
 	inline public static function fileExists(path:String, startFromRoot:Bool = false):Bool

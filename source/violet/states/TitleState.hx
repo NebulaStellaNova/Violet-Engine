@@ -1,5 +1,8 @@
 package violet.states;
 
+import violet.states.menus.MainMenu;
+import haxe.display.Display.DefinesResult;
+import flixel.util.FlxTimer;
 import flixel.tweens.FlxEase;
 import flixel.tweens.FlxTween;
 import violet.backend.utils.NovaUtils;
@@ -15,6 +18,8 @@ class TitleState extends StateBackend {
 
 	public var titleEnter:NovaSprite;
 	public var titleGirlfriend:NovaSprite;
+
+	public var skippedIntro:Bool = false;
 
 	override public function create() {
 		super.create();
@@ -58,7 +63,7 @@ class TitleState extends StateBackend {
 				FlxTween.tween(logoFull.scale, { x: 0.65, y: 0.65 }, 1, { startDelay: 1, ease: FlxEase.smootherStepInOut, onComplete: (_)->{
 					titleEnter.updateHitbox();
 					FlxTween.tween(titleEnter, { y: FlxG.height - 150 }, 1, { ease: FlxEase.backOut });
-					FlxTween.tween(titleGirlfriend, { x: 512 }, 1, { ease: FlxEase.smootherStepOut });
+					FlxTween.tween(titleGirlfriend, { x: 512 }, 1, { ease: FlxEase.smootherStepOut, onComplete: (_)->skippedIntro = true });
 				}});
 			});
 			logoText.visible = true;
@@ -79,9 +84,30 @@ class TitleState extends StateBackend {
 	override public function update(elapsed:Float) {
 		super.update(elapsed);
 
-		if (FlxG.keys.justPressed.ENTER && logoFull.visible) {
+		if (FlxG.keys.justPressed.ENTER && skippedIntro) {
 			titleEnter.playAnim("pressed", true);
 			NovaUtils.playSound(Paths.sound("menu/confirm"));
+			new FlxTimer().start(0.5, (_)->{
+				FlxTween.tween(titleEnter, { y: FlxG.height }, 1, { ease: FlxEase.backIn });
+				FlxTween.tween(logoFull, { x: -logoFull.width }, 1, { ease: FlxEase.backIn });
+				FlxTween.tween(titleGirlfriend, { x: FlxG.width }, 1, { ease: FlxEase.smoothStepIn, onComplete: (_)->{
+					new FlxTimer().start(1, (_)->{
+						FlxG.switchState(MainMenu.new);
+					});
+				}});
+			});
+		} else if (!skippedIntro && FlxG.keys.justPressed.ENTER) {
+			forEachAlive((a)->{
+				FlxTween.cancelTweensOf(a);
+			});
+			skippedIntro = true;
+			logoFull.visible = true;
+			logoText.visible = false;
+			logoBase.visible = false;
+			titleEnter.y = FlxG.height - 150;
+			titleGirlfriend.x = 512;
+			logoFull.x = logoFull.y = 25;
+			logoFull.scale.set(0.65, 0.65);
 		}
 
 		if (logoFull.visible) return;
