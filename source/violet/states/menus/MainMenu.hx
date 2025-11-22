@@ -209,6 +209,7 @@ class MainMenu extends StateBackend {
 	}
 
 	public function pickSelection() {
+		if (!canSelect) return;
 		/* var event:SelectionEvent = runEvent("onPickSelection", new SelectionEvent(curSelected));
 		if (!event.soundCancelled) */ NovaUtils.playSound(Paths.sound("menu/confirm"));
 		// if (event.cancelled) return;
@@ -219,14 +220,14 @@ class MainMenu extends StateBackend {
 
 
 		if (classData.isSubState) {
-			FlxTween.tween(bg, {x: FlxG.width - bg.width }, 0.75*2, { ease: FlxEase.smootherStepInOut });
+			FlxTween.tween(bg, {x: FlxG.width - bg.width }, 0.5*2, { ease: FlxEase.smootherStepInOut });
 			for (i in menuItems) {
-				FlxTween.tween(i, { x: i.x - FlxG.width }, 0.75, { ease: FlxEase.smootherStepIn });
+				FlxTween.tween(i, { x: i.x - FlxG.width }, 0.5, { ease: FlxEase.smootherStepIn });
 			}
 			FlxTween.tween(leftWatermark, { y: FlxG.height }, 0.5, { ease: FlxEase.backIn });
 		}
 
-		new FlxTimer().start(0.75, (t)->{
+		new FlxTimer().start(0.5, (t)->{
 			if (classData.isSubState) {
 				bg_static = bg;
 				openSubState(classData.target);
@@ -245,7 +246,7 @@ class MainMenu extends StateBackend {
 	override function closeSubState() {
 		super.closeSubState();
 		for (i in menuItems) {
-			FlxTween.tween(i, { x: i.x + FlxG.width }, 0.75, { ease: FlxEase.smootherStepOut, onComplete: (_)-> canSelect = true });
+			FlxTween.tween(i, { x: i.x + FlxG.width }, 0.5, { ease: FlxEase.smootherStepOut, onComplete: (_)-> canSelect = true });
 		}
 		FlxTween.tween(leftWatermark, { y: FlxG.height - leftWatermark.getHeight() - 5 }, 0.5, { ease: FlxEase.backOut });
 	}

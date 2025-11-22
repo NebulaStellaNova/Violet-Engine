@@ -23,9 +23,9 @@ class ClassData {
 					this.target = new FreeplayState();
 				case "PlayState":
 					this.target = new PlayState(); */
-				// case "ModMenuSubState":
-				// 	this.target = new ModMenuSubState();
-				// 	this.isSubState = true;
+				case "ModMenuSubState":
+					this.target = new ModMenuSubState();
+					this.isSubState = true;
 				default:
 					trace('error:Unknown State "${string.split(":")[1]}" returning to the Main Menu');
 			}

@@ -6,10 +6,11 @@
 	"contributors": [
 		{
 			"name": "Nebula S. Nova",
-			"color": "#FF00FF",
-			"roles": "Coder",
-			"icon": "nebula",
-			"url": "https://www.youtube.com/@ChinosModded"
+			"role": "Main Coder, Menu Theme"
+		},
+		{
+			"name": "Rodney Furball <3",
+        	"role": "Coder"
 		}
 	],
 	"mod_version": "0.1.0" // Unlike V-Slice, this can be whatever you want

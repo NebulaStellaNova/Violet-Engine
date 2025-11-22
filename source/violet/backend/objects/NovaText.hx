@@ -5,7 +5,7 @@ import flixel.text.FlxText;
 class NovaText extends FlxText {
 	public var upscaleResolution:Float = 1;
 
-	public function new(x:Float, y:Float, fieldWidth:Float = 0, text:String, size:Int = 8, ?font:String) {
+	public function new(x:Float, y:Float, ?fieldWidth:Float = 0, text:String, size:Int = 8, ?font:String) {
 		var scaleFactor:Float = (upscaleResolution*2);
 		fieldWidth *= cast scaleFactor;
 		super(x, y, fieldWidth*scaleFactor, text, Math.floor(size*scaleFactor));

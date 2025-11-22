@@ -30,7 +30,7 @@
 				"idle": "basic",
 				"selected": "white"
 			},
-			"state": "source:ModMenuState",
+			"state": "source:ModMenuSubState",
 			"color": "#ffff00"
 		},
 		{
