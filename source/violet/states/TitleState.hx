@@ -13,6 +13,9 @@ class TitleState extends StateBackend {
 	public var logoFull:NovaSprite;
 	public var logoText:NovaSprite;
 
+	public var titleEnter:NovaSprite;
+	public var titleGirlfriend:NovaSprite;
+
 	override public function create() {
 		super.create();
 
@@ -21,6 +24,11 @@ class TitleState extends StateBackend {
 		bootAnimation.playAnim("boot", true);
 		bootAnimation.scale.set(0.7, 0.7);
 		add(bootAnimation); */
+
+		titleGirlfriend = new NovaSprite(FlxG.width, 50, Paths.image("menus/titlescreen/gfDanceTitle"));
+		titleGirlfriend.addAnim("idle", "gfDance", 24, true);
+		titleGirlfriend.playAnim("idle", true);
+		add(titleGirlfriend);
 
 		logoFull = new NovaSprite(Paths.image("menus/titlescreen/logoFull"));
 		logoFull.scale.set(0.7, 0.7);
@@ -40,18 +48,29 @@ class TitleState extends StateBackend {
 		logoText.visible = false;
 		add(logoText);
 
-		FlxTween.tween(logoBase, { alpha: 1 }, 2, { startDelay: 1, ease: FlxEase.smootherStepOut, onComplete: (a)->{
+		FlxTween.tween(logoBase, { alpha: 1 }, 2, { startDelay: 1, ease: FlxEase.smootherStepOut, onComplete: (_)->{
 			logoText.playAnim("boot", true);
-			logoText.animation.onFinish.add((a)->{
+			logoText.animation.onFinish.add((_)->{
 				logoText.visible = false;
 				logoBase.visible = false;
 				logoFull.visible = true;
 				FlxTween.tween(logoFull, { x: 25, y: 25 }, 1, { startDelay: 1, ease: FlxEase.smootherStepInOut });
-				FlxTween.tween(logoFull.scale, { x: 0.6, y: 0.6 }, 1, { startDelay: 1, ease: FlxEase.smootherStepInOut });
+				FlxTween.tween(logoFull.scale, { x: 0.65, y: 0.65 }, 1, { startDelay: 1, ease: FlxEase.smootherStepInOut, onComplete: (_)->{
+					titleEnter.updateHitbox();
+					FlxTween.tween(titleEnter, { y: FlxG.height - 150 }, 1, { ease: FlxEase.backOut });
+					FlxTween.tween(titleGirlfriend, { x: 512 }, 1, { ease: FlxEase.smootherStepOut });
+				}});
 			});
 			logoText.visible = true;
 		}});
 		FlxTween.tween(logoBase.scale, { x: 0.7, y: 0.7 }, 2, { startDelay: 1, ease: FlxEase.smootherStepOut });
+
+		titleEnter = new NovaSprite(Paths.image("menus/titlescreen/titleEnter"));
+		titleEnter.addAnim("pressed", "pressed", null, [7, 7], 24, true);
+		titleEnter.addAnim("idle", "idle", null, [0, 0], 24, true);
+		titleEnter.playAnim("idle", true);
+		titleEnter.y = FlxG.height;
+		add(titleEnter);
 
 		NovaUtils.playMusic("mainMenuTheme", 0);
 		FlxG.sound.music.fadeIn(1, 0, 1);
@@ -59,6 +78,12 @@ class TitleState extends StateBackend {
 
 	override public function update(elapsed:Float) {
 		super.update(elapsed);
+
+		if (FlxG.keys.justPressed.ENTER && logoFull.visible) {
+			titleEnter.playAnim("pressed", true);
+			NovaUtils.playSound(Paths.sound("menu/confirm"));
+		}
+
 		if (logoFull.visible) return;
 
 		logoBase.updateHitbox();
@@ -70,5 +95,9 @@ class TitleState extends StateBackend {
 
 		logoText.x = 313;
 		logoText.y = 426;
+
+		titleEnter.updateHitbox();
+		titleEnter.screenCenter(X);
+		titleEnter.x += 240;
 	}
 }
