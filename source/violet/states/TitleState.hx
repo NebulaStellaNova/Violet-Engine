@@ -18,7 +18,7 @@ class TitleState extends StateBackend {
 		bootAnimation.scale.set(0.7, 0.7);
 		add(bootAnimation);
 
-		NovaUtils.playMusic("freakyMenu", 0);
+		NovaUtils.playMusic("mainMenuTheme", 0);
 		FlxG.sound.music.fadeIn(1, 0, 1);
 	}
 
