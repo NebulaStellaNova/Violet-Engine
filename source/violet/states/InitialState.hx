@@ -21,9 +21,9 @@ class InitialState extends flixel.FlxState { // for now
 		#end
 
 		FlxG.signals.preUpdate.add(() -> {
-			if (FlxG.keys.justPressed.F5)
+			if (Controls.resetState)
 				FlxG.resetState();
-			if (FlxG.keys.justPressed.F6)
+			if (Controls.shortcutState)
 				FlxG.switchState(() -> new violet.states.menus.MainMenu());
 		});
 

@@ -123,9 +123,9 @@ class MainMenu extends StateBackend {
 
 	function uiCheck() {
 		if (!canSelect) return 0;
-		if (FlxG.keys.justPressed.UP)
+		if (Controls.uiUp)
 			return -1;
-		else if (FlxG.keys.justPressed.DOWN)
+		else if (Controls.uiDown)
 			return 1;
 		else
 			return 0;
@@ -146,7 +146,7 @@ class MainMenu extends StateBackend {
 				leftWatermark.x = 10;
 		}
 
-		if (FlxG.keys.justPressed.ENTER) {
+		if (Controls.accept) {
 			pickSelection();
 		}
 		watermarkTexts.sort(function(a, b):Int {
@@ -163,15 +163,6 @@ class MainMenu extends StateBackend {
 		if (canSelect) {
 			leftWatermark.y = FlxG.height - leftWatermark.getHeight() - 5;
 		}
-
-
-		/* if (FlxG.keys.justPressed.F9) {
-			switchState(CharacterEditorState.new);
-		} */
-
-		/* call("postUpdate", [elapsed]);
-		call("onUpdatePost", [elapsed]); */
-
 	}
 
 	public function changeSelection(amt:Int) {

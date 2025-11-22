@@ -11,7 +11,6 @@ import violet.backend.filesystem.Paths;
 import violet.backend.objects.NovaSprite;
 
 class TitleState extends StateBackend {
-
 	public var logoBase:NovaSprite;
 	public var logoFull:NovaSprite;
 	public var logoText:NovaSprite;
@@ -24,12 +23,6 @@ class TitleState extends StateBackend {
 
 	override public function create() {
 		super.create();
-
-		/* bootAnimation = new NovaSprite(Paths.image("menus/titlescreen/bootAnimation"));
-		bootAnimation.addAnim("boot", "animation", 40);
-		bootAnimation.playAnim("boot", true);
-		bootAnimation.scale.set(0.7, 0.7);
-		add(bootAnimation); */
 
 		titleGirlfriend = new NovaSprite(FlxG.width, 50, Paths.image("menus/titlescreen/gfDanceTitle"));
 		titleGirlfriend.addAnim("idle", "gfDance", 24, true);
@@ -85,24 +78,21 @@ class TitleState extends StateBackend {
 	override public function update(elapsed:Float) {
 		super.update(elapsed);
 
-		if (FlxG.keys.justPressed.ENTER && allowSwitch) {
+		if (Controls.accept && allowSwitch)
 			FlxG.switchState(MainMenu.new);
-		}
-		if (FlxG.keys.justPressed.ENTER && skippedIntro) {
+		if (Controls.accept && skippedIntro) {
 			titleEnter.playAnim("pressed", true);
 			NovaUtils.playSound(Paths.sound("menu/confirm"));
 			allowSwitch = true;
-			new FlxTimer().start(0.5, (_)->{
+			new FlxTimer().start(0.5, (_) -> {
 				FlxTween.tween(titleEnter, { y: FlxG.height }, 1, { ease: FlxEase.backIn });
 				FlxTween.tween(logoFull, { x: -logoFull.width }, 1, { ease: FlxEase.backIn });
 				FlxTween.tween(titleGirlfriend, { x: FlxG.width }, 1, { ease: FlxEase.smoothStepIn, onComplete: (_)->{
 					FlxG.switchState(MainMenu.new);
 				}});
 			});
-		} else if (!skippedIntro && FlxG.keys.justPressed.ENTER) {
-			forEachAlive((a)->{
-				FlxTween.cancelTweensOf(a);
-			});
+		} else if (!skippedIntro && Controls.accept) {
+			forEachAlive((a) -> FlxTween.cancelTweensOf(a));
 			skippedIntro = true;
 			logoFull.visible = true;
 			logoText.visible = false;

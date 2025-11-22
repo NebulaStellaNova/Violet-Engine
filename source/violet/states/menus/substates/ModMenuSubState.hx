@@ -115,11 +115,11 @@ class ModMenuSubState extends FlxSubState {
     override public function update(e) {
         super.update(e);
 
-        if (FlxG.keys.justPressed.BACKSPACE) {
+        if (Controls.back) {
             exit();
         }
 
-        curSelected = FlxMath.wrap(curSelected + (FlxG.keys.justPressed.UP ? -1 : (FlxG.keys.justPressed.DOWN ? 1 : 0)), 0, modIconList.length - 1);
+        curSelected = FlxMath.wrap(curSelected + (Controls.uiUp ? -1 : (Controls.uiDown ? 1 : 0)), 0, modIconList.length - 1);
 
         var height:Float = 0;
         for (i in modIconList) {
@@ -163,7 +163,7 @@ class ModMenuSubState extends FlxSubState {
 
         selectedMod = Modding.availableMods[curSelected];
 
-        if (FlxG.keys.justPressed.UP || FlxG.keys.justPressed.DOWN || instant) {
+        if (Controls.uiUp || Controls.uiDown || instant) {
             updateCredits();
         }
 
