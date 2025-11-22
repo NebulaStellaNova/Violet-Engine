@@ -442,8 +442,10 @@ class EngineAsset {
 	 * Add a `haxeflag` to the project.
 	 * @param value The flag.
 	 */
-	inline public function addHaxeFlag(value:String):Void
+	inline public function addHaxeFlag(value:String):Void {
+		info('Added flag $value.');
 		haxeflags.push(value);
+	}
 	/**
 	 * Call a Haxe build macro.
 	 * @param value The macro.

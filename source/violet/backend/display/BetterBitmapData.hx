@@ -9,7 +9,6 @@ import openfl.geom.Rectangle;
  * Used for GPU caching!
  */
 class BetterBitmapData extends BitmapData {
-	@SuppressWarnings('checkstyle:Dynamic')
 	override function __fromImage(image:#if lime Image #else Dynamic #end):Void {
 		#if lime
 		if (image != null && image.buffer != null) {
