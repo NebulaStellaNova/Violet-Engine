@@ -1,6 +1,7 @@
 #if MOD_SUPPORT
 package violet.backend.filesystem;
 
+import flixel.FlxSprite;
 import json2object.JsonParser;
 import thx.semver.Version;
 import violet.backend.utils.FileUtil;
@@ -8,7 +9,7 @@ import violet.backend.utils.ParseUtil;
 
 typedef ModContributor = {
 	var name:String;
-	@:default('#FFFFFF') var color:String;
+	@:default('#FFFFFF') var color:ParseColor;
 	var ?role:String;
 	var icon:String;
 	var ?url:String;
@@ -52,5 +53,11 @@ class Modding {
 
 	inline public static function getActiveMods():Array<ModMeta>
 		return [for (id in activeModsIds) getMod(id)];
+}
+
+class ModIcon extends FlxSprite {
+	override public function new(modId:String) {
+		super(violet.backend.filesystem.Cache.image('mods/$modId/novamod_icon', 'root'));
+	}
 }
 #end

@@ -74,3 +74,61 @@ class ParseUtil {
 		return finalStr;
 	}
 }
+
+/**
+ * Used for parsing colors from json files.
+ */
+abstract ParseColor(String) {
+	public var red(get, set):Int;
+	inline function get_red():Int
+		return toFlxColor().red;
+	inline function set_red(value:Int):Int {
+		var color:FlxColor = toFlxColor();
+		color.red = value;
+		this = fromFlxColor(color);
+		return color.red;
+	}
+	public var green(get, set):Int;
+	inline function get_green():Int
+		return toFlxColor().green;
+	inline function set_green(value:Int):Int {
+		var color:FlxColor = toFlxColor();
+		color.green = value;
+		this = fromFlxColor(color);
+		return color.green;
+	}
+	public var blue(get, set):Int;
+	inline function get_blue():Int
+		return toFlxColor().blue;
+	inline function set_blue(value:Int):Int {
+		var color:FlxColor = toFlxColor();
+		color.blue = value;
+		this = fromFlxColor(color);
+		return color.blue;
+	}
+
+	inline public function nullCheck(nullColor:ParseColor):ParseColor
+		return this ??= nullColor;
+
+	@:from inline public static function fromString(from:String):ParseColor
+		return cast FlxColor.fromString(from ?? 'white').toWebString();
+	@:to inline public function toString():String
+		return this ?? '#FFFFFF';
+
+	@:from inline public static function fromInt(from:Int):ParseColor
+		return FlxColor.fromInt(from ?? FlxColor.WHITE).toWebString();
+	@:to inline public function toInt():Int
+		return FlxColor.fromString(this ?? 'white');
+
+	@:from inline public static function fromFlxColor(from:FlxColor):ParseColor
+		return FlxColor.fromInt(from ?? FlxColor.WHITE).toWebString();
+	@:to inline public function toFlxColor():FlxColor
+		return FlxColor.fromString(this ?? 'white');
+
+	@:from inline public static function fromArray(from:Array<Int>):ParseColor
+		return fromInt(FlxColor.fromRGB(from[0] ?? 255, from[1] ?? 255, from[2] ?? 255));
+	@:to inline public function toArray():Array<Int> {
+		var color:FlxColor = toFlxColor();
+		return [color.red ?? 255, color.green ?? 255, color.blue ?? 255];
+	}
+}

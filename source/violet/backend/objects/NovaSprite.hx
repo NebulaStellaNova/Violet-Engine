@@ -32,7 +32,7 @@ class NovaSprite extends FlxSprite {
 			this.filePath = path;
 			this.fileName = Paths.getFileName(path);
 			this.animated = true;
-			this.frames = FlxAtlasFrames.fromSparrow(path, path.replace(".png", ".xml"));
+			this.frames = FlxAtlasFrames.fromSparrow(path/* Cache.image(path, 'root', null) */, path.replace(".png", ".xml"));
 		} else this.loadGraphic(path);
 		return this;
 	}
