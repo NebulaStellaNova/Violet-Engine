@@ -57,9 +57,8 @@ class Main extends openfl.display.Sprite {
 	}
 
 	public static function switchState(targetClass:Dynamic) {
-        if (targetClass is flixel.FlxState) {
+        if (targetClass is flixel.FlxState)
             FlxG.switchState(targetClass);
-        }
 		FlxG.state.closeSubState();
         var redirects:Array<Dynamic> = ParseUtil.json("stateRedirects", "data/config");
         var className = FlxStringUtil.getClassName(targetClass, true);
@@ -73,6 +72,5 @@ class Main extends openfl.display.Sprite {
         }
         if (!switched)
             FlxG.switchState(targetClass);
-
 	}
 }

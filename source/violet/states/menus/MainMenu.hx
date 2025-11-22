@@ -1,25 +1,17 @@
 package violet.states.menus;
 
+import flixel.FlxObject;
+import flixel.math.FlxMath;
 import flixel.tweens.FlxEase;
 import flixel.tweens.FlxTween;
-import violet.backend.objects.ClassData;
-import violet.backend.utils.NovaUtils;
-import violet.backend.utils.MathUtil;
-import violet.backend.utils.ParseUtil;
-import violet.backend.JsonColor;
-import violet.backend.objects.NovaText;
-import violet.backend.objects.NovaSprite;
-import violet.backend.StateBackend;
-
-import flixel.FlxBasic;
-import flixel.FlxSprite;
-import flixel.FlxObject;
-import flixel.util.FlxColor;
 import flixel.util.FlxTimer;
-import flixel.text.FlxText;
-import flixel.math.FlxMath;
-import flixel.FlxG;
-import haxe.Json;
+import violet.backend.StateBackend;
+import violet.backend.objects.ClassData;
+import violet.backend.objects.NovaSprite;
+import violet.backend.objects.NovaText;
+import violet.backend.utils.MathUtil;
+import violet.backend.utils.NovaUtils;
+import violet.backend.utils.ParseUtil;
 
 typedef MenuAnimations = {
 	var idle:String;
@@ -31,7 +23,7 @@ typedef MenuItem = {
 	var item:String;
 	var state:String;
 	var scale:Float;
-	var color:JsonColor;
+	var color:ParseColor;
 	var animations:MenuAnimations;
 }
 
@@ -144,7 +136,7 @@ class MainMenu extends StateBackend {
 		super.update(elapsed);
 		changeSelection(uiCheck());
 		bg.color = MathUtil.colorLerp(bg.color, menuData.items[curSelected].color, 0.16);
-		bgColorString = JsonColor.fromInt(bg.color);
+		bgColorString = ParseColor.fromInt(bg.color);
 
 		leftWatermark.updateHitbox();
 		switch (watermarkAlignment) {
