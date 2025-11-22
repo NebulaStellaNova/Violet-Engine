@@ -20,6 +20,7 @@ class TitleState extends StateBackend {
 	public var titleGirlfriend:NovaSprite;
 
 	public var skippedIntro:Bool = false;
+	public var allowSwitch:Bool = false;
 
 	override public function create() {
 		super.create();
@@ -84,16 +85,18 @@ class TitleState extends StateBackend {
 	override public function update(elapsed:Float) {
 		super.update(elapsed);
 
+		if (FlxG.keys.justPressed.ENTER && allowSwitch) {
+			FlxG.switchState(MainMenu.new);
+		}
 		if (FlxG.keys.justPressed.ENTER && skippedIntro) {
 			titleEnter.playAnim("pressed", true);
 			NovaUtils.playSound(Paths.sound("menu/confirm"));
+			allowSwitch = true;
 			new FlxTimer().start(0.5, (_)->{
 				FlxTween.tween(titleEnter, { y: FlxG.height }, 1, { ease: FlxEase.backIn });
 				FlxTween.tween(logoFull, { x: -logoFull.width }, 1, { ease: FlxEase.backIn });
 				FlxTween.tween(titleGirlfriend, { x: FlxG.width }, 1, { ease: FlxEase.smoothStepIn, onComplete: (_)->{
-					new FlxTimer().start(1, (_)->{
-						FlxG.switchState(MainMenu.new);
-					});
+					FlxG.switchState(MainMenu.new);
 				}});
 			});
 		} else if (!skippedIntro && FlxG.keys.justPressed.ENTER) {
