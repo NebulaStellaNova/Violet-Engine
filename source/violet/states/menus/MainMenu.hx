@@ -1,5 +1,7 @@
 package violet.states.menus;
 
+import flixel.tweens.FlxEase;
+import flixel.tweens.FlxTween;
 import violet.backend.objects.ClassData;
 import violet.backend.utils.NovaUtils;
 import violet.backend.utils.MathUtil;
@@ -45,6 +47,8 @@ class MainMenu extends StateBackend {
 		"THIS IS NOT A FORK"
 	];
 
+	public static var bg_static:NovaSprite;
+
 	public var curSelectedString:String = "";
 	public var bgColorString:String = "";
 
@@ -81,6 +85,7 @@ class MainMenu extends StateBackend {
 		bg.screenCenter();
 		bg.color = menuData.items[curSelected].color;
 		bg.scrollFactor.set(0, mult);
+		bg.x = 0;
 		add(bg);
 
 		for (i=>daItem in menuData.items) {
@@ -163,7 +168,9 @@ class MainMenu extends StateBackend {
 		leftWatermark.borderSize = 3;
 		leftWatermark.text = watermarkTexts.join("\n");
 		leftWatermark.updateHitbox();
-		leftWatermark.y = FlxG.height - leftWatermark.getHeight() - 5;
+		if (canSelect) {
+			leftWatermark.y = FlxG.height - leftWatermark.getHeight() - 5;
+		}
 
 
 		/* if (FlxG.keys.justPressed.F9) {
@@ -195,13 +202,15 @@ class MainMenu extends StateBackend {
 			}
 			item.playAnim(i == curSelected ? "selected" : "static");
 			item.updateHitbox();
-			switch (menuAlignment) {
-				case "center":
-					item.screenCenter(X);
-				case "left":
-					item.x = 20;
-				case "right":
-					item.x = FlxG.width - item.width - 20;
+			if (canSelect) {
+				switch (menuAlignment) {
+					case "center":
+						item.screenCenter(X);
+					case "left":
+						item.x = 20;
+					case "right":
+						item.x = FlxG.width - item.width - 20;
+				}
 			}
 		}
 		curSelectedString = menuData.items[curSelected].item;
@@ -214,13 +223,38 @@ class MainMenu extends StateBackend {
 
 		canSelect = false;
 
-		new FlxTimer().start(1, (t)->{
-			Main.switchState(new ClassData(menuData.items[curSelected].state).target);
-			canSelect = true;
+		var classData = new ClassData(menuData.items[curSelected].state);
+
+
+		if (classData.isSubState) {
+			FlxTween.tween(bg, {x: FlxG.width - bg.width }, 0.75*2, { ease: FlxEase.smootherStepInOut });
+			for (i in menuItems) {
+				FlxTween.tween(i, { x: i.x - FlxG.width }, 0.75, { ease: FlxEase.smootherStepIn });
+			}
+			FlxTween.tween(leftWatermark, { y: FlxG.height }, 0.5, { ease: FlxEase.backIn });
+		}
+
+		new FlxTimer().start(0.75, (t)->{
+			if (classData.isSubState) {
+				bg_static = bg;
+				openSubState(classData.target);
+				persistentUpdate = true;
+			} else {
+				Main.switchState(classData.target);
+			}
+			// canSelect = true;
 		});
 	}
 
 	public function setSelectionColor(hex) {
 		menuData.items[curSelected].color = hex;
+	}
+
+	override function closeSubState() {
+		super.closeSubState();
+		for (i in menuItems) {
+			FlxTween.tween(i, { x: i.x + FlxG.width }, 0.75, { ease: FlxEase.smootherStepOut, onComplete: (_)-> canSelect = true });
+		}
+		FlxTween.tween(leftWatermark, { y: FlxG.height - leftWatermark.getHeight() - 5 }, 0.5, { ease: FlxEase.backOut });
 	}
 }
