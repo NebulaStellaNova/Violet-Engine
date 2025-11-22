@@ -1,6 +1,10 @@
 package;
 
+import flixel.util.FlxStringUtil;
+import lime.app.Application;
 import thx.semver.Version;
+import violet.backend.objects.ClassData;
+import violet.backend.utils.ParseUtil;
 
 class Main extends openfl.display.Sprite {
 	/**
@@ -42,7 +46,8 @@ class Main extends openfl.display.Sprite {
 		engineVersion = lime.app.Application.current.meta.get('version');
 		latestVersion = engineVersion;
 
-		addChild(new flixel.FlxGame(1280, 720, violet.states.InitialState));
+		var startFPS:Int = Application.current.window.displayMode.refreshRate;
+		addChild(new flixel.FlxGame(1280, 720, violet.states.InitialState, startFPS, startFPS));
 		var fpsCounter:openfl.display.FPS = new openfl.display.FPS(10, 10, FlxColor.WHITE);
 		fpsCounter.setTextFormat(new openfl.text.TextFormat(30));
 		fpsCounter.width = FlxG.width;
@@ -56,13 +61,13 @@ class Main extends openfl.display.Sprite {
             FlxG.switchState(targetClass);
         }
 		FlxG.state.closeSubState();
-        var redirects:Array<Dynamic> = violet.backend.utils.ParseUtil.json("stateRedirects", "data/config");
-        var className = flixel.util.FlxStringUtil.getClassName(targetClass, true);
+        var redirects:Array<Dynamic> = ParseUtil.json("stateRedirects", "data/config");
+        var className = FlxStringUtil.getClassName(targetClass, true);
         var switched = false;
         for (i in redirects) {
             if (i.state == className) {
-                trace('debug:Redirecting State "$className" to "${flixel.util.FlxStringUtil.getClassName(new violet.backend.objects.ClassData(i.target).target, true)}"');
-                FlxG.switchState(new violet.backend.objects.ClassData(i.target).target);
+                trace('debug:Redirecting State "$className" to "${FlxStringUtil.getClassName(new ClassData(i.target).target, true)}"');
+                FlxG.switchState(new ClassData(i.target).target);
                 switched = true;
             }
         }
