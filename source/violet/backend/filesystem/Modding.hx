@@ -2,7 +2,7 @@
 package violet.backend.filesystem;
 
 import json2object.JsonParser;
-// import thx.semver.Version;
+import thx.semver.Version;
 import violet.backend.utils.FileUtil;
 import violet.backend.utils.ParseUtil;
 
@@ -21,7 +21,7 @@ typedef ModMeta = {
 	var ?description:String;
 	var tag:String;
 	var ?contributors:Array<ModContributor>;
-	// @:alias('mod_version') var version:Version;
+	@:alias('mod_version') var version:Version;
 }
 
 class Modding {

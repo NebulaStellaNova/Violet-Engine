@@ -50,7 +50,7 @@ class EngineAsset {
 	/**
 	 * The directory path**s** to the source code.
 	 */
-	static final sourceCodeDirectories:Array<String> = ['./source'];
+	static final sourceCodeDirectories:Array<String> = ['./source', './.haxelib/thx,semver/0,2,2/src'];
 	/**
 	 * The class path to the preloader class.
 	 */
@@ -257,7 +257,7 @@ class EngineAsset {
 		if ( canLuaScript .exists()) addHaxelib('lscript',        'git');
 		if (  discordRPC  .exists()) addHaxelib('discord-rpc');
 		if (allowVideos   .exists()) addHaxelib('hxvlc');
-		addHaxelib('thx.semver');
+		// addHaxelib('thx.semver');
 
 		if (editWindowBorderColor.exists())
 			addHaxelib('hxWindowColorMode');
