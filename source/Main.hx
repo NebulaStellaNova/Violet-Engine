@@ -28,6 +28,9 @@ class Main extends openfl.display.Sprite {
 
 		super();
 
+		// trace(Controls.test);
+		// trace(new flixel.FlxBasic().extra);
+
 		moonchart.Moonchart.DEFAULT_DIFF = 'normal';
 		moonchart.Moonchart.CASE_SENSITIVE_DIFFS = moonchart.Moonchart.SPACE_SENSITIVE_DIFFS = false;
 		Paths.init();
