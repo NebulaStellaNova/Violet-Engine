@@ -77,7 +77,7 @@ class TitleState extends StateBackend {
 			FlxG.switchState(MainMenu.new);
 		if (Controls.accept && skippedIntro) {
 			titleEnter.playAnim("pressed", true);
-			NovaUtils.playSound("menu/confirm");
+			FlxG.sound.play(Cache.sound('menu/confirm'));
 			allowSwitch = true;
 			new FlxTimer().start(0.5, (_) -> {
 				FlxTween.tween(titleEnter, { y: FlxG.height }, 1, { ease: FlxEase.backIn });
