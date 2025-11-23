@@ -1,4 +1,3 @@
-#if macro
 package violet.backend.macro;
 
 import haxe.macro.Context;
@@ -21,4 +20,3 @@ class FlxMacro {
 		return fields.concat(tempClass.fields);
 	}
 }
-#end
