@@ -8,8 +8,6 @@ import lime.app.Application;
 import openfl.Lib;
 import openfl.events.UncaughtErrorEvent;
 
-using StringTools;
-
 class CrashHandler {
 	static var SEPERATOR = '=====================';
 

@@ -1,9 +1,6 @@
 package violet.backend.utils;
 
-import flixel.sound.FlxSound;
 import haxe.io.Path;
-
-using StringTools;
 
 class NovaUtils {
 	public static function playMusic(path:String, volume:Float = 1):Void {
@@ -12,9 +9,6 @@ class NovaUtils {
 		FlxG.sound.playMusic(Cache.music(musicPath.join('/')), volume);
 	}
 
-    public static function playSound(key:String, volume:Float = 1.0) {
-        var result:Null<FlxSound> = FlxG.sound.load(key, volume);
-        result.play();
-        return result;
-    }
+	inline public static function playSound(key:String, volume:Float = 1.0)
+		return FlxG.sound.play(Cache.sound(key), volume);
 }

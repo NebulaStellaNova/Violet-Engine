@@ -1,10 +1,6 @@
 #if MOD_SUPPORT
 package violet.backend.filesystem;
 
-import violet.backend.objects.NovaSprite;
-import haxe.display.Display.CompletionResponse;
-
-import flixel.FlxSprite;
 import json2object.JsonParser;
 import thx.semver.Version;
 import violet.backend.utils.FileUtil;

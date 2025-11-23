@@ -3,7 +3,7 @@ package violet.states;
 class InitialState extends flixel.FlxState { // for now
 	override public function create():Void {
 		FlxG.fixedTimestep = false;
-		flixel.FlxSprite.defaultAntialiasing = true; // this ain't a pixel game... yeah ik week 6 exists!
+		FlxSprite.defaultAntialiasing = true; // this ain't a pixel game... yeah ik week 6 exists!
 		FlxG.cameras.useBufferLocking = true;
 
 		super.create();

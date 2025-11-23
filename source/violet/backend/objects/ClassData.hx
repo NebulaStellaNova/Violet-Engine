@@ -2,7 +2,6 @@ package violet.backend.objects;
 
 import violet.states.*;
 import violet.states.menus.*;
-import violet.states.menus.substates.*;
 
 class ClassData {
 	public var type:String;
@@ -23,8 +22,8 @@ class ClassData {
 					this.target = new FreeplayState();
 				case "PlayState":
 					this.target = new PlayState(); */
-				case "ModMenuSubState":
-					this.target = new ModMenuSubState();
+				case "ModMenu":
+					this.target = new ModMenu();
 					this.isSubState = true;
 				default:
 					trace('error:Unknown State "${string.split(":")[1]}" returning to the Main Menu');

@@ -1,11 +1,8 @@
 package violet.backend.objects;
 
-import flixel.FlxSprite;
 import flixel.graphics.frames.FlxAtlasFrames;
 import flixel.math.FlxPoint;
 import flixel.system.FlxAssets;
-
-using StringTools;
 
 typedef AnimationInfo = {
 	var offset:Array<Float>;

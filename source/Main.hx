@@ -1,10 +1,9 @@
 package;
 
-import violet.backend.display.DebugDisplay;
 import flixel.util.FlxStringUtil;
 import lime.app.Application;
 import thx.semver.Version;
-import violet.backend.objects.ClassData;
+import violet.backend.display.DebugDisplay;
 import violet.backend.utils.ParseUtil;
 
 class Main extends openfl.display.Sprite {
@@ -58,20 +57,20 @@ class Main extends openfl.display.Sprite {
 	}
 
 	public static function switchState(targetClass:Dynamic) {
-        if (targetClass is flixel.FlxState)
-            FlxG.switchState(targetClass);
+		if (targetClass is flixel.FlxState)
+			FlxG.switchState(targetClass);
 		FlxG.state.closeSubState();
-        var redirects:Array<Dynamic> = ParseUtil.json("stateRedirects", "data/config");
-        var className = FlxStringUtil.getClassName(targetClass, true);
-        var switched = false;
-        for (i in redirects) {
-            if (i.state == className) {
-                trace('debug:Redirecting State "$className" to "${FlxStringUtil.getClassName(new ClassData(i.target).target, true)}"');
-                FlxG.switchState(new ClassData(i.target).target);
-                switched = true;
-            }
-        }
-        if (!switched)
-            FlxG.switchState(targetClass);
+		var redirects:Array<Dynamic> = ParseUtil.json("stateRedirects", "data/config");
+		var className = FlxStringUtil.getClassName(targetClass, true);
+		var switched = false;
+		for (i in redirects) {
+			if (i.state == className) {
+				trace('debug:Redirecting State "$className" to "${FlxStringUtil.getClassName(new ClassData(i.target).target, true)}"');
+				FlxG.switchState(new ClassData(i.target).target);
+				switched = true;
+			}
+		}
+		if (!switched)
+			FlxG.switchState(targetClass);
 	}
 }

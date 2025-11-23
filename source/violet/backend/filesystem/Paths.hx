@@ -8,7 +8,6 @@ import violet.backend.utils.FileUtil;
 import animate.FlxAnimateFrames;
 #end
 
-using StringTools;
 class Paths {
 	public static function init():Void {
 		#if ANIMATE_SUPPORT

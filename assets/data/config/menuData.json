@@ -9,7 +9,7 @@
 				"idle": "basic",
 				"selected": "white"
 			},
-			"state": "source:StoryMenuState",
+			"state": "source:StoryMenu",
 			"color": "#FF00FF"
 		},
 		{
@@ -19,7 +19,7 @@
 				"idle": "basic",
 				"selected": "white"
 			},
-			"state": "source:FreeplayState",
+			"state": "source:FreeplayMenu",
 			"color": "#ff4242"
 		},
 		{
@@ -30,7 +30,7 @@
 				"idle": "basic",
 				"selected": "white"
 			},
-			"state": "source:ModMenuSubState",
+			"state": "source:ModMenu",
 			"color": "#ffff00"
 		},
 		{
@@ -40,7 +40,7 @@
 				"idle": "basic",
 				"selected": "white"
 			},
-			"state": "source:CreditsState",
+			"state": "source:CreditsMenu",
 			"color": "#42b7ff"
 		},
 		{
@@ -50,7 +50,7 @@
 				"idle": "basic",
 				"selected": "white"
 			},
-			"state": "source:OptionsState",
+			"state": "source:OptionsMenu",
 			"color": "#FFFFFF"
 		}
 	]

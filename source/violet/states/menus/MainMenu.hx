@@ -2,13 +2,7 @@ package violet.states.menus;
 
 import flixel.FlxObject;
 import flixel.math.FlxMath;
-import flixel.tweens.FlxEase;
-import flixel.tweens.FlxTween;
-import flixel.util.FlxTimer;
 import violet.backend.StateBackend;
-import violet.backend.objects.ClassData;
-import violet.backend.objects.NovaSprite;
-import violet.backend.objects.NovaText;
 import violet.backend.utils.MathUtil;
 import violet.backend.utils.NovaUtils;
 import violet.backend.utils.ParseUtil;
@@ -39,12 +33,10 @@ class MainMenu extends StateBackend {
 		"THIS IS NOT A FORK"
 	];
 
-	public static var bg_static:NovaSprite;
-
 	public var curSelectedString:String = "";
 	public var bgColorString:String = "";
 
-	public var curSelected:Int = 0;
+	public static var curSelected:Int = 0;
 
 	public var menuData:MenuData;
 
@@ -172,7 +164,7 @@ class MainMenu extends StateBackend {
 			if (event.cancelled) return;
 		} */
 		if (amt != 0/*  && !event.soundCancelled */) {
-			NovaUtils.playSound(Paths.sound("menu/scroll"));
+			NovaUtils.playSound("menu/scroll");
 		}
 		curSelected = FlxMath.wrap(curSelected + amt, 0, menuItems.length-1);//event.selection;
 		for (i => item in menuItems) {
@@ -202,7 +194,7 @@ class MainMenu extends StateBackend {
 	public function pickSelection() {
 		if (!canSelect) return;
 		/* var event:SelectionEvent = runEvent("onPickSelection", new SelectionEvent(curSelected));
-		if (!event.soundCancelled) */ NovaUtils.playSound(Paths.sound("menu/confirm"));
+		if (!event.soundCancelled) */ NovaUtils.playSound("menu/confirm");
 		// if (event.cancelled) return;
 
 		canSelect = false;
@@ -220,7 +212,6 @@ class MainMenu extends StateBackend {
 
 		new FlxTimer().start(0.5, (t)->{
 			if (classData.isSubState) {
-				bg_static = bg;
 				openSubState(classData.target);
 				persistentUpdate = true;
 			} else {

@@ -1,14 +1,9 @@
 package violet.states;
 
-import violet.states.menus.MainMenu;
-import haxe.display.Display.DefinesResult;
-import flixel.util.FlxTimer;
-import flixel.tweens.FlxEase;
-import flixel.tweens.FlxTween;
-import violet.backend.utils.NovaUtils;
 import violet.backend.StateBackend;
 import violet.backend.filesystem.Paths;
-import violet.backend.objects.NovaSprite;
+import violet.backend.utils.NovaUtils;
+import violet.states.menus.MainMenu;
 
 class TitleState extends StateBackend {
 	public var logoBase:NovaSprite;
@@ -82,7 +77,7 @@ class TitleState extends StateBackend {
 			FlxG.switchState(MainMenu.new);
 		if (Controls.accept && skippedIntro) {
 			titleEnter.playAnim("pressed", true);
-			NovaUtils.playSound(Paths.sound("menu/confirm"));
+			NovaUtils.playSound("menu/confirm");
 			allowSwitch = true;
 			new FlxTimer().start(0.5, (_) -> {
 				FlxTween.tween(titleEnter, { y: FlxG.height }, 1, { ease: FlxEase.backIn });

@@ -2,7 +2,6 @@ package violet.backend.console;
 
 import haxe.Log;
 import haxe.PosInfos;
-using StringTools;
 
 @:publicFields
 class ConsoleColors {
@@ -48,7 +47,7 @@ class Logs {
 	public static function init() {
 		nativeTrace = Log.trace;
 		Log.trace = (v, ?infos) -> {
-            var type = LogMessage;
+			var type = LogMessage;
 			if (v is String) {
 				var res = v + "";
 				if (res.startsWith("error:")) {
@@ -103,12 +102,12 @@ class Logs {
 	}
 
 	public static function formatString(string:String):String {
-        for (field in Type.getClassFields(ConsoleColors)) {
+		for (field in Type.getClassFields(ConsoleColors)) {
 			string = string.replace("#" + field.toLowerCase(), Reflect.getProperty(ConsoleColors, field));
 			string = string.replace("#" + field, Reflect.getProperty(ConsoleColors, field));
 			string = string.replace("$" + field.toLowerCase(), Reflect.getProperty(ConsoleColors, field));
 			string = string.replace("$" + field, Reflect.getProperty(ConsoleColors, field));
-        }
-        return string;
-    }
+		}
+		return string;
+	}
 }
