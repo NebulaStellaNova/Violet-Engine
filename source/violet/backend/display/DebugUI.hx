@@ -16,7 +16,7 @@ class DebugUI extends Sprite {
     public var memoryCounter:TextField;
     public var fpsCounter:FPS;
 
-    public var shown:Bool = true;
+    public var shown:Bool = false;
 
     public var memoryPeak:Float = 0.0;
     public var memoryCurrent(get, never):Float;
