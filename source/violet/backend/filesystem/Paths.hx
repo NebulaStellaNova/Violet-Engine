@@ -56,7 +56,7 @@ class Paths {
 		return file(path, [directory, 'music'].join('/'), ext);
 
 	inline public static function json(path:String, directory:String = '', ?ext:String = 'json'):String
-		return file(path, directory, ext);
+		return file(path, directory, ext) != '' ? file(path, directory, ext) : (ext == 'json' ? file(path, directory, ext + 'c') : '');
 
 	inline public static function file(path:String, directory:String = '', ?ext:String):String
 		return root((directory == 'root' ? ['$path${ext == null || path.endsWith('.$ext') ? '' : '.$ext'}'] : [Path.removeTrailingSlashes(directory), '$path${ext == null || path.endsWith('.$ext') ? '' : '.$ext'}']).join('/'), directory == 'root');

@@ -29,8 +29,10 @@ class Modding {
 		trace("debug:Initializing Modding System...");
 		(availableMods = [
 			for (path in Paths.readFolder('mods', true)) {
-				if (!Paths.fileExists('mods/$path/novamod_meta.json', true)) continue;
-				var meta:ModMeta = new JsonParser<ModMeta>().fromJson(ParseUtil.removeJsonComments(FileUtil.getFileContent('mods/$path/novamod_meta.json')), 'mods/$path/novamod_meta.json');
+				if (!Paths.fileExists('mods/$path/novamod_meta.json', true) && !Paths.fileExists('mods/$path/novamod_meta.jsonc', true)) continue;
+				var meta:ModMeta = null;
+				if (Paths.fileExists('mods/$path/novamod_meta.json', true)) meta = new JsonParser<ModMeta>().fromJson(ParseUtil.removeJsonComments(FileUtil.getFileContent('mods/$path/novamod_meta.json')), 'mods/$path/novamod_meta.json');
+				if (Paths.fileExists('mods/$path/novamod_meta.jsonc', true)) meta = new JsonParser<ModMeta>().fromJson(ParseUtil.removeJsonComments(FileUtil.getFileContent('mods/$path/novamod_meta.jsonc')), 'mods/$path/novamod_meta.jsonc');
 				if (meta == null) continue;
 				meta.folder = path;
 				meta.title ??= meta.folder;
