@@ -231,6 +231,10 @@ class EngineAsset {
 		if (modSupport.exists()) addAssetPath('./mods', './mods', ['*'], excludeList);
 		/* Path Settings */
 
+		/* Macros */
+		addHaxeMacro('addMetadata("@:build(violet.backend.macro.FlxMacro.buildFlxBasic())", "flixel.FlxBasic")');
+		/* Macros */
+
 		/* Libraries */
 		// required for flixel, don't put below flixel, causes weird issues
 		addHaxelib('openfl');
@@ -262,10 +266,6 @@ class EngineAsset {
 		if (editWindowBorderColor.exists())
 			addHaxelib('hxWindowColorMode');
 		/* Libraries */
-
-		/* Macros */
-		addHaxeMacro('addMetadata("@:build(violet.backend.macro.FlxMacro.buildFlxBasic())", "flixel.FlxBasic")');
-		/* Macros */
 
 		if (!isDebug())
 			setHaxedef('FLX_NO_DEBUG');

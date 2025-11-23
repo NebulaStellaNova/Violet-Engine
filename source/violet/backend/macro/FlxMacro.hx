@@ -5,6 +5,7 @@ import haxe.macro.Expr;
 
 class FlxMacro {
 	public static macro function buildFlxBasic():Array<Field> {
+		trace('Building FlxBasic');
 		var fields:Array<Field> = Context.getBuildFields();
 		var tempClass:TypeDefinition = macro class TempClass {
 			/**
