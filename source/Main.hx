@@ -1,6 +1,6 @@
 package;
 
-import violet.backend.display.DebugUI;
+import violet.backend.display.DebugDisplay;
 import flixel.util.FlxStringUtil;
 import lime.app.Application;
 import thx.semver.Version;
@@ -52,7 +52,7 @@ class Main extends openfl.display.Sprite {
 
 		var startFPS:Int = Application.current.window.displayMode.refreshRate;
 		addChild(new flixel.FlxGame(1280, 720, violet.states.InitialState, startFPS, startFPS));
-		addChild(new DebugUI());
+		addChild(new DebugDisplay());
 		FlxG.game.focusLostFramerate = 30;
 		FlxG.mouse.useSystemCursor = true;
 	}
