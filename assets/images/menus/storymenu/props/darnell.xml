@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Created with Funkin Packer v0.1.3 https://neeeoo.github.io/funkin-packer/
+-->
+<TextureAtlas imagePath="darnell.png" width="607" height="748">
+	<SubTexture name="idle0000" x="203" y="254" width="191" height="240" frameX="-0" frameY="-8" frameWidth="201" frameHeight="248"/>
+	<SubTexture name="idle0001" x="397" y="254" width="191" height="240" frameX="-0" frameY="-8" frameWidth="201" frameHeight="248"/>
+	<SubTexture name="idle0002" x="3" y="505" width="201" height="240" frameX="-0" frameY="-8" frameWidth="201" frameHeight="248"/>
+	<SubTexture name="idle0003" x="3" y="505" width="201" height="240" frameX="-0" frameY="-8" frameWidth="201" frameHeight="248"/>
+	<SubTexture name="idle0004" x="404" y="3" width="200" height="245" frameX="-1" frameY="-3" frameWidth="201" frameHeight="248"/>
+	<SubTexture name="idle0005" x="404" y="3" width="200" height="245" frameX="-1" frameY="-3" frameWidth="201" frameHeight="248"/>
+	<SubTexture name="idle0006" x="3" y="3" width="198" height="248" frameX="-1" frameY="-0" frameWidth="201" frameHeight="248"/>
+	<SubTexture name="idle0007" x="3" y="3" width="198" height="248" frameX="-1" frameY="-0" frameWidth="201" frameHeight="248"/>
+	<SubTexture name="idle0008" x="204" y="3" width="197" height="248" frameX="-1" frameY="-0" frameWidth="201" frameHeight="248"/>
+	<SubTexture name="idle0009" x="204" y="3" width="197" height="248" frameX="-1" frameY="-0" frameWidth="201" frameHeight="248"/>
+	<SubTexture name="idle0010" x="204" y="3" width="197" height="248" frameX="-1" frameY="-0" frameWidth="201" frameHeight="248"/>
+	<SubTexture name="idle0011" x="204" y="3" width="197" height="248" frameX="-1" frameY="-0" frameWidth="201" frameHeight="248"/>
+	<SubTexture name="idle0012" x="3" y="254" width="197" height="248" frameX="-1" frameY="-0" frameWidth="201" frameHeight="248"/>
+	<SubTexture name="idle0013" x="3" y="254" width="197" height="248" frameX="-1" frameY="-0" frameWidth="201" frameHeight="248"/>
+</TextureAtlas>
