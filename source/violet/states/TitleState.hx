@@ -67,7 +67,7 @@ class TitleState extends StateBackend {
 		add(titleEnter);
 
 		NovaUtils.playMusic("mainMenuTheme", 0);
-		FlxG.sound.music.fadeIn(1, 0, 1);
+		FlxG.sound.music.fadeIn(1, 0, 0.7);
 	}
 
 	override public function update(elapsed:Float) {

@@ -34,6 +34,7 @@ class Main extends openfl.display.Sprite {
 		moonchart.Moonchart.DEFAULT_DIFF = 'normal';
 		moonchart.Moonchart.CASE_SENSITIVE_DIFFS = moonchart.Moonchart.SPACE_SENSITIVE_DIFFS = false;
 		Paths.init();
+		Cache.init();
 		#if EDIT_WINDOW_BORDER_COLOR
 		hxwindowmode.WindowColorMode.setDarkMode();
 		hxwindowmode.WindowColorMode.setWindowCornerType(1);
