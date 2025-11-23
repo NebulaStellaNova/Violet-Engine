@@ -264,8 +264,7 @@ class EngineAsset {
 		/* Libraries */
 
 		/* Macros */
-		// FUCK MACROS MAN, WHY DO THEY GOTTA BE A FUCKING BITCH TO COMPLIE, LIKE WDYM FLXSHADER DOESN'T EXIST!??!?!?!?!?!?!?!?
-		// addHaxeMacro('addMetadata("@:build(violet.backend.macro.FlxMacro.buildFlxBasic())", "flixel.FlxBasic")');
+		addHaxeMacro('addMetadata("@:build(violet.backend.macro.FlxMacro.buildFlxBasic())", "flixel.FlxBasic")');
 		/* Macros */
 
 		if (!isDebug())
