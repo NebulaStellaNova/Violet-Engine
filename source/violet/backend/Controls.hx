@@ -202,6 +202,12 @@ class Controls {
 	inline static function get_resetState():Bool
 		return pressed('resetState');
 	/**
+	 * When "debugDisplay" is pressed.
+	 */
+	public static var debugDisplay(get, never):Bool;
+	inline static function get_debugDisplay():Bool
+		return pressed('debugDisplay');
+	/**
 	 * When "shortcutState" is pressed.
 	 */
 	public static var shortcutState(get, never):Bool;
@@ -240,9 +246,10 @@ class Controls {
 
 		'fullscreen' => [F11],
 
-		'botplay' => [F4],
+		'botplay' => [F3],
 		'resetState' => [F5],
-		'shortcutState' => [F6],
+		'shortcutState' => [F4],
+		'debugDisplay' => [F6],
 		'reloadGame' => [F8]
 	];
 	/**

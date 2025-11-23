@@ -1,5 +1,6 @@
 package;
 
+import violet.backend.display.DebugUI;
 import flixel.util.FlxStringUtil;
 import lime.app.Application;
 import thx.semver.Version;
@@ -22,11 +23,14 @@ class Main extends openfl.display.Sprite {
 	public static var updateAvailable(default, null):Bool = false;
 	#end
 
+	public static var instance(default, null):openfl.display.Sprite;
+
 	public function new() {
 		violet.backend.CrashHandler.init();
 		violet.backend.console.Logs.init();
 
 		super();
+		instance = this;
 
 		moonchart.Moonchart.DEFAULT_DIFF = 'normal';
 		moonchart.Moonchart.CASE_SENSITIVE_DIFFS = moonchart.Moonchart.SPACE_SENSITIVE_DIFFS = false;
@@ -48,10 +52,7 @@ class Main extends openfl.display.Sprite {
 
 		var startFPS:Int = Application.current.window.displayMode.refreshRate;
 		addChild(new flixel.FlxGame(1280, 720, violet.states.InitialState, startFPS, startFPS));
-		var fpsCounter:openfl.display.FPS = new openfl.display.FPS(10, 10, FlxColor.WHITE);
-		fpsCounter.setTextFormat(new openfl.text.TextFormat(30));
-		fpsCounter.width = FlxG.width;
-		addChild(fpsCounter);
+		addChild(new DebugUI());
 		FlxG.game.focusLostFramerate = 30;
 		FlxG.mouse.useSystemCursor = true;
 	}
