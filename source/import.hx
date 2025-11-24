@@ -1,5 +1,5 @@
 #if MOD_SUPPORT
-import violet.backend.filesystem.Modding;
+import violet.backend.filesystem.ModdingAPI;
 #end
 import flixel.FlxG;
 import flixel.FlxSprite;

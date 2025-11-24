@@ -1,5 +1,6 @@
 package;
 
+import flixel.FlxState;
 import flixel.util.FlxStringUtil;
 import lime.app.Application;
 import thx.semver.Version;
@@ -21,6 +22,18 @@ class Main extends openfl.display.Sprite {
 	 */
 	public static var updateAvailable(default, null):Bool = false;
 	#end
+
+	/**
+	 * Name of the current state's class.
+	 */
+	public static var stateClassName(get, never):String;
+	private static function get_stateClassName(_:Bool = true):String return FlxStringUtil.getClassName(FlxG.state, _);
+
+	/**
+	 * Name of the current sub-state's class.
+	 */
+	public static var subStateClassName(get, never):String;
+	private static function get_subStateClassName():String return FlxStringUtil.getClassName(FlxG.state.subState, true);
 
 	public static var instance(default, null):openfl.display.Sprite;
 

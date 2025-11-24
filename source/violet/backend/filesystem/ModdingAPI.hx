@@ -24,7 +24,9 @@ typedef ModMeta = {
 	@:alias('mod_version') var version:Version;
 }
 
-class Modding {
+class ModdingAPI {
+	public static var STATE_PATHS = ['data/scripts/states'];
+
 	public static function init():Void {
 		trace("debug:Initializing Modding System...");
 		(availableMods = [

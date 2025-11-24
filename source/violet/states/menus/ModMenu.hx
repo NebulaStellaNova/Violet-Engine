@@ -42,7 +42,7 @@ class ModMenu extends flixel.FlxSubState {
 		infoSeperator.scrollFactor.set();
 		add(infoSeperator);
 
-		for (i=>mod in Modding.availableMods) {
+		for (i=>mod in ModdingAPI.availableMods) {
 			var icon:FlxSpriteGroup = new FlxSpriteGroup();
 			icon.ID = i;
 
@@ -101,7 +101,7 @@ class ModMenu extends flixel.FlxSubState {
 		statusText = new NovaSprite(Paths.image("menus/modmenu/enabled"));
 		add(statusText);
 
-		selectedMod = Modding.availableMods[curSelected];
+		selectedMod = ModdingAPI.availableMods[curSelected];
 		updateCredits();
 	}
 
@@ -154,7 +154,7 @@ class ModMenu extends flixel.FlxSubState {
 		tagImage.x = tagsText.x + tagsText.width + 10;
 		tagImage.y = tagsText.y;
 
-		selectedMod = Modding.availableMods[curSelected];
+		selectedMod = ModdingAPI.availableMods[curSelected];
 
 		if (Controls.uiUp || Controls.uiDown || instant) {
 			updateCredits();
