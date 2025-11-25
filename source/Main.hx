@@ -27,7 +27,7 @@ class Main extends openfl.display.Sprite {
 	 * Name of the current state's class.
 	 */
 	public static var stateClassName(get, never):String;
-	private static function get_stateClassName(_:Bool = true):String return FlxStringUtil.getClassName(FlxG.state, _);
+	private static function get_stateClassName():String return FlxStringUtil.getClassName(FlxG.state, true);
 
 	/**
 	 * Name of the current sub-state's class.

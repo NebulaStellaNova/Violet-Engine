@@ -19,7 +19,7 @@ class StateBackend extends flixel.FlxState {
 	override public function create() {
 		super.create();
 
-		/* #if (MOD_SUPPORT && SCRIPT_SUPPORT)
+		#if (MOD_SUPPORT && SCRIPT_SUPPORT)
 		for (mod in ModdingAPI.getActiveMods()) {
 			for (path in ModdingAPI.STATE_PATHS) {
 				var filePath:String = '${['mods', mod.folder, path].join('/')}/${Main.stateClassName}';
@@ -42,7 +42,7 @@ class StateBackend extends flixel.FlxState {
 				#end
 			}
 		}
-		#end */
+		#end
 	}
 
 	override public function add(objORcall:FlxBasic) {

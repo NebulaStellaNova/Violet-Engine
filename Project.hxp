@@ -50,7 +50,11 @@ class EngineAsset {
 	/**
 	 * The directory path**s** to the source code.
 	 */
-	static final sourceCodeDirectories:Array<String> = ['./source', './.haxelib/thx,semver/0,2,2/src', './.haxelib/rulescript/0,2,0/rulescript'];
+	static final sourceCodeDirectories:Array<String> = ['./source', './rulescript/0,2,0/rulescript'];
+	/**
+	 * Just put the fucking libs that refuse to load here.
+	 */
+	static final extraLibraries:Array<String> = ['thx.semver'/* , 'rulescript' */];
 	/**
 	 * The class path to the preloader class.
 	 */
@@ -145,6 +149,9 @@ class EngineAsset {
 			error('Hey this engine only works on desktop and mobile devices!');
 			return;
 		}
+
+		for (i in extraLibraries)
+			haxelibs.push(new Haxelib(i));
 
 		if (FileSystem.exists('./.haxelib'))
 			setenv('HAXEPATH', './.haxelib');
@@ -253,10 +260,10 @@ class EngineAsset {
 		// chart converter
 		addHaxelib('moonchart');
 
-		// if ( canHaxeScript.exists()) addHaxelib('rulescript');
-		if ( canLuaScript .exists()) addHaxelib('lscript',        'git');
-		if (  discordRPC  .exists()) addHaxelib('discord-rpc');
-		if (allowVideos   .exists()) addHaxelib('hxvlc');
+		// if (canHaxeScript.exists()) haxelibs.push(new Haxelib('rulescript'));
+		if (canLuaScript.exists()) addHaxelib('lscript',        'git');
+		if (discordRPC.exists()) addHaxelib('discord-rpc');
+		if (allowVideos.exists()) addHaxelib('hxvlc');
 		// addHaxelib('thx.semver');
 
 		if (editWindowBorderColor.exists())
