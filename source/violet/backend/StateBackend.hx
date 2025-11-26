@@ -19,6 +19,8 @@ class StateBackend extends flixel.FlxState {
 	override public function create() {
 		super.create();
 
+		stateScripts.parent = this;
+
 		#if (MOD_SUPPORT && SCRIPT_SUPPORT)
 		for (mod in ModdingAPI.getActiveMods()) {
 			for (path in ModdingAPI.STATE_PATHS) {
@@ -26,7 +28,8 @@ class StateBackend extends flixel.FlxState {
 
 				#if CAN_LUA_SCRIPT
 				if (Paths.fileExists('$filePath.lua', true)) {
-					stateScripts.addScript(new violet.backend.scripting.LuaScript('$filePath.lua'));
+					var script = new violet.backend.scripting.LuaScript('$filePath.lua');
+					stateScripts.addScript(script);
 				}
 				#end
 
@@ -39,7 +42,8 @@ class StateBackend extends flixel.FlxState {
 
 				#if CAN_HAXE_SCRIPT
 				if (Paths.fileExists('$filePath.py', true)) {
-					stateScripts.addScript(new violet.backend.scripting.PythonScript('$filePath.py'));
+					var script = new violet.backend.scripting.PythonScript('$filePath.py');
+					stateScripts.addScript(script);
 				}
 				#end
 			}

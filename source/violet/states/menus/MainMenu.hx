@@ -29,8 +29,7 @@ typedef MenuData = {
 
 class MainMenu extends StateBackend {
 	public var watermarkTexts = [
-		"Violet Engine v0.1",
-		"THIS IS NOT A FORK"
+		"Violet Engine v" + Main.engineVersion
 	];
 
 	public var curSelectedString:String = "";
@@ -55,8 +54,9 @@ class MainMenu extends StateBackend {
 	{
 		super.create();
 
+		var modMenu:violet.states.menus.ModMenu = new violet.states.menus.ModMenu();
+
 		// FlxG.camera.color = FlxColor.BLACK;
-		FlxG.camera.fade(FlxColor.BLACK, 0.25, true);
 
 		menuData = ParseUtil.json("data/config/menuData");
 
@@ -111,6 +111,8 @@ class MainMenu extends StateBackend {
 		changeSelection(uiCheck());
 		FlxG.camera.snapToTarget();
 		FlxG.camera.followLerp = 0.1;
+
+		FlxG.camera.fade(FlxColor.BLACK, 0.25, true);
 
 		callInScripts('postCreate');
 	}
