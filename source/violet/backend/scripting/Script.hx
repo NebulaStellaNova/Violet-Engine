@@ -10,9 +10,11 @@ import violet.backend.filesystem.ModdingAPI;
 using violet.backend.utils.ArrayUtil;
 
 class Script implements IFlxDestroyable {
-	var hasBlacklisted:Bool = false;
 	var scriptCode:String;
 	var executed:Bool = false;
+
+	@:unreflective
+	public var hasBlacklisted:Bool = false;
 
 	public var fileName:String;
 	public var folderName:String;
