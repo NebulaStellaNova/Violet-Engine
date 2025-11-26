@@ -34,38 +34,8 @@ class LuaScript extends Script {
 
 	public static var psychVariables:Map<String, Dynamic> = [];
 
-	public var blacklistImports:Array<Class<Dynamic>> = [
-		sys.io.File,
-		sys.FileSystem
-	];
-
-	function importCheck(code:String, importString:String) {
-		var variations = [
-			'script:import("$importString")',
-			'script:import(\'$importString\')',
-			'script.import("$importString")',
-			'script.import(\'$importString\')'
-		];
-		for (i in variations) {
-			if (code.contains(i)) {
-				trace('error:Blacklisted Lua Import "$importString"');
-				code.replace(i, "");
-			}
-		}
-		return code;
-	}
-
-	function checkForBlacklists(code:String):String {
-		for (theImport in blacklistImports) {
-			var importString:String = FlxStringUtil.getClassName(theImport);
-			code = importCheck(code, importString);
-		}
-		return code;
-	}
-
 	public function new(path:String, preset:Bool = true) {
 		super(path);
-		scriptCode = checkForBlacklists(scriptCode);
 		// scriptCode += '\n' + FileUtil.getFileContent("assets/data/scripts/import.lua");
 		for (i in violet.backend.filesystem.ModdingAPI.getActiveMods()) {
 			if (Paths.fileExists('mods/${i.folder}/data/scripts/import.lua', true))
@@ -84,6 +54,7 @@ class LuaScript extends Script {
 			violet.backend.console.Logs.traceCallback(s, info);
 			// trace(s, (s == "Nova Engine has Lua Support" ? SystemMessage : LogMessage), info);
 		}
+		checkForBlacklistedImports();
 		initVars();
 		internalScript.execute();
 	}

@@ -25,6 +25,13 @@ typedef ModMeta = {
 }
 
 class ModdingAPI {
+
+	@:unreflective
+	public static var BLACKLISTED_IMPORTS:Array<Class<Dynamic>> = [
+		sys.io.File,
+		sys.FileSystem
+	];
+
 	public static var STATE_PATHS = ['data/scripts/states'];
 
 	public static function init():Void {

@@ -1,12 +1,16 @@
 package violet.backend.scripting;
 
-import violet.backend.utils.FileUtil;
+import flixel.util.FlxStringUtil;
 import flixel.util.FlxDestroyUtil.IFlxDestroyable;
+
+import violet.backend.utils.FileUtil;
 import violet.backend.filesystem.Paths;
+import violet.backend.filesystem.ModdingAPI;
 
 using violet.backend.utils.ArrayUtil;
 
 class Script implements IFlxDestroyable {
+	var hasBlacklisted:Bool = false;
 	var scriptCode:String;
 	var executed:Bool = false;
 
@@ -41,5 +45,32 @@ class Script implements IFlxDestroyable {
 
 	public function destroy() {
 		//
+	}
+
+	inline private function checkIfBlacklisted(code:String, importString:String) {
+		var variations = [
+			'import $importString;',
+			'script:import("$importString")',
+			'script:import(\'$importString\')',
+			'script.import("$importString")',
+			'script.import(\'$importString\')'
+		];
+		for (i in variations) {
+			if (code.contains(i)) {
+				trace('error:Can not execute script "$fileName" as import "$importString" is blacklisted.' );
+				lime.app.Application.current.window.alert('Error executing "$fileName":\nImported module "$importString" is blacklisted.', 'Novamod Script Exception');
+				code.replace(i, "");
+				hasBlacklisted = true;
+			}
+		}
+		return code;
+	}
+
+	public function checkForBlacklistedImports():String { // IDK why I made it return, it's whatever tho.
+		for (theImport in ModdingAPI.BLACKLISTED_IMPORTS) {
+			var importString:String = FlxStringUtil.getClassName(theImport);
+			scriptCode = checkIfBlacklisted(scriptCode, importString);
+		}
+		return scriptCode = hasBlacklisted ? "" : scriptCode;
 	}
 }

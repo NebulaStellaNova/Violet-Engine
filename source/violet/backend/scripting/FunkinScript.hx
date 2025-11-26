@@ -44,6 +44,7 @@ class FunkinScript extends Script {
 			if (Paths.fileExists('mods/${i.folder}/data/scripts/import.hx', true))
 				scriptCode += '\n' + FileUtil.getFileContent('mods/${i.folder}/data/scripts/import.hx');
 		}
+		checkForBlacklistedImports();
 		executeScript();
 	}
 

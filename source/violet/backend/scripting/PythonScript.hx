@@ -18,10 +18,10 @@ class PythonScript extends FunkinScript {
         var code = "";
         for (i in violet.backend.filesystem.ModdingAPI.getActiveMods()) {
 			if (Paths.fileExists('mods/${i.folder}/data/scripts/import.py', true))
-				code += '\n' + FileUtil.getFileContent('mods/${i.folder}/data/scripts/import.py');
+				code += '\n' + FileUtil.getFileContent('mods/${i.folder}/data/scripts/import.py') + '\n';
 		}
         code += '\n' + FileUtil.getFileContent(path);
-        trace(code);
+		checkForBlacklistedImports(); // Just to be safe, LOL
 		super(convertToHscript(code), true);
 	}
 

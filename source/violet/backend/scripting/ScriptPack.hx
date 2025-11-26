@@ -21,7 +21,7 @@ class ScriptPack {
 
 	public function addScript(script:Script) {
 		var scriptClass = FlxStringUtil.getClassName(script, true);
-		trace('Added script "${script.fileName}" to "$this"');
+		trace('debug:Added script "${script.fileName}" to "$this"');
 		script.parent = parent;
 		scripts.push(script);
 	}
