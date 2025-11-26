@@ -58,6 +58,13 @@
       "url": "https://github.com/FunkinCrew/json2object"
     },
     {
+      "name": "linc_luajit",
+      "type": "git",
+      "dir": null,
+      "ref": null,
+      "url": "https://github.com/nebulazorua/linc_luajit.git"
+    },
+    {
       "name": "lscript",
       "type": "git",
       "dir": null,
@@ -71,8 +78,10 @@
     },
     {
       "name": "rulescript",
-      "type": "haxelib",
-      "version": null
+      "type": "git",
+      "dir": null,
+      "ref": null,
+      "url": "https://github.com/Kriptel/RuleScript.git"
     },
     {
       "name": "thx.semver",

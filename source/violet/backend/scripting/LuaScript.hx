@@ -18,6 +18,7 @@ import flixel.util.FlxTimer;
 // import hxwindowmode.WindowColorMode;
 import lscript.LScript;
 import violet.backend.filesystem.Paths;
+import violet.backend.utils.FileUtil;
 import violet.backend.objects.NovaSprite;
 
 using StringTools;
@@ -47,7 +48,7 @@ class LuaScript extends Script {
 		];
 		for (i in variations) {
 			if (code.contains(i)) {
-				log('Blacklisted Lua Import "$importString"', ErrorMessage);
+				trace('error:Blacklisted Lua Import "$importString"');
 				code.replace(i, "");
 			}
 		}
@@ -65,7 +66,11 @@ class LuaScript extends Script {
 	public function new(path:String, preset:Bool = true) {
 		super(path);
 		scriptCode = checkForBlacklists(scriptCode);
-		scriptCode += '\n' + Paths.readStringFromPath("assets/data/scripts/luaImports.lua");
+		// scriptCode += '\n' + FileUtil.getFileContent("assets/data/scripts/import.lua");
+		for (i in violet.backend.filesystem.ModdingAPI.getActiveMods()) {
+			if (Paths.fileExists('mods/${i.folder}/data/scripts/import.lua', true))
+				scriptCode += '\n' + FileUtil.getFileContent('mods/${i.folder}/data/scripts/import.lua');
+		}
 
 		internalScript = new LScript(scriptCode);
 		internalScript.print = (line:Int, s:String) -> {
@@ -73,9 +78,11 @@ class LuaScript extends Script {
 				fileName: '$folderName/$fileName',
 				lineNumber: line,
 				className: '$folderName/$fileName',
-				methodName: ""
+				methodName: "",
+				customParams: [] // Fuck YOU
 			}
-			log(s, (s == "Nova Engine has Lua Support" ? SystemMessage : LogMessage), info);
+			violet.backend.console.Logs.traceCallback(s, info);
+			// trace(s, (s == "Nova Engine has Lua Support" ? SystemMessage : LogMessage), info);
 		}
 		initVars();
 		internalScript.execute();
@@ -124,7 +131,7 @@ class LuaScript extends Script {
 		set('Paths', Paths);
 		// set('WindowColorMode', WindowColorMode);
 
-		backend.scripts.psych.LuaCallbacks.applyPsychCallbacksToScript(this);
+		violet.backend.scripting.psych.LuaCallbacks.applyPsychCallbacksToScript(this);
 
 		// Custom
 		/* set('add', (object:FlxBasic) -> return FlxG.state.add(object));

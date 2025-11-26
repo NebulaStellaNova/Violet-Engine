@@ -50,7 +50,7 @@ class EngineAsset {
 	/**
 	 * The directory path**s** to the source code.
 	 */
-	static final sourceCodeDirectories:Array<String> = ['./source', './rulescript/0,2,0/rulescript'];
+	static final sourceCodeDirectories:Array<String> = ['./source'];
 	/**
 	 * Just put the fucking libs that refuse to load here.
 	 */
@@ -260,8 +260,10 @@ class EngineAsset {
 		// chart converter
 		addHaxelib('moonchart');
 
-		// if (canHaxeScript.exists()) haxelibs.push(new Haxelib('rulescript'));
-		if (canLuaScript.exists()) addHaxelib('lscript',        'git');
+		addHaxelib('linc_luajit', 'git');
+		if (canHaxeScript.exists()) addHaxelib('rulescript', 'git');
+		if (canLuaScript.exists()) addHaxelib('lscript', 'git');
+
 		if (discordRPC.exists()) addHaxelib('discord-rpc');
 		if (allowVideos.exists()) addHaxelib('hxvlc');
 		// addHaxelib('thx.semver');

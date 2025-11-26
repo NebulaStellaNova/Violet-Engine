@@ -16,6 +16,7 @@ import flixel.util.FlxTimer;
 // import hxwindowmode.WindowColorMode;
 import rulescript.RuleScript;
 import rulescript.parsers.HxParser;
+import violet.backend.utils.FileUtil;
 import violet.backend.filesystem.Paths;
 import violet.backend.objects.NovaSprite;
 
@@ -39,12 +40,17 @@ class FunkinScript extends Script {
 		internalScript = new RuleScript();
 		internalScript.scriptName = '$folderName/$fileName';
 		initVars();
+		for (i in violet.backend.filesystem.ModdingAPI.getActiveMods()) {
+			if (Paths.fileExists('mods/${i.folder}/data/scripts/import.hx', true))
+				scriptCode += '\n' + FileUtil.getFileContent('mods/${i.folder}/data/scripts/import.hx');
+		}
 		executeScript();
 	}
 
 	function importClass<T>(name:String, daClass:Class<T>) {
-		internalScript.interp.imports.set(name, daClass);
-		internalScript.interp.variables.set(name, daClass);
+		set(name, daClass);
+		/* internalScript.interp.imports.set(name, daClass);
+		internalScript.interp.variables.set(name, daClass); */
 	}
 
 	function initVars():Void {
@@ -96,8 +102,8 @@ class FunkinScript extends Script {
 		set('remove', (object:FlxBasic) -> return FlxG.state.remove(object));
 		set('insert', (pos:Int, object:FlxBasic) -> return FlxG.state.insert(pos, object));
 
-		set('trace', (value:Dynamic) -> violet.backend.console.Logs.log(value, internalScript.interp.posInfos()));
-		set('log', (value:Dynamic, type:violet.backend.console.Logs.LogType = LogMessage) -> violet.backend.console.Logs.log(value, type, internalScript.interp.posInfos()));
+		set('trace', (value) -> violet.backend.console.Logs.traceCallback(value, internalScript.getInterp(rulescript.interps.RuleScriptInterp).posInfos()));
+		// set('log', (value:Dynamic, type:violet.backend.console.Logs.LogType = LogMessage) -> violet.backend.console.Logs.log(value, type, internalScript.interp.posInfos()));
 
         set('lerp', MathUtil.lerp);
 

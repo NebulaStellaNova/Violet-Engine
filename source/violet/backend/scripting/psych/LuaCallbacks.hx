@@ -16,7 +16,7 @@ class LuaCallbacks {
                     cast (getVar(script, variable), NovaSprite).loadGraphic(Paths.image(image));
                 }
             } else {
-                cast (FlxG.state, MusicBeatState).debugPrint('Unknown Variable "$variable"', "RED");
+                cast (FlxG.state, violet.backend.StateBackend).debugPrint('Unknown Variable "$variable"', "RED");
             }
         });
         script.set("addLuaSprite", function(tag:String, ?inFront){
@@ -26,7 +26,7 @@ class LuaCallbacks {
                     FlxG.state.add(getVar(script, tag));
                 //}
             } else {
-                cast (FlxG.state, MusicBeatState).debugPrint('Unknown Sprite "$tag"', "RED");
+                cast (FlxG.state, violet.backend.StateBackend).debugPrint('Unknown Sprite "$tag"', "RED");
             }
         });
 
@@ -36,7 +36,7 @@ class LuaCallbacks {
                     FlxG.state.remove(getVar(script, tag));
                 }
             } else {
-                cast (FlxG.state, MusicBeatState).debugPrint('Unknown Sprite "$tag"', "RED");
+                cast (FlxG.state, violet.backend.StateBackend).debugPrint('Unknown Sprite "$tag"', "RED");
             }
         });
 
@@ -50,7 +50,7 @@ class LuaCallbacks {
             if (getVar(script, obj) != null) {
                 cast (getVar(script, obj), NovaSprite).scrollFactor.set(scrollX, scrollY);
             } else {
-                cast (FlxG.state, MusicBeatState).debugPrint('Unknown Variable "$obj"', "RED");
+                cast (FlxG.state, violet.backend.StateBackend).debugPrint('Unknown Variable "$obj"', "RED");
             }
         });
 
@@ -58,7 +58,7 @@ class LuaCallbacks {
             if (getVar(script, obj) != null) {
                 cast (getVar(script, obj), NovaSprite).scale.set(x, y);
             } else {
-                cast (FlxG.state, MusicBeatState).debugPrint('Unknown Variable "$obj"', "RED");
+                cast (FlxG.state, violet.backend.StateBackend).debugPrint('Unknown Variable "$obj"', "RED");
             }
         });
 
@@ -70,7 +70,7 @@ class LuaCallbacks {
                     cast (getVar(script, obj), NovaSprite).updateHitbox();
                 // }
             } else {
-                cast (FlxG.state, MusicBeatState).debugPrint('Unknown Variable "$obj"', "RED");
+                cast (FlxG.state, violet.backend.StateBackend).debugPrint('Unknown Variable "$obj"', "RED");
             }
         });
 
@@ -92,7 +92,7 @@ class LuaCallbacks {
                         XY;
                 });
             } else {
-                cast (FlxG.state, MusicBeatState).debugPrint('Unknown Variable "$obj"', "RED");
+                cast (FlxG.state, violet.backend.StateBackend).debugPrint('Unknown Variable "$obj"', "RED");
             }
         });
 
@@ -108,7 +108,7 @@ class LuaCallbacks {
                     return Reflect.field(daObj, prop);
                 }
             }
-            cast (FlxG.state, MusicBeatState).debugPrint('Unknown Property "$property"', "RED");
+            cast (FlxG.state, violet.backend.StateBackend).debugPrint('Unknown Property "$property"', "RED");
             return "";
         });
 
@@ -134,7 +134,7 @@ class LuaCallbacks {
                     /* case "hud" | "camHUD":
                         cast (getVar(script, obj), NovaSprite).cameras = [PlayState.camHUD]; */
                     default:
-                         cast (FlxG.state, MusicBeatState).debugPrint('Unknown Camera "$camera"', "RED");
+                         cast (FlxG.state, violet.backend.StateBackend).debugPrint('Unknown Camera "$camera"', "RED");
                 }
             }
         });
@@ -144,7 +144,7 @@ class LuaCallbacks {
 		});
 
         script.set("debugPrint", function(text:Dynamic = '', color:String = 'WHITE') {
-            cast (FlxG.state, MusicBeatState).debugPrint(text, color);
+            cast (FlxG.state, violet.backend.StateBackend).debugPrint(text, color);
         });
     }
 

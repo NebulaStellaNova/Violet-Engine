@@ -44,34 +44,36 @@ class Logs {
 
 	public static var nativeTrace:(Dynamic, ?PosInfos)->Void;
 
+	public static var traceCallback:(v : Dynamic, ?infos : Null<haxe.PosInfos>)->Void = (v, ?infos) -> {
+		var type = LogMessage;
+		if (v is String) {
+			var res = v + "";
+			if (res.startsWith("error:")) {
+				type = ErrorMessage;
+				res = res.substr(6);
+			} else if (res.startsWith("warning:")) {
+				type = WarningMessage;
+				res = res.substr(8);
+			} else if (res.startsWith("sys:")) {
+				type = SystemMessage;
+				res = res.substr(4);
+			} else if (res.startsWith("system:")) {
+				type = SystemMessage;
+				res = res.substr(7);
+			} else if (res.startsWith("debug:")) {
+				type = DebugMessage;
+				res = res.substr(6);
+			} else if (res.startsWith("log:")) {
+				res = res.substr(4);
+			}
+			v = res;
+		}
+		log(v, type, infos);
+	}
+
 	public static function init() {
 		nativeTrace = Log.trace;
-		Log.trace = (v, ?infos) -> {
-			var type = LogMessage;
-			if (v is String) {
-				var res = v + "";
-				if (res.startsWith("error:")) {
-					type = ErrorMessage;
-					res = res.substr(6);
-				} else if (res.startsWith("warning:")) {
-					type = WarningMessage;
-					res = res.substr(8);
-				} else if (res.startsWith("sys:")) {
-					type = SystemMessage;
-					res = res.substr(4);
-				} else if (res.startsWith("system:")) {
-					type = SystemMessage;
-					res = res.substr(7);
-				} else if (res.startsWith("debug:")) {
-					type = DebugMessage;
-					res = res.substr(6);
-				} else if (res.startsWith("log:")) {
-					res = res.substr(4);
-				}
-				v = res;
-			}
-			log(v, type, infos);
-		}
+		Log.trace = traceCallback;
 
 		trace(  "error:Error Message           (tag = 'error:'  )");
 		trace("warning:Warning Message         (tag = 'warning:')");

@@ -111,6 +111,8 @@ class MainMenu extends StateBackend {
 		changeSelection(uiCheck());
 		FlxG.camera.snapToTarget();
 		FlxG.camera.followLerp = 0.1;
+
+		callInScripts('postCreate');
 	}
 
 	function uiCheck() {
@@ -126,8 +128,8 @@ class MainMenu extends StateBackend {
 	override public function update(elapsed:Float)
 	{
 		super.update(elapsed);
-		trace(Main.stateClassName);
-		trace(Main.subStateClassName);
+		// trace(Main.stateClassName);
+		// trace(Main.subStateClassName);
 		changeSelection(uiCheck());
 		bg.color = MathUtil.colorLerp(bg.color, menuData.items[curSelected].color, 0.16);
 		bgColorString = ParseColor.fromInt(bg.color);
