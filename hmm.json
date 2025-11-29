@@ -87,6 +87,16 @@
       "name": "thx.semver",
       "type": "haxelib",
       "version": null
+    },
+    {
+      "name": "haxeui-core",
+      "type": "haxelib",
+      "version": null
+    },
+    {
+      "name": "haxeui-flixel",
+      "type": "haxelib",
+      "version": null
     }
   ]
 }

@@ -50,19 +50,22 @@ class Script implements IFlxDestroyable {
 	}
 
 	inline private function checkIfBlacklisted(code:String, importString:String) {
+		var importsIncluded = [];
 		var variations = [
 			'import $importString;',
 			'script:import("$importString")',
 			'script:import(\'$importString\')',
 			'script.import("$importString")',
-			'script.import(\'$importString\')'
+			'script.import(\'$importString\')',
+			importString
 		];
 		for (i in variations) {
-			if (code.contains(i)) {
+			if (code.contains(i) && !importsIncluded.contains(importString)) {
 				trace('error:Can not execute script "$fileName" as import "$importString" is blacklisted.' );
-				lime.app.Application.current.window.alert('Error executing "$fileName":\nImported module "$importString" is blacklisted.', 'Novamod Script Exception');
+				violet.backend.CrashHandler.errorNotif('Novamod Script Exception!', 'Error executing "$fileName":\nImported module "$importString" is blacklisted.');
 				code.replace(i, "");
 				hasBlacklisted = true;
+				importsIncluded.push(importString);
 			}
 		}
 		return code;

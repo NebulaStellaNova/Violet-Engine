@@ -114,9 +114,15 @@ class FunkinScript extends Script {
 	}
 
 	override public function call<T>(funcName:String, ?args:Array<Dynamic>, ?def:T):T {
-		var func = this.get(funcName);
-		if (func != null && Reflect.isFunction(func))
-			return Reflect.callMethod(null, func, args ?? []) ?? def;
+		try {
+			var func = this.get(funcName);
+			if (func != null && Reflect.isFunction(func))
+				return Reflect.callMethod(null, func, args ?? []) ?? def;
+		} catch (e) {
+			// trace('error:${e.message}');
+			var data:Array<String> = e.message.split(":");
+			violet.backend.CrashHandler.errorNotif('Novamod Script Exception!', 'Error executing "$fileName": ${data[2]},\nOn Line #${data[1]}');
+		}
 		return null;
 	}
 

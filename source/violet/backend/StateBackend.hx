@@ -2,6 +2,8 @@ package violet.backend;
 
 import flixel.FlxBasic;
 import flixel.FlxState;
+import flixel.FlxCamera;
+
 
 #if SCRIPT_SUPPORT
 import violet.backend.scripting.ScriptPack;
@@ -18,6 +20,7 @@ class StateBackend extends flixel.FlxState {
 
 	override public function create() {
 		super.create();
+
 
 		stateScripts.parent = this;
 
@@ -50,10 +53,37 @@ class StateBackend extends flixel.FlxState {
 		}
 		callInScripts('create');
 		#end
+		new flixel.util.FlxTimer().start(0.1, (_)->{
+			nextFrame = true;
+		});
 	}
+
+	var nextFrame = false;
 
 	public function callInScripts(what) {
 		stateScripts.call(what);
+	}
+
+	var notificationManager = new haxe.ui.notifications.NotificationManager();
+	var errIndex:Int = 0;
+	override public function update(_) {
+		super.update(_);
+
+		if (nextFrame) {
+			if (errIndex > violet.backend.CrashHandler.notifList.length - 1) {
+				nextFrame = false;
+			} else {
+				notificationManager.addNotification({
+					title: violet.backend.CrashHandler?.notifList[errIndex]?.title,
+					body: violet.backend.CrashHandler?.notifList[errIndex]?.description,
+					type: haxe.ui.notifications.NotificationType.Error,
+					expiryMs: 5000,
+					actions: []
+				});
+			}
+			errIndex++;
+		}
+		callInScripts('update');
 	}
 
 	override public function add(objORcall:FlxBasic) {

@@ -44,6 +44,16 @@ class Main extends openfl.display.Sprite {
 		super();
 		instance = this;
 
+		haxe.ui.Toolkit.init();
+		haxe.ui.Toolkit.theme = 'dark'; // don't be cringe
+		haxe.ui.Toolkit.styleSheet.parse(".body, .label, .link, .textfield, .textarea { font-name: \"Inconsolata\"; font-size: 14px; font-bold: true; }");
+		// Toolkit.theme = 'light'; // embrace cringe
+		haxe.ui.Toolkit.autoScale = false;
+
+		/* FlxG.signals.postStateSwitch.add(()->{
+			@:privateAccess violet.backend.CrashHandler.notificationManager = null;//new haxe.ui.notifications.NotificationManager();
+		}); */
+
 		moonchart.Moonchart.DEFAULT_DIFF = 'normal';
 		moonchart.Moonchart.CASE_SENSITIVE_DIFFS = moonchart.Moonchart.SPACE_SENSITIVE_DIFFS = false;
 		Paths.init();
@@ -53,6 +63,7 @@ class Main extends openfl.display.Sprite {
 		hxwindowmode.WindowColorMode.setWindowCornerType(1);
 		hxwindowmode.WindowColorMode.redrawWindowHeader();
 		#end
+
 		#if ALLOW_VIDEOS
 		hxvlc.util.Handle.init();
 		#end

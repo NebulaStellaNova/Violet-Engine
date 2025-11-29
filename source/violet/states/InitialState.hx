@@ -20,6 +20,8 @@ class InitialState extends flixel.FlxState { // for now
 		// for later use
 		#end
 
+		new haxe.ui.notifications.NotificationManager().addNotification({title: 'a', body: ''});
+
 		FlxG.signals.preUpdate.add(() -> {
 			if (Controls.resetState)
 				FlxG.resetState();
@@ -27,6 +29,8 @@ class InitialState extends flixel.FlxState { // for now
 				FlxG.switchState(() -> new violet.states.menus.MainMenu());
 		});
 
-		FlxG.switchState(() -> new TitleState());
+		new flixel.util.FlxTimer().start(0.1, (_)->{
+			FlxG.switchState(() -> new TitleState());
+		});
 	}
 }

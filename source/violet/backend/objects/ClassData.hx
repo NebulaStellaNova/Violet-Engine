@@ -22,6 +22,9 @@ class ClassData {
 					this.target = new FreeplayState();
 				case "PlayState":
 					this.target = new PlayState(); */
+				case "CreditsMenu":
+					this.target = new CreditsMenu();
+					this.isSubState = true;
 				case "ModMenu":
 					this.target = new ModMenu();
 					this.isSubState = true;
