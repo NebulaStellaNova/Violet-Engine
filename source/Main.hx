@@ -64,6 +64,8 @@ class Main extends openfl.display.Sprite {
 		hxwindowmode.WindowColorMode.redrawWindowHeader();
 		#end
 
+		violet.external.windows.WinAPI.setDarkMode(violet.external.windows.WinAPI.isSystemDarkMode());
+
 		#if ALLOW_VIDEOS
 		hxvlc.util.Handle.init();
 		#end
