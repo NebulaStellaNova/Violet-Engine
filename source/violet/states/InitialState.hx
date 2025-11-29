@@ -29,8 +29,10 @@ class InitialState extends flixel.FlxState { // for now
 				FlxG.switchState(() -> new violet.states.menus.MainMenu());
 		});
 
-		new flixel.util.FlxTimer().start(0.1, (_)->{
-			FlxG.switchState(() -> new TitleState());
+		FlxG.camera.visible = false;
+		new flixel.util.FlxTimer().start(0.05, (_)->{
+			FlxG.switchState(SplashState.new);
+			FlxG.camera.visible = true;
 		});
 	}
 }
