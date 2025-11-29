@@ -43,6 +43,7 @@ class LuaScript extends Script {
 		}
 
 		internalScript = new LScript(scriptCode);
+		#if debug
 		internalScript.print = (line:Int, s:String) -> {
 			var info:PosInfos = {
 				fileName: '$folderName/$fileName',
@@ -54,6 +55,7 @@ class LuaScript extends Script {
 			violet.backend.console.Logs.traceCallback(s, info);
 			// trace(s, (s == "Nova Engine has Lua Support" ? SystemMessage : LogMessage), info);
 		}
+		#end
 		checkForBlacklistedImports();
 		initVars();
 		internalScript.execute();
@@ -100,6 +102,20 @@ class LuaScript extends Script {
 		// Engine
 		set('NovaSprite', NovaSprite);
 		set('Paths', Paths);
+
+		/* #if !DEBUG
+		set('print', (s:String) -> {
+			var info:PosInfos = {
+				fileName: '$folderName/$fileName',
+				lineNumber: 0,
+				className: '$folderName/$fileName',
+				methodName: "",
+				customParams: [] // Fuck YOU
+			}
+			violet.backend.console.Logs.traceCallback(s, info);
+			// trace(s, (s == "Nova Engine has Lua Support" ? SystemMessage : LogMessage), info);
+		});
+		#end */
 		// set('WindowColorMode', WindowColorMode);
 
 		violet.backend.scripting.psych.LuaCallbacks.applyPsychCallbacksToScript(this);
