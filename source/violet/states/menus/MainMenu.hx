@@ -7,9 +7,15 @@ import violet.backend.utils.MathUtil;
 import violet.backend.utils.NovaUtils;
 import violet.backend.utils.ParseUtil;
 
+typedef MenuOffset = {
+	var idle:Array<Float>;
+	var selected:Array<Float>;
+}
+
 typedef MenuAnimations = {
 	var idle:String;
 	var selected:String;
+	var ?offsets:MenuOffset;
 }
 
 typedef MenuItem = {
@@ -74,8 +80,9 @@ class MainMenu extends StateBackend {
 
 		for (i=>daItem in menuData.items) {
 			var item = new NovaSprite(0, (175*i)+90, Paths.image(menuData.directory + "/" + daItem.item));
-			item.addAnim("selected", daItem.item + " " + daItem.animations.selected, true);
-			item.addAnim("static", daItem.item + " " + daItem.animations.idle, true);
+			trace(daItem.animations?.offsets?.selected);
+			item.addAnim("selected", daItem.item + " " + daItem.animations.selected, [], daItem.animations?.offsets?.selected ?? [0, 0], 24, true);
+			item.addAnim("static", daItem.item + " " + daItem.animations.idle, [], daItem.animations?.offsets?.idle ?? [0, 0], 24, true);
 			item.playAnim("static");
 			item.scale.set(daItem.scale ?? 1, daItem.scale ?? 1);
 			item.updateHitbox();
@@ -193,6 +200,8 @@ class MainMenu extends StateBackend {
 						item.x = FlxG.width - item.width - 20;
 				}
 			}
+			item.offset.x = item.anims.get(i == curSelected ? "selected" : "static").offset[0];
+			item.offset.y =  item.anims.get(i == curSelected ? "selected" : "static").offset[1];
 		}
 		curSelectedString = menuData.items[curSelected].item;
 	}

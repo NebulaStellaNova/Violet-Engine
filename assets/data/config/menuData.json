@@ -28,10 +28,26 @@
 			"scale": 1,
 			"animations": {
 				"idle": "basic",
-				"selected": "white"
+				"selected": "white",
+				"offsets": {
+					"selected": [ 0, -10 ]
+				}
 			},
 			"state": "source:ModMenu",
 			"color": "#ffff00"
+		},
+		{
+			"id": "online",
+			"item": "online",
+			"animations": {
+				"idle": "basic",
+				"selected": "white",
+				"offsets": {
+					"selected": [ 0, -20 ]
+				}
+			},
+			"state": "source:OnlineMenu",
+			"color": "#5542FF"
 		},
 		{
 			"id": "credits",
