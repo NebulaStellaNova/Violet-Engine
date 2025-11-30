@@ -40,6 +40,10 @@ class SplashState extends violet.backend.StateBackend {
             playedSound = true;
             FlxG.sound.play(Cache.sound('haxeIntro'));
         }
+
+        if (Controls.accept) {
+            FlxG.switchState(TitleState.new);
+        }
     }
 
 }
