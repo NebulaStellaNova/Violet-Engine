@@ -66,7 +66,7 @@ class MainMenu extends StateBackend {
 
 		menuData = ParseUtil.json("data/config/menuData");
 
-		var mult:Float = 1/(menuData.items.length-1);
+		var mult:Float = 1/(menuData.items.length);
 		bg = new NovaSprite(Paths.image(menuData.directory + "/" + menuData.background));
 		bg.setGraphicSize(FlxG.width, FlxG.height);
 		bg.scale.x += mult;
@@ -74,7 +74,7 @@ class MainMenu extends StateBackend {
 		bg.updateHitbox();
 		bg.screenCenter();
 		bg.color = menuData.items[curSelected].color;
-		bg.scrollFactor.set(0, mult);
+		bg.scrollFactor.set(0, mult/2);
 		bg.x = 0;
 		add(bg);
 
