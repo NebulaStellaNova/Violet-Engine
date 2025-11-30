@@ -80,7 +80,6 @@ class MainMenu extends StateBackend {
 
 		for (i=>daItem in menuData.items) {
 			var item = new NovaSprite(0, (175*i)+90, Paths.image(menuData.directory + "/" + daItem.item));
-			trace(daItem.animations?.offsets?.selected);
 			item.addAnim("selected", daItem.item + " " + daItem.animations.selected, [], daItem.animations?.offsets?.selected ?? [0, 0], 24, true);
 			item.addAnim("static", daItem.item + " " + daItem.animations.idle, [], daItem.animations?.offsets?.idle ?? [0, 0], 24, true);
 			item.playAnim("static");
