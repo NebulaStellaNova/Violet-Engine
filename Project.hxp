@@ -234,7 +234,7 @@ class EngineAsset {
 
 		var excludeList:Array<String> = [''];
 		// addAssetLibrary('default', false, true); addAssetLibrary('mods');
-		addAssetPath('./assets', './assets', ['*'], excludeList);
+		addAssetPath('./assets', './resources', ['*'], excludeList);
 		if (modSupport.exists()) addAssetPath('./mods', './mods', ['*'], excludeList);
 		/* Path Settings */
 
@@ -257,8 +257,8 @@ class EngineAsset {
 		addHaxelib('json2object', 'git');
 
 		// debugging
-		if (isDesktop() && isDebug())
-			addHaxelib('hxcpp-debug-server');
+		// if (isDesktop() && isDebug())
+		// 	addHaxelib('hxcpp-debug-server');
 
 		// chart converter
 		addHaxelib('moonchart');
@@ -275,8 +275,8 @@ class EngineAsset {
 			// addHaxelib('hxWindowColorMode');
 		/* Libraries */
 
-		if (!isDebug())
-			setHaxedef('FLX_NO_DEBUG');
+		// if (!isDebug())
+		setHaxedef('FLX_NO_DEBUG');
 
 		// may add one
 		setHaxedef('FLX_NO_FOCUS_LOST_SCREEN');

@@ -9,6 +9,8 @@ import animate.FlxAnimateFrames;
 #end
 
 class Paths {
+	public static var ASSETS_FOLDER:String = "resources";
+
 	public static function init():Void {
 		#if ANIMATE_SUPPORT
 		@:privateAccess {
@@ -28,14 +30,14 @@ class Paths {
 
 	public static function root(path:String, startFromRoot:Bool = false):String {
 		if (startFromRoot) return path;
-		var rootPaths:Array<String> = ['assets'].concat(#if MOD_SUPPORT [for (meta in ModdingAPI.getActiveMods()) 'mods/${meta.folder}'] #else [] #end);
+		var rootPaths:Array<String> = [ASSETS_FOLDER].concat(#if MOD_SUPPORT [for (meta in ModdingAPI.getActiveMods()) 'mods/${meta.folder}'] #else [] #end);
 		for (root in rootPaths)
 			if (folderExists('$root/$path', true) || fileExists('$root/$path', true))
 				return Path.normalize('$root/$path');
 		return '';
 	}
 	public static function multiRoot(path:String):Array<String> {
-		var rootPaths:Array<String> = ['assets'].concat(#if MOD_SUPPORT [for (meta in ModdingAPI.getActiveMods()) 'mods/${meta.folder}'] #else [] #end);
+		var rootPaths:Array<String> = [ASSETS_FOLDER].concat(#if MOD_SUPPORT [for (meta in ModdingAPI.getActiveMods()) 'mods/${meta.folder}'] #else [] #end);
 		var results:Array<String> = [];
 		for (root in rootPaths)
 			if (folderExists('$root/$path', true) || fileExists('$root/$path', true))

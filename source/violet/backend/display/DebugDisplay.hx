@@ -53,6 +53,11 @@ class DebugDisplay extends Sprite {
 		memoryCounter.mouseEnabled = memoryCounter.selectable = false;
 		memoryCounter.sharpness = 0;
 		addChild(memoryCounter);
+
+		background.x = -FlxG.width;
+		background2.x = -FlxG.width;
+		memoryCounter.x = -FlxG.width;
+		memoryCounter.y = -FlxG.width;
 	}
 
 	override public function __enterFrame(e) {
