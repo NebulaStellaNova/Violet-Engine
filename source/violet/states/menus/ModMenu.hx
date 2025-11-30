@@ -99,6 +99,7 @@ class ModMenu extends flixel.FlxSubState {
 		add(creditsTitle);
 
 		statusText = new NovaSprite(Paths.image("menus/modmenu/enabled"));
+		statusText.scrollFactor.set();
 		add(statusText);
 
 		selectedMod = ModdingAPI.availableMods[curSelected];
@@ -147,7 +148,7 @@ class ModMenu extends flixel.FlxSubState {
 		statusText.updateHitbox();
 		statusText.antialiasing = true;
 		statusText.x = modInfoBox.x + (modInfoBox.width/2) - (statusText.width/2);
-		statusText.y = modInfoBox.y + modInfoBox.height + 50;
+		statusText.y = (modInfoBox.y + modInfoBox.height) - (statusText.height + 20);
 
 		tagsText.updateHitbox();
 		tagImage.updateHitbox();
