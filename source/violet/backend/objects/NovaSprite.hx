@@ -47,8 +47,8 @@ class NovaSprite extends FlxSprite {
 			this.animation.play(name, forced);
 			if (this.anims.exists(name)) {
 				// TODO: Rodney, add animation offsets like how you did in your engine! -Rodney
-				this.offset.x = this.anims.get(name).offset[0];
-				this.offset.y = this.anims.get(name).offset[1];
+				var info = this.anims.get(name);
+				this.offset.set(info.offset[0] ?? 0, info.offset[1] ?? 0);
 				this.offset.set(this.offset.x - globalOffset.x, this.offset.y - globalOffset.y);
 			}
 		}
