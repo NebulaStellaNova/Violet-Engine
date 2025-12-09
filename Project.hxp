@@ -232,7 +232,7 @@ class EngineAsset {
 		/* Path Settings */
 
 		/* Macros */
-		addHaxeMacro('addMetadata("@:build(violet.backend.macro.FlxMacro.buildFlxBasic())", "flixel.FlxBasic")');
+		// addHaxeMacro('addMetadata("@:build(violet.backend.macro.FlxMacro.buildFlxBasic())", "flixel.FlxBasic")');
 		/* Macros */
 
 		/* Libraries */

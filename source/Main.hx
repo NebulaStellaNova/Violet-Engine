@@ -25,6 +25,7 @@ class Main extends openfl.display.Sprite {
 	public function new() {
 		violet.backend.CrashHandler.init();
 		violet.backend.console.Logs.init();
+		new violet.backend.Macro.Test();
 
 		super();
 

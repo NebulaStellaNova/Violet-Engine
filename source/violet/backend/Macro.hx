@@ -1,23 +1,29 @@
-package violet.backend.macro;
+package violet.backend;
 
 import haxe.macro.Context;
 import haxe.macro.Expr;
 
-class FlxMacro {
+class Macro {
 	public static macro function buildFlxBasic():Array<Field> {
-		trace('Building FlxBasic');
 		var fields:Array<Field> = Context.getBuildFields();
-		var tempClass:TypeDefinition = macro class TempClass {
+		var tempClass = macro class TempClass {
 			/**
-			 * The current layering index of this sprite
+			 * The layering index of the object.
 			 */
 			public var zIndex:Int = 0;
 			/**
-			 * Extra data to store in a sprite.
+			 * Extra data the object can hold.
 			 */
 			public var extra:Map<String, Dynamic> = new Map<String, Dynamic>();
 		}
-		trace(tempClass);
 		return fields.concat(tempClass.fields);
+	}
+}
+
+// @:build(violet.backend.Macro.buildFlxBasic())
+class Test {
+	public function new() {
+		trace('cheese');
+		trace(Type.getInstanceFields(Test));
 	}
 }
