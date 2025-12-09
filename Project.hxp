@@ -231,9 +231,7 @@ class EngineAsset {
 		if (modSupport.exists()) addAssetPath('./mods', './mods', ['*'], excludeList);
 		/* Path Settings */
 
-		/* Macros */
-		// addHaxeMacro('addMetadata("@:build(violet.backend.macro.FlxMacro.buildFlxBasic())", "flixel.FlxBasic")');
-		/* Macros */
+		addHaxeMacro('violet.backend.Macro.init()');
 
 		/* Libraries */
 		// required for flixel, don't put below flixel, causes weird issues
