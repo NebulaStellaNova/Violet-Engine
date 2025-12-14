@@ -67,9 +67,9 @@
     {
       "name": "lscript",
       "type": "git",
-      "dir": null,
+      "dir": "e495006cdd766055a991d3d80b0414be9dd212ec",
       "ref": "main",
-      "url": "https://github.com/SrtHero278/lscript/tree/e495006cdd766055a991d3d80b0414be9dd212ec"
+      "url": "https://github.com/SrtHero278/lscript.git"
     },
     {
       "name": "lscript-debug",
