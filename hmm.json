@@ -32,13 +32,17 @@
     },
     {
       "name": "hxcpp",
-      "type": "haxelib",
-      "version": null
+      "type": "git",
+      "dir": null,
+      "ref": "363d3d0a8d3ac450f5ba1b4c3357353656b71e82",
+      "url": "https://github.com/FunkinCrew/hxcpp"
     },
     {
       "name": "hxcpp-debug-server",
-      "type": "haxelib",
-      "version": null
+     "type": "git",
+      "dir": null,
+      "ref": "7459934666a473a4cc4d066ba4a93ef92f1ce94c",
+      "url": "https://github.com/FunkinCrew/hxcpp-debugger"
     },
     {
       "name": "hxp",
