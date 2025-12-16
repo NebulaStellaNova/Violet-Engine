@@ -2,10 +2,10 @@
 
 package violet.backend.scripting;
 
-import flixel.math.FlxAngle;
 import flixel.*;
 import flixel.group.FlxGroup;
 import flixel.group.FlxSpriteGroup;
+import flixel.math.FlxAngle;
 import flixel.math.FlxMath;
 import flixel.sound.FlxSound;
 import flixel.text.FlxText;
@@ -16,9 +16,9 @@ import flixel.util.FlxTimer;
 // import hxwindowmode.WindowColorMode;
 import rulescript.RuleScript;
 import rulescript.parsers.HxParser;
-import violet.backend.utils.FileUtil;
 import violet.backend.filesystem.Paths;
 import violet.backend.objects.NovaSprite;
+import violet.backend.utils.FileUtil;
 
 using StringTools;
 using violet.backend.utils.ArrayUtil;
@@ -48,27 +48,21 @@ class FunkinScript extends Script {
 		executeScript();
 	}
 
-	function importClass<T>(name:String, daClass:Class<T>) {
-		set(name, daClass);
-		/* internalScript.interp.imports.set(name, daClass);
-		internalScript.interp.variables.set(name, daClass); */
-	}
-
 	function initVars():Void {
 		// Flixel
-		importClass('FlxG', FlxG);
-		importClass('FlxAngle', FlxAngle);
-		importClass('FlxBasic', FlxBasic);
-		importClass('FlxObject', FlxObject);
-		importClass('FlxSprite', FlxSprite);
-		importClass('FlxCamera', FlxCamera);
-		importClass('FlxText', FlxText);
-		importClass('FlxTween', FlxTween);
-		importClass('FlxTimer', FlxTimer);
-		importClass('FlxMath', FlxMath);
-		importClass('FlxTypedGroup', FlxTypedGroup);
-		importClass('FlxSpriteGroup', FlxSpriteGroup);
-		importClass('FlxSound', FlxSound);
+		set('FlxG', FlxG);
+		set('FlxAngle', FlxAngle);
+		set('FlxBasic', FlxBasic);
+		set('FlxObject', FlxObject);
+		set('FlxSprite', FlxSprite);
+		set('FlxCamera', FlxCamera);
+		set('FlxText', FlxText);
+		set('FlxTween', FlxTween);
+		set('FlxTimer', FlxTimer);
+		set('FlxMath', FlxMath);
+		set('FlxTypedGroup', FlxTypedGroup);
+		set('FlxSpriteGroup', FlxSpriteGroup);
+		set('FlxSound', FlxSound);
 		set('FlxColor', {
 			TRANSPARENT: FlxColor.TRANSPARENT,
 			WHITE: FlxColor.WHITE,
@@ -93,10 +87,10 @@ class FunkinScript extends Script {
 		});
 
 		// Engine
-		importClass('FunkinSprite', NovaSprite);
-		importClass('NovaSprite', NovaSprite);
-		importClass('Paths', Paths);
-		// importClass('WindowColorMode', WindowColorMode);
+		set('FunkinSprite', NovaSprite);
+		set('NovaSprite', NovaSprite);
+		set('Paths', Paths);
+		// set('WindowColorMode', WindowColorMode);
 
 		// Custom
 		set('add', (object:FlxBasic) -> return FlxG.state.add(object));
