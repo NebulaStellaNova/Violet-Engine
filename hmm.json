@@ -67,15 +67,8 @@
     {
       "name": "lscript",
       "type": "git",
-      "dir": "e495006cdd766055a991d3d80b0414be9dd212ec",
-      "ref": "main",
-      "url": "https://github.com/SrtHero278/lscript.git"
-    },
-    {
-      "name": "lscript-debug",
-      "type": "git",
       "dir": null,
-      "ref": "main",
+      "ref": "631f29ee29d2b1f8b87af1226a0e33b105d05c96",
       "url": "https://github.com/SrtHero278/lscript.git"
     },
     {
@@ -87,7 +80,7 @@
       "name": "rulescript",
       "type": "git",
       "dir": null,
-      "ref": null,
+      "ref": "dev",
       "url": "https://github.com/Kriptel/RuleScript.git"
     },
     {

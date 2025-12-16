@@ -265,7 +265,7 @@ class EngineAsset {
 
 		addHaxelib('linc_luajit', 'git');
 		if (canHaxeScript.exists()) addHaxelib('rulescript', 'git');
-		if (canLuaScript.exists()) addHaxelib(isDebug() ? 'lscript-debug' : 'lscript', 'git');
+		if (canLuaScript.exists()) addHaxelib('lscript', 'git');
 
 		if (discordRPC.exists()) addHaxelib('discord-rpc');
 		if (allowVideos.exists()) addHaxelib('hxvlc');
