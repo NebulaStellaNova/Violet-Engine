@@ -49,7 +49,10 @@ class FunkinScript extends Script {
 	}
 
 	function initVars():Void {
-		// Flixel
+		for (key in autoImports.keys()) {
+			set(key, autoImports.get(key));
+		}
+		/* // Flixel
 		set('FlxG', FlxG);
 		set('FlxAngle', FlxAngle);
 		set('FlxBasic', FlxBasic);
@@ -95,12 +98,12 @@ class FunkinScript extends Script {
 		// Custom
 		set('add', (object:FlxBasic) -> return FlxG.state.add(object));
 		set('remove', (object:FlxBasic) -> return FlxG.state.remove(object));
-		set('insert', (pos:Int, object:FlxBasic) -> return FlxG.state.insert(pos, object));
+		set('insert', (pos:Int, object:FlxBasic) -> return FlxG.state.insert(pos, object)); */
 
 		set('trace', (value) -> violet.backend.console.Logs.traceCallback(value, internalScript.getInterp(rulescript.interps.RuleScriptInterp).posInfos()));
 		// set('log', (value:Dynamic, type:violet.backend.console.Logs.LogType = LogMessage) -> violet.backend.console.Logs.log(value, type, internalScript.interp.posInfos()));
 
-        set('lerp', MathUtil.lerp);
+        // set('lerp', MathUtil.lerp);
 
 		/* set("debugPrint", function(text:Dynamic = '', color:String = 'WHITE') {
             cast (FlxG.state, MusicBeatState).debugPrint(text, color);

@@ -104,6 +104,7 @@ class Logs {
 	}
 
 	public static function formatString(string:String):String {
+		string = string.replace("lua:0", "lua:?");
 		for (field in Type.getClassFields(ConsoleColors)) {
 			string = string.replace("#" + field.toLowerCase(), Reflect.getProperty(ConsoleColors, field));
 			string = string.replace("#" + field, Reflect.getProperty(ConsoleColors, field));

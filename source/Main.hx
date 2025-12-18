@@ -77,7 +77,12 @@ class Main extends openfl.display.Sprite {
 		latestVersion = engineVersion;
 
 		var startFPS:Int = Application.current.window.displayMode.refreshRate;
-		addChild(new flixel.FlxGame(1280, 720, violet.states.InitialState, startFPS, startFPS, true));
+		var game:flixel.FlxGame = new flixel.FlxGame(1280, 720, violet.states.InitialState, startFPS, startFPS, true);
+
+		@:privateAccess
+    	game._customSoundTray = violet.backend.display.VioletSoundTray;
+
+		addChild(game);
 		addChild(new DebugDisplay());
 		FlxG.game.focusLostFramerate = 30;
 		FlxG.mouse.useSystemCursor = true;

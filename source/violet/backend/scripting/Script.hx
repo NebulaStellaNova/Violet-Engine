@@ -1,5 +1,9 @@
 package violet.backend.scripting;
 
+import flixel.group.FlxGroup.FlxTypedGroup;
+import flixel.util.FlxAxes;
+import violet.backend.utils.MathUtil;
+import flixel.FlxBasic;
 import flixel.util.FlxStringUtil;
 import flixel.util.FlxDestroyUtil.IFlxDestroyable;
 
@@ -18,6 +22,60 @@ class Script implements IFlxDestroyable {
 
 	public var fileName:String;
 	public var folderName:String;
+
+	public var autoImports:Map<String, Dynamic> = [
+		// Flixel
+		'FlxG' => flixel.FlxG,
+		'FlxAngle' => flixel.math.FlxAngle,
+		'FlxBasic' => flixel.FlxBasic,
+		'FlxObject' => flixel.FlxObject,
+		'FlxCamera' => flixel.FlxCamera,
+		'FlxTween' => flixel.tweens.FlxTween,
+		'FlxTimer' => flixel.util.FlxTimer,
+		'FlxMath' => flixel.math.FlxMath,
+		'FlxTypedGroup' => FlxTypedGroup,
+		'FlxSpriteGroup' => flixel.group.FlxSpriteGroup,
+		'FlxSound' => flixel.sound.FlxSound,
+
+		// Engine
+		'FunkinSprite' => NovaSprite,
+		'NovaSprite' => NovaSprite,
+		'FlxSprite' => NovaSprite,
+		'controls' => Controls,
+		'Controls' => Controls,
+		'FlxText' => NovaText,
+		'Paths' => Paths,
+
+		// Callbacks
+		'add' => (object:FlxBasic) -> return FlxG.state.add(object),
+		'remove' => (object:FlxBasic) -> return FlxG.state.remove(object),
+		'insert' => (pos:Int, object:FlxBasic) -> return FlxG.state.insert(pos, object),
+		'lerp' => MathUtil.lerp,
+
+		// Objects
+		'FlxAxes' => {
+			X: FlxAxes.X,
+			Y: FlxAxes.Y,
+			XY: FlxAxes.XY
+		},
+		'FlxColor' => {
+			TRANSPARENT: FlxColor.TRANSPARENT,
+			WHITE: FlxColor.WHITE,
+			GRAY: FlxColor.GRAY,
+			BLACK: FlxColor.BLACK,
+			GREEN: FlxColor.GREEN,
+			LIME: FlxColor.LIME,
+			YELLOW: FlxColor.YELLOW,
+			ORANGE: FlxColor.ORANGE,
+			RED: FlxColor.RED,
+			PURPLE: FlxColor.PURPLE,
+			BLUE: FlxColor.BLUE,
+			BROWN: FlxColor.BROWN,
+			PINK: FlxColor.PINK,
+			MAGENTA: FlxColor.MAGENTA,
+			CYAN: FlxColor.CYAN
+		}
+	];
 
 	public var parent(get, set):Dynamic;
 	function set_parent(value:Dynamic):Dynamic

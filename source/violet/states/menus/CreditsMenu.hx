@@ -1,5 +1,5 @@
 package violet.states.menus;
 
-class CreditsMenu extends flixel.FlxSubState {
+class CreditsMenu extends violet.backend.SubStateBackend {
 
 }

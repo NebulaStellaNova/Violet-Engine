@@ -1,10 +1,11 @@
 package violet.states.menus;
 
+import violet.backend.SubStateBackend;
 import flixel.group.FlxSpriteGroup;
 import flixel.math.FlxMath;
 import violet.backend.utils.MathUtil;
 
-class ModMenu extends flixel.FlxSubState {
+class ModMenu extends SubStateBackend {
 	public var statusText:NovaSprite;
 	public var tagImage:NovaSprite;
 
