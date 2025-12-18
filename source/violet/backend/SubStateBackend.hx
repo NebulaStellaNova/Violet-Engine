@@ -1,23 +1,17 @@
 package violet.backend;
 
-import flixel.FlxSubState;
-import flixel.FlxBasic;
-import flixel.FlxState;
-import flixel.FlxCamera;
-
-
 #if SCRIPT_SUPPORT
 import violet.backend.scripting.ScriptPack;
 #end
 
-class SubStateBackend extends FlxSubState {
+class SubStateBackend extends flixel.FlxSubState {
 
 	#if SCRIPT_SUPPORT
 	public var subStateScripts:ScriptPack = new ScriptPack();
 	#end
 
 	public var usesLoadingScreen = false;
-	public var stuffToLoad:Array<FlxBasic> = [];
+	public var stuffToLoad:Array<flixel.FlxBasic> = [];
 
 	override public function create() {
 		super.create();
@@ -97,7 +91,7 @@ class SubStateBackend extends FlxSubState {
 		callInScripts('update');
 	}
 
-	override public function add(objORcall:FlxBasic) {
+	override public function add(objORcall:flixel.FlxBasic) {
 		if (usesLoadingScreen) {
 			stuffToLoad.push(objORcall);
 		} else {
