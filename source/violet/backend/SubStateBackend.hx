@@ -29,7 +29,7 @@ class SubStateBackend extends FlxSubState {
 		for (path in ModdingAPI.STATE_PATHS) {
 			checkForScripts([Paths.ASSETS_FOLDER, path].join("/") + '/${Main.subStateClassName}');
 			for (mod in ModdingAPI.getActiveMods())
-				checkForScripts(['mods', mod.folder, path].join("/") + '/${Main.subStateClassName}');
+				checkForScripts([ModdingAPI.MOD_FOLDER, mod.folder, path].join("/") + '/${Main.subStateClassName}');
 		}
 		callInScripts('create');
 		#end
@@ -48,23 +48,29 @@ class SubStateBackend extends FlxSubState {
 		var filePath:String = string;
 
 		#if CAN_LUA_SCRIPT
-		if (Paths.fileExists('$filePath.lua', true)) {
-			var script = new violet.backend.scripting.LuaScript('$filePath.lua');
-			subStateScripts.addScript(script);
+		for (ext in ModdingAPI.EXT_ALIASES.get("lua")) {
+			if (Paths.fileExists('$filePath.$ext', true)) {
+				var script = new violet.backend.scripting.LuaScript('$filePath.$ext');
+				subStateScripts.addScript(script);
+			}
 		}
 		#end
 
 		#if CAN_HAXE_SCRIPT
-		if (Paths.fileExists('$filePath.hx', true)) {
-			var script = new violet.backend.scripting.FunkinScript('$filePath.hx');
-			subStateScripts.addScript(script);
+		for (ext in ModdingAPI.EXT_ALIASES.get("hx")) {
+			if (Paths.fileExists('$filePath.$ext', true)) {
+				var script = new violet.backend.scripting.FunkinScript('$filePath.$ext');
+				subStateScripts.addScript(script);
+			}
 		}
 		#end
 
 		#if CAN_HAXE_SCRIPT
-		if (Paths.fileExists('$filePath.py', true)) {
-			var script = new violet.backend.scripting.PythonScript('$filePath.py');
-			subStateScripts.addScript(script);
+		for (ext in ModdingAPI.EXT_ALIASES.get("py")) {
+			if (Paths.fileExists('$filePath.$ext', true)) {
+				var script = new violet.backend.scripting.PythonScript('$filePath.$ext');
+				subStateScripts.addScript(script);
+			}
 		}
 		#end
 	}

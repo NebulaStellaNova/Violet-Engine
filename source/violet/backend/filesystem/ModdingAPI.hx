@@ -25,11 +25,18 @@ typedef ModMeta = {
 }
 
 class ModdingAPI {
-
 	@:unreflective
 	public static var BLACKLISTED_IMPORTS:Array<Class<Dynamic>> = [
 		sys.io.File,
 		sys.FileSystem
+	];
+
+	public static var MOD_FOLDER:String = 'mods';
+
+	public static var EXT_ALIASES:Map<String, Array<String>> = [
+		'lua' => ['lua', 'luac', 'luas'],
+		'hx' => ['hx', 'hxc', 'hxs', 'hscript'],
+		'py' => ['py', 'pyc', 'pys']
 	];
 
 	public static var STATE_PATHS = ['data/scripts/states'];
@@ -38,18 +45,18 @@ class ModdingAPI {
 		trace("debug:Initializing Modding System...");
 		(availableMods = [
 			for (path in Paths.readFolder('mods', true)) {
-				if (!Paths.fileExists('mods/$path/novamod_meta.json', true) && !Paths.fileExists('mods/$path/novamod_meta.jsonc', true)) continue;
+				if (!Paths.fileExists('$MOD_FOLDER/$path/novamod_meta.json', true) && !Paths.fileExists('$MOD_FOLDER/$path/novamod_meta.jsonc', true)) continue;
 				var meta:ModMeta = null;
-				if (Paths.fileExists('mods/$path/novamod_meta.json', true)) meta = new JsonParser<ModMeta>().fromJson(ParseUtil.removeJsonComments(FileUtil.getFileContent('mods/$path/novamod_meta.json')), 'mods/$path/novamod_meta.json');
-				if (Paths.fileExists('mods/$path/novamod_meta.jsonc', true)) meta = new JsonParser<ModMeta>().fromJson(ParseUtil.removeJsonComments(FileUtil.getFileContent('mods/$path/novamod_meta.jsonc')), 'mods/$path/novamod_meta.jsonc');
+				if (Paths.fileExists('$MOD_FOLDER/$path/novamod_meta.json', true)) meta = new JsonParser<ModMeta>().fromJson(ParseUtil.removeJsonComments(FileUtil.getFileContent('$MOD_FOLDER/$path/novamod_meta.json')), '$MOD_FOLDER/$path/novamod_meta.json');
+				if (Paths.fileExists('$MOD_FOLDER/$path/novamod_meta.jsonc', true)) meta = new JsonParser<ModMeta>().fromJson(ParseUtil.removeJsonComments(FileUtil.getFileContent('$MOD_FOLDER/$path/novamod_meta.jsonc')), '$MOD_FOLDER/$path/novamod_meta.jsonc');
 				if (meta == null) continue;
 				meta.folder = path;
 				meta.title ??= meta.folder;
 				meta;
 			}
 		]);
-		if (Paths.fileExists('mods/active-mods.txt', true))
-			(activeModsIds = FileUtil.getFileContent('mods/active-mods.txt').split('\n').filter(id -> return getMod(id) != null));
+		if (Paths.fileExists('$MOD_FOLDER/active-mods.txt', true))
+			(activeModsIds = FileUtil.getFileContent('$MOD_FOLDER/active-mods.txt').split('\n').filter(id -> return getMod(id) != null));
 
 		for (i in availableMods) {
 			trace('debug:Found mod "${i.title}" with id "${i.id}"');
@@ -72,8 +79,8 @@ class ModdingAPI {
 
 class ModIcon extends NovaSprite {
 	override public function new(modId:String) {
-		// super(violet.backend.filesystem.Cache.image('mods/$modId/novamod_icon', 'root'));
-		super(Paths.file('mods/$modId/novamod_icon', 'root', 'png'));
+		// super(violet.backend.filesystem.Cache.image('$MOD_FOLDER/$modId/novamod_icon', 'root'));
+		super(Paths.file('${ModdingAPI.MOD_FOLDER}/$modId/novamod_icon', 'root', 'png'));
 	}
 }
 #end
