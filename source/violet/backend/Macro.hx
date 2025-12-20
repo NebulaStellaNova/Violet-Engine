@@ -7,7 +7,7 @@ import haxe.macro.Expr;
 
 class Macro {
 	public static function init():Void {
-		Compiler.addMetadata('@:build(violet.backend.Macro.buildFlxBasic())', 'flixel.FlxBasic');
+		/* Compiler.addMetadata('@:build(violet.backend.Macro.buildFlxBasic())', 'flixel.FlxBasic');
 		Compiler.addMetadata('@:build(violet.backend.Macro.buildFlxObject())', 'flixel.FlxObject');
 		Compiler.addMetadata('@:build(violet.backend.Macro.buildFlxSprite())', 'flixel.FlxSprite');
 		Compiler.addMetadata('@:build(violet.backend.Macro.buildFlxSpriteGroup())', 'flixel.FlxTypedSpriteGroup');
@@ -15,7 +15,7 @@ class Macro {
 		Compiler.include('violet', true);
 		Compiler.include('haxe', true, ['haxe.atomic.*', 'haxe.macro.*']);
 		Compiler.include('flixel', true, ['flixel.addons.editors.spine.*', 'flixel.addons.nape.*', 'flixel.system.macros.*', 'flixel.addons.tile.FlxRayCastTilemap', 'flixel.addons.weapon.*']);
-		#end
+		#end */
 	}
 
 	public static macro function buildFlxBasic():Array<Field> {
