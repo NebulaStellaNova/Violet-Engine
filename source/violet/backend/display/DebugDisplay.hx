@@ -57,18 +57,41 @@ class DebugDisplay extends Sprite {
 	var _previousTime:Float = 0;
 	var _updateClock:Float = 999999;
 
+	var memories:Array<Float> = [for (i in 0...100) 0];
+	var cpus:Array<Float> = [for (i in 0...100) 0];
+
 	function onEnterFrame(e:Event) {
 		_framesPassed++;
 
 		final deltaTime:Float = Math.max(NovaUtils.getTimerPrecise() - _previousTime, 0);
 		_updateClock += deltaTime;
 
+		memories.shift();
+		cpus.shift();
+		memories.push(Std.parseFloat(Memory.getProcessPhysicalMemoryUsage().formatBytes()));
+		cpus.push(FlxMath.roundDecimal(CPU.getProcessCPUUsage(), 2));
+
+		var memoryAvg:Float = 0;
+		var cpuAvg:Float = 0;
+		for (m in memories) memoryAvg += m;
+		for (c in cpus) cpuAvg += c;
+		memoryAvg /= memories.length;
+		cpuAvg /= cpus.length;
+
+
+		var parts = [
+			'Framerate: $framesPerSecond',
+			'Memory: ${FlxMath.roundDecimal(memoryAvg, 2)} / ${Memory.getProcessPeakPhysicalMemoryUsage().formatBytes()}',
+			'CPU: ${FlxMath.roundDecimal(cpuAvg, 2)}% / ${FlxMath.roundDecimal(CPU.getProcessPeakCPUUsage(), 2)}%'
+		];
 		if (_updateClock >= 1000) {
 			framesPerSecond = (FlxG.drawFramerate > 0) ? FlxMath.minInt(_framesPassed, FlxG.drawFramerate) : _framesPassed;
-			text.text = 'Framerate: $framesPerSecond\nMemory: ${Memory.getProcessPhysicalMemoryUsage().formatBytes()} / ${Memory.getProcessPeakPhysicalMemoryUsage().formatBytes()}\nCPU: ${FlxMath.roundDecimal(CPU.getProcessCPUUsage(), 2)}% / ${FlxMath.roundDecimal(CPU.getProcessPeakCPUUsage(), 2)}%';
 			_framesPassed = 0;
 			_updateClock = 0;
 		}
+		text.text = parts.join('\n');
+
+
 		_previousTime = NovaUtils.getTimerPrecise();
 
 		background.width = text.width + 21;
