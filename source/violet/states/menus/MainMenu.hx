@@ -121,7 +121,7 @@ class MainMenu extends StateBackend {
 
 		FlxG.camera.fade(FlxColor.BLACK, 0.25, true);
 
-		#if DEBUG
+		#if debug
 		DebugDisplay.registerVariable("Current Menu Item Index", "curSelected");
 		DebugDisplay.registerVariable("Current Menu Item", "curSelectedString");
 		DebugDisplay.registerVariable("Background Color", "bgColorString");

@@ -103,7 +103,7 @@ class LuaScript extends Script {
 		set('NovaSprite', NovaSprite);
 		set('Paths', Paths);
 
-		// #if !DEBUG
+		// #if !debug
 		set('print', (s:String) -> {
 			var info:PosInfos = {
 				fileName: '$folderName/$fileName',
