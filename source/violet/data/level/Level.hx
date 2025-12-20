@@ -34,7 +34,7 @@ class Level {
     /**
      * Construct the title graphic for the level.
      */
-    public function buildTitleGraphic():FlxSprite
+    public function buildTitleGraphic():NovaSprite
     {
         return new NovaSprite(Paths.image(_data.titleAsset));
     }

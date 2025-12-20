@@ -29,15 +29,17 @@ class LevelRegistry {
         };
     }
 
-    public static function registerLevel(data:Level):Void {
+    public static function registerLevel(newLevel:Level):Void {
         for (level in levels) {
-            if (level.id == data.id) {
-                trace('warning:Level with ID "${data.id}" is already registered. Skipping duplicate registration.');
+            if (level.id == newLevel.id) {
+                trace('warning:Level with ID "${newLevel.id}" is already registered. Skipping duplicate registration.');
                 return;
             }
         }
-        trace('debug:Found and registered level with ID "${data.id}"');
-        levels.push(data);
+        trace('debug:Found and registered level with ID "${newLevel.id}"');
+        // Preload title graphic
+        newLevel.buildTitleGraphic();
+        levels.push(newLevel);
     }
 
     /* public static function getLevelData(levelID:String):Null<LevelData> {
