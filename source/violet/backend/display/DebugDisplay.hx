@@ -1,9 +1,8 @@
 package violet.backend.display;
 
-import hxhardware.GPU;
+import flixel.math.FlxMath;
 import hxhardware.CPU;
 import hxhardware.Memory;
-import flixel.math.FlxMath;
 import openfl.display.Bitmap;
 import openfl.display.BitmapData;
 import openfl.display.Sprite;
@@ -86,21 +85,14 @@ class DebugDisplay extends Sprite {
 		cpuAvg /= cpus.length;
 
 
-		var parts:Array<String> = [];
-		if (extraInfo.length > 0) {
-			parts = [
-				'Framerate: $framesPerSecond',
-				'Memory: ${FlxMath.roundDecimal(memoryAvg, 2)} / ${Memory.getProcessPeakPhysicalMemoryUsage().formatBytes()}',
-				'CPU: ${FlxMath.roundDecimal(cpuAvg, 2)}% / ${FlxMath.roundDecimal(CPU.getProcessPeakCPUUsage(), 2)}%',
-				''
-			].concat([for (info in extraInfo) '${info.label}: ${Reflect.getProperty(FlxG.state, info.value) != null ? Reflect.getProperty(FlxG.state, info.value) : (Reflect.field(FlxG.state, info.value) != null ? Reflect.field(FlxG.state, info.value) : (Reflect.getProperty(Type.getClass(FlxG.state), info.value) != null ? Reflect.getProperty(Type.getClass(FlxG.state), info.value) : "???"))}']);
-		} else {
-			parts = [
-				'Framerate: $framesPerSecond',
-				'Memory: ${FlxMath.roundDecimal(memoryAvg, 2)} / ${Memory.getProcessPeakPhysicalMemoryUsage().formatBytes()}',
-				'CPU: ${FlxMath.roundDecimal(cpuAvg, 2)}% / ${FlxMath.roundDecimal(CPU.getProcessPeakCPUUsage(), 2)}%',
-			];
-		}
+		var parts:Array<String> = [
+			'Framerate: $framesPerSecond',
+			'Memory: ${FlxMath.roundDecimal(memoryAvg, 2)} / ${Memory.getProcessPeakPhysicalMemoryUsage().formatBytes()}',
+			'CPU: ${FlxMath.roundDecimal(cpuAvg, 2)}% / ${FlxMath.roundDecimal(CPU.getProcessPeakCPUUsage(), 2)}%',
+			''
+		];
+		if (extraInfo.length > 0)
+			parts = parts.concat([for (info in extraInfo) '${info.label}: ${Reflect.getProperty(FlxG.state, info.value) != null ? Reflect.getProperty(FlxG.state, info.value) : (Reflect.field(FlxG.state, info.value) != null ? Reflect.field(FlxG.state, info.value) : (Reflect.getProperty(Type.getClass(FlxG.state), info.value) != null ? Reflect.getProperty(Type.getClass(FlxG.state), info.value) : "???"))}']);
 		if (_updateClock >= 1000) {
 			framesPerSecond = (FlxG.drawFramerate > 0) ? FlxMath.minInt(_framesPassed, FlxG.drawFramerate) : _framesPassed;
 			_framesPassed = 0;
