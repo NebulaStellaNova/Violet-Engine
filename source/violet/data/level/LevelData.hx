@@ -107,5 +107,5 @@ typedef LevelPropData =
      */
     @:default(false)
     @:optional
-    var flipX:Null<Bool>;
+    var flipX:Bool;
 }

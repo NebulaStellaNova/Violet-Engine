@@ -21,7 +21,7 @@ typedef AnimationData = {
      * The offset to use for the animation.
      */
     @:default([0, 0])
-    var ?offsets:Null<Array<Float>>;
+    var ?offsets:Array<Float>;
 
     /**
      * Whether the animation should loop or not.
@@ -33,20 +33,20 @@ typedef AnimationData = {
      * Whether the animation's sprites should be flipped horizontally.
      */
     @:default(false)
-    var ?flipX:Null<Bool>;
+    var ?flipX:Bool;
 
     /**
      * Whether the animation's sprites should be flipped vertically.
      */
     @:default(false)
-    var ?flipY:Null<Bool>;
+    var ?flipY:Bool;
 
     /**
      * The frame rate of the animation.
      */
     @:alias("fps")
     @:default(24)
-    var ?frameRate:Null<Int>;
+    var ?frameRate:Int;
 
     /**
      * If you want this animation to use only certain frames of an animation with a given prefix,
@@ -54,5 +54,5 @@ typedef AnimationData = {
      */
     @:alias("indices")
     @:default([])
-    var ?frameIndices:Null<Array<Int>>;
+    var ?frameIndices:Array<Int>;
 }
