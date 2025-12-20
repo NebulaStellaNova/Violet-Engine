@@ -61,6 +61,8 @@ class ModdingAPI {
 		for (i in availableMods) {
 			trace('debug:Found mod "${i.title}" with id "${i.id}"');
 		}
+
+		reloadRegistries();
 	}
 
 	public static var availableMods(default, null):Array<ModMeta> = [];
@@ -75,6 +77,14 @@ class ModdingAPI {
 
 	inline public static function getActiveMods():Array<ModMeta>
 		return [for (id in activeModsIds) getMod(id)];
+
+
+	private static var registered:Bool = false;
+	public static function reloadRegistries():Void {
+		trace('debug:${registered ? "Reloading" : "Initializing"} Registries...');
+		registered = true;
+		violet.data.level.LevelRegistry.registerLevels();
+	}
 }
 
 class ModIcon extends NovaSprite {

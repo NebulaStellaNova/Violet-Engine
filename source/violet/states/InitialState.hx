@@ -23,8 +23,10 @@ class InitialState extends flixel.FlxState { // for now
 		new haxe.ui.notifications.NotificationManager().addNotification({title: 'a', body: ''});
 
 		FlxG.signals.preUpdate.add(() -> {
-			if (Controls.resetState)
+			if (Controls.resetState) {
+				ModdingAPI.reloadRegistries();
 				FlxG.resetState();
+			}
 			if (Controls.shortcutState)
 				FlxG.switchState(() -> new violet.states.menus.MainMenu());
 		});
