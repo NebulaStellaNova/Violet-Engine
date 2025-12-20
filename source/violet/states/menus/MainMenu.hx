@@ -6,6 +6,7 @@ import violet.backend.StateBackend;
 import violet.backend.utils.MathUtil;
 import violet.backend.utils.NovaUtils;
 import violet.backend.utils.ParseUtil;
+import violet.backend.display.DebugDisplay;
 
 typedef MenuOffset = {
 	var idle:Array<Float>;
@@ -119,6 +120,11 @@ class MainMenu extends StateBackend {
 		FlxG.camera.followLerp = 0.1;
 
 		FlxG.camera.fade(FlxColor.BLACK, 0.25, true);
+
+		DebugDisplay.registerVariable("Current Menu Item Index", "curSelected");
+		DebugDisplay.registerVariable("Current Menu Item", "curSelectedString");
+		DebugDisplay.registerVariable("Background Color", "bgColorString");
+		DebugDisplay.registerVariable("Can Select", "canSelect");
 
 		callInScripts('postCreate');
 	}

@@ -1,7 +1,9 @@
 package violet.backend.display;
 
+import hxhardware.GPU;
+import hxhardware.CPU;
+import hxhardware.Memory;
 import flixel.math.FlxMath;
-import hxhardware.*;
 import openfl.display.Bitmap;
 import openfl.display.BitmapData;
 import openfl.display.Sprite;
@@ -20,6 +22,9 @@ class DebugDisplay extends Sprite {
 	public var text:TextField;
 
 	public var shown:Bool = false;
+
+	@:unreflective
+	public static var extraInfo:Array<{label:String, value:Dynamic}> = [];
 
 	public function new() {
 		super();
@@ -48,6 +53,8 @@ class DebugDisplay extends Sprite {
 		background2.x = -FlxG.width;
 		text.x = -FlxG.width;
 		text.y = -FlxG.width;
+
+		flixel.FlxG.signals.preStateSwitch.add(()->extraInfo = []);
 
 		addEventListener(Event.ENTER_FRAME, onEnterFrame);
 	}
@@ -79,11 +86,21 @@ class DebugDisplay extends Sprite {
 		cpuAvg /= cpus.length;
 
 
-		var parts = [
-			'Framerate: $framesPerSecond',
-			'Memory: ${FlxMath.roundDecimal(memoryAvg, 2)} / ${Memory.getProcessPeakPhysicalMemoryUsage().formatBytes()}',
-			'CPU: ${FlxMath.roundDecimal(cpuAvg, 2)}% / ${FlxMath.roundDecimal(CPU.getProcessPeakCPUUsage(), 2)}%'
-		];
+		var parts:Array<String> = [];
+		if (extraInfo.length > 0) {
+			parts = [
+				'Framerate: $framesPerSecond',
+				'Memory: ${FlxMath.roundDecimal(memoryAvg, 2)} / ${Memory.getProcessPeakPhysicalMemoryUsage().formatBytes()}',
+				'CPU: ${FlxMath.roundDecimal(cpuAvg, 2)}% / ${FlxMath.roundDecimal(CPU.getProcessPeakCPUUsage(), 2)}%',
+				''
+			].concat([for (info in extraInfo) '${info.label}: ${Reflect.getProperty(FlxG.state, info.value) != null ? Reflect.getProperty(FlxG.state, info.value) : (Reflect.field(FlxG.state, info.value) != null ? Reflect.field(FlxG.state, info.value) : (Reflect.getProperty(Type.getClass(FlxG.state), info.value) != null ? Reflect.getProperty(Type.getClass(FlxG.state), info.value) : "???"))}']);
+		} else {
+			parts = [
+				'Framerate: $framesPerSecond',
+				'Memory: ${FlxMath.roundDecimal(memoryAvg, 2)} / ${Memory.getProcessPeakPhysicalMemoryUsage().formatBytes()}',
+				'CPU: ${FlxMath.roundDecimal(cpuAvg, 2)}% / ${FlxMath.roundDecimal(CPU.getProcessPeakCPUUsage(), 2)}%',
+			];
+		}
 		if (_updateClock >= 1000) {
 			framesPerSecond = (FlxG.drawFramerate > 0) ? FlxMath.minInt(_framesPassed, FlxG.drawFramerate) : _framesPassed;
 			_framesPassed = 0;
@@ -108,5 +125,10 @@ class DebugDisplay extends Sprite {
 
 		if (Controls.debugDisplay)
 			shown = !shown;
+	}
+
+	@:unreflective
+	public static function registerVariable(label:String, variable:String) {
+		extraInfo.push({label: label, value: variable});
 	}
 }
