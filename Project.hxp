@@ -112,10 +112,6 @@ class EngineAsset {
 	 * States if haxe scripting can do custom classes.
 	 */
 	static final customClasses:CompilerFlag = 'CUSTOM_CLASSES';
-	/**
-	 * States if dead code elimination will be disabled.
-	 */
-	static final disableDCE:CompilerFlag = 'DISABLE_DCE';
 
 	/**
 	 * States if the engine allows shaders at all.
@@ -173,7 +169,6 @@ class EngineAsset {
 			canHaxeScript.enable();
 			canLuaScript.enable();
 
-			disableDCE.enable();
 			scriptedStates.enable();
 			if (canHaxeScript.exists())
 				customClasses.enable();
@@ -282,9 +277,6 @@ class EngineAsset {
 
 		// may add one
 		setHaxedef('FLX_NO_FOCUS_LOST_SCREEN');
-
-		if (disableDCE.exists())
-			addHaxeFlag('-dce no');
 
 		setHaxedef('message.reporting', 'pretty');
 		setHaxedef('message.log-format', 'pretty');
