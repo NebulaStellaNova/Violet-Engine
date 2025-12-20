@@ -121,11 +121,12 @@ class MainMenu extends StateBackend {
 
 		FlxG.camera.fade(FlxColor.BLACK, 0.25, true);
 
+		#if DEBUG
 		DebugDisplay.registerVariable("Current Menu Item Index", "curSelected");
 		DebugDisplay.registerVariable("Current Menu Item", "curSelectedString");
 		DebugDisplay.registerVariable("Background Color", "bgColorString");
 		DebugDisplay.registerVariable("Can Select", "canSelect");
-
+		#end
 		callInScripts('postCreate');
 	}
 
@@ -159,6 +160,11 @@ class MainMenu extends StateBackend {
 		if (Controls.accept) {
 			pickSelection();
 		}
+
+		if (Controls.back) {
+			// Main.switchState(new ClassData('TitleState')); // Crashes idk why
+		}
+
 		watermarkTexts.sort(function(a, b):Int {
 			if(a.length < b.length) return -1;
 			else if(a.length > b.length) return 1;

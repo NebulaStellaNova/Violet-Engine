@@ -14,8 +14,13 @@ class ClassData {
 
 		if (this.type == "source") {
 			switch (string.split(":")[1]) {
+				case "TitleState":
+					this.target = new TitleState();
 				case "MainMenu":
 					this.target = new MainMenu();
+				case "StoryMenu":
+					this.target = new StoryMenu();
+					this.isSubState = true;
 				/* case "CreditsState":
 					this.target = new CreditsState();
 				case "FreeplayState":
