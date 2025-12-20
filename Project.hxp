@@ -238,6 +238,8 @@ class EngineAsset {
 		if (modSupport.exists()) addAssetPath('./mods', './mods', ['*'], excludeList);
 		/* Path Settings */
 
+		addHaxeMacro('violet.backend.Macro.init()');
+
 		/* Libraries */
 		// required for flixel, don't put below flixel, causes weird issues
 		addHaxelib('openfl');

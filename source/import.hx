@@ -1,3 +1,4 @@
+#if !macro
 #if MOD_SUPPORT
 import violet.backend.filesystem.ModdingAPI;
 #end
@@ -16,3 +17,4 @@ import violet.backend.objects.NovaSprite;
 import violet.backend.objects.NovaText;
 
 using StringTools;
+#end
