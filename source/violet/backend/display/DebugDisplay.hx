@@ -1,38 +1,28 @@
 package violet.backend.display;
 
+import flixel.math.FlxMath;
+import hxhardware.*;
 import openfl.display.Bitmap;
 import openfl.display.BitmapData;
-import openfl.display.FPS;
 import openfl.display.Sprite;
+import openfl.events.Event;
 import openfl.text.TextField;
 import openfl.text.TextFormat;
 import violet.backend.utils.MathUtil;
+import violet.backend.utils.NovaUtils;
 
 using flixel.util.FlxStringUtil;
 
 class DebugDisplay extends Sprite {
-
 	public var background:Bitmap;
 	public var background2:Bitmap;
 
-	public var memoryCounter:TextField;
-	public var fpsCounter:FPS;
+	public var text:TextField;
 
 	public var shown:Bool = false;
 
-	public var memoryPeak:Float = 0.0;
-	public var memoryCurrent(get, never):Float;
-
-	@:noCompletion
-	private function get_memoryCurrent():Float {
-		return cpp.vm.Gc.memInfo64(cpp.vm.Gc.MEM_INFO_USAGE);
-	}
-
 	public function new() {
 		super();
-
-		addChild(fpsCounter = new FPS(10, -110, FlxColor.WHITE));
-
 		background = new Bitmap(new BitmapData(1, 1, true, 0xFF3d3f41));
 		background.x = 20;
 		background.y = 20;
@@ -45,31 +35,44 @@ class DebugDisplay extends Sprite {
 		background2.alpha = 0.5;
 		addChild(background2);
 
-		memoryCounter = new TextField();
-		memoryCounter.autoSize = LEFT;
-		memoryCounter.x = memoryCounter.y = 30;
-		memoryCounter.defaultTextFormat = new TextFormat('Monsterrat', 18, FlxColor.WHITE);
-		memoryCounter.width = FlxG.width;
-		memoryCounter.mouseEnabled = memoryCounter.selectable = false;
-		memoryCounter.sharpness = 0;
-		addChild(memoryCounter);
+		text = new TextField();
+		text.autoSize = LEFT;
+		text.x = text.y = 10;
+		text.defaultTextFormat = new TextFormat('Monsterrat', 18, FlxColor.WHITE);
+		text.width = FlxG.width;
+		text.mouseEnabled = text.selectable = false;
+		text.sharpness = 0;
+		addChild(text);
 
 		background.x = -FlxG.width;
 		background2.x = -FlxG.width;
-		memoryCounter.x = -FlxG.width;
-		memoryCounter.y = -FlxG.width;
+		text.x = -FlxG.width;
+		text.y = -FlxG.width;
+
+		addEventListener(Event.ENTER_FRAME, onEnterFrame);
 	}
 
-	override public function __enterFrame(e) {
-		super.__enterFrame(e);
+	var framesPerSecond:Int = 0;
+	var _framesPassed:Int = 0;
+	var _previousTime:Float = 0;
+	var _updateClock:Float = 999999;
 
-		if (memoryPeak < memoryCurrent)
-			memoryPeak = memoryCurrent;
+	function onEnterFrame(e:Event) {
+		_framesPassed++;
 
-		memoryCounter.text = "Framerate: " + fpsCounter.text.replace("FPS: ", "") + '\nMemory: ${memoryCurrent.formatBytes()} / ${memoryPeak.formatBytes()}';
+		final deltaTime:Float = Math.max(NovaUtils.getTimerPrecise() - _previousTime, 0);
+		_updateClock += deltaTime;
 
-		background.width = memoryCounter.width + 21;
-		background.height = memoryCounter.height + 21;
+		if (_updateClock >= 1000) {
+			framesPerSecond = (FlxG.drawFramerate > 0) ? FlxMath.minInt(_framesPassed, FlxG.drawFramerate) : _framesPassed;
+			text.text = 'Framerate: $framesPerSecond\nMemory: ${Memory.getProcessPhysicalMemoryUsage().formatBytes()} / ${Memory.getProcessPeakPhysicalMemoryUsage().formatBytes()}\nCPU: ${FlxMath.roundDecimal(CPU.getProcessCPUUsage(), 2)}% / ${FlxMath.roundDecimal(CPU.getProcessPeakCPUUsage(), 2)}%';
+			_framesPassed = 0;
+			_updateClock = 0;
+		}
+		_previousTime = NovaUtils.getTimerPrecise();
+
+		background.width = text.width + 21;
+		background.height = text.height + 21;
 
 		background2.width = background.width + 10;
 		background2.height = background.height + 10;
@@ -77,10 +80,10 @@ class DebugDisplay extends Sprite {
 		background.x = MathUtil.lerp(background.x, shown ? 20 : - background.width - 50, 0.1);
 
 		background2.x = background.x - 5;
-		memoryCounter.x = background.x + 10;
-		memoryCounter.y = background.y + 10;
+		text.x = background.x + 10;
+		text.y = background.y + 10;
 
-		if (Controls.debugDisplay) shown = !shown;
+		if (Controls.debugDisplay)
+			shown = !shown;
 	}
-
 }

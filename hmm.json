@@ -21,6 +21,16 @@
       "version": null
     },
     {
+      "name": "haxeui-core",
+      "type": "haxelib",
+      "version": null
+    },
+    {
+      "name": "haxeui-flixel",
+      "type": "haxelib",
+      "version": null
+    },
+    {
       "name": "hmm",
       "type": "haxelib",
       "version": null
@@ -39,10 +49,17 @@
     },
     {
       "name": "hxcpp-debug-server",
-     "type": "git",
+      "type": "git",
       "dir": null,
       "ref": "7459934666a473a4cc4d066ba4a93ef92f1ce94c",
       "url": "https://github.com/FunkinCrew/hxcpp-debugger"
+    },
+    {
+      "name": "hxhardware",
+      "type": "git",
+      "dir": null,
+      "ref": "main",
+      "url": "https://github.com/Vortex2Oblivion/hxhardware"
     },
     {
       "name": "hxp",
@@ -89,16 +106,6 @@
     },
     {
       "name": "thx.semver",
-      "type": "haxelib",
-      "version": null
-    },
-    {
-      "name": "haxeui-core",
-      "type": "haxelib",
-      "version": null
-    },
-    {
-      "name": "haxeui-flixel",
       "type": "haxelib",
       "version": null
     }

@@ -76,6 +76,7 @@ class Main extends openfl.display.Sprite {
 		engineVersion = lime.app.Application.current.meta.get('version');
 		latestVersion = engineVersion;
 
+		hxhardware.CPU.init();
 		var startFPS:Int = Application.current.window.displayMode.refreshRate;
 		new flixel.FlxGame(1280, 720, violet.states.InitialState, startFPS, startFPS, true);
 		@:privateAccess FlxG.game._customSoundTray = violet.backend.display.VioletSoundTray;

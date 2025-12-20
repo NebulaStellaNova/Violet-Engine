@@ -236,6 +236,7 @@ class EngineAsset {
 		addHaxeMacro('violet.backend.Macro.init()');
 
 		/* Libraries */
+		addHaxelib('hxhardware');
 		// required for flixel, don't put below flixel, causes weird issues
 		addHaxelib('openfl');
 		addHaxelib('lime');
