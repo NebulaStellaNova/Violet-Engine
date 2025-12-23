@@ -84,6 +84,7 @@ class ModdingAPI {
 		trace('debug:${registered ? "Reloading" : "Initializing"} Registries...');
 		registered = true;
 		violet.data.level.LevelRegistry.registerLevels();
+		violet.data.song.SongRegistry.registerSongs();
 	}
 }
 

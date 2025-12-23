@@ -23,4 +23,8 @@ class NovaText extends FlxText {
 	public function getHeight(mult:Float = 1) {
 		return (this.frameHeight / (upscaleResolution*2))*mult;
 	}
+
+	public function setFont(font:String) {
+		this.setFormat(font, this.size);
+	}
 }

@@ -50,6 +50,7 @@ class CrashHandler {
 	static function onCrash(e:UncaughtErrorEvent):Void {
 		trace("warning:Uh Oh!");
 		errorNotif("test", "yo");
+		trace(e);
 		/* @:privateAccess FlxG.game._nextState = new violet.states.TitleState();
 		@:privateAccess FlxG.game.switchState(); */
 		return;

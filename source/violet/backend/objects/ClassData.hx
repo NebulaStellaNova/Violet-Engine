@@ -5,13 +5,14 @@ import violet.states.menus.*;
 
 class ClassData {
 	public var type:String;
+	public var name:String;
 	public var target:Dynamic;
 	public var isSubState:Bool = false;
 
 	public function new(string:String) {
 		this.type = string.split(":")[0];
+		this.name = string.split(":")[1];
 		this.target = new MainMenu();
-
 		if (this.type == "source") {
 			switch (string.split(":")[1]) {
 				case "TitleState":

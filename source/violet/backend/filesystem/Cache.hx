@@ -10,13 +10,14 @@ private class HaxeLogo extends BitmapData {}
 
 class Cache {
 	public static function init():Void {
+		trace("debug:Initializing Cache System...");
 		for (item in Paths.readFolder('sounds/menu')) {
 			sound('menu/$item');
-			trace('sys:Cached "${Paths.sound('menu/$item')}".');
+			trace('debug:Cached "${Paths.sound('menu/$item')}".');
 		}
 		for (item in Paths.readFolder('sounds/miss')) {
 			sound('miss/$item');
-			trace('sys:Cached "${Paths.sound('miss/$item')}".');
+			trace('debug:Cached "${Paths.sound('miss/$item')}".');
 		}
 	}
 
