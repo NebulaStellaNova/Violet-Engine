@@ -58,6 +58,11 @@
       "url": "https://github.com/FunkinCrew/json2object"
     },
     {
+      "name": "lime",
+      "type": "haxelib",
+      "version": null
+    },
+    {
       "name": "lscript",
       "type": "git",
       "dir": null,
