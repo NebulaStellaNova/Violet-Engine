@@ -18,6 +18,12 @@ class CreditsMenu extends violet.backend.SubStateBackend {
 	override function create() {
 		super.create();
 
+		var bgOverlay = new NovaSprite();
+		bgOverlay.makeGraphic(FlxG.width, FlxG.height, FlxColor.BLACK);
+		add(bgOverlay);
+		bgOverlay.alpha = 0;
+		FlxTween.tween(bgOverlay, {alpha: .2}, 1);
+
 		creditObjects = new FlxTypedGroup<FlxSprite>();
 		add(creditObjects);
 
