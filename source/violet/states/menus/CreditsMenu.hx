@@ -69,8 +69,6 @@ class CreditsMenu extends violet.backend.SubStateBackend {
 				if (contrib.icon != null || contrib.https_icon != null) {
 					var contribIcon:NovaSprite = new NovaSprite(contribText.x, creditObjectMaxY);
 
-					creditObjectMaxY += contribIcon.height;
-
 					if (contrib.icon != null && contrib.https_icon == null)
 						contribIcon.loadSprite(Paths.image(contrib.icon, 'menus/creditsmenu/icons'));
 					if (contrib.icon == null && contrib.https_icon != null)
@@ -86,8 +84,9 @@ class CreditsMenu extends violet.backend.SubStateBackend {
 					creditObjects.add(contribIcon);
 
 					contribText.x += contribIcon.width * 1.1;
-                    contribText.fieldWidth = (FlxG.width / 2) - 16 - contribIcon.width;
+                    // contribText.fieldWidth = ((FlxG.width / 2) - 16) - (contribIcon.width);
 					contribText.y += contribIcon.height / 2;
+					creditObjectMaxY += contribIcon.height;
 				}
 			}
 		}
