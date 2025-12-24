@@ -152,6 +152,8 @@ class CreditsMenu extends violet.backend.SubStateBackend {
 			FlxTween.tween(bgOverlay, {alpha: 0}, 2);
 			for (obj in creditObjects.members)
 				FlxTween.tween(obj, {alpha: 0}, 1);
+			for (obj in [selectedGuy, selectedGuyRole])
+				FlxTween.tween(obj, {alpha: 0}, 1);
 
 			FlxTimer.wait(2, () -> {
 				close();
