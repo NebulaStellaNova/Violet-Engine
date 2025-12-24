@@ -1,5 +1,6 @@
 package violet.states.menus;
 
+import flixel.FlxObject;
 import flixel.text.FlxText;
 import violet.backend.utils.FileUtil;
 import haxe.Json;
@@ -11,6 +12,8 @@ class CreditsMenu extends violet.backend.SubStateBackend {
 	public var creditsJSON:CreditsJSON;
 
 	public var creditObjects:FlxTypedGroup<FlxBasic>;
+
+    public var camFollow:FlxObject;
 
 	override function create() {
 		super.create();
@@ -64,5 +67,10 @@ class CreditsMenu extends violet.backend.SubStateBackend {
 		}
 
         trace('menuedCredits');
+
+        camFollow = new FlxObject();
+        add(camFollow);
+
+        FlxG.camera.follow(camFollow, LOCKON, 0.1);
 	}
 }
