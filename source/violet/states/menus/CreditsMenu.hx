@@ -16,9 +16,12 @@ class CreditsMenu extends violet.backend.SubStateBackend {
 
 	var creditObjectMaxY = 0.0;
 
-    public var contributors:Array<CreditsContributor> = [];
+	public var contributors:Array<CreditsContributor> = [];
 
-    public var sel:Int = 0;
+	public var sel:Int = 0;
+
+	public var selectedGuy:FlxText;
+	public var selectedGuyRole:FlxText;
 
 	override function create() {
 		super.create();
@@ -26,7 +29,7 @@ class CreditsMenu extends violet.backend.SubStateBackend {
 		var bgOverlay = new NovaSprite();
 		bgOverlay.makeGraphic(FlxG.width, FlxG.height, FlxColor.BLACK);
 		add(bgOverlay);
-        bgOverlay.scrollFactor.set();
+		bgOverlay.scrollFactor.set();
 		bgOverlay.alpha = 0;
 		FlxTween.tween(bgOverlay, {alpha: .2}, 1);
 
@@ -39,9 +42,9 @@ class CreditsMenu extends violet.backend.SubStateBackend {
 			trace(e.message);
 		}
 
-        var contribI = 0;
+		var contribI = 0;
 		for (credit in creditsJSON.credits) {
-			var title:NovaText = new NovaText(0, 0, 0, credit.title, 32);
+			var title:NovaText = new NovaText(0, 0, FlxG.width / 2, credit.title, 32);
 
 			title.y = creditObjectMaxY;
 			creditObjectMaxY += title.height * 1.1;
@@ -49,11 +52,11 @@ class CreditsMenu extends violet.backend.SubStateBackend {
 			creditObjects.add(title);
 
 			for (contrib in credit.contributors) {
-                contributors.push(contrib);
-				var contribText:NovaText = new NovaText(0, 0, 0, contrib.name, 16);
+				contributors.push(contrib);
+				var contribText:NovaText = new NovaText(0, 0, FlxG.width / 2, contrib.name, 16);
 
-                contribText.ID = contribI;
-                contribI++;
+				contribText.ID = contribI;
+				contribI++;
 				if (contrib.role != null)
 					contribText.text += ' : ${contrib.role}';
 
@@ -72,8 +75,10 @@ class CreditsMenu extends violet.backend.SubStateBackend {
 					if (contrib.icon == null && contrib.https_icon != null)
 						contribIcon.loadSprite(contrib.https_icon);
 
-                    if (contrib.icon_scale?.x != null) contribIcon.scale.x = contrib.icon_scale.x;
-                    if (contrib.icon_scale?.y != null) contribIcon.scale.y = contrib.icon_scale.y;
+					if (contrib.icon_scale?.x != null)
+						contribIcon.scale.x = contrib.icon_scale.x;
+					if (contrib.icon_scale?.y != null)
+						contribIcon.scale.y = contrib.icon_scale.y;
 
 					contribIcon.updateHitbox();
 
@@ -87,7 +92,14 @@ class CreditsMenu extends violet.backend.SubStateBackend {
 
 		for (obj in creditObjects.members) {
 			obj.scrollFactor.set();
+			// obj.x += 16;
 		}
+
+		selectedGuy = new FlxText(FlxG.width / 2, 0, FlxG.width / 2, "Hi", 32);
+        add(selectedGuy);
+
+        selectedGuyRole = new FlxText(FlxG.width / 2, selectedGuy.y + selectedGuyRole.height + 16, 0, "foam", 16);
+        add(selectedGuyRole);
 
 		trace('menuedCredits');
 	}
@@ -95,25 +107,36 @@ class CreditsMenu extends violet.backend.SubStateBackend {
 	override function update(_:Float) {
 		super.update(_);
 
+        selectedGuy.text = contributors[sel].name;
+        selectedGuyRole.text = contributors[sel]?.role ?? 'N/A';
+        selectedGuyRole.y = selectedGuy.y + selectedGuyRole.height + 16;
+
 		for (obj in creditObjects.members) {
 			obj.y -= 16;
 
-            if (Std.isOfType(obj, NovaText))
-            {
-                obj.color = FlxColor.WHITE;
-                if (sel == obj.ID)
-                obj.color = FlxColor.YELLOW;
-            }
+			if (Std.isOfType(obj, NovaText)) {
+				obj.color = FlxColor.WHITE;
+				if (sel == obj.ID)
+					obj.color = FlxColor.YELLOW;
+			}
 
 			if (obj.y < FlxG.camera.y - obj.height * 2) {
 				obj.y = creditObjectMaxY + FlxG.height;
 			}
 		}
 
-        if (FlxG.keys.anyJustReleased([UP, W])) sel--;
-        if (FlxG.keys.anyJustReleased([DOWN, S])) sel++;
+		if (FlxG.keys.anyJustReleased([DOWN, UP, S, W])) {
+			FlxG.sound.play(Cache.sound('menu/scroll'));
 
-        if (sel < 0) sel = 0;
-        if (sel >= contributors.length - 1) sel = contributors.length - 1;
+			if (FlxG.keys.anyJustReleased([UP, W]))
+				sel--;
+			if (FlxG.keys.anyJustReleased([DOWN, S]))
+				sel++;
+
+			if (sel < 0)
+				sel = 0;
+			if (sel >= contributors.length - 1)
+				sel = contributors.length - 1;
+		}
 	}
 }
