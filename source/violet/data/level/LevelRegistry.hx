@@ -25,7 +25,8 @@ class LevelRegistry {
             props: [],
             visible: true,
             songs: [],
-            background: "#F9CF51"
+            background: "#F9CF51",
+            difficulties: ["easy", "normal", "hard"]
         };
     }
 

@@ -40,6 +40,14 @@ class Level {
     }
 
     /**
+     * Get the list of difficulties for this level.
+     */
+    public function getDifficulties():Array<String>
+    {
+        return _data.difficulties ?? ["easy", "normal", "hard"];
+    }
+
+    /**
      * Whether this level is visible. If not, it will not be shown on the menu at all.
      */
     public function isVisible():Bool

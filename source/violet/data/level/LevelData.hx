@@ -22,6 +22,12 @@ typedef LevelData = {
     var props:Array<LevelPropData>;
 
     /**
+     * The difficulties for the level.
+     */
+    @:default(['easy', 'normal', 'hard'])
+    var ?difficulties:Array<String>;
+
+    /**
      * Whether this week is visible in the story menu.
      * @default `true`
      */

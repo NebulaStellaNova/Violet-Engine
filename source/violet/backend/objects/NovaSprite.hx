@@ -25,6 +25,7 @@ class NovaSprite extends FlxSprite {
 
 	public function new(x:Float = 0.0, y:Float = 0.0, ?path:String) {
 		super(x, y);
+		this.antialiasing = true;
 		if (path != null)
 			this.loadSprite(path);
 	}

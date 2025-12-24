@@ -1,5 +1,7 @@
 package violet.states.menus;
 
+import flixel.group.FlxSpriteGroup.FlxTypedSpriteGroup;
+import flixel.group.FlxGroup.FlxTypedGroup;
 import violet.data.song.SongRegistry;
 import flixel.math.FlxMath;
 import violet.backend.utils.MathUtil;
@@ -10,7 +12,8 @@ import violet.backend.SubStateBackend;
 
 class StoryMenu extends SubStateBackend {
 
-    var characters:Array<Array<NovaSprite>> = [];
+    var charactersSprites:Array<FlxTypedSpriteGroup<NovaSprite>> = [];
+    var difficultySprites:FlxTypedSpriteGroup<FlxTypedSpriteGroup<NovaSprite>> = new FlxTypedSpriteGroup<FlxTypedSpriteGroup<NovaSprite>>();
 
     var scoreText:NovaText;
     var levelText:NovaText;
@@ -19,6 +22,7 @@ class StoryMenu extends SubStateBackend {
     var updateAlpha:Bool = false;
 
     var curSelected:Int = 0;
+    var curDifficulty:Int = 1;
 
     var storyCam:FlxCamera;
 
@@ -86,12 +90,30 @@ class StoryMenu extends SubStateBackend {
             add(titleAsset);
             FlxTween.tween(titleAsset, { y: yLevel, alpha: 1 }, 0.5, { ease: FlxEase.backOut, startDelay: 0.4 + i * 0.1, onComplete: (_) -> updateAlpha = true });
             yLevel += titleAsset.height + 20;
+
+            var diffGroup:FlxTypedSpriteGroup<NovaSprite> = new FlxTypedSpriteGroup<NovaSprite>();
+            for (i in level.getDifficulties()) {
+                var sprite = new NovaSprite(Paths.image('menus/storymenu/difficulties/$i'));
+                sprite.updateHitbox();
+                sprite.x -= sprite.width / 2;
+                sprite.y -= sprite.height / 2;
+                diffGroup.add(sprite);
+            }
+            diffGroup.updateHitbox();
+            difficultySprites.add(diffGroup);
         }
         add(weekBG);
         add(topBar);
         add(scoreText);
         add(levelText);
         add(trackText);
+
+        difficultySprites.camera = storyCam;
+        difficultySprites.updateHitbox();
+        difficultySprites.scrollFactor.set();
+        difficultySprites.x = FlxG.width + (difficultySprites.width / 2);
+        difficultySprites.y = 560;
+        add(difficultySprites);
 
         updateTrackList();
 
@@ -103,6 +125,7 @@ class StoryMenu extends SubStateBackend {
         FlxTween.tween(scoreText, { y: 11 }, 0.5, { ease: FlxEase.backOut, startDelay: 0.6 });
         FlxTween.tween(levelText, { y: 11 }, 0.5, { ease: FlxEase.backOut, startDelay: 0.6 });
         FlxTween.tween(trackText, { x: (FlxG.width/2) - (trackText.getWidth()/2) - 450 }, 0.5, { ease: FlxEase.backOut, startDelay: 0.6 });
+        FlxTween.tween(difficultySprites, { x: 920 }, 0.5, { ease: FlxEase.backOut, startDelay: 0.6 });
         FlxTimer.wait(1.2, ()->{
             canInteract = true;
         });
@@ -120,12 +143,25 @@ class StoryMenu extends SubStateBackend {
         if (Controls.uiUp) {
             scroll(-1);
         }
+        if (Controls.uiRight) {
+            changeDifficulty(1);
+        }
+        if (Controls.uiLeft) {
+            changeDifficulty(-1);
+        }
 
         levelText.text = LevelRegistry.getAllLevels()[curSelected].getTitle();
         levelText.updateHitbox();
         levelText.x = FlxG.width - levelText.getWidth() - 11;
 
         storyCam.scroll.y = MathUtil.lerp(storyCam.scroll.y, (titleGraphics[curSelected].y - (weekBG.y + weekBG.height)) + (titleGraphics[curSelected].height/2) - 135, 0.2);
+
+        for (i=>group in difficultySprites.members) {
+            group.visible = (i == curSelected);
+            for (j=>diffSprite in group.members) {
+                diffSprite.visible = (j == curDifficulty);
+            }
+        }
 
         for (i=>titleAsset in titleGraphics) {
             if (updateAlpha) {
@@ -141,6 +177,13 @@ class StoryMenu extends SubStateBackend {
         updateTrackList();
         if (playSound)
             FlxG.sound.play(Cache.sound('menu/scroll'));
+    }
+
+    function changeDifficulty(direction:Int) {
+        if (!canInteract) return;
+        var difficulties = LevelRegistry.getAllLevels()[curSelected].getDifficulties();
+        curDifficulty = FlxMath.wrap(curDifficulty + direction, 0, difficulties.length - 1);
+        // FlxG.sound.play(Cache.sound('menu/scroll'));
     }
 
     function updateTrackList() {
@@ -161,6 +204,7 @@ class StoryMenu extends SubStateBackend {
         updateAlpha = false;
 		FlxTween.tween(cast(_parentState, MainMenu).bg, {x: 0 }, 0.5*2, { ease: FlxEase.quadInOut, startDelay: 0.4 });
 
+        FlxTween.tween(difficultySprites, { x: FlxG.width + (difficultySprites.width / 2) }, 0.5, { ease: FlxEase.backIn });
         FlxTween.tween(scoreText, { y: -112 }, 0.5, { ease: FlxEase.backIn });
         FlxTween.tween(trackText, { x: -trackText.getWidth() }, 0.5, { ease: FlxEase.backIn });
         FlxTween.tween(levelText, { y: -112 }, 0.5, { ease: FlxEase.backIn });
