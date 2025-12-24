@@ -98,7 +98,7 @@ class CreditsMenu extends violet.backend.SubStateBackend {
 		selectedGuy = new FlxText(FlxG.width / 2, 0, FlxG.width / 2, "Hi", 32);
         add(selectedGuy);
 
-        selectedGuyRole = new FlxText(FlxG.width / 2, selectedGuy.y + selectedGuyRole.height + 16, 0, "foam", 16);
+        selectedGuyRole = new FlxText(FlxG.width / 2, selectedGuy.y + selectedGuy.height + 16, 0, "foam", 16);
         add(selectedGuyRole);
 
 		trace('menuedCredits');
@@ -109,7 +109,7 @@ class CreditsMenu extends violet.backend.SubStateBackend {
 
         selectedGuy.text = contributors[sel].name;
         selectedGuyRole.text = contributors[sel]?.role ?? 'N/A';
-        selectedGuyRole.y = selectedGuy.y + selectedGuyRole.height + 16;
+        selectedGuyRole.y = selectedGuy.y + selectedGuy.height + 16;
 
 		for (obj in creditObjects.members) {
 			obj.y -= 16;
