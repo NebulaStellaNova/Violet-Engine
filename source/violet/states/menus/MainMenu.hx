@@ -127,6 +127,9 @@ class MainMenu extends StateBackend {
 		DebugDisplay.registerVariable("Background Color", "bgColorString");
 		DebugDisplay.registerVariable("Can Select", "canSelect");
 		#end
+
+		NovaUtils.playMenuMusic();
+
 		callInScripts('postCreate');
 	}
 

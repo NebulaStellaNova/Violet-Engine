@@ -1,5 +1,6 @@
 package violet.states.menus;
 
+import violet.backend.objects.Bopper;
 import flixel.group.FlxSpriteGroup.FlxTypedSpriteGroup;
 import flixel.group.FlxGroup.FlxTypedGroup;
 import violet.data.song.SongRegistry;
@@ -12,7 +13,7 @@ import violet.backend.SubStateBackend;
 
 class StoryMenu extends SubStateBackend {
 
-    var charactersSprites:FlxTypedSpriteGroup<FlxTypedSpriteGroup<NovaSprite>> = new FlxTypedSpriteGroup<FlxTypedSpriteGroup<NovaSprite>>();
+    var charactersSprites:FlxTypedSpriteGroup<FlxTypedSpriteGroup<Bopper>> = new FlxTypedSpriteGroup<FlxTypedSpriteGroup<Bopper>>();
     var difficultySprites:FlxTypedSpriteGroup<FlxTypedSpriteGroup<NovaSprite>> = new FlxTypedSpriteGroup<FlxTypedSpriteGroup<NovaSprite>>();
 
     var scoreText:NovaText;
@@ -22,7 +23,7 @@ class StoryMenu extends SubStateBackend {
     var updateAlpha:Bool = false;
 
     var curSelected:Int = 0;
-    var curDifficulty:Int = 1;
+    static var curDifficulty:Int = 1;
 
     var storyCam:FlxCamera;
 
@@ -102,14 +103,10 @@ class StoryMenu extends SubStateBackend {
             diffGroup.updateHitbox();
             difficultySprites.add(diffGroup);
 
-            var charGroup:FlxTypedSpriteGroup<NovaSprite> = level.buildProps();
+            var charGroup:FlxTypedSpriteGroup<Bopper> = level.buildProps();
             charactersSprites.add(charGroup);
         }
         add(weekBG);
-        add(topBar);
-        add(scoreText);
-        add(levelText);
-        add(trackText);
 
         difficultySprites.camera = storyCam;
         difficultySprites.updateHitbox();
@@ -121,9 +118,15 @@ class StoryMenu extends SubStateBackend {
         charactersSprites.camera = storyCam;
         // charactersSprites.updateHitbox();
         charactersSprites.scrollFactor.set();
+        charactersSprites.y -= charactersSprites.height;
         // charactersSprites.x -= FlxG.width / 2;
         // charactersSprites.y -= FlxG.height / 2;
         add(charactersSprites);
+
+        add(topBar);
+        add(scoreText);
+        add(levelText);
+        add(trackText);
 
         updateTrackList();
 
@@ -131,6 +134,7 @@ class StoryMenu extends SubStateBackend {
 
         FlxTween.tween(topBar, { y: -56 }, 0.5, { ease: FlxEase.backOut });
         FlxTween.tween(weekBG, { y: -45 }, 0.5, { ease: FlxEase.backOut, startDelay: 0.2 });
+        FlxTween.tween(charactersSprites, { y: 0 }, 0.5, { ease: FlxEase.backOut, startDelay: 0.3 });
         FlxTween.tween(bottomBox, { y: 0 }, 0.5, { ease: FlxEase.backOut, startDelay: 0.4 });
         FlxTween.tween(scoreText, { y: 11 }, 0.5, { ease: FlxEase.backOut, startDelay: 0.6 });
         FlxTween.tween(levelText, { y: 11 }, 0.5, { ease: FlxEase.backOut, startDelay: 0.6 });
@@ -238,4 +242,17 @@ class StoryMenu extends SubStateBackend {
 			close();
 		});
 	}
+
+    override public function beatHit(beat:Int) {
+        super.beatHit(beat);
+
+        trace("hello??");
+
+        for (i=>group in charactersSprites.members) {
+            for (j=>charSprite in group.members) {
+                if (beat % charSprite.danceEvery == 0)
+                    charSprite.playAnim("idle", true);
+            }
+        }
+    }
 }

@@ -63,6 +63,13 @@ class Paths {
 	inline public static function file(path:String, directory:String = '', ?ext:String):String
 		return root((directory == 'root' ? ['$path${ext == null || path.endsWith('.$ext') ? '' : '.$ext'}'] : [Path.removeTrailingSlashes(directory), '$path${ext == null || path.endsWith('.$ext') ? '' : '.$ext'}']).join('/'), directory == 'root');
 
+	inline public static function vocal(song:String, suffix:String = '', varient:String = '')
+		return root('songs/$song/song/${varient != '' ? '$varient/' : ''}Voices${suffix != '' ? '-$suffix' : ''}.ogg');
+
+	inline public static function inst(song:String, varient:String = "")
+		return root('songs/$song/song/${varient != '' ? '$varient/' : ''}Inst.ogg');
+
+
 
 	inline public static function fileExists(path:String, startFromRoot:Bool = false):Bool
 		return FileSystem.exists(root(path, startFromRoot));

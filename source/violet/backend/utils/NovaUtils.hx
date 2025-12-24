@@ -1,8 +1,17 @@
 package violet.backend.utils;
 
+import violet.backend.audio.Conductor;
+import violet.data.Constants;
 import haxe.io.Path;
 
 class NovaUtils {
+
+	public static function playMenuMusic():Void {
+		if (Conductor.curMusic != Constants.MENU_MUSIC) {
+			Conductor.playMusic(Constants.MENU_MUSIC);
+		}
+	}
+
 	public static function playMusic(path:String, volume:Float = 1):Void {
 		var musicPath:Array<String> = path.split('/');
 		musicPath.insert(musicPath.length - 2, Path.withoutExtension(musicPath[musicPath.length - 1]));

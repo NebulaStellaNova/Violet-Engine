@@ -1,5 +1,6 @@
 package violet.data.level;
 
+import violet.backend.objects.Bopper;
 import flixel.group.FlxSpriteGroup.FlxTypedSpriteGroup;
 import flixel.group.FlxGroup.FlxTypedGroup;
 import violet.backend.utils.ParseUtil;
@@ -57,15 +58,16 @@ class Level {
         return _data.visible;
     }
 
-    public function buildProps():FlxTypedSpriteGroup<NovaSprite>
+    public function buildProps():FlxTypedSpriteGroup<Bopper>
     {
-        var group:FlxTypedSpriteGroup<NovaSprite> = new FlxTypedSpriteGroup<NovaSprite>();
+        var group:FlxTypedSpriteGroup<Bopper> = new FlxTypedSpriteGroup<Bopper>();
         for (i=>propData in _data.props) {
-            var propSprite:NovaSprite = new NovaSprite(Paths.image(propData.assetPath));
+            var propSprite:Bopper = new Bopper(Paths.image(propData.assetPath));
             propSprite.scale.set(propData.scale ?? 1, propData.scale ?? 1);
             propSprite.flipX = propData.flipX ?? false;
             propSprite.alpha = propData.alpha ?? 1;
             propSprite.antialiasing = propData.isPixel != null ? !propData.isPixel : true;
+            propSprite.danceEvery = propData.danceEvery != null ? propData.danceEvery : 1.0;
 
             for (i in propData.animations) {
                 propSprite.addAnimFromJSON(i);

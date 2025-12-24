@@ -4,6 +4,7 @@ import flixel.FlxBasic;
 import flixel.FlxState;
 import flixel.FlxCamera;
 
+import violet.backend.audio.Conductor;
 
 #if SCRIPT_SUPPORT
 import violet.backend.scripting.ScriptPack;
@@ -15,11 +16,41 @@ class StateBackend extends flixel.FlxState {
 	public var stateScripts:ScriptPack = new ScriptPack();
 	#end
 
+	public var curBeat(get, null):Int = 0;
+	function get_curBeat() return Conductor.curBeat;
+
+	public var curStep(get, null):Int = 0;
+	function get_curStep() return Conductor.curStep;
+
+	public var curMeasure(get, null):Int = 0;
+	function get_curMeasure() return Conductor.curMeasure;
+
+	public var curBeatFloat:Float = 0;
+	function get_curBeatFloat() return Conductor.curBeatFloat;
+
+	public var curStepFloat:Float = 0;
+	function get_curStepFloat() return Conductor.curStepFloat;
+
+	public var curMeasureFloat:Float = 0;
+	function get_curMeasureFloat() return Conductor.curMeasureFloat;
+
+	public var beat:Int = 0;
+	function get_beat() return Conductor.curBeat;
+
+	public var step:Int = 0;
+	function get_step() return Conductor.curStep;
+
+	public var measure:Int = 0;
+	function get_measure() return Conductor.curMeasure;
+
+
 	public var usesLoadingScreen = false;
 	public var stuffToLoad:Array<FlxBasic> = [];
 
 	override public function create() {
 		super.create();
+
+		Conductor.init();
 
 		stateScripts.parent = this;
 
@@ -74,10 +105,30 @@ class StateBackend extends flixel.FlxState {
 		stateScripts.call(what);
 	}
 
+	@:unreflective
+	var previousStep:Int = -1;
+	@:unreflective
+	var previousBeat:Int = -1;
+	@:unreflective
+	var previousMeasure:Int = -1;
+
 	var notificationManager = new haxe.ui.notifications.NotificationManager();
 	var errIndex:Int = 0;
 	override public function update(_) {
 		super.update(_);
+
+		if (previousStep != Conductor.curStep) {
+			stepHit(Conductor.curStep);
+			previousStep = Conductor.curStep;
+		}
+		if (previousBeat != Conductor.curBeat) {
+			beatHit(Conductor.curBeat);
+			previousBeat = Conductor.curBeat;
+		}
+		if (previousMeasure != Conductor.curMeasure) {
+			measureHit(Conductor.curMeasure);
+			previousMeasure = Conductor.curMeasure;
+		}
 
 		if (nextFrame) {
 			if (errIndex > violet.backend.CrashHandler.notifList.length - 1) {
@@ -126,5 +177,17 @@ class StateBackend extends flixel.FlxState {
 			className: "",
 			methodName: ""
 		}); */
+	}
+
+	public function stepHit(curStep:Int) {
+		// trace("step hit");
+	}
+
+	public function beatHit(theBeat:Int) {
+		// trace("beat hit");
+	}
+
+	public function measureHit(theMeasure:Int) {
+		// trace("measure hit");
 	}
 }

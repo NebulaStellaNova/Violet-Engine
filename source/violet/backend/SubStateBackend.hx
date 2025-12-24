@@ -1,10 +1,39 @@
 package violet.backend;
 
+import violet.backend.audio.Conductor;
 #if SCRIPT_SUPPORT
 import violet.backend.scripting.ScriptPack;
 #end
 
 class SubStateBackend extends flixel.FlxSubState {
+
+	public var curBeat(get, null):Int = 0;
+	function get_curBeat() return Conductor.curBeat;
+
+	public var curStep(get, null):Int = 0;
+	function get_curStep() return Conductor.curStep;
+
+	public var curMeasure(get, null):Int = 0;
+	function get_curMeasure() return Conductor.curMeasure;
+
+	public var curBeatFloat:Float = 0;
+	function get_curBeatFloat() return Conductor.curBeatFloat;
+
+	public var curStepFloat:Float = 0;
+	function get_curStepFloat() return Conductor.curStepFloat;
+
+	public var curMeasureFloat:Float = 0;
+	function get_curMeasureFloat() return Conductor.curMeasureFloat;
+
+	public var beat:Int = 0;
+	function get_beat() return Conductor.curBeat;
+
+	public var step:Int = 0;
+	function get_step() return Conductor.curStep;
+
+	public var measure:Int = 0;
+	function get_measure() return Conductor.curMeasure;
+
 
 	#if SCRIPT_SUPPORT
 	public var subStateScripts:ScriptPack = new ScriptPack();
@@ -69,10 +98,33 @@ class SubStateBackend extends flixel.FlxSubState {
 		#end
 	}
 
+
+	@:unreflective
+	var previousStep:Int = -1;
+	@:unreflective
+	var previousBeat:Int = -1;
+	@:unreflective
+	var previousMeasure:Int = -1;
+
 	var notificationManager = new haxe.ui.notifications.NotificationManager();
 	var errIndex:Int = 0;
 	override public function update(_) {
 		super.update(_);
+
+		// trace(Conductor.curStep);
+
+		if (previousStep != Conductor.curStep) {
+			stepHit(Conductor.curStep);
+			previousStep = Conductor.curStep;
+		}
+		if (previousBeat != Conductor.curBeat) {
+			beatHit(Conductor.curBeat);
+			previousBeat = Conductor.curBeat;
+		}
+		if (previousMeasure != Conductor.curMeasure) {
+			measureHit(Conductor.curMeasure);
+			previousMeasure = Conductor.curMeasure;
+		}
 
 		if (nextFrame) {
 			if (errIndex > violet.backend.CrashHandler.notifList.length - 1) {
@@ -121,5 +173,17 @@ class SubStateBackend extends flixel.FlxSubState {
 			className: "",
 			methodName: ""
 		}); */
+	}
+
+	public function stepHit(curStep:Int) {
+		// trace("step hit");
+	}
+
+	public function beatHit(theBeat:Int) {
+		// trace("beat hit");
+	}
+
+	public function measureHit(theMeasure:Int) {
+		// trace("measure hit");
 	}
 }

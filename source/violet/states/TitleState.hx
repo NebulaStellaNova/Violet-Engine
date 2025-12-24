@@ -66,7 +66,7 @@ class TitleState extends StateBackend {
 		titleEnter.y = FlxG.height;
 		add(titleEnter);
 
-		NovaUtils.playMusic("mainMenuTheme", 0);
+		NovaUtils.playMenuMusic();
 		FlxG.sound.music.fadeIn(1, 0, 0.7);
 	}
 
