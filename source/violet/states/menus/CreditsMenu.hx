@@ -62,6 +62,9 @@ class CreditsMenu extends violet.backend.SubStateBackend {
 					if (contrib.icon == null && contrib.https_icon != null)
 						contribIcon.loadSprite(contrib.https_icon);
 
+                    if (contrib.icon_scale?.x != null) contribIcon.scale.set(contrib.icon_scale.x);
+                    if (contrib.icon_scale?.y != null) contribIcon.scale.set(contrib.icon_scale.y);
+
 					contribIcon.updateHitbox();
 
 					creditObjects.add(contribIcon);
