@@ -11,14 +11,12 @@ import violet.data.credits.CreditsEntry.CreditsJSON;
 class CreditsMenu extends violet.backend.SubStateBackend {
 	public var creditsJSON:CreditsJSON;
 
-	public var creditObjects:FlxTypedGroup<FlxBasic>;
-
-    public var camFollow:FlxObject;
+	public var creditObjects:FlxTypedGroup<FlxSprite>;
 
 	override function create() {
 		super.create();
 
-		creditObjects = new FlxTypedGroup<FlxBasic>();
+		creditObjects = new FlxTypedGroup<FlxSprite>();
 		add(creditObjects);
 
 		try {
@@ -55,9 +53,9 @@ class CreditsMenu extends violet.backend.SubStateBackend {
 					if (contrib.icon == null && contrib.https_icon != null)
 						contribIcon.loadSprite(contrib.https_icon);
 
-                    contribIcon.updateHitbox();
-                    contribIcon.scale.set(16 / contribIcon.width, 16 / contribIcon.height);
-                    contribIcon.updateHitbox();
+					contribIcon.updateHitbox();
+					contribIcon.scale.set(16 / contribIcon.width, 16 / contribIcon.height);
+					contribIcon.updateHitbox();
 
 					creditObjects.add(contribIcon);
 
@@ -66,11 +64,19 @@ class CreditsMenu extends violet.backend.SubStateBackend {
 			}
 		}
 
-        trace('menuedCredits');
+		trace('menuedCredits');
+	}
 
-        camFollow = new FlxObject();
-        add(camFollow);
+	override function stepHit(curStep:Int) {
+		super.stepHit(curStep);
 
-        FlxG.camera.follow(camFollow, LOCKON, 0.1);
+		for (obj in creditObjects.members) {
+			obj.y -= obj.height / 4;
+
+            if (obj.y < FlxG.camera.y - obj.height * 2)
+            {
+                obj.y = FlxG.camera.y + FlxG.height;
+            }
+		}
 	}
 }
