@@ -29,13 +29,15 @@ class Paths {
 		return Path.withoutExtension(Path.withoutDirectory(root(path, startFromRoot)));
 
 	public static function root(path:String, startFromRoot:Bool = false):String {
-		if (startFromRoot) return path;
+		if (startFromRoot)
+			return path;
 		var rootPaths:Array<String> = [ASSETS_FOLDER].concat(#if MOD_SUPPORT [for (meta in ModdingAPI.getActiveMods()) 'mods/${meta.folder}'] #else [] #end);
 		for (root in rootPaths)
 			if (folderExists('$root/$path', true) || fileExists('$root/$path', true))
 				return Path.normalize('$root/$path');
 		return '';
 	}
+
 	public static function multiRoot(path:String):Array<String> {
 		var rootPaths:Array<String> = [ASSETS_FOLDER].concat(#if MOD_SUPPORT [for (meta in ModdingAPI.getActiveMods()) 'mods/${meta.folder}'] #else [] #end);
 		var results:Array<String> = [];
@@ -61,15 +63,16 @@ class Paths {
 		return file(path, directory, ext) != '' ? file(path, directory, ext) : (ext == 'json' ? file(path, directory, ext + 'c') : '');
 
 	inline public static function file(path:String, directory:String = '', ?ext:String):String
-		return root((directory == 'root' ? ['$path${ext == null || path.endsWith('.$ext') ? '' : '.$ext'}'] : [Path.removeTrailingSlashes(directory), '$path${ext == null || path.endsWith('.$ext') ? '' : '.$ext'}']).join('/'), directory == 'root');
+		return root((directory == 'root' ? ['$path${ext == null || path.endsWith('.$ext') ? '' : '.$ext'}'] : [
+			Path.removeTrailingSlashes(directory),
+			'$path${ext == null || path.endsWith('.$ext') ? '' : '.$ext'}'
+		]).join('/'), directory == 'root');
 
 	inline public static function vocal(song:String, suffix:String = '', varient:String = '')
 		return root('songs/$song/song/${varient != '' ? '$varient/' : ''}Voices${suffix != '' ? '-$suffix' : ''}.ogg');
 
 	inline public static function inst(song:String, varient:String = "")
 		return root('songs/$song/song/${varient != '' ? '$varient/' : ''}Inst.ogg');
-
-
 
 	inline public static function fileExists(path:String, startFromRoot:Bool = false):Bool
 		return FileSystem.exists(root(path, startFromRoot));
@@ -78,7 +81,8 @@ class Paths {
 		return FileSystem.isDirectory(Path.removeTrailingSlashes(root(path, startFromRoot)));
 
 	public static function readFolder(path:String, startFromRoot:Bool = false):Array<String> {
-		if (startFromRoot) return FileSystem.readDirectory(Path.removeTrailingSlashes(root(path, true)));
+		if (startFromRoot)
+			return FileSystem.readDirectory(Path.removeTrailingSlashes(root(path, true)));
 		var files:Array<String> = [];
 		for (folder in multiRoot(path))
 			for (file in FileSystem.readDirectory(Path.removeTrailingSlashes(folder)))
