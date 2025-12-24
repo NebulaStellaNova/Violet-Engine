@@ -52,7 +52,7 @@ class CreditsMenu extends violet.backend.SubStateBackend {
 					creditObjectMaxY += contribIcon.height;
 
 					if (contrib.icon != null && contrib.https_icon == null)
-						contribIcon.loadSprite(Paths.image(contrib.icon, 'menus/creditsmenu'));
+						contribIcon.loadSprite(Paths.image(contrib.icon, 'menus/creditsmenu/icons'));
 					if (contrib.icon == null && contrib.https_icon != null)
 						contribIcon.loadSprite(contrib.https_icon);
 
