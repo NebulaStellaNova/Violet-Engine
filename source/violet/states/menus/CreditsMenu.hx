@@ -125,12 +125,12 @@ class CreditsMenu extends violet.backend.SubStateBackend {
 			}
 		}
 
-		if (FlxG.keys.anyJustReleased([DOWN, UP, S, W])) {
+		if (Controls.uiUpReleased || Controls.uiDownReleased) {
 			FlxG.sound.play(Cache.sound('menu/scroll'));
 
-			if (FlxG.keys.anyJustReleased([UP, W]))
+			if (Controls.uiUpReleased)
 				sel--;
-			if (FlxG.keys.anyJustReleased([DOWN, S]))
+			if (Controls.uiDownReleased)
 				sel++;
 
 			if (sel < 0)
