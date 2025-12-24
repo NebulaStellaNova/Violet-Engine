@@ -16,5 +16,7 @@ typedef CreditsContributor = {
 	?icon:String,
 	?https_icon:String,
 
-	?icon_scale:{?x:Float, ?y:Float}
+	?icon_scale:{?x:Float, ?y:Float},
+
+	?url:String
 }

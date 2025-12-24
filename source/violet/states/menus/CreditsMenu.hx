@@ -128,6 +128,10 @@ class CreditsMenu extends violet.backend.SubStateBackend {
 			}
 		}
 
+        if (Controls.accept)
+            if (contributors[sel].url != null)
+                FlxG.openURL(contributors[sel].url);
+
 		if (Controls.uiUpReleased || Controls.uiDownReleased) {
 			FlxG.sound.play(Cache.sound('menu/scroll'));
 
