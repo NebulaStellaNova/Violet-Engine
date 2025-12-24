@@ -1,5 +1,6 @@
 package violet.states.menus;
 
+import violet.data.credits.CreditsEntry.CreditsContributor;
 import flixel.FlxObject;
 import flixel.text.FlxText;
 import violet.backend.utils.FileUtil;
@@ -15,12 +16,15 @@ class CreditsMenu extends violet.backend.SubStateBackend {
 
 	var creditObjectMaxY = 0.0;
 
+    public var contributors:Array<CreditsContributor> = [];
+
 	override function create() {
 		super.create();
 
 		var bgOverlay = new NovaSprite();
 		bgOverlay.makeGraphic(FlxG.width, FlxG.height, FlxColor.BLACK);
 		add(bgOverlay);
+        bgOverlay.scrollFactor.set();
 		bgOverlay.alpha = 0;
 		FlxTween.tween(bgOverlay, {alpha: .2}, 1);
 
@@ -42,6 +46,7 @@ class CreditsMenu extends violet.backend.SubStateBackend {
 			creditObjects.add(title);
 
 			for (contrib in credit.contributors) {
+                contributors.push(contrib);
 				var contribText:NovaText = new NovaText(0, 0, 0, contrib.name, 16);
 
 				if (contrib.role != null)
@@ -86,7 +91,7 @@ class CreditsMenu extends violet.backend.SubStateBackend {
 		super.update(_);
 
 		for (obj in creditObjects.members) {
-			obj.y -= obj.height / 32;
+			obj.y -= 16;
 
 			if (obj.y < FlxG.camera.y - obj.height * 2) {
 				obj.y = creditObjectMaxY + FlxG.height;
