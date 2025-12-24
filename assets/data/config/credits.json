@@ -1,16 +1,18 @@
-[
-    {
-        "title": "Violet Engine",
-        "contributors": [
-            {
-                "name": "Nebula S. Nova",
-                "role": "Main Coder, Menu Theme",
-                "icon": "nebula"
-            },
-            {
-                "name": "Rodney Furball <3",
-                "role": "Coder"
-            }
-        ]
-    }
-]
+{
+    "credits": [
+        {
+            "title": "Violet Engine",
+            "contributors": [
+                {
+                    "name": "Nebula S. Nova",
+                    "role": "Main Coder, Menu Theme",
+                    "icon": "nebula"
+                },
+                {
+                    "name": "Rodney Furball <3",
+                    "role": "Coder"
+                }
+            ]
+        }
+    ]
+}
