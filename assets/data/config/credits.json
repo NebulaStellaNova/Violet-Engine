@@ -1,7 +1,7 @@
 {
     "credits": [
         {
-            "title": "Violet Engine",
+            "title": "Violet Engine | Main Team",
             "contributors": [
                 {
                     "name": "Nebula S. Nova",
@@ -11,6 +11,15 @@
                 {
                     "name": "Rodney Furball <3",
                     "role": "Coder"
+                }
+            ]
+        },{
+            "title": "Violet Engine | Github Contributors",
+            "contributors": [
+                {
+                    "name": "Macohi / Sphis",
+                    "role": "Credits Menu (Welcome to my magnum opus of this project LOL)",
+                    "icon": "macohi"
                 }
             ]
         }
