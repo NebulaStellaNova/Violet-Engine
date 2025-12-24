@@ -18,6 +18,8 @@ class CreditsMenu extends violet.backend.SubStateBackend {
 
     public var contributors:Array<CreditsContributor> = [];
 
+    public var sel:Int = 0;
+
 	override function create() {
 		super.create();
 
@@ -37,6 +39,7 @@ class CreditsMenu extends violet.backend.SubStateBackend {
 			trace(e.message);
 		}
 
+        var contribI = 0;
 		for (credit in creditsJSON.credits) {
 			var title:NovaText = new NovaText(0, 0, 0, credit.title, 32);
 
@@ -49,6 +52,8 @@ class CreditsMenu extends violet.backend.SubStateBackend {
                 contributors.push(contrib);
 				var contribText:NovaText = new NovaText(0, 0, 0, contrib.name, 16);
 
+                contribText.ID = contribI;
+                contribI++;
 				if (contrib.role != null)
 					contribText.text += ' : ${contrib.role}';
 
@@ -93,9 +98,22 @@ class CreditsMenu extends violet.backend.SubStateBackend {
 		for (obj in creditObjects.members) {
 			obj.y -= 16;
 
+            if (Std.isOfType(obj, NovaText))
+            {
+                obj.color = FlxColor.WHITE;
+                if (sel == obj.ID)
+                obj.color = FlxColor.YELLOW;
+            }
+
 			if (obj.y < FlxG.camera.y - obj.height * 2) {
 				obj.y = creditObjectMaxY + FlxG.height;
 			}
 		}
+
+        if (FlxG.keys.anyJustReleased([UP, W])) sel--;
+        if (FlxG.keys.anyJustReleased([DOWN, S])) sel++;
+
+        if (sel < 0) sel = 0;
+        if (sel >= contributors.length - 1) sel = contributors.length - 1;
 	}
 }
