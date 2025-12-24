@@ -63,8 +63,6 @@ class CreditsMenu extends violet.backend.SubStateBackend {
 						contribIcon.loadSprite(contrib.https_icon);
 
 					contribIcon.updateHitbox();
-					contribIcon.scale.set(16 / contribIcon.width, 16 / contribIcon.height);
-					contribIcon.updateHitbox();
 
 					creditObjects.add(contribIcon);
 
@@ -85,7 +83,7 @@ class CreditsMenu extends violet.backend.SubStateBackend {
 		super.update(_);
 
 		for (obj in creditObjects.members) {
-			obj.y -= obj.height / 128;
+			obj.y -= obj.height / 32;
 
 			if (obj.y < FlxG.camera.y - obj.height * 2) {
 				obj.y = creditObjectMaxY + FlxG.height;
