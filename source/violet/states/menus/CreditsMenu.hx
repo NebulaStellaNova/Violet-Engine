@@ -70,7 +70,7 @@ class CreditsMenu extends violet.backend.SubStateBackend {
 					var contribIcon:NovaSprite = new NovaSprite(contribText.x, creditObjectMaxY);
 
 					if (contrib.icon != null && contrib.https_icon == null)
-						contribIcon.loadSprite(Paths.image(contrib.icon, 'menus/creditsmenu/icons'));
+						contribIcon.loadSprite(Paths.image('menus/creditsmenu/icons/' + contrib.icon));
 					if (contrib.icon == null && contrib.https_icon != null)
 						contribIcon.loadSprite(contrib.https_icon);
 
