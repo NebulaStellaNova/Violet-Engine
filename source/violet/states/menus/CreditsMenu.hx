@@ -62,5 +62,7 @@ class CreditsMenu extends violet.backend.SubStateBackend {
 				}
 			}
 		}
+
+        trace('menuedCredits');
 	}
 }
