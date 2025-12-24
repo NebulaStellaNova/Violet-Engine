@@ -1,5 +1,6 @@
 package violet.backend.objects;
 
+import violet.data.animation.AnimationData;
 import openfl.net.URLLoaderDataFormat;
 import openfl.net.URLRequest;
 import flixel.graphics.FlxGraphic;
@@ -98,6 +99,10 @@ class NovaSprite extends FlxSprite {
 			this.animation.addByPrefix(name, prefix, fps, looped);
 		else this.animation.addByIndices(name, prefix, indices, "", fps, looped);
 		this.anims.set(name, {offset: offsets != null ? [-offsets[0], -offsets[1]] : [0, 0]});
+	}
+
+	public function addAnimFromJSON(data:AnimationData) {
+		addAnim(data.name, data.prefix, data.frameIndices, data.offsets, data.frameRate, data.looped);
 	}
 
 	// for now

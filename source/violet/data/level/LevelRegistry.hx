@@ -40,6 +40,7 @@ class LevelRegistry {
         trace('debug:Found and registered level with ID "${newLevel.id}"');
         // Preload title graphic
         newLevel.buildTitleGraphic();
+        newLevel.buildProps();
         levels.push(newLevel);
     }
 

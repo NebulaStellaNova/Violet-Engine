@@ -12,7 +12,7 @@ import violet.backend.SubStateBackend;
 
 class StoryMenu extends SubStateBackend {
 
-    var charactersSprites:Array<FlxTypedSpriteGroup<NovaSprite>> = [];
+    var charactersSprites:FlxTypedSpriteGroup<FlxTypedSpriteGroup<NovaSprite>> = new FlxTypedSpriteGroup<FlxTypedSpriteGroup<NovaSprite>>();
     var difficultySprites:FlxTypedSpriteGroup<FlxTypedSpriteGroup<NovaSprite>> = new FlxTypedSpriteGroup<FlxTypedSpriteGroup<NovaSprite>>();
 
     var scoreText:NovaText;
@@ -101,6 +101,9 @@ class StoryMenu extends SubStateBackend {
             }
             diffGroup.updateHitbox();
             difficultySprites.add(diffGroup);
+
+            var charGroup:FlxTypedSpriteGroup<NovaSprite> = level.buildProps();
+            charactersSprites.add(charGroup);
         }
         add(weekBG);
         add(topBar);
@@ -114,6 +117,13 @@ class StoryMenu extends SubStateBackend {
         difficultySprites.x = FlxG.width + (difficultySprites.width / 2);
         difficultySprites.y = 560;
         add(difficultySprites);
+
+        charactersSprites.camera = storyCam;
+        // charactersSprites.updateHitbox();
+        charactersSprites.scrollFactor.set();
+        // charactersSprites.x -= FlxG.width / 2;
+        // charactersSprites.y -= FlxG.height / 2;
+        add(charactersSprites);
 
         updateTrackList();
 
@@ -155,6 +165,13 @@ class StoryMenu extends SubStateBackend {
         levelText.x = FlxG.width - levelText.getWidth() - 11;
 
         storyCam.scroll.y = MathUtil.lerp(storyCam.scroll.y, (titleGraphics[curSelected].y - (weekBG.y + weekBG.height)) + (titleGraphics[curSelected].height/2) - 135, 0.2);
+
+        for (i=>group in charactersSprites.members) {
+            group.visible = (i == curSelected);
+            for (j=>charSprite in group.members) {
+                charSprite.updateHitbox();
+            }
+        }
 
         for (i=>group in difficultySprites.members) {
             group.visible = (i == curSelected);
