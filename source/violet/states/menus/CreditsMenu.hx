@@ -45,7 +45,7 @@ class CreditsMenu extends violet.backend.SubStateBackend {
 
 		var contribI = 0;
 		for (credit in creditsJSON.credits) {
-			var title:NovaText = new NovaText(0, 0, FlxG.width / 2, credit.title, 32);
+			var title:NovaText = new NovaText(8, 0, FlxG.width / 2 - 8, credit.title, 32);
 
 			title.y = creditObjectMaxY;
 			creditObjectMaxY += title.height * 1.1;
@@ -54,7 +54,7 @@ class CreditsMenu extends violet.backend.SubStateBackend {
 
 			for (contrib in credit.contributors) {
 				contributors.push(contrib);
-				var contribText:NovaText = new NovaText(0, 0, FlxG.width / 2, contrib.name, 16);
+				var contribText:NovaText = new NovaText(16, 0, (FlxG.width / 2) - 16, contrib.name, 16);
 
 				contribText.ID = contribI;
 				contribI++;
@@ -67,7 +67,7 @@ class CreditsMenu extends violet.backend.SubStateBackend {
 				creditObjects.add(contribText);
 
 				if (contrib.icon != null || contrib.https_icon != null) {
-					var contribIcon:NovaSprite = new NovaSprite(0, creditObjectMaxY);
+					var contribIcon:NovaSprite = new NovaSprite(contribText.x, creditObjectMaxY);
 
 					creditObjectMaxY += contribIcon.height;
 
@@ -86,6 +86,7 @@ class CreditsMenu extends violet.backend.SubStateBackend {
 					creditObjects.add(contribIcon);
 
 					contribText.x += contribIcon.width * 1.1;
+                    contribText.fieldWidth = (FlxG.width / 2) - 16 - contribIcon.width;
 					contribText.y += contribIcon.height / 2;
 				}
 			}
@@ -93,7 +94,6 @@ class CreditsMenu extends violet.backend.SubStateBackend {
 
 		for (obj in creditObjects.members) {
 			obj.scrollFactor.set();
-			// obj.x += 16;
 		}
 
 		selectedGuy = new FlxText(FlxG.width / 2, 0, FlxG.width / 2, "Hi", 32);
