@@ -32,7 +32,7 @@ class CreditsMenu extends violet.backend.SubStateBackend {
 		add(bgOverlay);
 		bgOverlay.scrollFactor.set();
 		bgOverlay.alpha = 0;
-		FlxTween.tween(bgOverlay, {alpha: .2}, 1);
+		FlxTween.tween(bgOverlay, {alpha: .8}, 1);
 
 		creditObjects = new FlxTypedGroup<FlxSprite>();
 		add(creditObjects);
@@ -98,11 +98,11 @@ class CreditsMenu extends violet.backend.SubStateBackend {
 
 		selectedGuy = new FlxText(FlxG.width / 2, 0, FlxG.width / 2, "Hi", 32);
 		add(selectedGuy);
-        selectedGuy.scrollFactor.set();
+		selectedGuy.scrollFactor.set();
 
 		selectedGuyRole = new FlxText(FlxG.width / 2, selectedGuy.y + selectedGuy.height + 16, 0, "foam", 16);
 		add(selectedGuyRole);
-        selectedGuyRole.scrollFactor.set();
+		selectedGuyRole.scrollFactor.set();
 
 		trace('menuedCredits');
 	}
@@ -115,7 +115,7 @@ class CreditsMenu extends violet.backend.SubStateBackend {
 		selectedGuyRole.y = selectedGuy.y + selectedGuy.height + 16;
 
 		for (obj in creditObjects.members) {
-			obj.y -= 8;
+			obj.y -= 1 / 1000000;
 
 			if (Std.isOfType(obj, NovaText)) {
 				obj.color = FlxColor.WHITE;
@@ -146,18 +146,14 @@ class CreditsMenu extends violet.backend.SubStateBackend {
 			transitioning = true;
 
 			FlxG.sound.play(Cache.sound('menu/cancel'), .4);
-			FlxTween.tween(bgOverlay, {alpha: 0}, 1);
+			FlxTween.tween(bgOverlay, {alpha: 0}, 2);
 			for (obj in creditObjects.members)
 				FlxTween.tween(obj, {alpha: 0}, 1);
-		}
 
-        if (transitioning)
-        {
-			FlxG.sound.play(Cache.sound('menu/scroll'), .4);
-            sel--;
-            if (sel < 0)
-                sel = contributors.length - 1;
-        }
+			FlxTimer.wait(2, () -> {
+				close();
+			});
+		}
 	}
 
 	var transitioning:Bool = false;
