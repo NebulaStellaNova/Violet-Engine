@@ -75,14 +75,14 @@ class CreditsMenu extends violet.backend.SubStateBackend {
 		trace('menuedCredits');
 	}
 
-	override function stepHit(curStep:Int) {
-		super.stepHit(curStep);
+	override function update(_:Float) {
+		super.update(_);
 
 		for (obj in creditObjects.members) {
-			obj.y -= obj.height / 4;
+			obj.y -= obj.height / 128;
 
 			if (obj.y < FlxG.camera.y - obj.height * 2) {
-				obj.y = creditObjectMaxY;
+				obj.y = creditObjectMaxY + FlxG.height;
 			}
 		}
 	}
