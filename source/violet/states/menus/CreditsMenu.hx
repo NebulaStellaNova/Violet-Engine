@@ -23,10 +23,11 @@ class CreditsMenu extends violet.backend.SubStateBackend {
 	public var selectedGuy:FlxText;
 	public var selectedGuyRole:FlxText;
 
+	var bgOverlay = new NovaSprite();
+
 	override function create() {
 		super.create();
 
-		var bgOverlay = new NovaSprite();
 		bgOverlay.makeGraphic(FlxG.width, FlxG.height, FlxColor.BLACK);
 		add(bgOverlay);
 		bgOverlay.scrollFactor.set();
@@ -96,10 +97,12 @@ class CreditsMenu extends violet.backend.SubStateBackend {
 		}
 
 		selectedGuy = new FlxText(FlxG.width / 2, 0, FlxG.width / 2, "Hi", 32);
-        add(selectedGuy);
+		add(selectedGuy);
+        selectedGuy.scrollFactor.set();
 
-        selectedGuyRole = new FlxText(FlxG.width / 2, selectedGuy.y + selectedGuy.height + 16, 0, "foam", 16);
-        add(selectedGuyRole);
+		selectedGuyRole = new FlxText(FlxG.width / 2, selectedGuy.y + selectedGuy.height + 16, 0, "foam", 16);
+		add(selectedGuyRole);
+        selectedGuyRole.scrollFactor.set();
 
 		trace('menuedCredits');
 	}
@@ -107,12 +110,12 @@ class CreditsMenu extends violet.backend.SubStateBackend {
 	override function update(_:Float) {
 		super.update(_);
 
-        selectedGuy.text = contributors[sel].name;
-        selectedGuyRole.text = contributors[sel]?.role ?? 'N/A';
-        selectedGuyRole.y = selectedGuy.y + selectedGuy.height + 16;
+		selectedGuy.text = contributors[sel].name;
+		selectedGuyRole.text = contributors[sel]?.role ?? 'N/A';
+		selectedGuyRole.y = selectedGuy.y + selectedGuy.height + 16;
 
 		for (obj in creditObjects.members) {
-			obj.y -= 16;
+			obj.y -= 8;
 
 			if (Std.isOfType(obj, NovaText)) {
 				obj.color = FlxColor.WHITE;
@@ -120,7 +123,7 @@ class CreditsMenu extends violet.backend.SubStateBackend {
 					obj.color = FlxColor.YELLOW;
 			}
 
-			if (obj.y < FlxG.camera.y - obj.height * 2) {
+			if (obj.y < FlxG.camera.y - 300) {
 				obj.y = creditObjectMaxY + FlxG.height;
 			}
 		}
@@ -138,5 +141,24 @@ class CreditsMenu extends violet.backend.SubStateBackend {
 			if (sel >= contributors.length - 1)
 				sel = contributors.length - 1;
 		}
+
+		if (Controls.back && !transitioning) {
+			transitioning = true;
+
+			FlxG.sound.play(Cache.sound('menu/cancel'), .4);
+			FlxTween.tween(bgOverlay, {alpha: 0}, 1);
+			for (obj in creditObjects.members)
+				FlxTween.tween(obj, {alpha: 0}, 1);
+		}
+
+        if (transitioning)
+        {
+			FlxG.sound.play(Cache.sound('menu/scroll'), .4);
+            sel--;
+            if (sel < 0)
+                sel = contributors.length - 1;
+        }
 	}
+
+	var transitioning:Bool = false;
 }
