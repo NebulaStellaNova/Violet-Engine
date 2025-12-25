@@ -1,5 +1,6 @@
 package violet.backend.scripting;
 
+import violet.backend.scripting.events.EventBase;
 import flixel.util.FlxStringUtil;
 // import scripting.events.EventBase;
 
@@ -47,11 +48,12 @@ class ScriptPack {
 		}
 		return returner ?? def;
 	}
-	/* public function event<T:EventBase>(func:String, event:T):T {
-		for (script in scripts) {
-			if (script == null) continue;
-			call(func, [event]);
-		}
+
+	public function event<T:EventBase>(func:String, event:T):T {
+		var eventNameCapitalized = func.charAt(0).toUpperCase() + func.substr(1);
+		call(func, [event]);
+		call('on$eventNameCapitalized', [event]);
+		call('upon$eventNameCapitalized', [event]);
 		return event;
-	} */
+	}
 }

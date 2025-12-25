@@ -1,5 +1,6 @@
 package violet.backend;
 
+import violet.backend.scripting.events.EventBase;
 import flixel.FlxBasic;
 import flixel.FlxState;
 import flixel.FlxCamera;
@@ -156,10 +157,10 @@ class StateBackend extends flixel.FlxState {
 		return objORcall;
 	}
 
-	/* public function runEvent<T:EventBase>(func:String, event:T):T {
+	public function runEvent<T:EventBase>(func:String, event:T):T {
 		if (stateScripts == null) return event;
 		return stateScripts.event(func, event);
-	} */
+	}
 
 	public function debugPrint(text:String, color:String = "WHITE") {
 		/* var txt:FlxText = new FlxText(10, 0, 0, text, 20);

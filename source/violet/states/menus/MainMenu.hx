@@ -8,6 +8,7 @@ import violet.backend.utils.MathUtil;
 import violet.backend.utils.NovaUtils;
 import violet.backend.utils.ParseUtil;
 import violet.backend.display.DebugDisplay;
+import violet.backend.scripting.events.SelectionEvent;
 
 typedef MenuOffset = {
 	var idle:Array<Float>;
@@ -149,7 +150,8 @@ class MainMenu extends StateBackend {
 		super.update(elapsed);
 		// trace(Main.stateClassName);
 		// trace(Main.subStateClassName);
-		changeSelection(uiCheck());
+		if (Controls.uiUp || Controls.uiDown)
+			changeSelection(uiCheck());
 		bg.color = MathUtil.colorLerp(bg.color, menuData.items[curSelected].color, 0.16);
 		bgColorString = ParseColor.fromInt(bg.color);
 
@@ -186,15 +188,15 @@ class MainMenu extends StateBackend {
 	}
 
 	public function changeSelection(amt:Int) {
-		// var event:SelectionEvent = new SelectionEvent(FlxMath.wrap(curSelected + amt, 0, menuItems.length-1));
-		/* if (amt != 0) {
-			event = runEvent("onChangeSelection", new SelectionEvent(FlxMath.wrap(curSelected + amt, 0, menuItems.length-1)));
+		var event:SelectionEvent = new SelectionEvent(FlxMath.wrap(curSelected + amt, 0, menuItems.length-1));
+		if (amt != 0) {
+			event = runEvent("changeSelection", new SelectionEvent(FlxMath.wrap(curSelected + amt, 0, menuItems.length-1)));
 			if (event.cancelled) return;
-		} */
-		if (amt != 0/*  && !event.soundCancelled */) {
+		}
+		if (amt != 0 && !event.soundCancelled) {
 		    NovaUtils.playMenuSFX(NovaUtils.SCROLL);
 		}
-		curSelected = FlxMath.wrap(curSelected + amt, 0, menuItems.length-1);//event.selection;
+		curSelected = event.selection;
 		for (i => item in menuItems) {
 			if (i == curSelected) {
 				item.updateHitbox();
@@ -223,9 +225,9 @@ class MainMenu extends StateBackend {
 
 	public function pickSelection() {
 		if (!canSelect) return;
-		/* var event:SelectionEvent = runEvent("onPickSelection", new SelectionEvent(curSelected));
-		if (!event.soundCancelled) */ NovaUtils.playMenuSFX(NovaUtils.CONFIRM);
-		// if (event.cancelled) return;
+		var event:SelectionEvent = runEvent("pickSelection", new SelectionEvent(curSelected));
+		if (!event.soundCancelled) NovaUtils.playMenuSFX(NovaUtils.CONFIRM);
+		if (event.cancelled) return;
 
 		canSelect = false;
 
