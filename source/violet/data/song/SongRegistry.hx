@@ -48,4 +48,12 @@ class SongRegistry {
         return null;
     }
 
+    public static function getAllSongIDs():Array<String> {
+        var ids:Array<String> = [];
+        for (song in songs) {
+            ids.push(song.id);
+        }
+        return ids;
+    }
+
 }
