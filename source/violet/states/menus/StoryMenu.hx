@@ -16,6 +16,9 @@ class StoryMenu extends SubStateBackend {
     var charactersSprites:FlxTypedSpriteGroup<FlxTypedSpriteGroup<Bopper>> = new FlxTypedSpriteGroup<FlxTypedSpriteGroup<Bopper>>();
     var difficultySprites:FlxTypedSpriteGroup<FlxTypedSpriteGroup<NovaSprite>> = new FlxTypedSpriteGroup<FlxTypedSpriteGroup<NovaSprite>>();
 
+    var leftArrow:NovaSprite;
+    var rightArrow:NovaSprite;
+
     var scoreText:NovaText;
     var levelText:NovaText;
     var trackText:NovaText;
@@ -78,6 +81,17 @@ class StoryMenu extends SubStateBackend {
 		trackText.scrollFactor.set();
         trackText.x = -trackText.getWidth();
 
+        leftArrow = new NovaSprite(Paths.image('menus/storymenu/arrow'));
+        leftArrow.camera = storyCam;
+        leftArrow.scrollFactor.set();
+        leftArrow.color = 0xFF00ffff;
+
+        rightArrow = new NovaSprite(Paths.image('menus/storymenu/arrow'));
+        rightArrow.flipX = true;
+        rightArrow.camera = storyCam;
+        rightArrow.scrollFactor.set();
+        rightArrow.color = 0xFF00ffff;
+
         add(bottomBox);
         var yLevel = 0.0;
         for (i=>level in LevelRegistry.getAllLevels()) {
@@ -126,6 +140,8 @@ class StoryMenu extends SubStateBackend {
         add(topBar);
         add(scoreText);
         add(levelText);
+        add(leftArrow);
+        add(rightArrow);
         add(trackText);
 
         updateTrackList();
@@ -151,6 +167,12 @@ class StoryMenu extends SubStateBackend {
 			exit();
 		}
 
+        leftArrow.color = Controls.uiLeftPress ? FlxColor.WHITE : 0xFF00ffff;
+        rightArrow.color = Controls.uiRightPress ? FlxColor.WHITE : 0xFF00ffff;
+
+        leftArrow.scale.x = leftArrow.scale.y = Controls.uiLeftPress ? 0.9 : 1.0;
+        rightArrow.scale.x = rightArrow.scale.y = Controls.uiRightPress ? 0.9 : 1.0;
+
         if (Controls.uiDown) {
             scroll(1);
         }
@@ -167,6 +189,12 @@ class StoryMenu extends SubStateBackend {
         levelText.text = LevelRegistry.getAllLevels()[curSelected].getTitle();
         levelText.updateHitbox();
         levelText.x = FlxG.width - levelText.getWidth() - 11;
+
+        leftArrow.x = difficultySprites.x - leftArrow.width - 16;
+        leftArrow.y = difficultySprites.y + (difficultySprites.height / 2) - (leftArrow.height / 2);
+
+        rightArrow.x = difficultySprites.x + difficultySprites.width + 16;
+        rightArrow.y = difficultySprites.y + (difficultySprites.height / 2) - (rightArrow.height / 2);
 
         storyCam.scroll.y = MathUtil.lerp(storyCam.scroll.y, (titleGraphics[curSelected].y - (weekBG.y + weekBG.height)) + (titleGraphics[curSelected].height/2) - 135, 0.2);
 
@@ -231,6 +259,7 @@ class StoryMenu extends SubStateBackend {
         FlxTween.tween(levelText, { y: -112 }, 0.5, { ease: FlxEase.backIn });
         FlxTween.tween(topBar, { y: -112 }, 0.5, { ease: FlxEase.backIn });
         FlxTween.tween(weekBG, { y: -500 }, 0.5, { ease: FlxEase.backIn, startDelay: 0.2 });
+        FlxTween.tween(charactersSprites, { y: -charactersSprites.height }, 0.5, { ease: FlxEase.backIn, startDelay: 0.3 });
         FlxTween.tween(bottomBox, { y: -FlxG.height }, 0.5, { ease: FlxEase.backIn, startDelay: 0.4 });
 
         for (i=>titleAsset in titleGraphics) {
@@ -246,7 +275,7 @@ class StoryMenu extends SubStateBackend {
     override public function beatHit(beat:Int) {
         super.beatHit(beat);
 
-        trace("hello??");
+        // trace("hello??");
 
         for (i=>group in charactersSprites.members) {
             for (j=>charSprite in group.members) {

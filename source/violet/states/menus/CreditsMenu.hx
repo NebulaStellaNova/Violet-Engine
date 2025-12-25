@@ -1,5 +1,6 @@
 package violet.states.menus;
 
+import violet.backend.utils.ParseUtil;
 import violet.data.credits.CreditsEntry.CreditsContributor;
 import flixel.FlxObject;
 import flixel.text.FlxText;
@@ -38,7 +39,7 @@ class CreditsMenu extends violet.backend.SubStateBackend {
 		add(creditObjects);
 
 		try {
-			creditsJSON = Json.parse(FileUtil.getFileContent(Paths.json('config/credits', 'data')));
+			creditsJSON = ParseUtil.json('config/credits', 'data');
 		} catch (e) {
 			trace(e.message);
 		}
@@ -131,12 +132,12 @@ class CreditsMenu extends violet.backend.SubStateBackend {
             if (contributors[sel].url != null)
                 FlxG.openURL(contributors[sel].url);
 
-		if (Controls.uiUpReleased || Controls.uiDownReleased) {
+		if (Controls.uiUp || Controls.uiDown) {
 			FlxG.sound.play(Cache.sound('menu/scroll'));
 
-			if (Controls.uiUpReleased)
+			if (Controls.uiUp)
 				sel--;
-			if (Controls.uiDownReleased)
+			if (Controls.uiDown)
 				sel++;
 
 			if (sel < 0)
