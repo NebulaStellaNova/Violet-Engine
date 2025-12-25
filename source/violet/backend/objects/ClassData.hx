@@ -22,10 +22,10 @@ class ClassData {
 				case "StoryMenu":
 					this.target = new StoryMenu();
 					this.isSubState = true;
+				case "FreeplayMenu":
+					this.target = new FreeplayMenu();
 				/* case "CreditsState":
 					this.target = new CreditsState();
-				case "FreeplayState":
-					this.target = new FreeplayState();
 				case "PlayState":
 					this.target = new PlayState(); */
 				case "CreditsMenu":
