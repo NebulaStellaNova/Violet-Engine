@@ -38,7 +38,7 @@ class Script implements IFlxDestroyable {
 		'FlxSound' => flixel.sound.FlxSound,
 		'FlxTween' => flixel.tweens.FlxTween,
 		'FlxSpriteGroup' => flixel.group.FlxSpriteGroup,
-		'FlxTypedSpriteGroup' => flixel.group.FlxTypedSpriteGroup,
+		'FlxTypedSpriteGroup' => flixel.group.FlxSpriteGroup.FlxTypedSpriteGroup,
 
 		// Engine
 		'Paths' => Paths,
