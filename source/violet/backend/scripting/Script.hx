@@ -48,7 +48,12 @@ class Script implements IFlxDestroyable {
 		'FunkinSprite' => NovaSprite,
 
 		// Callbacks
-		'add' => (object:FlxBasic) -> return FlxG.state.add(object),
+		'add' => (object:FlxBasic) -> {
+			if (FlxG.state.subState != null)
+				return FlxG.state.subState.add(object);
+			else
+				return FlxG.state.add(object);
+		},
 		'remove' => (object:FlxBasic) -> return FlxG.state.remove(object),
 		'insert' => (pos:Int, object:FlxBasic) -> return FlxG.state.insert(pos, object),
 		'lerp' => MathUtil.lerp,
