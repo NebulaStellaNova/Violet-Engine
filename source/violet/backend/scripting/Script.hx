@@ -62,6 +62,9 @@ class Script implements IFlxDestroyable {
 		'lerp' => MathUtil.lerp,
 
 		// Objects
+		'X' => FlxAxes.X,
+		'Y' => FlxAxes.Y,
+		'XY' => FlxAxes.XY,
 		'FlxAxes' => {
 			X: FlxAxes.X,
 			Y: FlxAxes.Y,
