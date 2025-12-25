@@ -1,15 +1,25 @@
 package violet.backend.utils;
 
-import violet.backend.audio.Conductor;
-import violet.data.Constants;
 import haxe.io.Path;
 
+import violet.data.Constants;
+import violet.backend.audio.Conductor;
+
 class NovaUtils {
+
+	public static var SCROLL:Int = 0;
+	public static var CANCEL:Int = 1;
+	public static var CONFIRM:Int = 2;
+
 
 	public static function playMenuMusic():Void {
 		if (Conductor.curMusic != Constants.MENU_MUSIC) {
 			Conductor.playMusic(Constants.MENU_MUSIC);
 		}
+	}
+
+	public static function playMenuSFX(which:Int):Void {
+		FlxG.sound.play(Cache.sound('menu/${['scroll', 'cancel', 'confirm'][which]}'));
 	}
 
 	public static function playMusic(path:String, volume:Float = 1):Void {

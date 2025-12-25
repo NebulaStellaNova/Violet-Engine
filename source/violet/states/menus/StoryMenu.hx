@@ -1,15 +1,17 @@
 package violet.states.menus;
 
-import violet.backend.objects.Bopper;
 import flixel.group.FlxSpriteGroup.FlxTypedSpriteGroup;
 import flixel.group.FlxGroup.FlxTypedGroup;
-import violet.data.song.SongRegistry;
 import flixel.math.FlxMath;
-import violet.backend.utils.MathUtil;
 import flixel.addons.plugin.taskManager.FlxTask;
-import violet.data.level.LevelRegistry;
 import flixel.FlxCamera;
+
+import violet.backend.objects.Bopper;
+import violet.data.song.SongRegistry;
+import violet.backend.utils.MathUtil;
+import violet.backend.utils.NovaUtils;
 import violet.backend.SubStateBackend;
+import violet.data.level.LevelRegistry;
 
 class StoryMenu extends SubStateBackend {
 
@@ -165,6 +167,7 @@ class StoryMenu extends SubStateBackend {
         super.update(elapsed);
         if (Controls.back) {
 			exit();
+            canInteract = false;
 		}
 
         leftArrow.color = Controls.uiLeftPress ? FlxColor.WHITE : 0xFF00ffff;
@@ -225,7 +228,7 @@ class StoryMenu extends SubStateBackend {
         curSelected = FlxMath.wrap(curSelected + direction, 0, titleGraphics.length - 1);
         updateTrackList();
         if (playSound)
-            FlxG.sound.play(Cache.sound('menu/scroll'));
+		    NovaUtils.playMenuSFX(NovaUtils.SCROLL);
     }
 
     function changeDifficulty(direction:Int) {
@@ -250,6 +253,8 @@ class StoryMenu extends SubStateBackend {
 
     function exit() {
         if (!canInteract) return;
+		NovaUtils.playMenuSFX(NovaUtils.CANCEL);
+
         updateAlpha = false;
 		FlxTween.tween(cast(_parentState, MainMenu).bg, {x: 0 }, 0.5*2, { ease: FlxEase.quadInOut, startDelay: 0.4 });
 

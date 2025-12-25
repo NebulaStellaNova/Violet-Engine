@@ -2,6 +2,7 @@ package violet.states.menus;
 
 import flixel.FlxObject;
 import flixel.math.FlxMath;
+
 import violet.backend.StateBackend;
 import violet.backend.utils.MathUtil;
 import violet.backend.utils.NovaUtils;
@@ -191,7 +192,7 @@ class MainMenu extends StateBackend {
 			if (event.cancelled) return;
 		} */
 		if (amt != 0/*  && !event.soundCancelled */) {
-			FlxG.sound.play(Cache.sound('menu/scroll'));
+		    NovaUtils.playMenuSFX(NovaUtils.SCROLL);
 		}
 		curSelected = FlxMath.wrap(curSelected + amt, 0, menuItems.length-1);//event.selection;
 		for (i => item in menuItems) {
@@ -223,7 +224,7 @@ class MainMenu extends StateBackend {
 	public function pickSelection() {
 		if (!canSelect) return;
 		/* var event:SelectionEvent = runEvent("onPickSelection", new SelectionEvent(curSelected));
-		if (!event.soundCancelled) */ FlxG.sound.play(Cache.sound('menu/confirm'));
+		if (!event.soundCancelled) */ NovaUtils.playMenuSFX(NovaUtils.CONFIRM);
 		// if (event.cancelled) return;
 
 		canSelect = false;

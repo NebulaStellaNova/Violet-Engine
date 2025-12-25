@@ -1,9 +1,11 @@
 package violet.states.menus;
 
-import violet.backend.SubStateBackend;
 import flixel.group.FlxSpriteGroup;
 import flixel.math.FlxMath;
+
 import violet.backend.utils.MathUtil;
+import violet.backend.utils.NovaUtils;
+import violet.backend.SubStateBackend;
 
 class ModMenu extends SubStateBackend {
 	public var statusText:NovaSprite;
@@ -213,6 +215,8 @@ class ModMenu extends SubStateBackend {
 	}
 
 	function exit() {
+		NovaUtils.playMenuSFX(NovaUtils.CANCEL);
+
 		FlxTween.tween(modInfoBox, {x: FlxG.width + 200 }, 0.5, { ease: FlxEase.smootherStepIn });
 
 		FlxTween.tween(cast(_parentState, MainMenu).bg, {x: 0 }, 0.5*2, { ease: FlxEase.quadInOut });

@@ -1,14 +1,17 @@
 package violet.states.menus;
 
-import violet.backend.utils.ParseUtil;
-import violet.data.credits.CreditsEntry.CreditsContributor;
+import haxe.Json;
+
+import flixel.FlxBasic;
 import flixel.FlxObject;
 import flixel.text.FlxText;
-import violet.backend.utils.FileUtil;
-import haxe.Json;
-import flixel.FlxBasic;
 import flixel.group.FlxGroup.FlxTypedGroup;
+
+import violet.backend.utils.FileUtil;
+import violet.backend.utils.ParseUtil;
+import violet.backend.utils.NovaUtils;
 import violet.data.credits.CreditsEntry.CreditsJSON;
+import violet.data.credits.CreditsEntry.CreditsContributor;
 
 class CreditsMenu extends violet.backend.SubStateBackend {
 	public var creditsJSON:CreditsJSON;
@@ -149,7 +152,9 @@ class CreditsMenu extends violet.backend.SubStateBackend {
 		if (Controls.back && !transitioning) {
 			transitioning = true;
 
-			FlxG.sound.play(Cache.sound('menu/cancel'), .4);
+			FlxTween.tween(cast(_parentState, MainMenu).bg, {x: 0 }, 0.5*2, { ease: FlxEase.quadInOut, startDelay: 0.4 });
+
+			NovaUtils.playMenuSFX(NovaUtils.CANCEL);
 			FlxTween.tween(bgOverlay, {alpha: 0}, 2);
 			for (obj in creditObjects.members)
 				FlxTween.tween(obj, {alpha: 0}, 1);
