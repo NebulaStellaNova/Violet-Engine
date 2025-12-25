@@ -1,5 +1,6 @@
 package violet.backend.scripting;
 
+import violet.backend.utils.NovaUtils;
 import flixel.group.FlxGroup.FlxTypedGroup;
 import flixel.util.FlxAxes;
 import violet.backend.utils.MathUtil;
@@ -37,12 +38,14 @@ class Script implements IFlxDestroyable {
 		'FlxSound' => flixel.sound.FlxSound,
 		'FlxTween' => flixel.tweens.FlxTween,
 		'FlxSpriteGroup' => flixel.group.FlxSpriteGroup,
+		'FlxTypedSpriteGroup' => flixel.group.FlxTypedSpriteGroup,
 
 		// Engine
 		'Paths' => Paths,
 		'FlxText' => NovaText,
 		'controls' => Controls,
 		'Controls' => Controls,
+		'NovaUtils' => NovaUtils,
 		'FlxSprite' => NovaSprite,
 		'NovaSprite' => NovaSprite,
 		'FunkinSprite' => NovaSprite,
