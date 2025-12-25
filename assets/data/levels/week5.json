@@ -18,7 +18,7 @@
     {
       "assetPath": "menus/storymenu/props/bf",
       "scale": 0.8,
-      "offsets": [250, 100],
+      "offsets": [150, 85],
       "animations": [
         {
           "name": "idle",
@@ -35,7 +35,7 @@
     {
       "assetPath": "menus/storymenu/props/gf",
       "scale": 0.5,
-      "offsets": [200, 80],
+      "offsets": [225, 80],
       "animations": [
         {
           "name": "danceLeft",

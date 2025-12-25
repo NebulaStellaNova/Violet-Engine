@@ -26,7 +26,7 @@
     {
       "assetPath": "menus/storymenu/props/bf",
       "scale": 0.8,
-      "offsets": [200, 100],
+      "offsets": [150, 85],
       "danceEvery": 2,
       "animations": [
         {

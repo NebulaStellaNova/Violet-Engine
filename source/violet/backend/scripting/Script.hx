@@ -26,25 +26,26 @@ class Script implements IFlxDestroyable {
 	public var autoImports:Map<String, Dynamic> = [
 		// Flixel
 		'FlxG' => flixel.FlxG,
-		'FlxAngle' => flixel.math.FlxAngle,
 		'FlxBasic' => flixel.FlxBasic,
 		'FlxObject' => flixel.FlxObject,
 		'FlxCamera' => flixel.FlxCamera,
-		'FlxTween' => flixel.tweens.FlxTween,
-		'FlxTimer' => flixel.util.FlxTimer,
-		'FlxMath' => flixel.math.FlxMath,
 		'FlxTypedGroup' => FlxTypedGroup,
-		'FlxSpriteGroup' => flixel.group.FlxSpriteGroup,
+		'FlxMath' => flixel.math.FlxMath,
+		'FlxAngle' => flixel.math.FlxAngle,
+		'FlxEase' => flixel.tweens.FlxEase,
+		'FlxTimer' => flixel.util.FlxTimer,
 		'FlxSound' => flixel.sound.FlxSound,
+		'FlxTween' => flixel.tweens.FlxTween,
+		'FlxSpriteGroup' => flixel.group.FlxSpriteGroup,
 
 		// Engine
-		'FunkinSprite' => NovaSprite,
-		'NovaSprite' => NovaSprite,
-		'FlxSprite' => NovaSprite,
+		'Paths' => Paths,
+		'FlxText' => NovaText,
 		'controls' => Controls,
 		'Controls' => Controls,
-		'FlxText' => NovaText,
-		'Paths' => Paths,
+		'FlxSprite' => NovaSprite,
+		'NovaSprite' => NovaSprite,
+		'FunkinSprite' => NovaSprite,
 
 		// Callbacks
 		'add' => (object:FlxBasic) -> return FlxG.state.add(object),

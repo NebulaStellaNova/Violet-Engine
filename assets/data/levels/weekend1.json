@@ -18,7 +18,7 @@
     {
       "assetPath": "menus/storymenu/props/pico-player",
       "scale": 1.0,
-      "offsets": [175, 80],
+      "offsets": [150, 80],
       "animations": [
         {
           "name": "idle",
@@ -36,7 +36,7 @@
     {
       "assetPath": "menus/storymenu/props/nene",
       "scale": 1.0,
-      "offsets": [150, 80],
+      "offsets": [200, 80],
       "animations": [
         {
           "name": "danceLeft",
