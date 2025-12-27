@@ -1,5 +1,7 @@
 package violet.backend.scripting;
 
+import violet.backend.objects.special_thanks.GenzuSprite;
+import violet.backend.objects.special_thanks.JamSprite;
 import violet.backend.utils.NovaUtils;
 import flixel.group.FlxGroup.FlxTypedGroup;
 import flixel.util.FlxAxes;
@@ -51,6 +53,10 @@ class Script implements IFlxDestroyable {
 		'FlxSprite' => NovaSprite,
 		'NovaSprite' => NovaSprite,
 		'FunkinSprite' => NovaSprite,
+
+		// Secial Thanks
+		'GenzuSprite' => GenzuSprite,
+		'JamSprite' => JamSprite,
 
 		// Callbacks
 		'add' => (object:FlxBasic) -> {
