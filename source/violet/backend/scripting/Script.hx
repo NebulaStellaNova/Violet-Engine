@@ -46,13 +46,16 @@ class Script implements IFlxDestroyable {
 		'Paths' => Paths,
 		'FlxText' => NovaText,
 		'NovaText' => NovaText,
-		'AngleMask' => violet.backend.shaders.AngleMask,
 		'controls' => Controls,
 		'Controls' => Controls,
 		'NovaUtils' => NovaUtils,
 		'FlxSprite' => NovaSprite,
 		'NovaSprite' => NovaSprite,
 		'FunkinSprite' => NovaSprite,
+
+		// Shaders
+		'AngleMask' => violet.backend.shaders.AngleMask,
+		'GaussianBlurShader' => violet.backend.shaders.GaussianBlurShader,
 
 		// Secial Thanks
 		'GenzuSprite' => GenzuSprite,
