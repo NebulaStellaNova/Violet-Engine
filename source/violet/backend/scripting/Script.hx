@@ -43,7 +43,6 @@ class Script implements IFlxDestroyable {
 		// Engine
 		'Paths' => Paths,
 		'FlxText' => NovaText,
-		'FlxText' => NovaText,
 		'NovaText' => NovaText,
 		'controls' => Controls,
 		'Controls' => Controls,
