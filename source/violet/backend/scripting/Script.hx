@@ -9,6 +9,7 @@ import violet.backend.utils.MathUtil;
 import flixel.FlxBasic;
 import flixel.util.FlxStringUtil;
 import flixel.util.FlxDestroyUtil.IFlxDestroyable;
+import openfl.filters.GlowFilter;
 
 import violet.backend.utils.FileUtil;
 import violet.backend.filesystem.Paths;
