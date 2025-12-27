@@ -51,13 +51,13 @@ class Song {
         return _data?.icon ?? '';
     }
 
-    public var instSuffix(get, null):Bool;
-    public function get_instSuffix():Bool {
+    public var instSuffix(get, null):String;
+    public function get_instSuffix():String {
         return _data?.instSuffix ?? '';
     }
 
-    public var vocalsSuffix(get, null):Bool;
-    public function get_vocalsSuffix():Bool {
+    public var vocalsSuffix(get, null):String;
+    public function get_vocalsSuffix():String {
         return _data?.vocalsSuffix ?? '';
     }
 
