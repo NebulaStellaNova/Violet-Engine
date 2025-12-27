@@ -56,6 +56,9 @@ class Paths {
 	inline public static function sound(path:String, directory:String = '', ?ext:String = 'ogg'):String
 		return file(path, [directory, 'sounds'].join('/'), ext);
 
+	inline public static function frag(path:String, directory:String = '', ?ext:String = 'frag'):String
+		return file(path, [directory, 'shaders'].join('/'), ext);
+
 	inline public static function music(path:String, directory:String = '', ?ext:String = 'ogg'):String
 		return file(path, [directory, 'music'].join('/'), ext);
 
