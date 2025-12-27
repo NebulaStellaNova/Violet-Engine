@@ -14,10 +14,10 @@ typedef SongData = {
 	public var ?customValues:Dynamic;
 
 	public var ?icon:String;
-	public var ?color:FlxColor;
+	public var ?color:FlxColor; // Doesn't do shit, only here for compatibilty
 
-	public var ?coopAllowed:Bool;
-	public var ?opponentModeAllowed:Bool;
+	public var ?coopAllowed:Bool; // Doesn't do shit, only here for compatibilty
+	public var ?opponentModeAllowed:Bool; // Doesn't do shit, only here for compatibilty
 
 	// public var ?metas:Map<String, ChartMetaData>;
 	public var ?instSuffix:String;
