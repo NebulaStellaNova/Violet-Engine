@@ -19,6 +19,8 @@ var screenshot:GenzuSprite;
 var blur = new GaussianBlurShader(1);
 var glowColor = 0xFF00ccff;
 
+var xPos = -1000; // For Capsule
+
 function create() {
 
     camHUD = new FlxCamera();
@@ -57,7 +59,7 @@ function create() {
 
         trace(song.displayName);
 
-        var capsuleGroup = new FlxTypedSpriteGroup();
+        var capsuleGroup = new FlxTypedSpriteGroup(xPos, 0);
         capsuleGroup.cameras = [camHUD];
 
         capsule = new GenzuSprite(0, 0, Paths.image("menus/freeplay/capsule/freeplayCapsule"));
@@ -71,7 +73,10 @@ function create() {
         add(capsuleGroup);
         daCapsules.push(capsuleGroup);
 
-        for (i in 0...3) {
+
+        var textGroup = new FlxTypedSpriteGroup(0, 0);
+
+        // for (i in 0...3) {
             var txt = new NovaText(0, 0, null, song.displayName, 40);
             txt.setFont(Paths.font("5by7"));
             txt.updateHitbox();
@@ -79,16 +84,26 @@ function create() {
             txt.y += 42;
             txt.color = glowColor;
             txt.shader = blur;
-            capsuleGroup.add(txt);
-        }
+            textGroup.add(txt);
+        // }
 
         var txt2 = new NovaText(0, 0, null, song.displayName, 40);
         txt2.setFont(Paths.font("5by7"));
         txt2.updateHitbox();
         txt2.x += 120;
         txt2.y += 42;
-        capsuleGroup.add(txt2);
+        /* txt2.textField.filters = [
+            new openfl.filters.GlowFilter(glowColor, 1, 5, 5, 210, BitmapFilterQuality.MEDIUM),
+            // new openfl.filters.BlurFilter(5, 5, BitmapFilterQuality.LOW)
+        ]; */
+        textGroup.add(txt2);
+
+        capsuleGroup.add(textGroup);
     }
+
+    FlxTimer.wait(0.3, ()->{
+        xPos = 315;
+    });
 }
 
 function update() {
@@ -107,14 +122,15 @@ function update() {
     for (i in 0...daCapsules.length) {
         var capsule = daCapsules[i].members[0];
         capsule.playAnim(curSelected == i ? "selected" : "idle");
+        var text = daCapsules[i].members[1];
+        text.alpha = curSelected == i ? 1 : 0.6;
 
-        var xPos = 315;
         if (curSelected < i) {
-            daCapsules[i].x = lerp(daCapsules[i].x, xPos - ((i - curSelected)*50), 0.2);
+            daCapsules[i].x = xPos + lerp(daCapsules[i].x - xPos, - ((i - curSelected)*50), 0.2);
         } else if (curSelected == i) {
-            daCapsules[i].x = lerp(daCapsules[i].x, xPos, 0.2);
+            daCapsules[i].x = xPos + lerp(daCapsules[i].x - xPos, 0, 0.2);
         } else if (curSelected > i) {
-            daCapsules[i].x = lerp(daCapsules[i].x, xPos + ((i - curSelected)*50), 0.2);
+            daCapsules[i].x = xPos + lerp(daCapsules[i].x - xPos, ((i - curSelected)*50), 0.2);
         }
         daCapsules[i].y = lerp(daCapsules[i].y, ((FlxG.height / 2) + 140 * (i - curSelected)) - 140, 0.2);
     }
