@@ -7,31 +7,31 @@ import violet.backend.scripting.ScriptPack;
 
 class SubStateBackend extends flixel.FlxSubState {
 
-	public var curBeat(get, null):Int = 0;
+	public var curBeat(get, never):Int;
 	function get_curBeat() return Conductor.curBeat;
 
-	public var curStep(get, null):Int = 0;
+	public var curStep(get, never):Int;
 	function get_curStep() return Conductor.curStep;
 
-	public var curMeasure(get, null):Int = 0;
+	public var curMeasure(get, never):Int;
 	function get_curMeasure() return Conductor.curMeasure;
 
-	public var curBeatFloat:Float = 0;
+	public var curBeatFloat(get, never):Float;
 	function get_curBeatFloat() return Conductor.curBeatFloat;
 
-	public var curStepFloat:Float = 0;
+	public var curStepFloat(get, never):Float;
 	function get_curStepFloat() return Conductor.curStepFloat;
 
-	public var curMeasureFloat:Float = 0;
+	public var curMeasureFloat(get, never):Float;
 	function get_curMeasureFloat() return Conductor.curMeasureFloat;
 
-	public var beat:Int = 0;
+	public var beat(get, never):Int;
 	function get_beat() return Conductor.curBeat;
 
-	public var step:Int = 0;
+	public var step(get, never):Int;
 	function get_step() return Conductor.curStep;
 
-	public var measure:Int = 0;
+	public var measure(get, never):Int;
 	function get_measure() return Conductor.curMeasure;
 
 
