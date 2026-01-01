@@ -1,22 +1,22 @@
 package violet.data.credits;
 
 typedef CreditsJSON = {
-	credits:Array<CreditsEntry>
+	var credits:Array<CreditsEntry>;
 }
 
 typedef CreditsEntry = {
-	title:String,
-	contributors:Array<CreditsContributor>
+	var title:String;
+	var contributors:Array<CreditsContributor>;
 }
 
 typedef CreditsContributor = {
-	name:String,
-	?role:String,
+	var name:String;
+	var ?role:String;
 
-	?icon:String,
-	?https_icon:String,
+	var ?icon:String;
+	var ?https_icon:String;
 
-	?icon_scale:{?x:Float, ?y:Float},
+	@:default([1, 1]) var ?icon_scale:Array<Float>;
 
-	?url:String
+	var ?url:String;
 }

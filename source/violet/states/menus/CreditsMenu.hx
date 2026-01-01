@@ -1,17 +1,11 @@
 package violet.states.menus;
 
-import haxe.Json;
-
-import flixel.FlxBasic;
-import flixel.FlxObject;
+import flixel.group.FlxGroup;
 import flixel.text.FlxText;
-import flixel.group.FlxGroup.FlxTypedGroup;
-
 import violet.backend.utils.FileUtil;
-import violet.backend.utils.ParseUtil;
 import violet.backend.utils.NovaUtils;
-import violet.data.credits.CreditsEntry.CreditsJSON;
-import violet.data.credits.CreditsEntry.CreditsContributor;
+import violet.backend.utils.ParseUtil;
+import violet.data.credits.CreditsEntry;
 
 class CreditsMenu extends violet.backend.SubStateBackend {
 	public var creditsJSON:CreditsJSON;
@@ -42,9 +36,10 @@ class CreditsMenu extends violet.backend.SubStateBackend {
 		add(creditObjects);
 
 		try {
-			creditsJSON = ParseUtil.json('config/credits', 'data');
+			final jsonPath = Paths.json('config/credits', 'data');
+			creditsJSON = new json2object.JsonParser<CreditsJSON>().fromJson(ParseUtil.removeJsonComments(FileUtil.getFileContent(jsonPath)), jsonPath);
 		} catch (e) {
-			trace(e.message);
+			trace(e);
 		}
 
 		var contribI = 0;
@@ -78,10 +73,9 @@ class CreditsMenu extends violet.backend.SubStateBackend {
 					if (contrib.icon == null && contrib.https_icon != null)
 						contribIcon.loadSprite(contrib.https_icon);
 
-					if (contrib.icon_scale?.x != null)
-						contribIcon.scale.x = contrib.icon_scale.x;
-					if (contrib.icon_scale?.y != null)
-						contribIcon.scale.y = contrib.icon_scale.y;
+					contrib.icon_scale ??= [1, 1];
+					if (contrib.icon_scale.length < 2) contrib.icon_scale[1] = contrib.icon_scale[0];
+					contribIcon.scale.set(contrib.icon_scale[0] ?? 1, contrib.icon_scale[1] ?? 1);
 
 					contribIcon.updateHitbox();
 
