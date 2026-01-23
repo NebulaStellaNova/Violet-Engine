@@ -285,7 +285,7 @@ class StoryMenu extends SubStateBackend {
         for (i=>group in charactersSprites.members) {
             for (j=>charSprite in group.members) {
                 if (beat % charSprite.danceEvery == 0)
-                    charSprite.playAnim("idle", true);
+                    charSprite.dance();
             }
         }
     }

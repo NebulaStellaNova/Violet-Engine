@@ -41,6 +41,12 @@ class Conductor {
 		FlxRhythmConductor.instance.onMeasureHit.add((measure:Int, backward:Bool) -> { StateBackend.instance.measureHit(measure); });
 	}
 
+	public static function initCallbacksSubState() {
+		FlxRhythmConductor.instance.onBeatHit.add((beat:Int, backward:Bool) -> { if (SubStateBackend.instance != null) SubStateBackend.instance.beatHit(beat); });
+		FlxRhythmConductor.instance.onStepHit.add((step:Int, backward:Bool) -> { if (SubStateBackend.instance != null) SubStateBackend.instance.stepHit(step); });
+		FlxRhythmConductor.instance.onMeasureHit.add((measure:Int, backward:Bool) -> { if (SubStateBackend.instance != null) SubStateBackend.instance.measureHit(measure); });
+	}
+
 	public static function setInitialBPM(bpm:Float, tsn:Int = 4, tsd:Int = 4) {
 		BPM = bpm;
 		FlxRhythmConductor.instance.loadMeta([

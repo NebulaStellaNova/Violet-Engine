@@ -22,6 +22,9 @@ class NovaSprite extends FlxSprite {
 
 	public var anims:Map<String, AnimationInfo> = new Map<String, AnimationInfo>();
 
+	public var animationList(get, never):Array<String>;
+	function get_animationList() return [ for (i in this.anims.keys()) i ];
+
 	public var globalOffset:FlxPoint = new FlxPoint();
 
 	public function new(x:Float = 0.0, y:Float = 0.0, ?path:String) {

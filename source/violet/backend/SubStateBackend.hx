@@ -7,7 +7,7 @@ import violet.backend.scripting.ScriptPack;
 
 class SubStateBackend extends flixel.FlxSubState {
 
-	/* public var curBeat(get, never):Int;
+	public var curBeat(get, never):Int;
 	function get_curBeat() return Conductor.curBeat;
 
 	public var curStep(get, never):Int;
@@ -16,15 +16,6 @@ class SubStateBackend extends flixel.FlxSubState {
 	public var curMeasure(get, never):Int;
 	function get_curMeasure() return Conductor.curMeasure;
 
-	public var curBeatFloat(get, never):Float;
-	function get_curBeatFloat() return Conductor.curBeatFloat;
-
-	public var curStepFloat(get, never):Float;
-	function get_curStepFloat() return Conductor.curStepFloat;
-
-	public var curMeasureFloat(get, never):Float;
-	function get_curMeasureFloat() return Conductor.curMeasureFloat;
-
 	public var beat(get, never):Int;
 	function get_beat() return Conductor.curBeat;
 
@@ -32,7 +23,7 @@ class SubStateBackend extends flixel.FlxSubState {
 	function get_step() return Conductor.curStep;
 
 	public var measure(get, never):Int;
-	function get_measure() return Conductor.curMeasure; */
+	function get_measure() return Conductor.curMeasure;
 
 
 	#if SCRIPT_SUPPORT
@@ -42,9 +33,12 @@ class SubStateBackend extends flixel.FlxSubState {
 	public var usesLoadingScreen = false;
 	public var stuffToLoad:Array<flixel.FlxBasic> = [];
 
+	public static var instance:SubStateBackend;
+
 	override public function create() {
 		super.create();
 
+		instance = this;
 
 		subStateScripts.parent = this;
 
@@ -98,33 +92,10 @@ class SubStateBackend extends flixel.FlxSubState {
 		#end
 	}
 
-
-	/* @:unreflective
-	var previousStep:Int = -1;
-	@:unreflective
-	var previousBeat:Int = -1;
-	@:unreflective
-	var previousMeasure:Int = -1; */
-
 	var notificationManager = new haxe.ui.notifications.NotificationManager();
 	var errIndex:Int = 0;
 	override public function update(_) {
 		super.update(_);
-
-		// trace(Conductor.curStep);
-
-		/* if (previousStep != Conductor.curStep) {
-			stepHit(Conductor.curStep);
-			previousStep = Conductor.curStep;
-		}
-		if (previousBeat != Conductor.curBeat) {
-			beatHit(Conductor.curBeat);
-			previousBeat = Conductor.curBeat;
-		}
-		if (previousMeasure != Conductor.curMeasure) {
-			measureHit(Conductor.curMeasure);
-			previousMeasure = Conductor.curMeasure;
-		} */
 
 		if (nextFrame) {
 			if (errIndex > violet.backend.CrashHandler.notifList.length - 1) {
@@ -173,6 +144,11 @@ class SubStateBackend extends flixel.FlxSubState {
 			className: "",
 			methodName: ""
 		}); */
+	}
+
+	override function close() {
+		instance = null;
+		super.close();
 	}
 
 	public function stepHit(curStep:Int) {

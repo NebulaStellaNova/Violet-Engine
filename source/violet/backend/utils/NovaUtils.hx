@@ -34,6 +34,7 @@ class NovaUtils {
 		Conductor.resetConductor();
 		FlxG.sound.playMusic(Cache.music(musicPath.join('/')), volume);
 		Conductor.initCallbacks();
+		Conductor.initCallbacksSubState();
 		Conductor.setInitialBPM(metaData.bpm, metaData.signature[0], metaData.signature[1]);
 	}
 
