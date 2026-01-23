@@ -7,7 +7,7 @@ import violet.backend.scripting.ScriptPack;
 
 class SubStateBackend extends flixel.FlxSubState {
 
-	public var curBeat(get, never):Int;
+	/* public var curBeat(get, never):Int;
 	function get_curBeat() return Conductor.curBeat;
 
 	public var curStep(get, never):Int;
@@ -32,7 +32,7 @@ class SubStateBackend extends flixel.FlxSubState {
 	function get_step() return Conductor.curStep;
 
 	public var measure(get, never):Int;
-	function get_measure() return Conductor.curMeasure;
+	function get_measure() return Conductor.curMeasure; */
 
 
 	#if SCRIPT_SUPPORT
@@ -99,12 +99,12 @@ class SubStateBackend extends flixel.FlxSubState {
 	}
 
 
-	@:unreflective
+	/* @:unreflective
 	var previousStep:Int = -1;
 	@:unreflective
 	var previousBeat:Int = -1;
 	@:unreflective
-	var previousMeasure:Int = -1;
+	var previousMeasure:Int = -1; */
 
 	var notificationManager = new haxe.ui.notifications.NotificationManager();
 	var errIndex:Int = 0;
@@ -113,7 +113,7 @@ class SubStateBackend extends flixel.FlxSubState {
 
 		// trace(Conductor.curStep);
 
-		if (previousStep != Conductor.curStep) {
+		/* if (previousStep != Conductor.curStep) {
 			stepHit(Conductor.curStep);
 			previousStep = Conductor.curStep;
 		}
@@ -124,7 +124,7 @@ class SubStateBackend extends flixel.FlxSubState {
 		if (previousMeasure != Conductor.curMeasure) {
 			measureHit(Conductor.curMeasure);
 			previousMeasure = Conductor.curMeasure;
-		}
+		} */
 
 		if (nextFrame) {
 			if (errIndex > violet.backend.CrashHandler.notifList.length - 1) {

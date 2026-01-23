@@ -1,5 +1,6 @@
 package violet.backend.utils;
 
+import violet.backend.audio.Conductor;
 import haxe.io.Path;
 
 import violet.data.Constants;
@@ -11,10 +12,11 @@ class NovaUtils {
 	public static var CANCEL:Int = 1;
 	public static var CONFIRM:Int = 2;
 
+	public static var CURRENT_MUSIC:String = "";
 
 	public static function playMenuMusic():Void {
-		if (Conductor.curMusic != Constants.MENU_MUSIC) {
-			Conductor.playMusic(Constants.MENU_MUSIC);
+		if (CURRENT_MUSIC != Constants.MENU_MUSIC) {
+			playMusic(Constants.MENU_MUSIC);
 		}
 	}
 
@@ -24,8 +26,15 @@ class NovaUtils {
 
 	public static function playMusic(path:String, volume:Float = 1):Void {
 		var musicPath:Array<String> = path.split('/');
+		CURRENT_MUSIC = path;
 		musicPath.insert(musicPath.length - 2, Path.withoutExtension(musicPath[musicPath.length - 1]));
+		var metaData = ParseUtil.json('music/${musicPath.join('/')}');
+
+		// Setup Conductor
+		Conductor.resetConductor();
 		FlxG.sound.playMusic(Cache.music(musicPath.join('/')), volume);
+		Conductor.initCallbacks();
+		Conductor.setInitialBPM(metaData.bpm, metaData.signature[0], metaData.signature[1]);
 	}
 
 	inline public static function getTimerPrecise():Float {

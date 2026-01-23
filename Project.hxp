@@ -254,6 +254,8 @@ class EngineAsset {
 		// json parsing
 		addHaxelib('json2object', 'git');
 
+		addHaxelib('flxrhythmconductor', 'git');
+
 		// debugging
 		// if (isDesktop() && isDebug())
 		// 	addHaxelib('hxcpp-debug-server');
