@@ -1,6 +1,8 @@
 package violet.states;
 
-class InitialState extends flixel.FlxState { // for now
+import violet.backend.StateBackend;
+
+class InitialState extends StateBackend { // for now
 	override public function create():Void {
 		FlxG.fixedTimestep = false;
 		FlxSprite.defaultAntialiasing = true; // this ain't a pixel game... yeah ik week 6 exists!
