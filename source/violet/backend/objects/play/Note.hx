@@ -75,7 +75,7 @@ class Note extends NovaSprite {
 		final meta:NoteSkinMeta = getMeta(skin);
 		loadSprite(Paths.image('$skin/${meta.notes.assetPath ?? 'notes'}', 'game/notes'));
 		for (data in meta.notes.animations.filter(data -> return data.mania == parent.strums.length)) {
-			if (data.id != ID) continue;
+			if (data.id != id) continue;
 			addAnimFromJSON(data);
 		}
 		var lol:Array<Float> = meta.notes.offsets != null ? [-meta.notes.offsets[0], -meta.notes.offsets[1]] : [0, 0];

@@ -65,7 +65,7 @@ class Sustain extends NovaSprite {
 		final meta:NoteSkinMeta = getMeta(skin);
 		loadSprite(Paths.image('$skin/${meta.sustains.assetPath ?? 'sustains'}', 'game/notes'));
 		for (data in meta.sustains.animations.filter(data -> return data.mania == parent.strums.length)) {
-			if (data.id != ID) continue;
+			if (data.id != id) continue;
 			addAnimFromJSON(data);
 		}
 		var lol:Array<Float> = meta.sustains.offsets != null ? [-meta.sustains.offsets[0], -meta.sustains.offsets[1]] : [0, 0];
