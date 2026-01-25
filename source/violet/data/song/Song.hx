@@ -1,6 +1,6 @@
 package violet.data.song;
 
-import violet.backend.utils.ParseUtil;
+
 
 class Song {
 
@@ -21,8 +21,8 @@ class Song {
         return _data?.bpm ?? 120;
     }
 
-    public var beatsPerMeasure(get, null):Float;
-    public function get_beatsPerMeasure():Float {
+    public var beatsPerMeasure(get, null):Int;
+    public function get_beatsPerMeasure():Int {
         return _data?.beatsPerMeasure ?? 4;
     }
 

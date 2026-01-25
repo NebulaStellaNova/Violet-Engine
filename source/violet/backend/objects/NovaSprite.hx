@@ -29,7 +29,6 @@ class NovaSprite extends FlxSprite {
 
 	public function new(x:Float = 0.0, y:Float = 0.0, ?path:String) {
 		super(x, y);
-		this.antialiasing = true;
 		if (path != null)
 			this.loadSprite(path);
 	}
@@ -40,27 +39,25 @@ class NovaSprite extends FlxSprite {
 		} else {
 			if (Paths.fileExists(path.replace(".png", ".xml"), true)) {
 				this.filePath = path;
-				this.fileName = Paths.getFileName(path);
+				this.fileName = Paths.getFileName(path, true);
 				this.animated = true;
 				this.frames = FlxAtlasFrames.fromSparrow(path/* Cache.image(path, 'root', null) */, path.replace(".png", ".xml"));
-				this.onLoaded(this);
+				this.onLoaded();
 			} else {
 				this.loadGraphic(path);
 				this.updateHitbox();
-				this.onLoaded(this);
+				this.onLoaded();
 			}
 		}
 		return this;
 	}
 
-	dynamic function onLoaded(?self:NovaSprite):Void {
-
-	}
+	dynamic function onLoaded():Void {}
 
 	@:unreflective
 	private var prevUrl:String = "";
 	@:unreflective
-	private function fromWeb(url:String) {
+	private function fromWeb(url:String):NovaSprite {
 		url = url.split("?")[0];
 		prevUrl = url;
 		var loader = new URLLoader();
@@ -72,16 +69,18 @@ class NovaSprite extends FlxSprite {
 
             this.loadGraphic(FlxGraphic.fromBitmapData(bitmap));
             this.updateHitbox();
-			this.onLoaded(this);
+			this.onLoaded();
         });
         loader.load(new URLRequest(url));
+		return this;
 	}
 
 	override function loadGraphic(graphic:FlxGraphicAsset, animated:Bool = false, frameWidth:Int = 0, frameHeight:Int = 0, unique:Bool = false, ?key:String):NovaSprite {
 		if (graphic is String) {
 			this.filePath = graphic;
-			this.fileName = Paths.getFileName(graphic);
+			this.fileName = Paths.getFileName(graphic, true);
 		}
+		this.animated = animated;
 		return cast super.loadGraphic(graphic, animated, frameWidth, frameHeight, unique, key);
 	}
 

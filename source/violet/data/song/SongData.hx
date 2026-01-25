@@ -6,7 +6,7 @@ typedef SongData = {
 	public var ?displayName:String;
 
 	public var ?bpm:Float;
-	public var ?beatsPerMeasure:Float;
+	public var ?beatsPerMeasure:Int;
 	public var ?stepsPerBeat:Int;
 
 	public var ?difficulties:Array<String>;
@@ -14,10 +14,10 @@ typedef SongData = {
 	public var ?customValues:Dynamic;
 
 	public var ?icon:String;
-	public var ?color:FlxColor; // Doesn't do shit, only here for compatibilty
+	public var ?color:FlxColor; // Doesn't do shit, only here for compatibility
 
-	public var ?coopAllowed:Bool; // Doesn't do shit, only here for compatibilty
-	public var ?opponentModeAllowed:Bool; // Doesn't do shit, only here for compatibilty
+	public var ?coopAllowed:Bool; // Doesn't do shit, only here for compatibility
+	public var ?opponentModeAllowed:Bool; // Doesn't do shit, only here for compatibility
 
 	// public var ?metas:Map<String, ChartMetaData>;
 	public var ?instSuffix:String;

@@ -149,7 +149,6 @@ class ModMenu extends SubStateBackend {
 
 		modInfoBox.updateHitbox();
 		statusText.updateHitbox();
-		statusText.antialiasing = true;
 		statusText.x = modInfoBox.x + (modInfoBox.width/2) - (statusText.width/2);
 		statusText.y = (modInfoBox.y + modInfoBox.height) - (statusText.height + 20);
 

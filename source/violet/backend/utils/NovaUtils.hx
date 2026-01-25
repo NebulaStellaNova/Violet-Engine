@@ -1,10 +1,9 @@
 package violet.backend.utils;
 
-import violet.backend.audio.Conductor;
 import haxe.io.Path;
-
-import violet.data.Constants;
 import violet.backend.audio.Conductor;
+import violet.backend.audio.Conductor;
+import violet.data.Constants;
 
 class NovaUtils {
 
@@ -27,7 +26,8 @@ class NovaUtils {
 	public static function playMusic(path:String, volume:Float = 1, folder:String = 'music'):Void {
 		var musicPath:Array<String> = path.split('/');
 		CURRENT_MUSIC = path;
-		musicPath.insert(musicPath.length - 2, Path.withoutExtension(musicPath[musicPath.length - 1]));
+		if (folder == 'music')
+			musicPath.insert(musicPath.length - 2, Path.withoutExtension(musicPath[musicPath.length - 1]));
 		var metaData = null;
 		if (Paths.fileExists('$folder/${musicPath.join('/')}.json'))
 			metaData = ParseUtil.json('$folder/${musicPath.join('/')}');

@@ -47,8 +47,10 @@
     },
     {
       "name": "flxrhythmconductor",
-      "type": "haxelib",
-      "url" : "https://github.com/PurSnake/FlxRhythmConductor/"
+      "type": "git",
+      "dir": null,
+      "ref": "main",
+      "url" : "https://github.com/PurSnake/FlxRhythmConductor"
     },
     {
       "name": "hxcpp",

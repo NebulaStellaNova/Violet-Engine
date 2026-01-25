@@ -7,8 +7,11 @@ import violet.backend.StateBackend;
 import violet.backend.utils.MathUtil;
 import violet.backend.utils.NovaUtils;
 import violet.backend.utils.ParseUtil;
-import violet.backend.display.DebugDisplay;
 import violet.backend.scripting.events.SelectionEvent;
+
+#if debug
+import violet.backend.display.DebugDisplay;
+#end
 
 typedef MenuOffset = {
 	var idle:Array<Float>;
