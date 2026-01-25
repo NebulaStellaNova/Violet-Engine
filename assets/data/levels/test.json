@@ -1,0 +1,154 @@
+{
+	"version": "1.0.0",
+	"titleAsset": "storymenu/titles/week1",
+	"props": [
+		{
+			"danceEvery": 1,
+			"offsets": [
+				100,
+				80
+			],
+			"isPixel": false,
+			"assetPath": "storymenu/props/bf",
+			"alpha": 1,
+			"scale": 1,
+			"animations": [
+				{
+					"offsets": [
+						0,
+						0
+					],
+					"frameIndices": [],
+					"prefix": "idle0",
+					"looped": false,
+					"name": "idle",
+					"flipX": true,
+					"flipY": false,
+					"assetPath": null,
+					"frameRate": 24
+				}
+			]
+		},
+		{
+			"isPixel": false,
+			"danceEvery": 1,
+			"offsets": [
+				150,
+				80
+			],
+			"assetPath": "storymenu/props/bf",
+			"scale": 1,
+			"alpha": 1,
+			"animations": [
+				{
+					"offsets": [
+						0,
+						0
+					],
+					"frameIndices": [],
+					"prefix": "idle0",
+					"looped": false,
+					"name": "idle",
+					"flipX": false,
+					"flipY": false,
+					"assetPath": null,
+					"frameRate": 24
+				},
+				{
+					"offsets": [
+						0,
+						0
+					],
+					"frameIndices": [],
+					"prefix": "confirm0",
+					"looped": false,
+					"name": "confirm",
+					"flipX": false,
+					"flipY": false,
+					"assetPath": null,
+					"frameRate": 24
+				}
+			]
+		},
+		{
+			"isPixel": false,
+			"danceEvery": 1,
+			"offsets": [
+				200,
+				80
+			],
+			"assetPath": "storymenu/props/gf",
+			"scale": 1,
+			"alpha": 1,
+			"animations": [
+				{
+					"offsets": [
+						0,
+						0
+					],
+					"frameIndices": [
+						30,
+						0,
+						1,
+						2,
+						3,
+						4,
+						5,
+						6,
+						7,
+						8,
+						9,
+						10,
+						11,
+						12,
+						13,
+						14
+					],
+					"prefix": "idle0",
+					"looped": false,
+					"name": "danceLeft",
+					"flipX": false,
+					"flipY": false,
+					"assetPath": null,
+					"frameRate": 24
+				},
+				{
+					"offsets": [
+						0,
+						0
+					],
+					"frameIndices": [
+						15,
+						16,
+						17,
+						18,
+						19,
+						20,
+						21,
+						22,
+						23,
+						24,
+						25,
+						26,
+						27,
+						28,
+						29
+					],
+					"prefix": "idle0",
+					"looped": false,
+					"name": "danceRight",
+					"flipX": false,
+					"flipY": false,
+					"assetPath": null,
+					"frameRate": 24
+				}
+			]
+		}
+	],
+	"songs": [
+		"test"
+	],
+	"visible": false,
+	"background": "#FFFFFF",
+	"name": "Test"
+}
