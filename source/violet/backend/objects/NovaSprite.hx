@@ -97,9 +97,9 @@ class NovaSprite extends #if ANIMATE_SUPPORT FlxAnimate #else FlxSprite #end {
 		return cast super.loadGraphic(graphic, animated, frameWidth, frameHeight, unique, key);
 	}
 
-	public function playAnim(name:String, forced:Bool = false):Void {
+	public function playAnim(name:String, forced:Bool = false, reversed:Bool = false, frame:Int = 0):Void {
 		if (this.animation.exists(name)) {
-			this.animation.play(name, forced);
+			this.animation.play(name, forced, reversed, frame);
 			if (this.anims.exists(name)) {
 				// TODO: Rodney, add animation offsets like how you did in your engine! -Rodney
 				var info = this.anims.get(name);
