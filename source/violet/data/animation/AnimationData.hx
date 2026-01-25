@@ -1,7 +1,6 @@
 package violet.data.animation;
 
 typedef AnimationData = {
-
     /**
      * The name of the animation.
      */
@@ -55,4 +54,11 @@ typedef AnimationData = {
     @:alias("indices")
     @:default([])
     var ?frameIndices:Array<Int>;
+
+    /**
+     * Used to determine whether when adding via an atlas if it should get the animation via a frame label name.
+     */
+    @:alias("label")
+    @:default(false)
+    var ?byLabel:Bool;
 }

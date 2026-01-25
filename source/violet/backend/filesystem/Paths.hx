@@ -5,24 +5,36 @@ import sys.FileSystem;
 import moonchart.backend.Util as MoonUtil;
 import violet.backend.utils.FileUtil;
 #if ANIMATE_SUPPORT
-import animate.FlxAnimateFrames;
+import animate.FlxAnimateAssets;
+
+typedef AssetType = #if (flixel >= "5.9.0") flixel.system.frontEnds.AssetFrontEnd.FlxAssetType #else openfl.utils.AssetType #end;
 #end
 
 class Paths {
 	public static var ASSETS_FOLDER:String = "resources";
 
 	public static function init():Void {
-		#if ANIMATE_SUPPORT
-		@:privateAccess {
-			FlxAnimateFrames.getTextFromPath = (path:String) -> return root(path, true).replace(String.fromCharCode(0xFEFF), '');
-			FlxAnimateFrames.existsFile = (path:String, type:openfl.utils.AssetType) -> return Paths.fileExists(path, true);
-			FlxAnimateFrames.listWithFilter = (path:String, filter:String->Bool) -> return [for (file in Paths.readFolder(path, true)) file].filter(filter);
-			// FlxAnimateFrames.getGraphic = (path:String) -> return Cache.image(path);
-		}
-		#end
-		MoonUtil.readFolder = (folder:String) -> [for (file in Paths.readFolder(folder, true)) file];
+		MoonUtil.readFolder = (folder:String) -> Paths.readFolder(folder, true);
 		MoonUtil.isFolder = (folder:String) -> Paths.folderExists(folder, true);
-		MoonUtil.getText = (path:String) -> FileUtil.getFileContent(path);
+		// MoonUtil.saveBytes;
+		// MoonUtil.saveText = (path:String, text:String) -> return FileUtil.setFileContent(path, text);
+		// MoonUtil.getBytes;
+		MoonUtil.getText = FileUtil.getFileContent;
+		#if ANIMATE_SUPPORT
+		FlxAnimateAssets.exists = (path:String, type:AssetType) -> return fileExists(path, true);
+		FlxAnimateAssets.getText = MoonUtil.getText;
+		// FlxAnimateAssets.getBytes = MoonUtil.getBytes;
+		FlxAnimateAssets.getBitmapData = (path:String) -> return Cache.image(path, 'root').bitmap;
+		function newLister(path:String, ?type:AssetType, ?library:String, includeSubDirectories:Bool = false):Array<String> {
+			var list:Array<String> = readFolder(path, true);
+			if (includeSubDirectories)
+				for (item in list)
+					if (folderExists('$path/$item', true))
+						list.concat(newLister('$path/$item', true));
+			return list;
+		}
+		FlxAnimateAssets.list = newLister;
+		#end
 	}
 
 	inline public static function getFileName(path:String, startFromRoot:Bool = false)

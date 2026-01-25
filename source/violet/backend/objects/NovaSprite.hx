@@ -1,20 +1,23 @@
 package violet.backend.objects;
 
-import violet.data.animation.AnimationData;
-import openfl.net.URLLoaderDataFormat;
-import openfl.net.URLRequest;
+#if ANIMATE_SUPPORT
+import animate.FlxAnimate;
+#end
 import flixel.graphics.FlxGraphic;
-import openfl.display.BitmapData;
-import openfl.net.URLLoader;
 import flixel.graphics.frames.FlxAtlasFrames;
 import flixel.math.FlxPoint;
 import flixel.system.FlxAssets;
+import openfl.display.BitmapData;
+import openfl.net.URLLoader;
+import openfl.net.URLLoaderDataFormat;
+import openfl.net.URLRequest;
+import violet.data.animation.AnimationData;
 
 typedef AnimationInfo = {
 	var offset:Array<Float>;
 }
 
-class NovaSprite extends FlxSprite {
+class NovaSprite extends #if ANIMATE_SUPPORT FlxAnimate #else FlxSprite #end {
 	public var filePath:String;
 	public var fileName:String;
 
@@ -36,6 +39,16 @@ class NovaSprite extends FlxSprite {
 	public function loadSprite(path:String):NovaSprite {
 		if (path.startsWith("https://")) {
 			fromWeb(path);
+		} else if (Paths.fileExists('${haxe.io.Path.withoutExtension(path)}/Animation.json', true)) {
+			#if ANIMATE_SUPPORT
+			this.filePath = '${haxe.io.Path.withoutExtension(path)}/Animation.json';
+			this.fileName = Paths.getFileName(path, true);
+			this.animated = true;
+			this.frames = animate.FlxAnimateFrames.fromAnimate(haxe.io.Path.withoutExtension(path));
+			this.onLoaded();
+			#else
+			trace('warning:Atlas\'s aren\'t supported in this build of Violet Engine.');
+			#end
 		} else {
 			if (Paths.fileExists(path.replace(".png", ".xml"), true)) {
 				this.filePath = path;
@@ -96,15 +109,29 @@ class NovaSprite extends FlxSprite {
 		}
 	}
 
-	public function addAnim(name:String, prefix:String, ?indices:Array<Int>, ?offsets:Array<Float>, fps:Int = 24, looped:Bool = false) {
-		if (indices == null || indices.length == 0)
-			this.animation.addByPrefix(name, prefix, fps, looped);
-		else this.animation.addByIndices(name, prefix, indices, "", fps, looped);
+	public function addAnim(name:String, prefix:String, ?indices:Array<Int>, ?offsets:Array<Float>, fps:Int = 24, looped:Bool = false, byLabel:Bool = false):Void {
+		if (#if ANIMATE_SUPPORT isAnimate #else false #end) {
+			#if ANIMATE_SUPPORT
+			if (byLabel) {
+				if (indices == null || indices.length == 0)
+					this.anim.addByFrameLabel(name, prefix, fps, looped);
+				else this.anim.addByFrameLabelIndices(name, prefix, indices, fps, looped);
+			} else {
+				if (indices == null || indices.length == 0)
+					this.anim.addBySymbol(name, prefix, fps, looped);
+				else this.anim.addBySymbolIndices(name, prefix, indices, fps, looped);
+			}
+			#end
+		} else {
+			if (indices == null || indices.length == 0)
+				this.animation.addByPrefix(name, prefix, fps, looped);
+			else this.animation.addByIndices(name, prefix, indices, "", fps, looped);
+		}
 		this.anims.set(name, {offset: offsets != null ? [-offsets[0], -offsets[1]] : [0, 0]});
 	}
 
-	public function addAnimFromJSON(data:AnimationData) {
-		addAnim(data.name, data.prefix, data.frameIndices, data.offsets, data.frameRate, data.looped);
+	public function addAnimFromJSON(data:AnimationData):Void {
+		addAnim(data.name, data.prefix, data.frameIndices, data.offsets, data.frameRate, data.looped, data.byLabel);
 	}
 
 	// for now

@@ -162,7 +162,7 @@ class EngineAsset {
 		modSupport.enable();
 		scriptSupport.enable();
 
-		// usesAnimateAtlas.enable();
+		usesAnimateAtlas.enable();
 
 		// script related
 		if (scriptSupport.exists()) {
