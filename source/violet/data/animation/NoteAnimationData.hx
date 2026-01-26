@@ -6,9 +6,13 @@ typedef NoteAnimationData = {
 	/**
 	 * The direction id.
 	 */
-	var id:Int;
+	@:alias('id')
+	@:default(0)
+	var directionId:Int;
 	/**
 	 * The mania count.
 	 */
-	var mania:Int;
+	@:alias('mania')
+	@:default(4)
+	var keyCount:Int;
 }

@@ -48,15 +48,15 @@ class Sustain extends NovaSprite {
 		this.time = time;
 		this.isEnd = isEnd;
 		skin = 'default';
-		parent.sustains.add(this);
+		this.parent.sustains.add(this);
 	}
 
 	public function reloadSkin(?skin:String):Void {
 		function getMeta(skin:String):NoteSkinMeta {
-			final jsonPath = Paths.json('$skin/meta', 'game/notes');
+			final jsonPath = Paths.json('$skin/meta', 'images/game/notes');
 			if (Paths.fileExists(jsonPath, true))
 				return new json2object.JsonParser<NoteSkinMeta>().fromJson(ParseUtil.removeJsonComments(FileUtil.getFileContent(jsonPath)), jsonPath);
-			return getMeta('default');
+			return getMeta(ParseUtil.json('$skin/meta', 'images/game/notes')?.fallback ?? 'default');
 		}
 
 		this.anims.clear();
@@ -64,9 +64,10 @@ class Sustain extends NovaSprite {
 		final skin:String = skin ?? this.skin ?? 'default';
 		final meta:NoteSkinMeta = getMeta(skin);
 		loadSprite(Paths.image('$skin/${meta.sustains.assetPath ?? 'sustains'}', 'game/notes'));
-		for (data in meta.sustains.animations.filter(data -> return data.mania == parent.strums.length)) {
-			if (data.id != id) continue;
-			addAnimFromJSON(data);
+		for (data in meta.sustains.animations) {
+			if (data.keyCount != parent.keyCount) continue;
+			if (data.directionId != id) continue;
+			addAnim(data.name, data.prefix, data.frameIndices, data.offsets, data.frameRate, data.looped, data.byLabel);
 		}
 		var lol:Array<Float> = meta.sustains.offsets != null ? [-meta.sustains.offsets[0], -meta.sustains.offsets[1]] : [0, 0];
 		globalOffset.set(lol[0], lol[1]);

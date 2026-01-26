@@ -27,28 +27,30 @@ class Strum extends NovaSprite {
 
 	public function reloadSkin(?skin:String):Void {
 		function getMeta(skin:String):NoteSkinMeta {
-			final jsonPath = Paths.json('$skin/meta', 'game/notes');
+			final jsonPath = Paths.json('$skin/meta', 'images/game/notes');
 			if (Paths.fileExists(jsonPath, true))
 				return new json2object.JsonParser<NoteSkinMeta>().fromJson(ParseUtil.removeJsonComments(FileUtil.getFileContent(jsonPath)), jsonPath);
-			return getMeta('default');
+			return getMeta(ParseUtil.json('$skin/meta', 'images/game/notes')?.fallback ?? 'default');
 		}
-		final lastAnim:String = animation.name;
-		final wasReversed:Bool = animation.curAnim.reversed;
-		final lastFrame:Int = animation.curAnim.curFrame;
+		final lastAnim:String = animation?.name ?? 'static';
+		final wasReversed:Bool = animation?.curAnim?.reversed ?? false;
+		// final lastFrame:Array<Int> = [animation?.curAnim?.curFrame ?? 0, animation?.curAnim?.numFrames ?? 1];
 
 		this.anims.clear();
 		animation.destroyAnimations();
 		final skin:String = skin ?? this.skin ?? 'default';
 		final meta:NoteSkinMeta = getMeta(skin);
 		loadSprite(Paths.image('$skin/${meta.strums.assetPath ?? 'strums'}', 'game/notes'));
-		for (data in meta.strums.animations.filter(data -> return data.mania == parent.strums.length)) {
-			if (data.id != ID) continue;
-			addAnimFromJSON(data);
+		for (data in meta.strums.animations) {
+			if (data.keyCount != parent.keyCount) continue;
+			if (data.directionId != ID) continue;
+			addAnim(data.name, data.prefix, data.frameIndices, data.offsets, data.frameRate, data.looped, data.byLabel);
 		}
 		var lol:Array<Float> = meta.strums.offsets != null ? [-meta.strums.offsets[0], -meta.strums.offsets[1]] : [0, 0];
 		globalOffset.set(lol[0], lol[1]);
 
-		playAnim(lastAnim, true, wasReversed, lastFrame);
+		playAnim(lastAnim, true, wasReversed);
+		// animation.curAnim.curFrame = Math.round(flixel.math.FlxMath.remapToRange(lastFrame[0], 0, lastFrame[1], 0, animation.curAnim.numFrames));
 	}
 }
 
