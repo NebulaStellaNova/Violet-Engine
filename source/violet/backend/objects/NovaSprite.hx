@@ -109,10 +109,10 @@ class NovaSprite extends #if ANIMATE_SUPPORT FlxAnimate #else FlxSprite #end {
 		}
 	}
 
-	public function addAnim(name:String, prefix:String, ?indices:Array<Int>, ?offsets:Array<Float>, fps:Int = 24, looped:Bool = false, byLabel:Bool = false):Void {
+	public function addAnim(name:String, prefix:String, ?indices:Array<Int>, ?offsets:Array<Float>, fps:Int = 24, looped:Bool = false, label:Bool = false):Void {
 		if (#if ANIMATE_SUPPORT isAnimate #else false #end) {
 			#if ANIMATE_SUPPORT
-			if (byLabel) {
+			if (label) {
 				if (indices == null || indices.length == 0)
 					this.anim.addByFrameLabel(name, prefix, fps, looped);
 				else this.anim.addByFrameLabelIndices(name, prefix, indices, fps, looped);

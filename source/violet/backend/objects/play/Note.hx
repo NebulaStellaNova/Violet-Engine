@@ -45,7 +45,7 @@ class Note extends NovaSprite {
 	public final tail:Array<Sustain> = [];
 
 	public function new(parent:StrumLine, id:Int, time:Float, tailLength:Float) {
-		super();
+		super(-10000, -10000);
 		this.parent = parent;
 		this.id = id;
 		this.time = time;

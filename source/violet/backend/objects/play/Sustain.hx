@@ -43,7 +43,7 @@ class Sustain extends NovaSprite {
 	public final isEnd:Bool;
 
 	public function new(parent:Note, time:Float, isEnd:Bool) {
-		super();
+		super(-10000, -10000);
 		parentNote = parent;
 		this.time = time;
 		this.isEnd = isEnd;

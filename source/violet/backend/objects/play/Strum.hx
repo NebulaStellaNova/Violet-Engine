@@ -1,5 +1,7 @@
 package violet.backend.objects.play;
 
+import violet.data.animation.NoteAnimationData;
+
 class Strum extends NovaSprite {
 	/**
 	 * The parent strumline.
@@ -53,10 +55,10 @@ class Strum extends NovaSprite {
 typedef NotePartMeta = {
 	@:default([0, 0]) var ?offsets:Array<Float>;
 	var ?assetPath:String;
-	var animations:Array<NoteAnimationData>;
+	@:default([]) var animations:Array<NoteAnimationData>;
 }
 typedef NoteSkinMeta = {
-	@:default('default') var fallback:String;
+	@:default('default') var ?fallback:String;
 	var strums:NotePartMeta;
 	var notes:NotePartMeta;
 	var sustains:NotePartMeta;
