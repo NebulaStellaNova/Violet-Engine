@@ -7,62 +7,62 @@ class Song {
     public var id:String;
 
     public var displayName(get, null):String;
-    public function get_displayName():String {
+    function get_displayName():String {
         return _data?.displayName ?? _data?.name ?? id;
     }
 
     public var variant(get, null):String;
-    public function get_variant():String {
+    function get_variant():String {
         return _data.variant ?? '';
     }
 
     public var bpm(get, null):Float;
-    public function get_bpm():Float {
+    function get_bpm():Float {
         return _data?.bpm ?? 120;
     }
 
     public var beatsPerMeasure(get, null):Int;
-    public function get_beatsPerMeasure():Int {
+    function get_beatsPerMeasure():Int {
         return _data?.beatsPerMeasure ?? 4;
     }
 
     public var stepsPerBeat(get, null):Int;
-    public function get_stepsPerBeat():Int {
+    function get_stepsPerBeat():Int {
         return _data?.stepsPerBeat ?? 4;
     }
 
     public var difficulties(get, null):Array<String>;
-    public function get_difficulties():Array<String> {
+    function get_difficulties():Array<String> {
         return _data?.difficulties ?? [];
     }
 
     public var variants(get, null):Array<String>;
-    public function get_variants():Array<String> {
+    function get_variants():Array<String> {
         return _data?.variants ?? [];
     }
 
     public var customValues(get, null):Dynamic;
-    public function get_customValues():Dynamic {
+    function get_customValues():Dynamic {
         return _data?.customValues;
     }
 
     public var icon(get, null):String;
-    public function get_icon():String {
+    function get_icon():String {
         return _data?.icon ?? '';
     }
 
     public var instSuffix(get, null):String;
-    public function get_instSuffix():String {
+    function get_instSuffix():String {
         return _data?.instSuffix ?? '';
     }
 
     public var vocalsSuffix(get, null):String;
-    public function get_vocalsSuffix():String {
+    function get_vocalsSuffix():String {
         return _data?.vocalsSuffix ?? '';
     }
 
     public var needsVoices(get, null):Bool;
-    public function get_needsVoices():Bool {
+    function get_needsVoices():Bool {
         return _data?.needsVoices ?? false;
     }
 
