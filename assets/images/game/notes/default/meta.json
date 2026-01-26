@@ -4,87 +4,87 @@
 		"assetPath": "strums",
 		"animations": [
 			{
-				"id": "0",
-				"mania": "4",
+				"id": 0,
+				"mania": 4,
 				"name": "static",
 				"prefix": "staticLeft",
 				"offsets": [0, 0]
 			},
 			{
-				"id": "1",
-				"mania": "4",
+				"id": 1,
+				"mania": 4,
 				"name": "static",
 				"prefix": "staticDown",
 				"offsets": [0, 0]
 			},
 			{
-				"id": "2",
-				"mania": "4",
+				"id": 2,
+				"mania": 4,
 				"name": "static",
 				"prefix": "staticUp",
 				"offsets": [0, 0]
 			},
 			{
-				"id": "3",
-				"mania": "4",
+				"id": 3,
+				"mania": 4,
 				"name": "static",
 				"prefix": "staticRight",
 				"offsets": [0, 0]
 			},
 
 			{
-				"id": "0",
-				"mania": "4",
+				"id": 0,
+				"mania": 4,
 				"name": "press",
 				"prefix": "left press",
 				"offsets": [0, 0]
 			},
 			{
-				"id": "1",
-				"mania": "4",
+				"id": 1,
+				"mania": 4,
 				"name": "press",
 				"prefix": "down press",
 				"offsets": [0, 0]
 			},
 			{
-				"id": "2",
-				"mania": "4",
+				"id": 2,
+				"mania": 4,
 				"name": "press",
 				"prefix": "up press",
 				"offsets": [0, 0]
 			},
 			{
-				"id": "3",
-				"mania": "4",
+				"id": 3,
+				"mania": 4,
 				"name": "press",
 				"prefix": "right press",
 				"offsets": [0, 0]
 			},
 
 			{
-				"id": "0",
-				"mania": "4",
+				"id": 0,
+				"mania": 4,
 				"name": "confirm",
 				"prefix": "left confirm",
 				"offsets": [0, 0]
 			},
 			{
-				"id": "1",
-				"mania": "4",
+				"id": 1,
+				"mania": 4,
 				"name": "confirm",
 				"prefix": "down confirm",
 				"offsets": [0, 0]
 			},
 			{
-				"id": "2",
-				"mania": "4",
+				"id": 2,
+				"mania": 4,
 				"name": "confirm",
 				"prefix": "up confirm",
 				"offsets": [0, 0]
 			},
 			{
-				"id": "3",
-				"mania": "4",
+				"id": 3,
+				"mania": 4,
 				"name": "confirm",
 				"prefix": "right confirm",
 				"offsets": [0, 0]
@@ -96,29 +96,29 @@
 		"assetPath": "notes",
 		"animations": [
 			{
-				"id": "0",
-				"mania": "4",
+				"id": 0,
+				"mania": 4,
 				"name": "note",
 				"prefix": "noteLeft",
 				"offsets": [0, 0]
 			},
 			{
-				"id": "1",
-				"mania": "4",
+				"id": 1,
+				"mania": 4,
 				"name": "note",
 				"prefix": "noteDown",
 				"offsets": [0, 0]
 			},
 			{
-				"id": "2",
-				"mania": "4",
+				"id": 2,
+				"mania": 4,
 				"name": "note",
 				"prefix": "noteUp",
 				"offsets": [0, 0]
 			},
 			{
-				"id": "3",
-				"mania": "4",
+				"id": 3,
+				"mania": 4,
 				"name": "note",
 				"prefix": "noteRight",
 				"offsets": [0, 0]
@@ -130,58 +130,58 @@
 		"assetPath": "sustains",
 		"animations": [
 			{
-				"id": "0",
-				"mania": "4",
+				"id": 0,
+				"mania": 4,
 				"name": "tail",
 				"prefix": "purple hold piece",
 				"offsets": [0, 0]
 			},
 			{
-				"id": "1",
-				"mania": "4",
+				"id": 1,
+				"mania": 4,
 				"name": "tail",
 				"prefix": "blue hold piece",
 				"offsets": [0, 0]
 			},
 			{
-				"id": "2",
-				"mania": "4",
+				"id": 2,
+				"mania": 4,
 				"name": "tail",
 				"prefix": "green hold piece",
 				"offsets": [0, 0]
 			},
 			{
-				"id": "3",
-				"mania": "4",
+				"id": 3,
+				"mania": 4,
 				"name": "tail",
 				"prefix": "red hold piece",
 				"offsets": [0, 0]
 			},
 
 			{
-				"id": "0",
-				"mania": "4",
+				"id": 0,
+				"mania": 4,
 				"name": "end",
 				"prefix": "purple hold end",
 				"offsets": [0, 0]
 			},
 			{
-				"id": "1",
-				"mania": "4",
+				"id": 1,
+				"mania": 4,
 				"name": "end",
 				"prefix": "blue hold end",
 				"offsets": [0, 0]
 			},
 			{
-				"id": "2",
-				"mania": "4",
+				"id": 2,
+				"mania": 4,
 				"name": "end",
 				"prefix": "green hold end",
 				"offsets": [0, 0]
 			},
 			{
-				"id": "3",
-				"mania": "4",
+				"id": 3,
+				"mania": 4,
 				"name": "end",
 				"prefix": "red hold end",
 				"offsets": [0, 0]
