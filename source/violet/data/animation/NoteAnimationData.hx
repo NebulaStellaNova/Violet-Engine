@@ -7,7 +7,6 @@ typedef NoteAnimationData = {
 	 * The direction id.
 	 */
 	@:alias('id')
-	@:default(0)
 	var directionId:Int;
 	/**
 	 * The mania count.
