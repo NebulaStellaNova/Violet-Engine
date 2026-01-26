@@ -1,9 +1,11 @@
 package violet.data.song;
 
+import violet.backend.utils.FileUtil;
 import violet.backend.utils.ParseUtil;
 import violet.data.level.LevelRegistry;
 
 using StringTools;
+
 class SongRegistry {
 
     public static var songs:Array<Song> = [];
@@ -19,11 +21,12 @@ class SongRegistry {
         }
         for (songID in songList) {
             var folderName = songID.replace("-", " ");
-            if (!Paths.fileExists('songs/$folderName/meta.json')) {
+            final jsonPath = Paths.json('songs/$folderName/meta');
+            if (!Paths.fileExists(jsonPath, true)) {
                 trace('warning:Could not find meta file for song with ID $folderName. Skipping registration.');
                 continue;
             }
-            songDatas.set(songID, ParseUtil.json('songs/$folderName/meta.json'));
+            songDatas.set(songID, new json2object.JsonParser<SongData>().fromJson(ParseUtil.removeJsonComments(FileUtil.getFileContent(jsonPath)), jsonPath));
             registerSong(new Song(songID));
         }
     }

@@ -4,7 +4,6 @@ import violet.backend.utils.FileUtil;
 import violet.backend.utils.ParseUtil;
 
 class LevelRegistry {
-
     public static var levels:Array<Level> = [];
     public static var levelDatas:Map<String, LevelData> = new Map<String, LevelData>();
 
@@ -13,7 +12,8 @@ class LevelRegistry {
         levels = [];
         var levelFiles = Paths.readFolder("data/levels");
         for (levelFile in levelFiles) {
-            levelDatas.set(levelFile.replace(".json", ""), ParseUtil.json('data/levels/$levelFile'));
+            final jsonPath = Paths.json('data/levels/$levelFile');
+            levelDatas.set(levelFile.replace(".json", ""), new json2object.JsonParser<LevelData>().fromJson(ParseUtil.removeJsonComments(FileUtil.getFileContent(jsonPath)), jsonPath));
             registerLevel(new Level(levelFile.replace(".json", "")));
         }
     }
