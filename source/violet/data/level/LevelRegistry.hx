@@ -10,6 +10,7 @@ class LevelRegistry {
     public static function registerLevels() {
         trace("debug:Registering levels...");
         levels = [];
+        levelDatas.clear();
         var levelFiles = Paths.readFolder("data/levels");
         for (levelFile in levelFiles) {
             final jsonPath = Paths.json('data/levels/$levelFile');
@@ -68,6 +69,15 @@ class LevelRegistry {
             }
         };
         return false;
+    }
+
+    public static function getLevelByID(levelID:String):Null<Level> {
+        for (level in levels) {
+            if (level.id == levelID) {
+                return level;
+            }
+        };
+        return null;
     }
 
 }

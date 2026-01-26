@@ -3,6 +3,8 @@ package violet.backend.objects.play;
 import flixel.addons.sound.FlxRhythmConductor;
 import flixel.util.FlxSort;
 
+import violet.data.noteskin.NoteSkinData;
+
 class Note extends NovaSprite {
 	/**
 	 * The parent strumline.
@@ -62,17 +64,17 @@ class Note extends NovaSprite {
 	}
 
 	public function reloadSkin(?skin:String, effectTail:Bool = false):Void {
-		function getMeta(skin:String):NoteSkinMeta {
+		function getMeta(skin:String):NoteSkinData {
 			final jsonPath = Paths.json('$skin/meta', 'images/game/notes');
 			if (Paths.fileExists(jsonPath, true))
-				return new json2object.JsonParser<NoteSkinMeta>().fromJson(ParseUtil.removeJsonComments(FileUtil.getFileContent(jsonPath)), jsonPath);
+				return new json2object.JsonParser<NoteSkinData>().fromJson(ParseUtil.removeJsonComments(FileUtil.getFileContent(jsonPath)), jsonPath);
 			return getMeta(ParseUtil.json('$skin/meta', 'images/game/notes')?.fallback ?? 'default');
 		}
 
 		this.anims.clear();
 		animation.destroyAnimations();
 		final skin:String = skin ?? this.skin ?? 'default';
-		final meta:NoteSkinMeta = getMeta(skin);
+		final meta:NoteSkinData = getMeta(skin);
 		loadSprite(Paths.image('$skin/${meta.notes.assetPath ?? 'notes'}', 'game/notes'));
 		for (data in meta.notes.animations) {
 			if (data.keyCount != parent.keyCount) continue;

@@ -1,6 +1,6 @@
 package violet.backend.objects.play;
 
-import violet.data.animation.NoteAnimationData;
+import violet.data.noteskin.NoteSkinData;
 
 class Strum extends NovaSprite {
 	/**
@@ -26,10 +26,10 @@ class Strum extends NovaSprite {
 	}
 
 	public function reloadSkin(?skin:String):Void {
-		function getMeta(skin:String):NoteSkinMeta {
+		function getMeta(skin:String):NoteSkinData {
 			final jsonPath = Paths.json('$skin/meta', 'images/game/notes');
 			if (Paths.fileExists(jsonPath, true))
-				return new json2object.JsonParser<NoteSkinMeta>().fromJson(ParseUtil.removeJsonComments(FileUtil.getFileContent(jsonPath)), jsonPath);
+				return new json2object.JsonParser<NoteSkinData>().fromJson(ParseUtil.removeJsonComments(FileUtil.getFileContent(jsonPath)), jsonPath);
 			return getMeta(ParseUtil.json('$skin/meta', 'images/game/notes')?.fallback ?? 'default');
 		}
 		final lastAnim:String = animation?.name ?? 'static';
@@ -39,7 +39,7 @@ class Strum extends NovaSprite {
 		this.anims.clear();
 		animation.destroyAnimations();
 		final skin:String = skin ?? this.skin ?? 'default';
-		final meta:NoteSkinMeta = getMeta(skin);
+		final meta:NoteSkinData = getMeta(skin);
 		loadSprite(Paths.image('$skin/${meta.strums.assetPath ?? 'strums'}', 'game/notes'));
 		for (data in meta.strums.animations) {
 			if (data.keyCount != parent.keyCount) continue;
@@ -52,16 +52,4 @@ class Strum extends NovaSprite {
 		playAnim(lastAnim, true, wasReversed);
 		// animation.curAnim.curFrame = Math.round(flixel.math.FlxMath.remapToRange(lastFrame[0], 0, lastFrame[1], 0, animation.curAnim.numFrames));
 	}
-}
-
-typedef NotePartMeta = {
-	@:default([0, 0]) var ?offsets:Array<Float>;
-	var ?assetPath:String;
-	@:default([]) var animations:Array<NoteAnimationData>;
-}
-typedef NoteSkinMeta = {
-	@:default('default') var ?fallback:String;
-	var strums:NotePartMeta;
-	var notes:NotePartMeta;
-	var sustains:NotePartMeta;
 }

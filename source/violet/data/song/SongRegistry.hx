@@ -15,6 +15,7 @@ class SongRegistry {
         trace("debug:Registering songs...");
         // Implementation for registering songs goes here
         songs = [];
+        songDatas.clear();
         var songList:Array<String> = [];
         for (level in LevelRegistry.getAllLevels()) {
             songList = songList.concat(level.getSongs());

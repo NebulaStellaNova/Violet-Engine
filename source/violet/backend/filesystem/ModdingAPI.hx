@@ -83,6 +83,7 @@ class ModdingAPI {
 	public static function reloadRegistries():Void {
 		trace('debug:${registered ? "Reloading" : "Initializing"} Registries...');
 		registered = true;
+		violet.data.noteskin.NoteSkinRegistry.registerNoteSkins();
 		violet.data.level.LevelRegistry.registerLevels();
 		violet.data.song.SongRegistry.registerSongs();
 	}

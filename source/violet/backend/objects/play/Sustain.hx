@@ -1,5 +1,7 @@
 package violet.backend.objects.play;
 
+import violet.data.noteskin.NoteSkinData;
+
 class Sustain extends NovaSprite {
 	/**
 	 * The parent strumline.
@@ -52,17 +54,17 @@ class Sustain extends NovaSprite {
 	}
 
 	public function reloadSkin(?skin:String):Void {
-		function getMeta(skin:String):NoteSkinMeta {
+		function getMeta(skin:String):NoteSkinData {
 			final jsonPath = Paths.json('$skin/meta', 'images/game/notes');
 			if (Paths.fileExists(jsonPath, true))
-				return new json2object.JsonParser<NoteSkinMeta>().fromJson(ParseUtil.removeJsonComments(FileUtil.getFileContent(jsonPath)), jsonPath);
+				return new json2object.JsonParser<NoteSkinData>().fromJson(ParseUtil.removeJsonComments(FileUtil.getFileContent(jsonPath)), jsonPath);
 			return getMeta(ParseUtil.json('$skin/meta', 'images/game/notes')?.fallback ?? 'default');
 		}
 
 		this.anims.clear();
 		animation.destroyAnimations();
 		final skin:String = skin ?? this.skin ?? 'default';
-		final meta:NoteSkinMeta = getMeta(skin);
+		final meta:NoteSkinData = getMeta(skin);
 		loadSprite(Paths.image('$skin/${meta.sustains.assetPath ?? 'sustains'}', 'game/notes'));
 		for (data in meta.sustains.animations) {
 			if (data.keyCount != parent.keyCount) continue;
