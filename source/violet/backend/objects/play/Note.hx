@@ -2,8 +2,8 @@ package violet.backend.objects.play;
 
 import flixel.addons.sound.FlxRhythmConductor;
 import flixel.util.FlxSort;
-
-import violet.data.noteskin.NoteSkinData;
+import violet.data.noteskin.NoteSkin;
+import violet.data.noteskin.NoteSkinRegistry;
 
 class Note extends NovaSprite {
 	/**
@@ -64,24 +64,16 @@ class Note extends NovaSprite {
 	}
 
 	public function reloadSkin(?skin:String, effectTail:Bool = false):Void {
-		function getMeta(skin:String):NoteSkinData {
-			final jsonPath = Paths.json('$skin/meta', 'images/game/notes');
-			if (Paths.fileExists(jsonPath, true))
-				return new json2object.JsonParser<NoteSkinData>().fromJson(ParseUtil.removeJsonComments(FileUtil.getFileContent(jsonPath)), jsonPath);
-			return getMeta(ParseUtil.json('$skin/meta', 'images/game/notes')?.fallback ?? 'default');
-		}
-
 		this.anims.clear();
 		animation.destroyAnimations();
 		final skin:String = skin ?? this.skin ?? 'default';
-		final meta:NoteSkinData = getMeta(skin);
-		loadSprite(Paths.image('$skin/${meta.notes.assetPath ?? 'notes'}', 'game/notes'));
-		for (data in meta.notes.animations) {
-			if (data.keyCount != parent.keyCount) continue;
-			if (data.directionId != id) continue;
+		final meta:NoteSkin = NoteSkinRegistry.getNoteSkinByID(skin);
+		loadSprite(meta.getNoteAssetPath());
+		for (data in meta.getNoteAnimations(ID, parent.keyCount)) {
+			trace([data.directionId, data.keyCount, data.name, data.prefix, data.frameIndices, data.offsets, data.frameRate, data.looped, data.byLabel]);
 			addAnim(data.name, data.prefix, data.frameIndices, data.offsets, data.frameRate, data.looped, data.byLabel);
 		}
-		var lol:Array<Float> = meta.notes.offsets != null ? [-meta.notes.offsets[0], -meta.notes.offsets[1]] : [0, 0];
+		var lol:Array<Float> = meta.getNoteOffsets();
 		globalOffset.set(lol[0], lol[1]);
 		if (effectTail) for (sustain in tail) sustain.reloadSkin(skin);
 

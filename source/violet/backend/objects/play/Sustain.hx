@@ -1,6 +1,7 @@
 package violet.backend.objects.play;
 
-import violet.data.noteskin.NoteSkinData;
+import violet.data.noteskin.NoteSkin;
+import violet.data.noteskin.NoteSkinRegistry;
 
 class Sustain extends NovaSprite {
 	/**
@@ -54,24 +55,16 @@ class Sustain extends NovaSprite {
 	}
 
 	public function reloadSkin(?skin:String):Void {
-		function getMeta(skin:String):NoteSkinData {
-			final jsonPath = Paths.json('$skin/meta', 'images/game/notes');
-			if (Paths.fileExists(jsonPath, true))
-				return new json2object.JsonParser<NoteSkinData>().fromJson(ParseUtil.removeJsonComments(FileUtil.getFileContent(jsonPath)), jsonPath);
-			return getMeta(ParseUtil.json('$skin/meta', 'images/game/notes')?.fallback ?? 'default');
-		}
-
 		this.anims.clear();
 		animation.destroyAnimations();
 		final skin:String = skin ?? this.skin ?? 'default';
-		final meta:NoteSkinData = getMeta(skin);
-		loadSprite(Paths.image('$skin/${meta.sustains.assetPath ?? 'sustains'}', 'game/notes'));
-		for (data in meta.sustains.animations) {
-			if (data.keyCount != parent.keyCount) continue;
-			if (data.directionId != id) continue;
+		final meta:NoteSkin = NoteSkinRegistry.getNoteSkinByID(skin);
+		loadSprite(meta.getSustainAssetPath());
+		for (data in meta.getSustainAnimations(ID, parent.keyCount)) {
+			trace([data.directionId, data.keyCount, data.name, data.prefix, data.frameIndices, data.offsets, data.frameRate, data.looped, data.byLabel]);
 			addAnim(data.name, data.prefix, data.frameIndices, data.offsets, data.frameRate, data.looped, data.byLabel);
 		}
-		var lol:Array<Float> = meta.sustains.offsets != null ? [-meta.sustains.offsets[0], -meta.sustains.offsets[1]] : [0, 0];
+		var lol:Array<Float> = meta.getSustainOffsets();
 		globalOffset.set(lol[0], lol[1]);
 
 		playAnim(isEnd ? 'end' : 'tail', true);

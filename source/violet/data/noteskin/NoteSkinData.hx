@@ -9,6 +9,8 @@ typedef NotePartMeta = {
 }
 
 typedef NoteSkinData = {
+	var name:String;
+	var ?assetPath:String;
 	@:default('default') var ?fallback:String;
 	var strums:NotePartMeta;
 	var notes:NotePartMeta;

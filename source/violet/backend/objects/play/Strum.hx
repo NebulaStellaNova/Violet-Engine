@@ -1,6 +1,7 @@
 package violet.backend.objects.play;
 
-import violet.data.noteskin.NoteSkinData;
+import violet.data.noteskin.NoteSkin;
+import violet.data.noteskin.NoteSkinRegistry;
 
 class Strum extends NovaSprite {
 	/**
@@ -26,12 +27,6 @@ class Strum extends NovaSprite {
 	}
 
 	public function reloadSkin(?skin:String):Void {
-		function getMeta(skin:String):NoteSkinData {
-			final jsonPath = Paths.json('$skin/meta', 'images/game/notes');
-			if (Paths.fileExists(jsonPath, true))
-				return new json2object.JsonParser<NoteSkinData>().fromJson(ParseUtil.removeJsonComments(FileUtil.getFileContent(jsonPath)), jsonPath);
-			return getMeta(ParseUtil.json('$skin/meta', 'images/game/notes')?.fallback ?? 'default');
-		}
 		final lastAnim:String = animation?.name ?? 'static';
 		final wasReversed:Bool = animation?.curAnim?.reversed ?? false;
 		// final lastFrame:Array<Int> = [animation?.curAnim?.curFrame ?? 0, animation?.curAnim?.numFrames ?? 1];
@@ -39,14 +34,13 @@ class Strum extends NovaSprite {
 		this.anims.clear();
 		animation.destroyAnimations();
 		final skin:String = skin ?? this.skin ?? 'default';
-		final meta:NoteSkinData = getMeta(skin);
-		loadSprite(Paths.image('$skin/${meta.strums.assetPath ?? 'strums'}', 'game/notes'));
-		for (data in meta.strums.animations) {
-			if (data.keyCount != parent.keyCount) continue;
-			if (data.directionId != ID) continue;
+		final meta:NoteSkin = NoteSkinRegistry.getNoteSkinByID(skin);
+		loadSprite(meta.getStrumAssetPath());
+		for (data in meta.getStrumAnimations(ID, parent.keyCount)) {
+			trace([data.directionId, data.keyCount, data.name, data.prefix, data.frameIndices, data.offsets, data.frameRate, data.looped, data.byLabel]);
 			addAnim(data.name, data.prefix, data.frameIndices, data.offsets, data.frameRate, data.looped, data.byLabel);
 		}
-		var lol:Array<Float> = meta.strums.offsets != null ? [-meta.strums.offsets[0], -meta.strums.offsets[1]] : [0, 0];
+		var lol:Array<Float> = meta.getStrumOffsets();
 		globalOffset.set(lol[0], lol[1]);
 
 		playAnim(lastAnim, true, wasReversed);

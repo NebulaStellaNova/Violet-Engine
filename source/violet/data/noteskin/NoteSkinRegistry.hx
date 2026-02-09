@@ -24,6 +24,27 @@ class NoteSkinRegistry {
         }
     }
 
+    public static function getDefaultNoteSkinData():NoteSkinData {
+        return {
+            name: 'default',
+            strums: {
+                offsets: [0, 0],
+                assetPath: 'strums',
+                animations: []
+            },
+            notes: {
+                offsets: [0, 0],
+                assetPath: 'notes',
+                animations: []
+            },
+            sustains: {
+                offsets: [0, 0],
+                assetPath: 'sustains',
+                animations: []
+            }
+        }
+    }
+
     public static function registerNoteSkin(newSkin:NoteSkin) {
         for (noteSkin in noteSkins) {
             if (noteSkin.id == newSkin.id) {
@@ -54,7 +75,7 @@ class NoteSkinRegistry {
         return false;
     }
 
-    public static function getLevelByID(id:String):Null<NoteSkin> {
+    public static function getNoteSkinByID(id:String):Null<NoteSkin> {
         for (noteSkin in noteSkins) {
             if (noteSkin.id == id) {
                 return noteSkin;

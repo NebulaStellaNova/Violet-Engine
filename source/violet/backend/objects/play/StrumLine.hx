@@ -25,6 +25,6 @@ class StrumLine extends FlxGroup {
 		notes.memberRemoved.add((_:Note) -> notes.members.sort(Note.sortNotes));
 
 		for (i in 0...4) strums.add(new Strum(this, i));
-		for (data in chartData.notes) notes.add(new Note(this, data.id, data.time, data.length));
+		// for (data in chartData.notes) notes.add(new Note(this, data.id, data.time, data.length));
 	}
 }
