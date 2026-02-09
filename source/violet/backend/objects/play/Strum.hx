@@ -36,10 +36,8 @@ class Strum extends NovaSprite {
 		final skin:String = skin ?? this.skin ?? 'default';
 		final meta:NoteSkin = NoteSkinRegistry.getNoteSkinByID(skin);
 		loadSprite(meta.getStrumAssetPath());
-		for (data in meta.getStrumAnimations(ID, parent.keyCount)) {
-			trace([data.directionId, data.keyCount, data.name, data.prefix, data.frameIndices, data.offsets, data.frameRate, data.looped, data.byLabel]);
-			addAnim(data.name, data.prefix, data.frameIndices, data.offsets, data.frameRate, data.looped, data.byLabel);
-		}
+		for (data in meta.getStrumAnimations(ID, parent.keyCount))
+			addAnimFromJSON(data);
 		var lol:Array<Float> = meta.getStrumOffsets();
 		globalOffset.set(lol[0], lol[1]);
 

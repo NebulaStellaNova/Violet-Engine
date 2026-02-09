@@ -6,6 +6,8 @@ import violet.data.noteskin.NoteSkin;
 import violet.data.noteskin.NoteSkinRegistry;
 
 class Note extends NovaSprite {
+	public static var swagWidth:Float = 160 * 0.7;
+
 	/**
 	 * The parent strumline.
 	 */
@@ -69,10 +71,8 @@ class Note extends NovaSprite {
 		final skin:String = skin ?? this.skin ?? 'default';
 		final meta:NoteSkin = NoteSkinRegistry.getNoteSkinByID(skin);
 		loadSprite(meta.getNoteAssetPath());
-		for (data in meta.getNoteAnimations(ID, parent.keyCount)) {
-			trace([data.directionId, data.keyCount, data.name, data.prefix, data.frameIndices, data.offsets, data.frameRate, data.looped, data.byLabel]);
-			addAnim(data.name, data.prefix, data.frameIndices, data.offsets, data.frameRate, data.looped, data.byLabel);
-		}
+		for (data in meta.getNoteAnimations(ID, parent.keyCount))
+			addAnimFromJSON(data);
 		var lol:Array<Float> = meta.getNoteOffsets();
 		globalOffset.set(lol[0], lol[1]);
 		if (effectTail) for (sustain in tail) sustain.reloadSkin(skin);

@@ -1,5 +1,6 @@
 package violet.states;
 
+import flixel.FlxCamera;
 import flixel.group.FlxGroup;
 import violet.backend.audio.Conductor;
 import violet.backend.objects.play.StrumLine;
@@ -16,11 +17,19 @@ class PlayState extends violet.backend.StateBackend {
 	public static var difficulty:String;
 	public static var variation:Null<String>;
 
+	public var camHUD:FlxCamera;
+	public var camGame:FlxCamera;
+
 	public var strumLines:FlxTypedGroup<StrumLine>;
 
 	override public function create():Void {
 		super.create();
 		instance = this;
+
+		FlxG.cameras.reset(camGame = new FlxCamera());
+		camHUD = new FlxCamera();
+		camHUD.bgColor = FlxColor.TRANSPARENT;
+		FlxG.cameras.add(camHUD);
 
 		strumLines = new FlxTypedGroup<StrumLine>();
 
@@ -39,9 +48,9 @@ class PlayState extends violet.backend.StateBackend {
 				var char = new Character(0, 0, charName, stage.isCharFlipped(stage.characterPoses[charName] != null ? charName : charPosName, strumLine.type == 1));
 				stage.applyCharStuff(char, charPosName, k);
 				chars.push(char);
-			}
+			} */
 
-			var strOffset:Float = data.strumLinePos != null ? data.strumLinePos : (data.type == 1 ? 0.75 : 0.25);
+			/* var strOffset:Float = data.strumLinePos != null ? data.strumLinePos : (data.type == 1 ? 0.75 : 0.25);
 			var strScale:Float = data.strumScale != null ? data.strumScale : 1;
 			var strSpacing:Float = data.strumSpacing == null ? 1 : data.strumSpacing;
 			var keyCount:Int = data.keyCount == null ? 4 : data.keyCount;
@@ -58,10 +67,9 @@ class PlayState extends violet.backend.StateBackend {
 				data.type != 1, coopMode ? ((data.type == 1) != opponentMode ? controlsP1 : controlsP2) : controls,
 				data.vocalsSuffix */
 			);
-			/* strumLine.cameras = [camHUD];
-			strumLine.data = data;
+			strumLine.cameras = [camHUD];
 			strumLine.visible = (data.visible != false);
-			strumLine.vocals.group = FlxG.sound.defaultMusicGroup; */
+			// strumLine.vocals.group = FlxG.sound.defaultMusicGroup;
 			strumLine.ID = i;
 			strumLines.add(strumLine);
 		}

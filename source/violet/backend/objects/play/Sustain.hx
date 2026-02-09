@@ -60,10 +60,8 @@ class Sustain extends NovaSprite {
 		final skin:String = skin ?? this.skin ?? 'default';
 		final meta:NoteSkin = NoteSkinRegistry.getNoteSkinByID(skin);
 		loadSprite(meta.getSustainAssetPath());
-		for (data in meta.getSustainAnimations(ID, parent.keyCount)) {
-			trace([data.directionId, data.keyCount, data.name, data.prefix, data.frameIndices, data.offsets, data.frameRate, data.looped, data.byLabel]);
-			addAnim(data.name, data.prefix, data.frameIndices, data.offsets, data.frameRate, data.looped, data.byLabel);
-		}
+		for (data in meta.getSustainAnimations(ID, parent.keyCount))
+			addAnimFromJSON(data);
 		var lol:Array<Float> = meta.getSustainOffsets();
 		globalOffset.set(lol[0], lol[1]);
 
