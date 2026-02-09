@@ -77,7 +77,7 @@ class Note extends NovaSprite {
 		globalOffset.set(lol[0], lol[1]);
 		if (effectTail) for (sustain in tail) sustain.reloadSkin(skin);
 
-		playAnim('note', true);
+		playAnim('note', true); updateHitbox();
 	}
 
 	/**

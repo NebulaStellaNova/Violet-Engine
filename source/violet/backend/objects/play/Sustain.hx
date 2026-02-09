@@ -67,6 +67,6 @@ class Sustain extends NovaSprite {
 		var lol:Array<Float> = meta.getSustainOffsets();
 		globalOffset.set(lol[0], lol[1]);
 
-		playAnim(isEnd ? 'end' : 'tail', true);
+		playAnim(isEnd ? 'end' : 'tail', true); updateHitbox();
 	}
 }

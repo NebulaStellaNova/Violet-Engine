@@ -43,7 +43,7 @@ class Strum extends NovaSprite {
 		var lol:Array<Float> = meta.getStrumOffsets();
 		globalOffset.set(lol[0], lol[1]);
 
-		playAnim(lastAnim, true, wasReversed);
+		playAnim(lastAnim, true, wasReversed); updateHitbox();
 		// animation.curAnim.curFrame = Math.round(flixel.math.FlxMath.remapToRange(lastFrame[0], 0, lastFrame[1], 0, animation.curAnim.numFrames));
 	}
 }

@@ -28,7 +28,7 @@ class NovaSprite extends #if ANIMATE_SUPPORT FlxAnimate #else FlxSprite #end {
 	public var animationList(get, never):Array<String>;
 	function get_animationList() return [ for (i in this.anims.keys()) i ];
 
-	public var globalOffset:FlxPoint = new FlxPoint();
+	public var globalOffset:FlxPoint = FlxPoint.get();
 
 	public function new(x:Float = 0.0, y:Float = 0.0, ?path:String) {
 		super(x, y);
@@ -140,4 +140,9 @@ class NovaSprite extends #if ANIMATE_SUPPORT FlxAnimate #else FlxSprite #end {
 		returner.loadSprite(this.filePath);
 		return returner;
 	} */
+
+	override public function destroy() {
+		globalOffset.put();
+		super.destroy();
+	}
 }

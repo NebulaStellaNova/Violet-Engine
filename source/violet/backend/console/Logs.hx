@@ -44,7 +44,7 @@ class Logs {
 
 	public static var nativeTrace:(Dynamic, ?PosInfos)->Void;
 
-	public static var traceCallback:(v : Dynamic, ?infos : Null<haxe.PosInfos>)->Void = (v, ?infos) -> {
+	public static var traceCallback:(v:Dynamic, ?infos:Null<PosInfos>)->Void = (v:Dynamic, ?infos:PosInfos) -> {
 		var type = LogMessage;
 		if (v is String) {
 			var res = v + "";

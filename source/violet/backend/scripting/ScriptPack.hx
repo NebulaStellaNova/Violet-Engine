@@ -1,8 +1,7 @@
 package violet.backend.scripting;
 
-import violet.backend.scripting.events.EventBase;
 import flixel.util.FlxStringUtil;
-// import scripting.events.EventBase;
+import violet.backend.scripting.events.EventBase;
 
 class ScriptPack {
 	public var scripts:Array<Script> = [];

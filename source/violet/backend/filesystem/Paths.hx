@@ -83,11 +83,11 @@ class Paths {
 			'$path${ext == null || path.endsWith('.$ext') ? '' : '.$ext'}'
 		]).join('/'), directory == 'root');
 
-	inline public static function vocal(song:String, suffix:String = '', varient:String = '')
-		return root('songs/$song/song/${varient != '' ? '$varient/' : ''}Voices${suffix != '' ? '-$suffix' : ''}.ogg');
+	inline public static function vocal(song:String, suffix:String = '', variant:String = '')
+		return root('songs/$song/song/${variant != '' ? '$variant/' : ''}Voices${suffix != '' ? '-$suffix' : ''}.ogg');
 
-	inline public static function inst(song:String, varient:String = "")
-		return root('songs/$song/song/${varient != '' ? '$varient/' : ''}Inst.ogg');
+	inline public static function inst(song:String, variant:String = "")
+		return root('songs/$song/song/${variant != '' ? '$variant/' : ''}Inst.ogg');
 
 	inline public static function fileExists(path:String, startFromRoot:Bool = false):Bool
 		return FileSystem.exists(root(path, startFromRoot));
