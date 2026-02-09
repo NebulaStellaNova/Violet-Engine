@@ -34,7 +34,7 @@ class StateBackend extends flixel.FlxState {
 	function get_measure() return Conductor.curMeasure;
 
 
-	public var usesLoadingScreen = false;
+	public var usesLoadingScreen:Bool = false;
 	public var stuffToLoad:Array<FlxBasic> = [];
 
 	public static var instance:StateBackend;
@@ -46,8 +46,7 @@ class StateBackend extends flixel.FlxState {
 
 		instance = this;
 
-		stateScripts.parent = this;
-
+		#if SCRIPT_SUPPORT stateScripts.parent = this; #end
 		#if (MOD_SUPPORT && SCRIPT_SUPPORT)
 		for (path in ModdingAPI.STATE_PATHS) {
 			checkForScripts([Paths.ASSETS_FOLDER, path].join("/") + '/${Main.stateClassName}');
@@ -95,14 +94,14 @@ class StateBackend extends flixel.FlxState {
 
 	var nextFrame = false;
 
-	public function callInScripts(what) {
-		stateScripts.call(what);
+	public function callInScripts<T>(funcName:String, ?args:Array<Dynamic>, ?def:T):T {
+		return #if SCRIPT_SUPPORT stateScripts.call(funcName, args, def) ?? #end def;
 	}
 
 	var notificationManager = new haxe.ui.notifications.NotificationManager();
 	var errIndex:Int = 0;
-	override public function update(_) {
-		super.update(_);
+	override public function update(elapsed:Float) {
+		super.update(elapsed);
 
 		Conductor.update();
 
@@ -133,8 +132,12 @@ class StateBackend extends flixel.FlxState {
 	}
 
 	public function runEvent<T:EventBase>(func:String, event:T):T {
+		#if SCRIPT_SUPPORT
 		if (stateScripts == null) return event;
 		return stateScripts.event(func, event);
+		#else
+		return event;
+		#end
 	}
 
 	public function debugPrint(text:String, color:String = "WHITE") {
@@ -155,17 +158,15 @@ class StateBackend extends flixel.FlxState {
 		}); */
 	}
 
-
-
 	public function stepHit(curStep:Int) {
-		// trace("step hit");
+		callInScripts('stepHit', [curStep]);
 	}
 
-	public function beatHit(theBeat:Int) {
-		// trace("beat hit");
+	public function beatHit(curBeat:Int) {
+		callInScripts('beatHit', [curBeat]);
 	}
 
-	public function measureHit(theMeasure:Int) {
-		// trace("measure hit");
+	public function measureHit(curMeasure:Int) {
+		callInScripts('measureHit', [curMeasure]);
 	}
 }

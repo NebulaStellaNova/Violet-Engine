@@ -9,7 +9,8 @@
 		"jcustomparse",
 		"jignored",
 		"jsons",
-		"lscript"
+		"lscript",
+		"luac"
 	],
 
 	"files.associations": {
