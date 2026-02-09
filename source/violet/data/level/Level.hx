@@ -1,20 +1,16 @@
 package violet.data.level;
 
+import flixel.group.FlxSpriteGroup;
 import violet.backend.objects.Bopper;
-import flixel.group.FlxSpriteGroup.FlxTypedSpriteGroup;
-import flixel.group.FlxGroup.FlxTypedGroup;
-import violet.backend.utils.ParseUtil;
 
 class Level {
 
     public var id:String;
-
-    @:default(LevelRegistry.getDefaultLevelData())
     public var _data:LevelData;
 
     public function new(id:String) {
-        this._data = LevelRegistry.levelDatas.get(id);
         this.id = id;
+        this._data = LevelRegistry.levelDatas.get(id) ?? LevelRegistry.getDefaultLevelData();
     }
 
     /**
@@ -42,13 +38,9 @@ class Level {
         return new NovaSprite(Paths.image(_data.titleAsset));
     }
 
-    /**
-     * Get the list of difficulties for this level.
-     */
-    public function getDifficulties():Array<String>
-    {
-        return _data.difficulties ?? ["easy", "normal", "hard"];
-    }
+    // MAYBE: Song display name shenanigans.
+
+    // TODO: isUnlocked
 
     /**
      * Whether this level is visible. If not, it will not be shown on the menu at all.
@@ -56,6 +48,16 @@ class Level {
     public function isVisible():Bool
     {
         return _data.visible;
+    }
+
+    // TODO: Background Related Stuff
+
+    /**
+     * Get the list of difficulties for this level.
+     */
+    public function getDifficulties():Array<String>
+    {
+        return _data.difficulties ?? ["easy", "normal", "hard"];
     }
 
     public function buildProps():FlxTypedSpriteGroup<Bopper>

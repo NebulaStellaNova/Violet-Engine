@@ -1,9 +1,7 @@
 package violet.states.menus;
 
-import flixel.group.FlxSpriteGroup.FlxTypedSpriteGroup;
-import flixel.group.FlxGroup.FlxTypedGroup;
+import flixel.group.FlxSpriteGroup;
 import flixel.math.FlxMath;
-import flixel.addons.plugin.taskManager.FlxTask;
 import flixel.FlxCamera;
 
 import violet.backend.objects.Bopper;
