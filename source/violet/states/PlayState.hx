@@ -33,7 +33,7 @@ class PlayState extends violet.backend.StateBackend {
 
 		strumLines = new FlxTypedGroup<StrumLine>();
 
-		SONG = ChartRegistry.getChart('test', difficulty, variation);
+		SONG = ChartRegistry.getChart(song, difficulty, variation);
 		for (i => data in SONG.strumLines) {
 			if (data == null) continue;
 
