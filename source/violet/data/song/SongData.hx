@@ -19,7 +19,7 @@ typedef SongData = {
 	public var ?coopAllowed:Bool; // Doesn't do shit, only here for compatibility
 	public var ?opponentModeAllowed:Bool; // Doesn't do shit, only here for compatibility
 
-	// public var ?metas:Map<String, ChartMetaData>;
+	// public var ?metas:Map<String, SongData>;
 	public var ?instSuffix:String;
 	public var ?vocalsSuffix:String;
 	public var ?needsVoices:Bool;

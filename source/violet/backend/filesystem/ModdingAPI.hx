@@ -86,6 +86,7 @@ class ModdingAPI {
 		violet.data.noteskin.NoteSkinRegistry.registerNoteSkins();
 		violet.data.level.LevelRegistry.registerLevels();
 		violet.data.song.SongRegistry.registerSongs();
+		violet.data.chart.ChartRegistry.registerCharts();
 	}
 }
 

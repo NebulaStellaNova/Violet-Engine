@@ -4,16 +4,16 @@ import flixel.FlxCamera;
 import flixel.group.FlxGroup;
 import violet.backend.audio.Conductor;
 import violet.backend.objects.play.StrumLine;
-import violet.backend.utils.FileUtil;
 import violet.backend.utils.NovaUtils;
-import violet.backend.utils.ParseUtil;
-import violet.data.song.ChartData;
+import violet.data.chart.Chart;
+import violet.data.chart.ChartRegistry;
 import violet.data.song.SongRegistry;
 
 class PlayState extends violet.backend.StateBackend {
 
 	public static var instance:PlayState;
-	public static var SONG:ChartData;
+	public static var SONG:Chart;
+	public static var song:String;
 	public static var difficulty:String;
 	public static var variation:Null<String>;
 
@@ -33,8 +33,7 @@ class PlayState extends violet.backend.StateBackend {
 
 		strumLines = new FlxTypedGroup<StrumLine>();
 
-		final jsonPath = Paths.json('songs/test/charts/${variation == null ? '' : '$variation/'}$difficulty');
-		SONG = new json2object.JsonParser<ChartData>().fromJson(ParseUtil.removeJsonComments(FileUtil.getFileContent(jsonPath)), jsonPath);
+		SONG = ChartRegistry.getChart('test', difficulty, variation);
 		for (i => data in SONG.strumLines) {
 			if (data == null) continue;
 
@@ -68,12 +67,24 @@ class PlayState extends violet.backend.StateBackend {
 				data.vocalsSuffix */
 			);
 			strumLine.cameras = [camHUD];
-			strumLine.visible = (data.visible != false);
+			strumLine.visible = data.visible;
 			// strumLine.vocals.group = FlxG.sound.defaultMusicGroup;
 			strumLine.ID = i;
 			strumLines.add(strumLine);
 		}
 		add(strumLines);
+
+		for (strumLine in strumLines) {
+			strumLine.generateNotes();
+		}
+	}
+
+	override public function update(elapsed:Float):Void {
+		super.update(elapsed);
+
+		if (Controls.back) {
+			FlxG.switchState(violet.states.menus.MainMenu.new);
+		}
 	}
 
 	override public function destroy():Void {
@@ -85,6 +96,7 @@ class PlayState extends violet.backend.StateBackend {
 		var songMetaData = SongRegistry.getSongByID(id);
 		NovaUtils.playMusic('$id/song/Inst${variation == null ? '' : '-$variation'}', 'songs');
 		Conductor.setInitialBPM(songMetaData.bpm, songMetaData.stepsPerBeat, songMetaData.beatsPerMeasure);
+		PlayState.song = id;
 		PlayState.difficulty = difficulty;
 		PlayState.variation = variation;
 	}

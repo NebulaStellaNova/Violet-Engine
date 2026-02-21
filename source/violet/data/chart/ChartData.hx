@@ -1,9 +1,11 @@
-package violet.data.song;
+package violet.data.chart;
+
+import violet.data.song.SongData;
 
 typedef ChartData = {
 	public var strumLines:Array<ChartStrumLine>;
 	public var events:Array<ChartEvent>;
-	public var meta:ChartMetaData;
+	public var meta:SongData;
 	public var codenameChart:Bool;
 	public var stage:String;
 	public var scrollSpeed:Float;
@@ -11,31 +13,6 @@ typedef ChartData = {
 
 	public var ?chartVersion:String;
 	public var ?fromMods:Bool;
-}
-
-typedef ChartMetaData = {
-	public var name:String;
-	public var ?variant:String;
-	public var ?displayName:String;
-
-	public var ?bpm:Float;
-	public var ?beatsPerMeasure:Float;
-	public var ?stepsPerBeat:Int;
-
-	public var ?difficulties:Array<String>;
-	public var ?variants:Array<String>;
-	public var ?customValues:Dynamic;
-
-	public var ?icon:String;
-	public var ?color:FlxColor;
-
-	public var ?coopAllowed:Bool;
-	public var ?opponentModeAllowed:Bool;
-
-	public var ?metas:Map<String, ChartMetaData>;
-	public var ?instSuffix:String;
-	public var ?vocalsSuffix:String;
-	public var ?needsVoices:Bool;
 }
 
 typedef ChartStrumLine = {
@@ -50,6 +27,8 @@ typedef ChartStrumLine = {
 	var ?scrollSpeed:Float;
 	var ?vocalsSuffix:String;
 	@:default(4) var ?keyCount:Int;
+
+	var ?strumLinePos:Float;
 }
 
 typedef ChartNote = {

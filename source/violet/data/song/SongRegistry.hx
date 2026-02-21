@@ -43,6 +43,10 @@ class SongRegistry {
         songs.push(song);
     }
 
+    public static function getAllSongs():Array<Song> {
+        return songs.copy();
+    }
+
     public static function getSongByID(songID:String):Null<Song> {
         for (song in songs) {
             if (song.id == songID) {

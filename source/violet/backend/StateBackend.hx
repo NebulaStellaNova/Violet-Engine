@@ -1,7 +1,6 @@
 package violet.backend;
 
 import flixel.FlxBasic;
-
 import violet.backend.audio.Conductor;
 import violet.backend.scripting.events.EventBase;
 
