@@ -10,6 +10,7 @@ import violet.backend.utils.MathUtil;
 import violet.backend.utils.NovaUtils;
 import violet.backend.SubStateBackend;
 import violet.data.level.LevelRegistry;
+import violet.data.level.Level;
 
 class StoryMenu extends SubStateBackend {
 
