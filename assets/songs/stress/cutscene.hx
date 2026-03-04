@@ -33,7 +33,7 @@ function create() {
 		}
 		game.camHUD.visible = game.dad.visible = game.gf.visible = true;
 		close();
-	};
+	}
 
 	tankman = new FunkinSprite(game.dad.x + game.dad.globalOffset.x + 520, game.dad.y + game.dad.globalOffset.y + 225);
 	tankman.antialiasing = true;
@@ -89,7 +89,7 @@ function update(elapsed) {
 				game.boyfriend.animation.finishCallback = function(anim:String) {
 					game.boyfriend.dance();
 					game.boyfriend.animation.finishCallback = null;
-				};
+				}
 			}
 		case 2:
 			if (stressCutscene.time > 19600) {
@@ -118,7 +118,7 @@ function update(elapsed) {
 					focusOn(game.dad, true);
 					game.boyfriend.dance();
 					game.boyfriend.animation.finishCallback = null;
-				};
+				}
 				step = 5;
 			}
 	}

@@ -99,7 +99,7 @@ class DataParse {
 	 * @return Dynamic
 	 */
 	static function jsonFieldsToDynamicObject(fields:Array<JObjectField>):Dynamic {
-		var result:Dynamic = {};
+		var result:Dynamic = {}
 		for (field in fields)
 			Reflect.setField(result, field.name, Tools.getValue(field.value));
 		return result;

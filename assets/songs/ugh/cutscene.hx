@@ -24,7 +24,7 @@ function create() {
 	bfBeep = FlxG.sound.load(Paths.sound('cutscenes/tank/ugh-beep'));
 	bfBeep.onComplete = function() {
 		game.boyfriend.dance();
-	};
+	}
 	distorto = FlxG.sound.load(Paths.music('DISTORTO'));
 	distorto.volume = 0;
 	distorto.play();

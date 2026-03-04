@@ -71,7 +71,7 @@ class NoteSkinRegistry {
             if (noteSkin.id == id) {
                 return true;
             }
-        };
+        }
         return false;
     }
 
@@ -80,7 +80,7 @@ class NoteSkinRegistry {
             if (noteSkin.id == id) {
                 return noteSkin;
             }
-        };
+        }
         return null;
     }
 

@@ -28,7 +28,7 @@ class LevelRegistry {
             songs: [],
             background: "#F9CF51",
             difficulties: ["easy", "normal", "hard"]
-        };
+        }
     }
 
     public static function registerLevel(newLevel:Level):Void {
@@ -67,7 +67,7 @@ class LevelRegistry {
             if (level.id == levelID) {
                 return true;
             }
-        };
+        }
         return false;
     }
 
@@ -76,7 +76,7 @@ class LevelRegistry {
             if (level.id == levelID) {
                 return level;
             }
-        };
+        }
         return null;
     }
 
