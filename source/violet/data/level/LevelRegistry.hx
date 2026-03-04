@@ -45,21 +45,16 @@ class LevelRegistry {
         levels.push(newLevel);
     }
 
-    /* public static function getLevelData(levelID:String):Null<LevelData> {
-        for (level in levels) {
-            if (level.id == levelID) {
-                return level._data;
-            }
-        };
-        return null;
-    } */
-
     public static function getAllLevelIDs():Iterator<String> {
         return levels.map((level) -> level.id).iterator();
     }
 
     public static function getAllLevels():Array<Level> {
         return levels.copy();
+    }
+
+    public static function getVisibleLevels():Array<Level> {
+        return getAllLevels().filter((level) -> return level.isVisible());
     }
 
     public static function doesLevelExist(levelID:String):Bool {

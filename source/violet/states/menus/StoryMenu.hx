@@ -27,6 +27,7 @@ class StoryMenu extends SubStateBackend {
 
     var curSelected:Int = 0;
     static var curDifficulty:Int = 1;
+    var levelList:Array<Level> = [];
 
     var storyCam:FlxCamera;
 
@@ -94,7 +95,7 @@ class StoryMenu extends SubStateBackend {
 
         add(bottomBox);
         var yLevel = 0.0;
-        for (i=>level in LevelRegistry.getAllLevels()) {
+        for (i=>level in levelList = LevelRegistry.getVisibleLevels()) {
             var titleAsset = level.buildTitleGraphic();
             titleAsset.camera = storyCam;
             titleAsset.y = yLevel-titleAsset.height;
@@ -187,7 +188,7 @@ class StoryMenu extends SubStateBackend {
             changeDifficulty(-1);
         }
 
-        levelText.text = LevelRegistry.getAllLevels()[curSelected].getTitle();
+        levelText.text = levelList[curSelected].getTitle();
         levelText.updateHitbox();
         levelText.x = FlxG.width - levelText.getWidth() - 11;
 
@@ -201,7 +202,7 @@ class StoryMenu extends SubStateBackend {
 
         for (i=>group in charactersSprites.members) {
             group.visible = (i == curSelected);
-            for (j=>charSprite in group.members) {
+            for (charSprite in group.members) {
                 charSprite.updateHitbox();
             }
         }
@@ -223,7 +224,7 @@ class StoryMenu extends SubStateBackend {
 
     function scroll(direction:Int, playSound:Bool = true) {
         if (!canInteract) return;
-        curSelected = FlxMath.wrap(curSelected + direction, 0, titleGraphics.length - 1);
+        curSelected = FlxMath.wrap(curSelected + direction, 0, levelList.length - 1);
         updateTrackList();
         if (playSound)
 		    NovaUtils.playMenuSFX(NovaUtils.SCROLL);
@@ -231,14 +232,14 @@ class StoryMenu extends SubStateBackend {
 
     function changeDifficulty(direction:Int) {
         if (!canInteract) return;
-        var difficulties = LevelRegistry.getAllLevels()[curSelected].getDifficulties();
+        var difficulties = levelList[curSelected].getDifficulties();
         curDifficulty = FlxMath.wrap(curDifficulty + direction, 0, difficulties.length - 1);
         // FlxG.sound.play(Cache.sound('menu/scroll'));
     }
 
     function updateTrackList() {
         var trackList = "- TRACKS -\n\n";
-        var songList = LevelRegistry.getAllLevels()[curSelected].getSongs();
+        var songList = levelList[curSelected].getSongs();
         for (song in songList) {
             trackList += (SongRegistry.getSongByID(song)?.displayName ?? "Unknown") + "\n";
         }
@@ -265,7 +266,7 @@ class StoryMenu extends SubStateBackend {
         FlxTween.tween(charactersSprites, { y: -charactersSprites.height }, 0.5, { ease: FlxEase.backIn, startDelay: 0.3 });
         FlxTween.tween(bottomBox, { y: -FlxG.height }, 0.5, { ease: FlxEase.backIn, startDelay: 0.4 });
 
-        for (i=>titleAsset in titleGraphics) {
+        for (titleAsset in titleGraphics) {
             FlxTween.cancelTweensOf(titleAsset);
             FlxTween.tween(titleAsset, { alpha: 0 }, 0.5, { startDelay: 0.2 });
         }
@@ -280,8 +281,8 @@ class StoryMenu extends SubStateBackend {
 
         // trace("hello??");
 
-        for (i=>group in charactersSprites.members) {
-            for (j=>charSprite in group.members) {
+        for (group in charactersSprites.members) {
+            for (charSprite in group.members) {
                 if (beat % charSprite.danceEvery == 0)
                     charSprite.dance();
             }
