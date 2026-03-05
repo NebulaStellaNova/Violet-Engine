@@ -129,6 +129,7 @@ class StrumLine extends FlxGroup {
 		}
 	}
 
+	public dynamic function _onVoidTap(id:Int):Void {}
 	public dynamic function _onNoteHit(note:Note):Void {}
 	public dynamic function _onSustainHit(sustain:Sustain):Void {}
 	public dynamic function _onNoteMissed(note:Note):Void {}
@@ -251,11 +252,7 @@ class StrumLine extends FlxGroup {
 					frontNote = backNote;
 			}
 			_onNoteHit(frontNote);
-		} else {
-			final ghostTapping:Bool = true;
-			if (!ghostTapping) FlxG.sound.play(Cache.sound('miss/${FlxG.random.int(1, 3)}'), 0.7);
-			strums.members[inputId].playStrumAnim('press', ghostTapping);
-		}
+		} else _onVoidTap(inputId);
 	}
 	function _on_release(event:KeyboardEvent):Void {
 		if (isComputer) return;

@@ -54,29 +54,18 @@ class PlayState extends violet.backend.StateBackend {
 				chars.push(char);
 			} */
 
-			/* var strOffset:Float = data.strumLinePos != null ? data.strumLinePos : (data.type == 1 ? 0.75 : 0.25);
-			var strScale:Float = data.strumScale != null ? data.strumScale : 1;
-			var strSpacing:Float = data.strumSpacing == null ? 1 : data.strumSpacing;
-			var keyCount:Int = data.keyCount == null ? 4 : data.keyCount;
-			var strXPos:Float = StrumLine.calculateStartingXPos(strOffset, strScale, strSpacing, keyCount);
-			var startingPos:FlxPoint = data.strumPos != null ?
-				FlxPoint.get(data.strumPos[0] == 0 ? strXPos : data.strumPos[0], data.strumPos[1]) :
-				FlxPoint.get(strXPos, this.strumLine.y); */
-			var strumLine = new StrumLine(
-				data
-				/* chars,
-				startingPos,
-				data.strumScale == null ? 1 : data.strumScale,
-				data.type == 2 || (!coopMode && !((data.type == 1 && !opponentMode) || (data.type == 0 && opponentMode))),
-				data.type != 1, coopMode ? ((data.type == 1) != opponentMode ? controlsP1 : controlsP2) : controls,
-				data.vocalsSuffix */
-			);
+			var strumLine = new StrumLine(data);
 			strumLine.cameras = [camHUD];
 			strumLine.visible = data.visible;
 			strumLine.ID = i;
 			strumLines.add(strumLine);
 
 			// note interactions
+			final ghostTapping:Bool = true;
+			strumLine._onVoidTap = (id:Int) -> {
+				if (!ghostTapping) FlxG.sound.play(Cache.sound('miss/${FlxG.random.int(1, 3)}'), 0.7);
+				strumLine.strums.members[id].playStrumAnim('press', ghostTapping);
+			}
 			strumLine._onNoteHit = (note:Note) -> {
 				if (note.wasHit) return;
 				note.wasHit = true;
@@ -96,30 +85,26 @@ class PlayState extends violet.backend.StateBackend {
 			strumLine._onNoteMissed = (note:Note) -> {
 				if (note.wasMissed) return;
 				note.wasMissed = true;
-				note.alpha *= 0.86;
+				note.alpha *= 0.6;
 				FlxG.sound.play(Cache.sound('miss/${FlxG.random.int(1, 3)}'), 0.7);
 				if (generalVocals != null) generalVocals.volume = 0;
 				if (strumLine.vocals != null) strumLine.vocals.volume = 0;
 				for (sustain in Note.filterTail(note.tail, true)) {
 					sustain.wasMissed = true;
-					sustain.alpha *= 0.86;
+					sustain.alpha *= 0.6;
 				}
-				/* if (strumLine.isPlayer)
-					note.parentStrum.playStrumAnim('press', true); */
 			}
 			strumLine._onSustainMissed = (sustain:Sustain) -> {
 				if (sustain.wasMissed) return;
 				sustain.wasMissed = true;
-				sustain.alpha *= 0.86;
+				sustain.alpha *= 0.6;
 				FlxG.sound.play(Cache.sound('miss/${FlxG.random.int(1, 3)}'), 0.7);
 				if (generalVocals != null) generalVocals.volume = 0;
 				if (strumLine.vocals != null) strumLine.vocals.volume = 0;
 				for (sustain in Note.filterTail(sustain.parentNote.tail, true)) {
 					sustain.wasMissed = true;
-					sustain.alpha *= 0.86;
+					sustain.alpha *= 0.6;
 				}
-				/* if (strumLine.isPlayer)
-					sustain.parentStrum.playStrumAnim('press', true); */
 			}
 		}
 		add(strumLines);
