@@ -1,5 +1,6 @@
 package violet.states.menus;
 
+import violet.data.Constants;
 import flixel.FlxObject;
 import flixel.math.FlxMath;
 
@@ -41,7 +42,7 @@ typedef MenuData = {
 
 class MainMenu extends StateBackend {
 	public var watermarkTexts = [
-		"Violet Engine v" + Main.engineVersion
+		Constants.ENGINE_TITLE + " v" + Constants.ENGINE_VERSION
 	];
 
 	public var curSelectedString:String = "";
