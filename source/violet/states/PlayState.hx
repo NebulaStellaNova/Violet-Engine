@@ -6,7 +6,6 @@ import violet.backend.audio.Conductor;
 import violet.backend.objects.play.Note;
 import violet.backend.objects.play.StrumLine;
 import violet.backend.objects.play.Sustain;
-import violet.backend.utils.NovaUtils;
 import violet.data.chart.Chart;
 import violet.data.chart.ChartRegistry;
 import violet.data.song.SongRegistry;
@@ -23,6 +22,7 @@ class PlayState extends violet.backend.StateBackend {
 	public var camGame:FlxCamera;
 
 	public var strumLines:FlxTypedGroup<StrumLine>;
+	public var generalVocals:Null<FlxSound>;
 
 	override public function create():Void {
 		super.create();
@@ -36,6 +36,7 @@ class PlayState extends violet.backend.StateBackend {
 		strumLines = new FlxTypedGroup<StrumLine>();
 
 		SONG = ChartRegistry.getChart(song, difficulty, variation);
+		if (SONG.meta.needsVoices) generalVocals = Conductor.addAdditionalTrack(FlxG.sound.load(Cache.sound(Paths.vocal(PlayState.song, '', PlayState.variation), 'root', null, true), FlxG.sound.defaultMusicGroup));
 		StrumLine.generalScrollSpeed = SONG.scrollSpeed ?? 1;
 		for (i => data in SONG.strumLines) {
 			if (data == null) continue;
@@ -71,7 +72,6 @@ class PlayState extends violet.backend.StateBackend {
 			);
 			strumLine.cameras = [camHUD];
 			strumLine.visible = data.visible;
-			// strumLine.vocals.group = FlxG.sound.defaultMusicGroup;
 			strumLine.ID = i;
 			strumLines.add(strumLine);
 
@@ -80,12 +80,16 @@ class PlayState extends violet.backend.StateBackend {
 				if (note.wasHit) return;
 				note.wasHit = true;
 				note.visible = false;
+				if (generalVocals != null) generalVocals.volume = 1;
+				if (strumLine.vocals != null) strumLine.vocals.volume = 1;
 				note.parentStrum.playStrumAnim('confirm', true);
 			}
 			strumLine._onSustainHit = (sustain:Sustain) -> {
 				if (sustain.wasHit) return;
 				sustain.wasHit = true;
 				sustain.visible = false;
+				if (generalVocals != null) generalVocals.volume = 1;
+				if (strumLine.vocals != null) strumLine.vocals.volume = 1;
 				sustain.parentStrum.playStrumAnim('confirm', true);
 			}
 			strumLine._onNoteMissed = (note:Note) -> {
@@ -93,6 +97,8 @@ class PlayState extends violet.backend.StateBackend {
 				note.wasMissed = true;
 				note.alpha *= 0.86;
 				FlxG.sound.play(Cache.sound('miss/${FlxG.random.int(1, 3)}'), 0.7);
+				if (generalVocals != null) generalVocals.volume = 0;
+				if (strumLine.vocals != null) strumLine.vocals.volume = 0;
 				for (sustain in Note.filterTail(note.tail, true)) {
 					sustain.wasMissed = true;
 					sustain.alpha *= 0.86;
@@ -105,6 +111,8 @@ class PlayState extends violet.backend.StateBackend {
 				sustain.wasMissed = true;
 				sustain.alpha *= 0.86;
 				FlxG.sound.play(Cache.sound('miss/${FlxG.random.int(1, 3)}'), 0.7);
+				if (generalVocals != null) generalVocals.volume = 0;
+				if (strumLine.vocals != null) strumLine.vocals.volume = 0;
 				for (sustain in Note.filterTail(sustain.parentNote.tail, true)) {
 					sustain.wasMissed = true;
 					sustain.alpha *= 0.86;

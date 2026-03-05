@@ -1,54 +1,103 @@
 package violet.backend.audio;
 
-import violet.backend.utils.NovaUtils;
 import flixel.addons.sound.FlxRhythmConductor;
 import flixel.addons.sound.MusicTimeChangeEvent;
-
-using flixel.addons.sound.FlxRhythmConductorUtil;
-
+import violet.backend.utils.NovaUtils;
 
 using StringTools;
+using flixel.addons.sound.FlxRhythmConductorUtil;
 
 class Conductor {
 
-	public static var curBeat(get, never):Int;
-	static function get_curBeat() return FlxRhythmConductor.instance.currentBeat;
-
-	public static var curBeatFloat(get, never):Float;
-	static function get_curBeatFloat() return FlxRhythmConductor.instance.currentBeatTime;
-
+	/**
+	 * The current song position in steps.
+	 */
 	public static var curStep(get, never):Int;
-	static function get_curStep() return FlxRhythmConductor.instance.currentStep;
-
+	static function get_curStep():Int return FlxRhythmConductor.instance.currentStep;
+	/**
+	 * The precise song position in steps.
+	 */
 	public static var curStepFloat(get, never):Float;
-	static function get_curStepFloat() return FlxRhythmConductor.instance.currentStepTime;
+	static function get_curStepFloat():Float return FlxRhythmConductor.instance.currentStepTime;
 
+	/**
+	 * The current song position in beats.
+	 */
+	public static var curBeat(get, never):Int;
+	static function get_curBeat():Int return FlxRhythmConductor.instance.currentBeat;
+	/**
+	 * The precise song position in beats.
+	 */
+	public static var curBeatFloat(get, never):Float;
+	static function get_curBeatFloat():Float return FlxRhythmConductor.instance.currentBeatTime;
+
+	/**
+	 * The current song position in measures.
+	 */
 	public static var curMeasure(get, never):Int;
-	static function get_curMeasure() return FlxRhythmConductor.instance.currentMeasure;
-
+	static function get_curMeasure():Int return FlxRhythmConductor.instance.currentMeasure;
+	/**
+	 * The precise song position in measures.
+	 */
 	public static var curMeasureFloat(get, never):Float;
-	static function get_curMeasureFloat() return FlxRhythmConductor.instance.currentMeasureTime;
+	static function get_curMeasureFloat():Float return FlxRhythmConductor.instance.currentMeasureTime;
 
+	/**
+	 * The current song position in milliseconds.
+	 */
 	public static var songPosition(get, never):Float;
-	static function get_songPosition() return FlxRhythmConductor.instance.musicPosition;
+	static function get_songPosition():Float return FlxRhythmConductor.instance.musicPosition;
 
-	public static var BPM(get, never):Float;
-	static function get_BPM() return FlxRhythmConductor.instance.currentBpm;
+	/**
+	 * The current BPM of the song.
+	 */
+	public static var currentBpm(get, never):Float;
+	static function get_currentBpm():Float return FlxRhythmConductor.instance.currentBpm;
 
+	/**
+	 * The number of steps per measure.
+	 */
 	public static var stepsPerMeasure(get, never):Float;
-	static function get_stepsPerMeasure() return FlxRhythmConductor.instance.stepsPerMeasure;
-
+	static function get_stepsPerMeasure():Float return FlxRhythmConductor.instance.stepsPerMeasure;
+	/**
+	 * The number of beats per measure.
+	 */
 	public static var beatsPerMeasure(get, never):Float;
-	static function get_beatsPerMeasure() return FlxRhythmConductor.instance.beatsPerMeasure;
+	static function get_beatsPerMeasure():Float return FlxRhythmConductor.instance.beatsPerMeasure;
 
+	/**
+	 * The length of a step in milliseconds.
+	 */
 	public static var stepLengthMs(get, never):Float;
-	static function get_stepLengthMs() return FlxRhythmConductor.instance.stepLengthMs;
+	static function get_stepLengthMs():Float return FlxRhythmConductor.instance.stepLengthMs;
+	/**
+	 * The length of a beat in milliseconds.
+	 */
+	public static var beatLengthMs(get, never):Float;
+	static function get_beatLengthMs():Float return FlxRhythmConductor.instance.beatLengthMs;
+	/**
+	 * The length of a measure in milliseconds.
+	 */
+	public static var measureLengthMs(get, never):Float;
+	static function get_measureLengthMs():Float return FlxRhythmConductor.instance.measureLengthMs;
 
+	/**
+	 * The instrumental track of the song.
+	 */
+	public static var instrumental(get, never):FlxSound;
+	static function get_instrumental():FlxSound return FlxRhythmConductor.instance.target;
+	/**
+	 * Additional tracks of the song.
+	 */
+	public static final additionalTracks:Array<FlxSound> = [];
+	public static function addAdditionalTrack(track:FlxSound):FlxSound {
+		if (track == null) return null;
+		track.persist = instrumental.persist;
+		additionalTracks.push(track);
+		return track;
+	}
 
-	public static var initialized:Bool = false;
-
-	public static var vocalTracks:Array<FlxSound> = [];
-
+	static var initialized:Bool = false;
 	public static function init():Void {
 		if (initialized) return;
 		resetConductor();
@@ -56,36 +105,47 @@ class Conductor {
 		initialized = true;
 	}
 
-	public static function resetConductor() {
+	public static function resetConductor():Void {
+		for (track in additionalTracks) {
+			track.stop();
+			track.destroy();
+		}
+		additionalTracks.resize(0);
 		FlxRhythmConductor.reset();
 		FlxRhythmConductor.instance.connectWatch(true);
 	}
 
-	public static function initCallbacks() {
-		FlxRhythmConductor.instance.onBeatHit.add((beat:Int, backward:Bool) -> { StateBackend.instance.beatHit(beat); });
-		FlxRhythmConductor.instance.onStepHit.add((step:Int, backward:Bool) -> { StateBackend.instance.stepHit(step); });
-		FlxRhythmConductor.instance.onMeasureHit.add((measure:Int, backward:Bool) -> { StateBackend.instance.measureHit(measure); });
+	public static function initCallbacks():Void {
+		FlxRhythmConductor.instance.onStepHit.add((step:Int, backward:Bool) -> StateBackend.instance.stepHit(step));
+		FlxRhythmConductor.instance.onBeatHit.add((beat:Int, backward:Bool) -> StateBackend.instance.beatHit(beat));
+		FlxRhythmConductor.instance.onMeasureHit.add((measure:Int, backward:Bool) -> StateBackend.instance.measureHit(measure));
 	}
 
-	public static function initCallbacksSubState() {
-		FlxRhythmConductor.instance.onBeatHit.add((beat:Int, backward:Bool) -> { if (SubStateBackend.instance != null) SubStateBackend.instance.beatHit(beat); });
-		FlxRhythmConductor.instance.onStepHit.add((step:Int, backward:Bool) -> { if (SubStateBackend.instance != null) SubStateBackend.instance.stepHit(step); });
-		FlxRhythmConductor.instance.onMeasureHit.add((measure:Int, backward:Bool) -> { if (SubStateBackend.instance != null) SubStateBackend.instance.measureHit(measure); });
+	public static function initCallbacksSubState():Void {
+		FlxRhythmConductor.instance.onStepHit.add((step:Int, backward:Bool) -> if (SubStateBackend.instance != null) SubStateBackend.instance.stepHit(step));
+		FlxRhythmConductor.instance.onBeatHit.add((beat:Int, backward:Bool) -> if (SubStateBackend.instance != null) SubStateBackend.instance.beatHit(beat));
+		FlxRhythmConductor.instance.onMeasureHit.add((measure:Int, backward:Bool) -> if (SubStateBackend.instance != null) SubStateBackend.instance.measureHit(measure));
 	}
 
-	public static function setInitialBPM(bpm:Float, tsn:Int = 4, tsd:Int = 4) {
-		FlxRhythmConductor.instance.loadMeta([
-			new MusicTimeChangeEvent(0, bpm, tsn, tsd)
-		]);
+	public static function setInitialBPM(bpm:Float, tsn:Int = 4, tsd:Int = 4):Void {
+		FlxRhythmConductor.instance.loadMeta([new MusicTimeChangeEvent(0, bpm, tsn, tsd)]);
 	}
 
-	public static function update() {
+	public static function update():Void {
 		FlxRhythmConductor.instance.update(null);
+		for (track in additionalTracks)
+			if (instrumental.time < track.length) {
+				if (Math.abs(songPosition - track.time) > 25) {
+					track.pause();
+					track.time = songPosition;
+					track.play();
+				}
+			} else if (track.playing)
+				track.pause();
 	}
 
-	public static function playSong(id:String, ?variation:String) {
+	public static function playSong(id:String, ?variation:String):Void {
 		NovaUtils.playMusic('$id/song/Inst${variation == null ? '' : '-$variation'}', 'songs');
-
 	}
 
 }

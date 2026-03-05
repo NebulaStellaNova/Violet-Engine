@@ -1,12 +1,13 @@
 package violet.backend.objects.play;
 
-import violet.backend.audio.Conductor;
 import flixel.group.FlxGroup;
 import flixel.input.keyboard.FlxKey;
 import flixel.math.FlxPoint;
 import openfl.events.KeyboardEvent;
+import violet.backend.audio.Conductor;
 import violet.data.chart.Chart;
 import violet.data.chart.ChartData;
+import violet.states.PlayState;
 
 class StrumLine extends FlxGroup {
 
@@ -53,6 +54,8 @@ class StrumLine extends FlxGroup {
 	public var strumScale:Float;
 	public var strumSpacing:Float;
 
+	public var vocals:Null<FlxSound>;
+
 	public function new(chartData:_ChartStrumLine) {
 		this.chartData = chartData;
 		controllerType = chartData.type;
@@ -93,6 +96,8 @@ class StrumLine extends FlxGroup {
 
 		FlxG.stage.addEventListener(KeyboardEvent.KEY_DOWN, _on_press);
 		FlxG.stage.addEventListener(KeyboardEvent.KEY_UP, _on_release);
+
+		vocals = Conductor.addAdditionalTrack(FlxG.sound.load(Cache.sound(Paths.vocal(PlayState.song, chartData.vocalsSuffix, PlayState.variation), 'root', null, true), FlxG.sound.defaultMusicGroup));
 	}
 
 	public function setPosition(x:Float = 0, y:Float = 0, purePos:Bool = true):Void {
