@@ -35,6 +35,7 @@ class PlayState extends violet.backend.StateBackend {
 
 		strumLines = new FlxTypedGroup<StrumLine>();
 
+		Conductor.instrumental.time = 0;
 		SONG = ChartRegistry.getChart(song, difficulty, variation);
 		if (SONG.meta.needsVoices) generalVocals = Conductor.addAdditionalTrack(FlxG.sound.load(Cache.sound(Paths.vocal(PlayState.song, '', PlayState.variation), 'root', null, true), FlxG.sound.defaultMusicGroup));
 		StrumLine.generalScrollSpeed = SONG.scrollSpeed ?? 1;
@@ -122,18 +123,16 @@ class PlayState extends violet.backend.StateBackend {
 			}
 		}
 		add(strumLines);
-
-		for (strumLine in strumLines) {
-			strumLine.generateNotes();
+		Conductor.instrumental.onComplete = () -> {
+			FlxG.switchState(violet.states.menus.MainMenu.new);
 		}
+
+		for (strumLine in strumLines)
+			strumLine.generateNotes(Conductor.instrumental.time);
 	}
 
 	override public function update(elapsed:Float):Void {
 		super.update(elapsed);
-
-		if (Controls.back) {
-			FlxG.switchState(violet.states.menus.MainMenu.new);
-		}
 	}
 
 	override public function destroy():Void {

@@ -188,7 +188,7 @@ class StrumLine extends FlxGroup {
 
 			final strum:Strum = note.parentStrum;
 			final pos:Array<Float> = [strum.x, strum.y];
-			var disPos:Float = 0.45 * (Conductor.songPosition - note.time) * Math.abs(note.__scrollSpeed) * Math.abs(scale.x / scale.y);
+			var disPos:Float = 0.45 * (Conductor.framePosition - note.time) * Math.abs(note.__scrollSpeed) * Math.abs(scale.x / scale.y);
 
 			pos[0] += Math.cos(angleDir) * disPos;
 			// TODO: Figure out how to do this better, especially for sustains.
@@ -204,7 +204,7 @@ class StrumLine extends FlxGroup {
 
 			for (sustain in note.tail) {
 				final pos:Array<Float> = [strum.x, strum.y];
-				disPos = 0.45 * (Conductor.songPosition - (note.time + sustain.time)) * Math.abs(sustain.__scrollSpeed) * Math.abs(scale.x / scale.y);
+				disPos = 0.45 * (Conductor.framePosition - (note.time + sustain.time)) * Math.abs(sustain.__scrollSpeed) * Math.abs(scale.x / scale.y);
 
 				pos[0] += Math.cos(angleDir) * disPos;
 				pos[0] -= sustain.width / 2;
