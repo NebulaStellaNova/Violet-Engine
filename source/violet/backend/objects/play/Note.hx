@@ -1,6 +1,6 @@
 package violet.backend.objects.play;
 
-import flixel.addons.sound.FlxRhythmConductor;
+import violet.backend.audio.Conductor;
 import flixel.util.FlxSort;
 import violet.data.noteskin.NoteSkin;
 import violet.data.noteskin.NoteSkinRegistry;
@@ -72,14 +72,14 @@ class Note extends NovaSprite {
 	 */
 	public var canHit(get, never):Bool;
 	inline function get_canHit():Bool {
-		return time >= FlxRhythmConductor.instance.musicPosition - 230 && time <= FlxRhythmConductor.instance.musicPosition + 230;
+		return time >= Conductor.songPosition - 230 && time <= Conductor.songPosition + 230;
 	}
 	/**
 	 * If true it's too late to hit the note.
 	 */
 	public var tooLate(get, never):Bool;
 	inline function get_tooLate():Bool {
-		return time < FlxRhythmConductor.instance.musicPosition - (300 / Math.abs(__scrollSpeed)) && !wasHit;
+		return time < Conductor.songPosition - (300 / Math.abs(__scrollSpeed)) && !wasHit;
 	}
 	/**
 	 * If true this note has been hit.
@@ -99,10 +99,10 @@ class Note extends NovaSprite {
 		skin = 'default';
 		preventAutoSkinSet = false;
 
-		var roundedLength:Int = Math.round(tailLength / FlxRhythmConductor.instance.stepLengthMs);
+		var roundedLength:Int = Math.round(tailLength / Conductor.stepLengthMs);
 		if (roundedLength > 1) {
 			for (susNote in 0...roundedLength)
-				tail.push(new Sustain(this, (FlxRhythmConductor.instance.stepLengthMs * susNote), susNote == (roundedLength - 1)));
+				tail.push(new Sustain(this, (Conductor.stepLengthMs * susNote), susNote == (roundedLength - 1)));
 			tail.sort(sortTail);
 		}
 		reloadSkin(true);

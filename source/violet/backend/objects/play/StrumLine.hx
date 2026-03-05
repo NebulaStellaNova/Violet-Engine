@@ -1,6 +1,6 @@
 package violet.backend.objects.play;
 
-import flixel.addons.sound.FlxRhythmConductor;
+import violet.backend.audio.Conductor;
 import flixel.group.FlxGroup;
 import flixel.input.keyboard.FlxKey;
 import flixel.math.FlxPoint;
@@ -132,27 +132,27 @@ class StrumLine extends FlxGroup {
 	override public function update(elapsed:Float):Void {
 		// auto hit and note miss
 		notes.forEachExists((note:Note) -> {
-			if (note.tooLate && (FlxRhythmConductor.instance.musicPosition - note.time) > Math.max(FlxRhythmConductor.instance.stepLengthMs, 350 / Math.abs(note.__scrollSpeed)))
+			if (note.tooLate && (Conductor.songPosition - note.time) > Math.max(Conductor.stepLengthMs, 350 / Math.abs(note.__scrollSpeed)))
 				if (!note.wasHit && !note.wasMissed)
 					_onNoteMissed(note);
 			if (isComputer)
-				if (note.time <= FlxRhythmConductor.instance.musicPosition && !note.tooLate && !note.wasHit && !note.wasMissed)
+				if (note.time <= Conductor.songPosition && !note.tooLate && !note.wasHit && !note.wasMissed)
 					_onNoteHit(note);
 		});
 		// auto hit and sustain miss
 		sustains.forEachExists((sustain:Sustain) -> {
-			if (sustain.tooLate && (FlxRhythmConductor.instance.musicPosition - (sustain.time + sustain.parentNote.time)) > Math.max(FlxRhythmConductor.instance.stepLengthMs, 350 / Math.abs(sustain.__scrollSpeed)))
+			if (sustain.tooLate && (Conductor.songPosition - (sustain.time + sustain.parentNote.time)) > Math.max(Conductor.stepLengthMs, 350 / Math.abs(sustain.__scrollSpeed)))
 				if (!sustain.wasHit && !sustain.wasMissed)
 					_onSustainMissed(sustain);
 			if (isComputer)
-				if ((sustain.time + sustain.parentNote.time) <= FlxRhythmConductor.instance.musicPosition && !sustain.tooLate && !sustain.wasHit && !sustain.wasMissed)
+				if ((sustain.time + sustain.parentNote.time) <= Conductor.songPosition && !sustain.tooLate && !sustain.wasHit && !sustain.wasMissed)
 					_onSustainHit(sustain);
 		});
 
 		if (isPlayer) {
 			for (i => input in currentInputs)
 				if (input) for (sustain in Note.filterTail(sustains.members, i))
-					if ((sustain.time + sustain.parentNote.time) <= FlxRhythmConductor.instance.musicPosition)
+					if ((sustain.time + sustain.parentNote.time) <= Conductor.songPosition)
 						_onSustainHit(sustain);
 		}
 
@@ -183,7 +183,7 @@ class StrumLine extends FlxGroup {
 
 			final strum:Strum = note.parentStrum;
 			final pos:Array<Float> = [strum.x, strum.y];
-			var disPos:Float = 0.45 * (FlxRhythmConductor.instance.musicPosition - note.time) * Math.abs(note.__scrollSpeed) * Math.abs(scale.x / scale.y);
+			var disPos:Float = 0.45 * (Conductor.songPosition - note.time) * Math.abs(note.__scrollSpeed) * Math.abs(scale.x / scale.y);
 
 			pos[0] += Math.cos(angleDir) * disPos;
 			// TODO: Figure out how to do this better, especially for sustains.
@@ -199,7 +199,7 @@ class StrumLine extends FlxGroup {
 
 			for (sustain in note.tail) {
 				final pos:Array<Float> = [strum.x, strum.y];
-				disPos = 0.45 * (FlxRhythmConductor.instance.musicPosition - (note.time + sustain.time)) * Math.abs(sustain.__scrollSpeed) * Math.abs(scale.x / scale.y);
+				disPos = 0.45 * (Conductor.songPosition - (note.time + sustain.time)) * Math.abs(sustain.__scrollSpeed) * Math.abs(scale.x / scale.y);
 
 				pos[0] += Math.cos(angleDir) * disPos;
 				pos[0] -= sustain.width / 2;
@@ -247,7 +247,7 @@ class StrumLine extends FlxGroup {
 			}
 			_onNoteHit(frontNote);
 		} else {
-			final ghostTapping:Bool = false;
+			final ghostTapping:Bool = true;
 			if (!ghostTapping) FlxG.sound.play(Cache.sound('miss/${FlxG.random.int(1, 3)}'), 0.7);
 			strums.members[inputId].playStrumAnim('press', ghostTapping);
 		}

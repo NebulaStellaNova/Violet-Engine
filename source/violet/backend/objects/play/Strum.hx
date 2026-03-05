@@ -1,6 +1,6 @@
 package violet.backend.objects.play;
 
-import flixel.addons.sound.FlxRhythmConductor;
+import violet.backend.audio.Conductor;
 import violet.data.noteskin.NoteSkin;
 import violet.data.noteskin.NoteSkinRegistry;
 
@@ -65,7 +65,7 @@ class Strum extends NovaSprite {
 		super.update(elapsed);
 
 		if (willReset && animation?.name != 'static')
-			if (glowLength > 0 ? (lastHit + (FlxRhythmConductor.instance.stepLengthMs * glowLength) < FlxRhythmConductor.instance.musicPosition) : (animation.name == null || animation.finished))
+			if (glowLength > 0 ? (lastHit + (Conductor.stepLengthMs * glowLength) < Conductor.songPosition) : (animation.name == null || animation.finished))
 				playStrumAnim(parent.isComputer ? 'static' : 'press');
 	}
 
@@ -76,7 +76,7 @@ class Strum extends NovaSprite {
 			this.offset.x += (frameWidth - width) * 0.5;
 			this.offset.y += (frameHeight - height) * 0.5;
 			centerOrigin();
-			if (reset) lastHit = FlxRhythmConductor.instance.musicPosition;
+			if (reset) lastHit = Conductor.songPosition;
 			willReset = reset;
 		}
 	}

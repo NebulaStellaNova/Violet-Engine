@@ -1,6 +1,6 @@
 package violet.backend.objects.play;
 
-import flixel.addons.sound.FlxRhythmConductor;
+import violet.backend.audio.Conductor;
 import violet.data.noteskin.NoteSkin;
 import violet.data.noteskin.NoteSkinRegistry;
 
@@ -58,14 +58,14 @@ class Sustain extends NovaSprite {
 	 */
 	public var canHit(get, never):Bool;
 	inline function get_canHit():Bool {
-		return (time + parentNote.time) >= FlxRhythmConductor.instance.musicPosition - 230 && (time + parentNote.time) <= FlxRhythmConductor.instance.musicPosition + 230;
+		return (time + parentNote.time) >= Conductor.songPosition - 230 && (time + parentNote.time) <= Conductor.songPosition + 230;
 	}
 	/**
 	 * If true it's too late to hit the sustain.
 	 */
 	public var tooLate(get, never):Bool;
 	inline function get_tooLate():Bool {
-		return (time + parentNote.time) < FlxRhythmConductor.instance.musicPosition - (300 / Math.abs(__scrollSpeed)) && !wasHit;
+		return (time + parentNote.time) < Conductor.songPosition - (300 / Math.abs(__scrollSpeed)) && !wasHit;
 	}
 	/**
 	 * If true this sustain has been hit.

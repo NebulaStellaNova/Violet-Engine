@@ -97,8 +97,8 @@ class PlayState extends violet.backend.StateBackend {
 					sustain.wasMissed = true;
 					sustain.alpha *= 0.86;
 				}
-				if (strumLine.isPlayer)
-					note.parentStrum.playStrumAnim('press', true);
+				/* if (strumLine.isPlayer)
+					note.parentStrum.playStrumAnim('press', true); */
 			}
 			strumLine._onSustainMissed = (sustain:Sustain) -> {
 				if (sustain.wasMissed) return;
@@ -109,8 +109,8 @@ class PlayState extends violet.backend.StateBackend {
 					sustain.wasMissed = true;
 					sustain.alpha *= 0.86;
 				}
-				if (strumLine.isPlayer)
-					sustain.parentStrum.playStrumAnim('press', true);
+				/* if (strumLine.isPlayer)
+					sustain.parentStrum.playStrumAnim('press', true); */
 			}
 		}
 		add(strumLines);
@@ -135,7 +135,7 @@ class PlayState extends violet.backend.StateBackend {
 
 	public static function loadSong(id:String, difficulty:String = "normal", ?variation:String) {
 		var songMetaData = SongRegistry.getSongByID(id);
-		NovaUtils.playMusic('$id/song/Inst${variation == null ? '' : '-$variation'}', 'songs');
+		Conductor.playSong(id, variation);
 		Conductor.setInitialBPM(songMetaData.bpm, songMetaData.stepsPerBeat, songMetaData.beatsPerMeasure);
 		PlayState.song = id;
 		PlayState.difficulty = difficulty;
