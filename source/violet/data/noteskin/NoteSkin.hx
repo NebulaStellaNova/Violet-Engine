@@ -68,10 +68,11 @@ class NoteSkin {
 	}
 
 	public function getStrumAnimations(id:Int, mania:Int = 4):Array<NoteAnimationData> {
+		if (mania < 1) return [];
 		var anims:Array<NoteAnimationData> = [
 			for (data in _data.strums.animations) {
-				if (data.directionId != (id % mania)) continue;
 				if (data.keyCount != mania) continue;
+				if (data.directionId != (id % mania)) continue;
 				data;
 			}
 		];
@@ -80,10 +81,11 @@ class NoteSkin {
 		return anims;
 	}
 	public function getNoteAnimations(id:Int, mania:Int = 4):Array<NoteAnimationData> {
+		if (mania < 1) return [];
 		var anims:Array<NoteAnimationData> = [
 			for (data in _data.notes.animations) {
-				if (data.directionId != (id % mania)) continue;
 				if (data.keyCount != mania) continue;
+				if (data.directionId != (id % mania)) continue;
 				data;
 			}
 		];
@@ -92,10 +94,11 @@ class NoteSkin {
 		return anims;
 	}
 	public function getSustainAnimations(id:Int, mania:Int = 4):Array<NoteAnimationData> {
+		if (mania < 1) return [];
 		var anims:Array<NoteAnimationData> = [
 			for (data in _data.sustains.animations) {
-				if (data.directionId != (id % mania)) continue;
 				if (data.keyCount != mania) continue;
+				if (data.directionId != (id % mania)) continue;
 				data;
 			}
 		];

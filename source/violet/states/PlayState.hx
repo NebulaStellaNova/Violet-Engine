@@ -3,7 +3,9 @@ package violet.states;
 import flixel.FlxCamera;
 import flixel.group.FlxGroup;
 import violet.backend.audio.Conductor;
+import violet.backend.objects.play.Note;
 import violet.backend.objects.play.StrumLine;
+import violet.backend.objects.play.Sustain;
 import violet.backend.utils.NovaUtils;
 import violet.data.chart.Chart;
 import violet.data.chart.ChartRegistry;
@@ -29,11 +31,12 @@ class PlayState extends violet.backend.StateBackend {
 		FlxG.cameras.reset(camGame = new FlxCamera());
 		camHUD = new FlxCamera();
 		camHUD.bgColor = FlxColor.TRANSPARENT;
-		FlxG.cameras.add(camHUD);
+		FlxG.cameras.add(camHUD, false);
 
 		strumLines = new FlxTypedGroup<StrumLine>();
 
 		SONG = ChartRegistry.getChart(song, difficulty, variation);
+		StrumLine.generalScrollSpeed = SONG.scrollSpeed ?? 1;
 		for (i => data in SONG.strumLines) {
 			if (data == null) continue;
 
@@ -71,6 +74,44 @@ class PlayState extends violet.backend.StateBackend {
 			// strumLine.vocals.group = FlxG.sound.defaultMusicGroup;
 			strumLine.ID = i;
 			strumLines.add(strumLine);
+
+			// note interactions
+			strumLine._onNoteHit = (note:Note) -> {
+				if (note.wasHit) return;
+				note.wasHit = true;
+				note.visible = false;
+				note.parentStrum.playStrumAnim('confirm', true);
+			}
+			strumLine._onSustainHit = (sustain:Sustain) -> {
+				if (sustain.wasHit) return;
+				sustain.wasHit = true;
+				sustain.visible = false;
+				sustain.parentStrum.playStrumAnim('confirm', true);
+			}
+			strumLine._onNoteMissed = (note:Note) -> {
+				if (note.wasMissed) return;
+				note.wasMissed = true;
+				note.alpha *= 0.86;
+				FlxG.sound.play(Cache.sound('miss/${FlxG.random.int(1, 3)}'), 0.7);
+				for (sustain in Note.filterTail(note.tail, true)) {
+					sustain.wasMissed = true;
+					sustain.alpha *= 0.86;
+				}
+				if (strumLine.isPlayer)
+					note.parentStrum.playStrumAnim('press', true);
+			}
+			strumLine._onSustainMissed = (sustain:Sustain) -> {
+				if (sustain.wasMissed) return;
+				sustain.wasMissed = true;
+				sustain.alpha *= 0.86;
+				FlxG.sound.play(Cache.sound('miss/${FlxG.random.int(1, 3)}'), 0.7);
+				for (sustain in Note.filterTail(sustain.parentNote.tail, true)) {
+					sustain.wasMissed = true;
+					sustain.alpha *= 0.86;
+				}
+				if (strumLine.isPlayer)
+					sustain.parentStrum.playStrumAnim('press', true);
+			}
 		}
 		add(strumLines);
 

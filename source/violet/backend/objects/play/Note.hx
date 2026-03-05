@@ -44,9 +44,52 @@ class Note extends NovaSprite {
 	}
 
 	/**
+	 * The scroll speed of this note.
+	 */
+	public var scrollSpeed:Null<Float> = null;
+	/**
+	 * The resulting scroll speed information.
+	 */
+	public var __scrollSpeed(get, never):Float;
+	inline function get___scrollSpeed():Float
+		return scrollSpeed ?? parent.scrollSpeed ?? StrumLine.generalScrollSpeed;
+
+	/**
 	 * The sustains tied to this note.
 	 */
 	public final tail:Array<Sustain> = [];
+	/**
+	 * The tail length in time.
+	 */
+	public var length(get, never):Float;
+	inline function get_length():Float {
+		tail.sort(sortTail); // jic
+		return tail.length != 0 ? tail[tail.length - 1].time : 0;
+	}
+
+	/**
+	 * If true the note can be hit.
+	 */
+	public var canHit(get, never):Bool;
+	inline function get_canHit():Bool {
+		return time >= FlxRhythmConductor.instance.musicPosition - 230 && time <= FlxRhythmConductor.instance.musicPosition + 230;
+	}
+	/**
+	 * If true it's too late to hit the note.
+	 */
+	public var tooLate(get, never):Bool;
+	inline function get_tooLate():Bool {
+		return time < FlxRhythmConductor.instance.musicPosition - (300 / Math.abs(__scrollSpeed)) && !wasHit;
+	}
+	/**
+	 * If true this note has been hit.
+	 */
+	public var wasHit:Bool = false;
+	/**
+	 * If true this note has been missed.
+	 */
+	public var wasMissed:Bool = false;
+
 
 	public function new(parent:StrumLine, id:Int, time:Float, tailLength:Float) {
 		super(-10000, -10000);
@@ -63,6 +106,10 @@ class Note extends NovaSprite {
 			tail.sort(sortTail);
 		}
 		reloadSkin(true);
+
+		scale.set(0.7, 0.7);
+		scale.scale(parent.strumScale);
+		updateHitbox();
 	}
 
 	public function reloadSkin(?skin:String, effectTail:Bool = false):Void {
@@ -71,7 +118,7 @@ class Note extends NovaSprite {
 		final skin:String = skin ?? this.skin ?? 'default';
 		final meta:NoteSkin = NoteSkinRegistry.getNoteSkinByID(skin);
 		loadSprite(meta.getNoteAssetPath());
-		for (data in meta.getNoteAnimations(ID, parent.keyCount))
+		for (data in meta.getNoteAnimations(id, parent.keyCount))
 			addAnimFromJSON(data);
 		var lol:Array<Float> = meta.getNoteOffsets();
 		globalOffset.set(lol[0], lol[1]);
@@ -87,7 +134,7 @@ class Note extends NovaSprite {
 	 * @return Array<Note> ~ Resulting filter.
 	 */
 	inline public static function filterNotes(notes:Array<Note>, ?i:Int):Array<Note> {
-		var result:Array<Note> = notes.filter((note:Note) -> return note.exists /* && note.canHit && !note.wasHit && !note.wasMissed && !note.tooLate */ && note.id == (i ?? note.id));
+		var result:Array<Note> = notes.filter((note:Note) -> return note.exists && note.canHit && !note.wasHit && !note.wasMissed && !note.tooLate && note.id == (i ?? note.id));
 		result.sort(sortNotes);
 		return result;
 	}
@@ -99,7 +146,7 @@ class Note extends NovaSprite {
 	 * @return Array<Sustain> ~ Resulting filter.
 	 */
 	inline public static function filterTail(sustains:Array<Sustain>, isMiss:Bool = false, ?i:Int):Array<Sustain> {
-		var result:Array<Sustain> = sustains.filter((sustain:Sustain) -> return sustain.exists /* && (isMiss ? true : sustain.canHit) && !sustain.wasHit && !sustain.wasMissed && !sustain.tooLate */ && sustain.id == (i ?? sustain.id));
+		var result:Array<Sustain> = sustains.filter((sustain:Sustain) -> return sustain.exists && (isMiss ? true : sustain.canHit) && !sustain.wasHit && !sustain.wasMissed && !sustain.tooLate && sustain.id == (i ?? sustain.id));
 		result.sort(sortTail);
 		return result;
 	}
@@ -110,11 +157,8 @@ class Note extends NovaSprite {
 	 * @param b Note b.
 	 * @return Int
 	 */
-	inline public static function sortNotes(a:Note, b:Note):Int {
-		/* if (a.lowPriority && !b.lowPriority) return 1;
-		else if (!a.lowPriority && b.lowPriority) return -1; */
+	inline public static function sortNotes(a:Note, b:Note):Int
 		return FlxSort.byValues(FlxSort.ASCENDING, a.time, b.time);
-	}
 	/**
 	 * Helper function for sorting an array of sustains.
 	 * @param a Note a.
@@ -137,6 +181,7 @@ class Note extends NovaSprite {
 	override public function destroy():Void {
 		for (sustain in tail)
 			sustain.destroy();
+		tail.resize(0);
 		super.destroy();
 	}
 }
