@@ -44,10 +44,10 @@ class Cache {
 	}
 
 	inline public static function sound(path:String, directory:String = '', ?ext:String = 'ogg', beepWhenNull:Bool = false, folder:String = 'sounds'):Sound
-		return audio(path, [directory, folder].join('/'), ext, beepWhenNull);
+		return audio(path, directory == 'root' ? 'root' : [directory, folder].join('/'), ext, beepWhenNull);
 
 	inline public static function music(path:String, directory:String = '', ?ext:String = 'ogg', beepWhenNull:Bool = true, folder:String = 'music'):Sound
-		return audio(path, [directory, folder].join('/'), ext, beepWhenNull);
+		return audio(path, directory == 'root' ? 'root' : [directory, folder].join('/'), ext, beepWhenNull);
 
 	static function audio(path:String, directory:String = '', ?ext:String = 'ogg', beepWhenNull:Bool = false):Sound {
 		var audioPath:String = Paths.file(path, directory, ext);

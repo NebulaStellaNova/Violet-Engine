@@ -37,9 +37,9 @@ class NovaSprite extends #if ANIMATE_SUPPORT FlxAnimate #else FlxSprite #end {
 	}
 
 	public function loadSprite(path:String):NovaSprite {
-		if (path.startsWith("https://")) {
+		if (path.startsWith("https://"))
 			fromWeb(path);
-		} else if (Paths.fileExists('${haxe.io.Path.withoutExtension(path)}/Animation.json', true)) {
+		else if (Paths.fileExists('${haxe.io.Path.withoutExtension(path)}/Animation.json', true)) {
 			#if ANIMATE_SUPPORT
 			this.filePath = '${haxe.io.Path.withoutExtension(path)}/Animation.json';
 			this.fileName = Paths.getFileName(path, true);
@@ -54,7 +54,7 @@ class NovaSprite extends #if ANIMATE_SUPPORT FlxAnimate #else FlxSprite #end {
 				this.filePath = path;
 				this.fileName = Paths.getFileName(path, true);
 				this.animated = true;
-				this.frames = FlxAtlasFrames.fromSparrow(path/* Cache.image(path, 'root', null) */, path.replace(".png", ".xml"));
+				this.frames = FlxAtlasFrames.fromSparrow(Cache.image(path, 'root', null), path.replace(".png", ".xml"));
 				this.onLoaded();
 			} else {
 				this.loadGraphic(path);
@@ -67,20 +67,27 @@ class NovaSprite extends #if ANIMATE_SUPPORT FlxAnimate #else FlxSprite #end {
 
 	dynamic function onLoaded():Void {}
 
-	@:unreflective
-	private var prevUrl:String = "";
-	@:unreflective
-	private function fromWeb(url:String):NovaSprite {
+	@:unreflective var prevUrl:String = "";
+	@:unreflective function fromWeb(url:String):NovaSprite @:privateAccess {
 		url = url.split("?")[0];
 		prevUrl = url;
-		var loader = new URLLoader();
-        loader.dataFormat = URLLoaderDataFormat.BINARY;
-        loader.addEventListener("complete", (_:Dynamic)->
-        {
+		if (Cache.cache.exists(prevUrl)) {
 			this.filePath = prevUrl;
-            var bitmap:BitmapData = BitmapData.fromBytes(loader.data);
-
-            this.loadGraphic(FlxGraphic.fromBitmapData(bitmap));
+			this.loadGraphic(Cache.cache.get(prevUrl));
+			this.updateHitbox();
+			this.onLoaded();
+			return this;
+		}
+		final loader = new URLLoader();
+        loader.dataFormat = URLLoaderDataFormat.BINARY;
+        loader.addEventListener("complete", (_:Dynamic) -> {
+			this.filePath = prevUrl;
+            final bitmap:BitmapData = BitmapData.fromBytes(loader.data);
+			var graphic:FlxGraphic = FlxGraphic.fromBitmapData(bitmap, prevUrl, false);
+			graphic.destroyOnNoUse = false;
+			graphic.persist = true;
+			Cache.cache.set(prevUrl, graphic);
+            this.loadGraphic(graphic);
             this.updateHitbox();
 			this.onLoaded();
         });
