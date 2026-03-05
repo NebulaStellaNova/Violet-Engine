@@ -46,7 +46,7 @@ class Conductor {
 	 * The current song position in milliseconds.
 	 */
 	public static var songPosition(get, never):Float;
-	static function get_songPosition():Float return FlxRhythmConductor.instance.musicPosition;
+	static function get_songPosition():Float return FlxRhythmConductor.instance.frameMusicPosition;
 
 	/**
 	 * The current BPM of the song.
