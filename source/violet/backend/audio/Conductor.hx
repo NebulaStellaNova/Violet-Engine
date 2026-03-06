@@ -108,7 +108,7 @@ class Conductor {
 	 */
 	public static final additionalTracks:Array<FlxSound> = [];
 	public static function addAdditionalTrack(track:FlxSound):FlxSound {
-		if (track == null) return null;
+		if (track == null) return new FlxSound();
 		track.persist = instrumental.persist;
 		additionalTracks.push(track);
 		return track;

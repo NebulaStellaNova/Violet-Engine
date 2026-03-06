@@ -126,16 +126,16 @@ class PlayState extends violet.backend.StateBackend {
 				if (note.wasHit) return;
 				note.wasHit = true;
 				note.visible = false;
-				if (generalVocals != null) generalVocals.volume = 1;
-				if (strumLine.vocals != null) strumLine.vocals.volume = 1;
+				if (generalVocals?.playing) generalVocals.volume = 1;
+				if (strumLine.vocals?.playing) strumLine.vocals.volume = 1;
 				note.parentStrum.playStrumAnim('confirm', true);
 			}
 			strumLine._onSustainHit = (sustain:Sustain) -> {
 				if (sustain.wasHit && !sustain.parentNote.wasHit) return;
 				sustain.wasHit = true;
 				sustain.visible = false;
-				if (generalVocals != null) generalVocals.volume = 1;
-				if (strumLine.vocals != null) strumLine.vocals.volume = 1;
+				if (generalVocals?.playing) generalVocals.volume = 1;
+				if (strumLine.vocals?.playing) strumLine.vocals.volume = 1;
 				sustain.parentStrum.playStrumAnim('confirm', true);
 			}
 			strumLine._onNoteMissed = (note:Note) -> {
@@ -143,8 +143,8 @@ class PlayState extends violet.backend.StateBackend {
 				note.wasMissed = true;
 				note.alpha *= 0.6;
 				FlxG.sound.play(Cache.sound('miss/${FlxG.random.int(1, 3)}'), 0.7);
-				if (generalVocals != null) generalVocals.volume = 0;
-				if (strumLine.vocals != null) strumLine.vocals.volume = 0;
+				if (generalVocals?.playing) generalVocals.volume = 0;
+				if (strumLine.vocals?.playing) strumLine.vocals.volume = 0;
 				for (sustain in Note.filterTail(note.tail, true)) {
 					sustain.wasMissed = true;
 					sustain.alpha *= 0.6;
@@ -155,8 +155,8 @@ class PlayState extends violet.backend.StateBackend {
 				sustain.wasMissed = true;
 				sustain.alpha *= 0.6;
 				FlxG.sound.play(Cache.sound('miss/${FlxG.random.int(1, 3)}'), 0.7);
-				if (generalVocals != null) generalVocals.volume = 0;
-				if (strumLine.vocals != null) strumLine.vocals.volume = 0;
+				if (generalVocals?.playing) generalVocals.volume = 0;
+				if (strumLine.vocals?.playing) strumLine.vocals.volume = 0;
 				for (sustain in Note.filterTail(sustain.parentNote.tail, true)) {
 					sustain.wasMissed = true;
 					sustain.alpha *= 0.6;
