@@ -136,10 +136,13 @@ class Conductor {
 		FlxRhythmConductor.instance.loadMeta([new MusicTimeChangeEvent(0, bpm, tsn, tsd)]);
 	}
 
-	public static function update():Void {
-		FlxRhythmConductor.instance.update(null);
+	public static function update(?setTime:Float):Void {
+		if (setTime != null) instrumental.time = setTime;
+		FlxRhythmConductor.instance.update(setTime);
 		for (track in additionalTracks)
-			if (instrumental.time < track.length) {
+			if (!instrumental.playing)
+				track.pause();
+			else if (instrumental.time < track.length) {
 				if (Math.abs(songPosition - track.time) > 25) {
 					track.pause();
 					track.time = songPosition;

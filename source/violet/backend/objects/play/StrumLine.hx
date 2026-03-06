@@ -54,7 +54,7 @@ class StrumLine extends FlxGroup {
 	public var strumScale:Float;
 	public var strumSpacing:Float;
 
-	public var vocals:Null<FlxSound>;
+	public final vocals:Null<FlxSound>;
 
 	public function new(chartData:_ChartStrumLine) {
 		this.chartData = chartData;

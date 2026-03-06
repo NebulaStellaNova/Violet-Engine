@@ -10,6 +10,17 @@ import violet.data.chart.Chart;
 import violet.data.chart.ChartRegistry;
 import violet.data.song.SongRegistry;
 
+typedef CountdownAssets = {
+	/**
+	 * Countdown images.
+	 */
+	var images:Array<String>;
+	/**
+	 * Countdown sounds.
+	 */
+	var sounds:Array<String>;
+}
+
 class PlayState extends violet.backend.StateBackend {
 
 	public static var instance:PlayState;
@@ -24,6 +35,52 @@ class PlayState extends violet.backend.StateBackend {
 	public var strumLines:FlxTypedGroup<StrumLine>;
 	public var generalVocals:Null<FlxSound>;
 
+	/**
+	 * The amount of beats the countdown lasts for.
+	 */
+	public var countdownLength(default, set):Int = 4;
+	inline function set_countdownLength(value:Int):Int
+		return countdownLength = Std.int(Math.max(value, 1));
+	/**
+	 * This timer that tracks the countdown steps.
+	 */
+	public final countdownTimer:FlxTimer = new FlxTimer();
+	/**
+	 * The assets what will be used in the countdown.
+	 */
+	public var countdownAssets:CountdownAssets;
+	/**
+	 * Sets up the listings for the countdownAssets variable.
+	 * @param root The path to the assets.
+	 * @param parts List of assets to get from root var path.
+	 * @param suffix Adds a suffix to each item of the parts array.
+	 * @return Array<String> ~ The mod paths of the items.
+	 */
+	inline public static function getCountdownAssetList(root:String = 'countdown/funkin', parts:Array<String>, ?suffix:String):Array<String> {
+		return [
+			for (part in parts) {
+				final asset:String = part == null ? null : '${haxe.io.Path.addTrailingSlash(root)}$part${flixel.util.FlxStringUtil.isNullOrEmpty(suffix) ? '' : '-$suffix'}';
+				// attempts to cache the asset, I don't feel like adding a bool to specify this shit
+				if (Paths.fileExists(Paths.image(asset), true)) Cache.image(asset);
+				if (Paths.fileExists(Paths.sound(asset), true)) Cache.sound(asset);
+				asset;
+			}
+		];
+	}
+
+	/**
+	 * States if the countdown has started.
+	 */
+	public var countdownStarted(default, null):Bool = false;
+	/**
+	 * States if the song has started.
+	 */
+	public var songStarted(default, null):Bool = false;
+	/**
+	 * States if the song has ended.
+	 */
+	public var songEnded(default, null):Bool = false;
+
 	override public function create():Void {
 		super.create();
 		instance = this;
@@ -35,7 +92,7 @@ class PlayState extends violet.backend.StateBackend {
 
 		strumLines = new FlxTypedGroup<StrumLine>();
 
-		Conductor.instrumental.time = 0;
+		Conductor.update(0);
 		SONG = ChartRegistry.getChart(song, difficulty, variation);
 		if (SONG.meta.needsVoices) generalVocals = Conductor.addAdditionalTrack(FlxG.sound.load(Cache.sound(Paths.vocal(PlayState.song, '', PlayState.variation), 'root', null, true), FlxG.sound.defaultMusicGroup));
 		StrumLine.generalScrollSpeed = SONG.scrollSpeed ?? 1;
@@ -75,7 +132,7 @@ class PlayState extends violet.backend.StateBackend {
 				note.parentStrum.playStrumAnim('confirm', true);
 			}
 			strumLine._onSustainHit = (sustain:Sustain) -> {
-				if (sustain.wasHit) return;
+				if (sustain.wasHit && !sustain.parentNote.wasHit) return;
 				sustain.wasHit = true;
 				sustain.visible = false;
 				if (generalVocals != null) generalVocals.volume = 1;
@@ -108,16 +165,68 @@ class PlayState extends violet.backend.StateBackend {
 			}
 		}
 		add(strumLines);
-		Conductor.instrumental.onComplete = () -> {
-			FlxG.switchState(violet.states.menus.MainMenu.new);
+		Conductor.instrumental.onComplete = endSong;
+
+		countdownAssets = {
+			images: getCountdownAssetList([null, 'ready', 'set', 'go']),
+			sounds: getCountdownAssetList(['introTHREE', 'introTWO', 'introONE', 'introGO'])
 		}
 
+		startCountdown();
+
 		for (strumLine in strumLines)
-			strumLine.generateNotes(Conductor.instrumental.time);
+			strumLine.generateNotes(Conductor.songPosition);
 	}
 
 	override public function update(elapsed:Float):Void {
 		super.update(elapsed);
+	}
+
+	function startCountdown():Void {
+		final assets:CountdownAssets = {
+			images: countdownAssets.images.copy(),
+			sounds: countdownAssets.sounds.copy()
+		}
+		assets.images.reverse();
+		assets.sounds.reverse();
+
+		countdownStarted = true;
+		if (countdownLength >= 1) {
+			countdownTimer.start(Conductor.beatLengthMs / 1000, timer -> {
+				if (!songStarted)
+					startSong(countdownLength);
+
+				final assetIndex:Int = timer.loopsLeft - 1;
+
+				final soundAsset:String = assets.sounds[assetIndex];
+				if (Paths.fileExists(Paths.sound(soundAsset), true))
+					FlxG.sound.play(Cache.sound(soundAsset));
+
+				final imageAsset:String = assets.images[assetIndex];
+				if (Paths.fileExists(Paths.image(imageAsset), true)) {
+					final sprite:NovaSprite = new NovaSprite(imageAsset);
+					sprite.cameras = [camHUD];
+					sprite.screenCenter();
+					add(sprite);
+
+					FlxTween.tween(sprite, {alpha: 0}, Conductor.beatLengthMs / 1.2 / 1000, {
+						ease: FlxEase.cubeInOut,
+						onComplete: tween ->
+							sprite.destroy()
+					});
+				}
+			}, countdownLength + 1);
+		}
+	}
+
+	function startSong(startDelay:Int = 0):Void {
+		songStarted = true;
+		Conductor.update(-Conductor.beatLengthMs * Math.abs(startDelay));
+	}
+
+	function endSong():Void {
+		songEnded = true;
+		FlxG.switchState(violet.states.menus.MainMenu.new);
 	}
 
 	override public function destroy():Void {
