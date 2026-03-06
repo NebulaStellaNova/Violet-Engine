@@ -86,11 +86,23 @@ class Conductor {
 	public static var measureLengthMs(get, never):Float;
 	static function get_measureLengthMs():Float return FlxRhythmConductor.instance.measureLengthMs;
 
+	public static var onComplete:Void->Void;
+	static function _onComplete():Void {
+		Conductor.pause();
+		if (onComplete != null)
+			onComplete();
+		onComplete = null;
+	}
+
 	/**
 	 * The instrumental track of the song.
 	 */
 	public static var instrumental(get, never):FlxSound;
-	static function get_instrumental():FlxSound return FlxRhythmConductor.instance.target;
+	static function get_instrumental():FlxSound {
+		if (FlxRhythmConductor.instance.target != null)
+			FlxRhythmConductor.instance.target.onComplete = _onComplete;
+		return FlxRhythmConductor.instance.target;
+	}
 	/**
 	 * Additional tracks of the song.
 	 */
@@ -125,7 +137,6 @@ class Conductor {
 		FlxRhythmConductor.instance.onBeatHit.add((beat:Int, backward:Bool) -> StateBackend.instance.beatHit(beat));
 		FlxRhythmConductor.instance.onMeasureHit.add((measure:Int, backward:Bool) -> StateBackend.instance.measureHit(measure));
 	}
-
 	public static function initCallbacksSubState():Void {
 		FlxRhythmConductor.instance.onStepHit.add((step:Int, backward:Bool) -> if (SubStateBackend.instance != null) SubStateBackend.instance.stepHit(step));
 		FlxRhythmConductor.instance.onBeatHit.add((beat:Int, backward:Bool) -> if (SubStateBackend.instance != null) SubStateBackend.instance.beatHit(beat));
@@ -136,9 +147,19 @@ class Conductor {
 		FlxRhythmConductor.instance.loadMeta([new MusicTimeChangeEvent(0, bpm, tsn, tsd)]);
 	}
 
-	public static function update(?setTime:Float):Void {
-		if (setTime != null) instrumental.time = setTime;
-		FlxRhythmConductor.instance.update(setTime);
+	public static function pause():Void {
+		instrumental.pause();
+		for (track in additionalTracks)
+			track.pause();
+	}
+	public static function play():Void {
+		instrumental.play();
+		for (track in additionalTracks)
+			track.play();
+	}
+
+	public static function update():Void {
+		FlxRhythmConductor.instance.update(null);
 		for (track in additionalTracks)
 			if (!instrumental.playing)
 				track.pause();
@@ -154,6 +175,7 @@ class Conductor {
 
 	public static function playSong(id:String, ?variation:String):Void {
 		NovaUtils.playMusic('$id/song/Inst${variation == null ? '' : '-$variation'}', 'songs');
+		instrumental.looped = false;
 	}
 
 }

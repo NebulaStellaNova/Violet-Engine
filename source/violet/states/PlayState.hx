@@ -92,7 +92,6 @@ class PlayState extends violet.backend.StateBackend {
 
 		strumLines = new FlxTypedGroup<StrumLine>();
 
-		Conductor.update(0);
 		SONG = ChartRegistry.getChart(song, difficulty, variation);
 		if (SONG.meta.needsVoices) generalVocals = Conductor.addAdditionalTrack(FlxG.sound.load(Cache.sound(Paths.vocal(PlayState.song, '', PlayState.variation), 'root', null, true), FlxG.sound.defaultMusicGroup));
 		StrumLine.generalScrollSpeed = SONG.scrollSpeed ?? 1;
@@ -165,7 +164,7 @@ class PlayState extends violet.backend.StateBackend {
 			}
 		}
 		add(strumLines);
-		Conductor.instrumental.onComplete = endSong;
+		Conductor.onComplete = endSong;
 
 		countdownAssets = {
 			images: getCountdownAssetList([null, 'ready', 'set', 'go']),
@@ -221,7 +220,8 @@ class PlayState extends violet.backend.StateBackend {
 
 	function startSong(startDelay:Int = 0):Void {
 		songStarted = true;
-		Conductor.update(-Conductor.beatLengthMs * Math.abs(startDelay));
+		Conductor.playSong(song, variation);
+		Conductor.instrumental.time = -Conductor.beatLengthMs * Math.abs(startDelay);
 	}
 
 	function endSong():Void {
@@ -236,11 +236,10 @@ class PlayState extends violet.backend.StateBackend {
 
 	public static function loadSong(id:String, difficulty:String = "normal", ?variation:String) {
 		var songMetaData = SongRegistry.getSongByID(id);
-		Conductor.playSong(id, variation);
-		Conductor.setInitialBPM(songMetaData.bpm, songMetaData.stepsPerBeat, songMetaData.beatsPerMeasure);
 		PlayState.song = id;
 		PlayState.difficulty = difficulty;
 		PlayState.variation = variation;
+		Conductor.setInitialBPM(songMetaData.bpm, songMetaData.stepsPerBeat, songMetaData.beatsPerMeasure);
 	}
 
 }
