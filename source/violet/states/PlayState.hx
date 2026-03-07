@@ -8,7 +8,10 @@ import violet.backend.objects.play.StrumLine;
 import violet.backend.objects.play.Sustain;
 import violet.data.chart.Chart;
 import violet.data.chart.ChartRegistry;
-import violet.data.song.SongRegistry;
+
+#if SCRIPT_SUPPORT
+import violet.backend.scripting.ScriptPack;
+#end
 
 typedef CountdownAssets = {
 	/**
@@ -29,11 +32,15 @@ class PlayState extends violet.backend.StateBackend {
 	public static var difficulty:String;
 	public static var variation:Null<String>;
 
+	#if SCRIPT_SUPPORT
+	public var songScripts:ScriptPack = new ScriptPack();
+	#end
+
 	public var camHUD:FlxCamera;
 	public var camGame:FlxCamera;
 
 	public var strumLines:FlxTypedGroup<StrumLine>;
-	public var generalVocals:Null<FlxSound>;
+	public var generalVocals:FlxSound;
 
 	/**
 	 * The amount of beats the countdown lasts for.
@@ -90,10 +97,27 @@ class PlayState extends violet.backend.StateBackend {
 		camHUD.bgColor = FlxColor.TRANSPARENT;
 		FlxG.cameras.add(camHUD, false);
 
+		#if SCRIPT_SUPPORT
+		songScripts.parent = this;
+		final scriptPaths:Array<String> = ['$song/scripts', '$song/scripts/$difficulty'];
+		if (variation != null) scriptPaths.push('$song/scripts/$variation');
+		for (path in scriptPaths) {
+			for (folder in Paths.readFolder(path)) {
+				checkForScripts([Paths.ASSETS_FOLDER, haxe.io.Path.withoutExtension(folder)].join("/"), songScripts);
+				#if MOD_SUPPORT
+				for (mod in ModdingAPI.getActiveMods())
+					checkForScripts([ModdingAPI.MOD_FOLDER, mod.folder, haxe.io.Path.withoutExtension(folder)].join("/"), songScripts);
+				#end
+			}
+		}
+		#end
+
 		strumLines = new FlxTypedGroup<StrumLine>();
 
 		SONG = ChartRegistry.getChart(song, difficulty, variation);
-		if (SONG.meta.needsVoices) generalVocals = Conductor.addAdditionalTrack(FlxG.sound.load(Cache.sound(Paths.vocal(PlayState.song, '', PlayState.variation), 'root', null, true), FlxG.sound.defaultMusicGroup));
+		Conductor.playSong(song, variation); Conductor.pause();
+		if (SONG.meta.needsVoices) generalVocals = Conductor.addAdditionalTrack(FlxG.sound.load(Cache.sound(Paths.vocal(PlayState.song, null, PlayState.variation), 'root', null, true), FlxG.sound.defaultMusicGroup));
+		else generalVocals = Conductor.addAdditionalTrack(new FlxSound());
 		StrumLine.generalScrollSpeed = SONG.scrollSpeed ?? 1;
 		for (i => data in SONG.strumLines) {
 			if (data == null) continue;
@@ -126,16 +150,14 @@ class PlayState extends violet.backend.StateBackend {
 				if (note.wasHit) return;
 				note.wasHit = true;
 				note.visible = false;
-				if (generalVocals?.playing) generalVocals.volume = 1;
-				if (strumLine.vocals?.playing) strumLine.vocals.volume = 1;
+				generalVocals.resume(); strumLine.vocals.resume();
 				note.parentStrum.playStrumAnim('confirm', true);
 			}
 			strumLine._onSustainHit = (sustain:Sustain) -> {
 				if (sustain.wasHit && !sustain.parentNote.wasHit) return;
 				sustain.wasHit = true;
 				sustain.visible = false;
-				if (generalVocals?.playing) generalVocals.volume = 1;
-				if (strumLine.vocals?.playing) strumLine.vocals.volume = 1;
+				generalVocals.resume(); strumLine.vocals.resume();
 				sustain.parentStrum.playStrumAnim('confirm', true);
 			}
 			strumLine._onNoteMissed = (note:Note) -> {
@@ -143,8 +165,7 @@ class PlayState extends violet.backend.StateBackend {
 				note.wasMissed = true;
 				note.alpha *= 0.6;
 				FlxG.sound.play(Cache.sound('miss/${FlxG.random.int(1, 3)}'), 0.7);
-				if (generalVocals?.playing) generalVocals.volume = 0;
-				if (strumLine.vocals?.playing) strumLine.vocals.volume = 0;
+				generalVocals.pause(); strumLine.vocals.pause();
 				for (sustain in Note.filterTail(note.tail, true)) {
 					sustain.wasMissed = true;
 					sustain.alpha *= 0.6;
@@ -155,8 +176,7 @@ class PlayState extends violet.backend.StateBackend {
 				sustain.wasMissed = true;
 				sustain.alpha *= 0.6;
 				FlxG.sound.play(Cache.sound('miss/${FlxG.random.int(1, 3)}'), 0.7);
-				if (generalVocals?.playing) generalVocals.volume = 0;
-				if (strumLine.vocals?.playing) strumLine.vocals.volume = 0;
+				generalVocals.pause(); strumLine.vocals.pause();
 				for (sustain in Note.filterTail(sustain.parentNote.tail, true)) {
 					sustain.wasMissed = true;
 					sustain.alpha *= 0.6;
@@ -171,21 +191,26 @@ class PlayState extends violet.backend.StateBackend {
 			sounds: getCountdownAssetList(['introTHREE', 'introTWO', 'introONE', 'introGO'])
 		}
 
+		callSongScripts('create');
+
 		// startCountdown();
-		startSong(0);
+		startSong();
 
 		for (strumLine in strumLines)
 			strumLine.generateNotes(Conductor.songPosition);
+
+		callSongScripts('postCreate');
 	}
 
 	override public function update(elapsed:Float):Void {
 		super.update(elapsed);
 	}
 
-	function startCountdown():Void {
+	function startCountdown(?saidAssets:CountdownAssets):Void {
+		saidAssets ??= countdownAssets;
 		final assets:CountdownAssets = {
-			images: countdownAssets.images.copy(),
-			sounds: countdownAssets.sounds.copy()
+			images: saidAssets.images.copy(),
+			sounds: saidAssets.sounds.copy()
 		}
 		assets.images.reverse();
 		assets.sounds.reverse();
@@ -221,13 +246,25 @@ class PlayState extends violet.backend.StateBackend {
 
 	function startSong(startDelay:Int = 0):Void {
 		songStarted = true;
-		Conductor.playSong(song, variation);
-		Conductor.instrumental.time = -Conductor.beatLengthMs * Math.abs(startDelay);
+		Conductor.play(true, -Conductor.beatLengthMs * Math.abs(startDelay));
 	}
 
 	function endSong():Void {
 		songEnded = true;
 		FlxG.switchState(violet.states.menus.MainMenu.new);
+	}
+
+	public function callSongScripts<T>(funcName:String, ?args:Array<Dynamic>, ?def:T):T {
+		return #if SCRIPT_SUPPORT songScripts.call(funcName, args, def) ?? #end def;
+	}
+
+	public function runSongEvent<T:violet.backend.scripting.events.EventBase>(func:String, event:T):T {
+		#if SCRIPT_SUPPORT
+		if (songScripts == null) return event;
+		return songScripts.event(func, event);
+		#else
+		return event;
+		#end
 	}
 
 	override public function destroy():Void {
@@ -236,11 +273,10 @@ class PlayState extends violet.backend.StateBackend {
 	}
 
 	public static function loadSong(id:String, difficulty:String = "normal", ?variation:String) {
-		var songMetaData = SongRegistry.getSongByID(id);
 		PlayState.song = id;
 		PlayState.difficulty = difficulty;
 		PlayState.variation = variation;
-		Conductor.setInitialBPM(songMetaData.bpm, songMetaData.stepsPerBeat, songMetaData.beatsPerMeasure);
+		FlxG.switchState(() -> new PlayState());
 	}
 
 }

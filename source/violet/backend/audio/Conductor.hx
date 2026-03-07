@@ -152,10 +152,10 @@ class Conductor {
 		for (track in additionalTracks)
 			track.pause();
 	}
-	public static function play():Void {
-		instrumental.play();
+	public static function play(forceRestart:Bool = false, startTime:Float = 0.0):Void {
+		instrumental.play(forceRestart, startTime);
 		for (track in additionalTracks)
-			track.play();
+			track.play(forceRestart, startTime);
 	}
 
 	public static function update():Void {
@@ -163,7 +163,8 @@ class Conductor {
 		for (track in additionalTracks)
 			if (!instrumental.playing)
 				track.pause();
-			else if (instrumental.time < track.length) {
+			// setting the volume variable was NOT working so we doing pause and resume
+			else if (track.playing && instrumental.time < track.length) {
 				if (Math.abs(songPosition - track.time) > 25) {
 					track.pause();
 					track.time = songPosition;
@@ -175,6 +176,8 @@ class Conductor {
 
 	public static function playSong(id:String, ?variation:String):Void {
 		NovaUtils.playMusic('$id/song/Inst${variation == null ? '' : '-$variation'}', 'songs');
+		final songMetaData = violet.data.song.SongRegistry.getSongByID(id);
+		Conductor.setInitialBPM(songMetaData.bpm, songMetaData.stepsPerBeat, songMetaData.beatsPerMeasure);
 		instrumental.looped = false;
 	}
 

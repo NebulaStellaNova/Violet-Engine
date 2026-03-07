@@ -2,7 +2,6 @@ package violet.backend.utils;
 
 import haxe.io.Path;
 import violet.backend.audio.Conductor;
-import violet.backend.audio.Conductor;
 import violet.data.Constants;
 
 class NovaUtils {
@@ -37,7 +36,7 @@ class NovaUtils {
 		FlxG.sound.playMusic(Cache.music(musicPath.join('/'), '', 'ogg', false, folder), volume);
 		Conductor.initCallbacks();
 		Conductor.initCallbacksSubState();
-		if (metaData != null && metaData.bpm != null) Conductor.setInitialBPM(metaData.bpm, metaData.signature[0], metaData.signature[1]);
+		if (metaData != null && metaData.bpm != null && metaData.signature != null) Conductor.setInitialBPM(metaData.bpm, metaData.signature[0], metaData.signature[1]);
 	}
 
 	inline public static function getTimerPrecise():Float {

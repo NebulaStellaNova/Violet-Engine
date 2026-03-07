@@ -54,7 +54,7 @@ class StrumLine extends FlxGroup {
 	public var strumScale:Float;
 	public var strumSpacing:Float;
 
-	public var vocals:FlxSound = new FlxSound();
+	public var vocals:FlxSound;
 
 	public function new(chartData:_ChartStrumLine) {
 		this.chartData = chartData;
@@ -97,7 +97,8 @@ class StrumLine extends FlxGroup {
 		FlxG.stage.addEventListener(KeyboardEvent.KEY_DOWN, _on_press);
 		FlxG.stage.addEventListener(KeyboardEvent.KEY_UP, _on_release);
 
-		vocals = Conductor.addAdditionalTrack(FlxG.sound.load(Cache.sound(Paths.vocal(PlayState.song, chartData.vocalsSuffix, PlayState.variation), 'root', null, true), FlxG.sound.defaultMusicGroup));
+		if (chartData.vocalsSuffix == null) vocals = Conductor.addAdditionalTrack(new FlxSound());
+		else vocals = Conductor.addAdditionalTrack(FlxG.sound.load(Cache.sound(Paths.vocal(PlayState.song, chartData.vocalsSuffix, PlayState.variation), 'root', null, true), FlxG.sound.defaultMusicGroup));
 	}
 
 	public function setPosition(x:Float = 0, y:Float = 0, purePos:Bool = true):Void {
