@@ -6,5 +6,6 @@
 	"opponentModeAllowed": true,
 	"difficulties": [
 		"NORMAL"
-	]
+	],
+	"needsVoices": true
 }
