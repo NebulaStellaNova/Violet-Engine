@@ -2,6 +2,7 @@ package violet.states;
 
 import flixel.FlxCamera;
 import flixel.group.FlxGroup;
+import violet.data.character.Character;
 import violet.backend.audio.Conductor;
 import violet.backend.objects.play.Note;
 import violet.backend.objects.play.StrumLine;
@@ -140,6 +141,12 @@ class PlayState extends violet.backend.StateBackend {
 			strumLine.ID = i;
 			strumLines.add(strumLine);
 
+			for(k=>charName in data.characters) {
+				var char = new Character(charName);
+				strumLine.characters.push(char);
+				add(char);
+			}
+
 			// note interactions
 			final ghostTapping:Bool = true;
 			strumLine._onVoidTap = (id:Int) -> {
@@ -152,6 +159,9 @@ class PlayState extends violet.backend.StateBackend {
 				note.visible = false;
 				generalVocals.resume(); strumLine.vocals.resume();
 				note.parentStrum.playStrumAnim('confirm', true);
+				for (char in note.parent.characters) {
+					char.playSingAnim(note.id);
+				}
 			}
 			strumLine._onSustainHit = (sustain:Sustain) -> {
 				if (sustain.wasHit && !sustain.parentNote.wasHit) return;
@@ -200,6 +210,9 @@ class PlayState extends violet.backend.StateBackend {
 			strumLine.generateNotes(Conductor.songPosition);
 
 		callSongScripts('postCreate');
+
+		/* var bg = new Character("bf");
+		add(bg); */
 	}
 
 	override public function update(elapsed:Float):Void {
@@ -277,6 +290,15 @@ class PlayState extends violet.backend.StateBackend {
 		PlayState.difficulty = difficulty;
 		PlayState.variation = variation;
 		FlxG.switchState(() -> new PlayState());
+	}
+
+
+	override function beatHit(curBeat:Int) {
+		super.beatHit(curBeat);
+
+		/* for (strumLine in strumLines)
+			for (char in strumLine.characters)
+				if (curBeat % char.danceEvery == 0) char.dance(); */
 	}
 
 }

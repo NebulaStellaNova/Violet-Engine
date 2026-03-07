@@ -1,8 +1,9 @@
 package violet.backend.utils;
 
 import haxe.io.Path;
-import violet.backend.audio.Conductor;
 import violet.data.Constants;
+import violet.backend.audio.Conductor;
+import flixel.graphics.frames.FlxAtlasFrames;
 
 class NovaUtils {
 
@@ -54,5 +55,14 @@ class NovaUtils {
 		#else
 		return 0;
 		#end
+	}
+
+
+	public static function getSparrowFrames(path:String):FlxAtlasFrames {
+		return FlxAtlasFrames.fromSparrow(Cache.image(path, 'root', null), path.replace(".png", ".xml"));
+	}
+
+	public static function getAtlasFrames(path:String):FlxAtlasFrames {
+		return animate.FlxAnimateFrames.fromAnimate(haxe.io.Path.withoutExtension(path));
 	}
 }

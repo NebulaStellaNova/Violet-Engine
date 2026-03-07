@@ -4,12 +4,13 @@ class Bopper extends NovaSprite {
     public var danceEvery:Float;
 
     public var alternator:Bool = false;
-    public function dance() {
+    public function dance(force:Bool = false) {
+        if (this.animation.name != "idle" && this.animation.name != "danceLeft" && this.animation.name != "danceRight" && !force) return;
         if (this.animationList.contains("danceLeft")) {
-            this.animation.play(alternator ? "danceLeft" : "danceRight");
+            this.playAnim(alternator ? "danceLeft" : "danceRight", true);
             alternator = !alternator;
         } else {
-            this.animation.play("idle");
+            this.playAnim("idle", true);
         }
     }
 }

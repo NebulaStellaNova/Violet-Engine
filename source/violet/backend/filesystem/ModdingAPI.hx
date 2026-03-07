@@ -87,6 +87,7 @@ class ModdingAPI {
 		violet.data.level.LevelRegistry.registerLevels();
 		violet.data.song.SongRegistry.registerSongs();
 		violet.data.chart.ChartRegistry.registerCharts();
+		violet.data.character.CharacterRegistry.registerCharacters();
 	}
 }
 

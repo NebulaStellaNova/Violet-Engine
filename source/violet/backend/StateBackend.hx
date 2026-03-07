@@ -102,7 +102,12 @@ class StateBackend extends flixel.FlxState {
 	override public function update(elapsed:Float) {
 		super.update(elapsed);
 
+		if (FlxG.keys.justPressed.TAB)
+			violet.states.PlayState.loadSong('test'/* , 'hard' */);
+
 		Conductor.update();
+
+
 
 		if (nextFrame) {
 			if (errIndex > violet.backend.CrashHandler.notifList.length - 1) {

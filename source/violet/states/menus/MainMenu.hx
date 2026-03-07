@@ -151,8 +151,6 @@ class MainMenu extends StateBackend {
 
 	override public function update(elapsed:Float)
 	{
-		if (FlxG.keys.justPressed.TAB)
-			PlayState.loadSong('test');
 
 		super.update(elapsed);
 		// trace(Main.stateClassName);

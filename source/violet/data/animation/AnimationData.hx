@@ -43,7 +43,6 @@ typedef AnimationData = {
 	/**
 	 * The frame rate of the animation.
 	 */
-	@:alias("fps")
 	@:default(24)
 	var ?frameRate:Int;
 
@@ -51,14 +50,12 @@ typedef AnimationData = {
 	 * If you want this animation to use only certain frames of an animation with a given prefix,
 	 * select them here.
 	 */
-	@:alias("indices")
 	@:default([])
 	var ?frameIndices:Array<Int>;
 
 	/**
 	 * Used to determine whether when adding via an atlas if it should get the animation via a frame label name.
 	 */
-	@:alias("label")
 	@:default(false)
 	var ?byLabel:Bool;
 }

@@ -1,5 +1,6 @@
 package violet.backend.objects;
 
+import violet.backend.utils.NovaUtils;
 #if ANIMATE_SUPPORT
 import animate.FlxAnimate;
 #end
@@ -44,7 +45,7 @@ class NovaSprite extends #if ANIMATE_SUPPORT FlxAnimate #else FlxSprite #end {
 			this.filePath = '${haxe.io.Path.withoutExtension(path)}/Animation.json';
 			this.fileName = Paths.getFileName(path, true);
 			this.animated = true;
-			this.frames = animate.FlxAnimateFrames.fromAnimate(haxe.io.Path.withoutExtension(path));
+			this.frames = NovaUtils.getAtlasFrames(path);
 			this.onLoaded();
 			#else
 			trace('warning:Atlas\'s aren\'t supported in this build of Violet Engine.');
@@ -54,7 +55,7 @@ class NovaSprite extends #if ANIMATE_SUPPORT FlxAnimate #else FlxSprite #end {
 				this.filePath = path;
 				this.fileName = Paths.getFileName(path, true);
 				this.animated = true;
-				this.frames = FlxAtlasFrames.fromSparrow(Cache.image(path, 'root', null), path.replace(".png", ".xml"));
+				this.frames = NovaUtils.getSparrowFrames(path);
 				this.onLoaded();
 			} else {
 				this.loadGraphic(path);
@@ -117,6 +118,7 @@ class NovaSprite extends #if ANIMATE_SUPPORT FlxAnimate #else FlxSprite #end {
 	}
 
 	public function addAnim(name:String, prefix:String, ?indices:Array<Int>, ?offsets:Array<Float>, fps:Int = 24, looped:Bool = false, label:Bool = false):Void {
+		prefix += "0";
 		if (#if ANIMATE_SUPPORT isAnimate #else false #end) {
 			#if ANIMATE_SUPPORT
 			if (label) {
@@ -139,6 +141,10 @@ class NovaSprite extends #if ANIMATE_SUPPORT FlxAnimate #else FlxSprite #end {
 
 	public function addAnimFromJSON(data:AnimationData):Void {
 		addAnim(data.name, data.prefix, data.frameIndices, data.offsets, data.frameRate, data.looped, data.byLabel);
+	}
+
+	public function addFrames(framesToAdd:FlxAtlasFrames) {
+		this.frames = animate.FlxAnimateFrames.combineAtlas(cast this.frames, framesToAdd);
 	}
 
 	// for now

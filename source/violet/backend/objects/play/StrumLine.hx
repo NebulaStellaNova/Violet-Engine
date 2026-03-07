@@ -1,5 +1,6 @@
 package violet.backend.objects.play;
 
+import violet.data.character.Character;
 import flixel.group.FlxGroup;
 import flixel.input.keyboard.FlxKey;
 import flixel.math.FlxPoint;
@@ -12,6 +13,8 @@ import violet.states.PlayState;
 class StrumLine extends FlxGroup {
 
 	public var controllerType:ChartStrumLineType;
+
+	public var characters:Array<Character> = [];
 
 	/**
 	 * States whether the strumLine is meant to be managed by the player.
