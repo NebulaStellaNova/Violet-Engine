@@ -21,7 +21,7 @@ class Character extends violet.backend.objects.Bopper {
      *
      *  
     */
-    public function new(id:String, x:Float = 0, y:Float = 0) {
+    public function new(x:Float = 0, y:Float = 0, id:String) {
         this._data = CharacterRegistry.characterDatas.get(id);// ?? CharacterRegistry.getDefaultLevelData();
         super(x, y, Paths.image(this._data.assetPath));
 
