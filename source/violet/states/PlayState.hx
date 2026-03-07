@@ -171,8 +171,7 @@ class PlayState extends violet.backend.StateBackend {
 			sounds: getCountdownAssetList(['introTHREE', 'introTWO', 'introONE', 'introGO'])
 		}
 
-		// startCountdown();
-		startSong(0);
+		startCountdown();
 
 		for (strumLine in strumLines)
 			strumLine.generateNotes(Conductor.songPosition);
