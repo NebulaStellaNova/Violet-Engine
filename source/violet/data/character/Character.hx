@@ -49,6 +49,7 @@ class Character extends violet.backend.objects.Bopper {
     override function update(elapsed:Float) {
         super.update(elapsed);
 
+        // -- Rodney Fix Me -- \\
         if (singTimer > 0 ? (lastHit + (Conductor.stepLengthMs * singTimer) < Conductor.songPosition) : (animation.name == null || animation.finished))
             if (prevBeat != Conductor.curBeat) {
                 prevBeat = Conductor.curBeat;
@@ -56,6 +57,7 @@ class Character extends violet.backend.objects.Bopper {
                     dance(true);
                 }
             }
+        // ------------------- \\
     }
 
 }

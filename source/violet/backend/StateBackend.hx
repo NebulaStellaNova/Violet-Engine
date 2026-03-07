@@ -107,8 +107,6 @@ class StateBackend extends flixel.FlxState {
 
 		Conductor.update();
 
-
-
 		if (nextFrame) {
 			if (errIndex > violet.backend.CrashHandler.notifList.length - 1) {
 				nextFrame = false;
