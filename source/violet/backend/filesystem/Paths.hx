@@ -83,10 +83,10 @@ class Paths {
 			'$path${ext == null || path.endsWith('.$ext') ? '' : '.$ext'}'
 		]).join('/'), directory == 'root');
 
-	inline public static function vocal(song:String, suffix:String = '', ?variant:String)
-		return root('songs/$song/song/${variant != null ? '$variant/' : ''}Voices${suffix != '' ? '-$suffix' : ''}.ogg');
+	inline public static function vocal(song:String, suffix:String = '', ?variant:String):String
+		return root('songs/$song/song/Voices${variant != null ? '-$variant' : ''}${suffix != '' ? '-$suffix' : ''}.ogg');
 
-	inline public static function inst(song:String, ?variant:String)
+	inline public static function inst(song:String, ?variant:String):String
 		return root('songs/$song/song/${variant != null ? '$variant/' : ''}Inst.ogg');
 
 	inline public static function fileExists(path:String, startFromRoot:Bool = false):Bool
