@@ -78,7 +78,10 @@ class Character extends violet.backend.objects.Bopper {
 			}
 	}
 
+	public var canDance:Bool = true; // For play animation event;
+
 	override public function dance(force:Bool = false) {
+		if (!canDance) return;
 		final suffix:String = idleSuffix != null ? '-$idleSuffix' : '';
 		if (this.animationList.contains('danceLeft$suffix')) {
 			if (this.animation.name != 'danceLeft$suffix' && this.animation.name != 'danceRight$suffix' && !force) return;

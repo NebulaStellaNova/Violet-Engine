@@ -62,6 +62,7 @@ class PlayState extends violet.backend.StateBackend {
 	public var healthBar:HealthBar;
 	public var health:Float;
 
+	public var sillyBop:Bool = false; // Silly Icon Bop
 	public var iconPlayer:HealthIcon;
 	public var iconOpponent:HealthIcon;
 
@@ -303,6 +304,8 @@ class PlayState extends violet.backend.StateBackend {
 		healthLerp = MathUtil.lerp(healthLerp, health, 0.1);
 		healthBar.position = healthLerp;
 
+		iconPlayer.angle = MathUtil.lerp(iconPlayer.angle, 0, 0.2);
+		iconOpponent.angle = MathUtil.lerp(iconOpponent.angle, 0, 0.2);
 		iconPlayer.scale.x = iconPlayer.scale.y = MathUtil.lerp(iconPlayer.scale.y, iconPlayer._data.scale, 0.2);
 		iconOpponent.scale.x = iconOpponent.scale.y = MathUtil.lerp(iconOpponent.scale.y, iconOpponent._data.scale, 0.2);
 		iconPlayer.updateHitbox();
@@ -364,14 +367,29 @@ class PlayState extends violet.backend.StateBackend {
 		if (event.ran) return;
 		event.ran = true;
 
+		var cameraMovementEventHandler = (event:ChartEvent) -> {
+			var targetCharacter:Character = strumLines.members[event.params[0]].characters[0];
+			FlxTween.cancelTweensOf(camGame.scroll);
+			FlxTween.tween(camGame.scroll, {
+				x: targetCharacter.x + targetCharacter.cameraOffsets[0],
+				y: targetCharacter.y + targetCharacter.cameraOffsets[1]
+			}, 0.75, { ease: FlxEase.quartOut });
+		}
+
 		switch (event.type) {
 			case 1:
+				cameraMovementEventHandler(event);
+			}
+
+		switch (event.name) {
+			case "Camera Movement":
+				cameraMovementEventHandler(event);
+			case "Play Animation":
 				var targetCharacter:Character = strumLines.members[event.params[0]].characters[0];
-				FlxTween.cancelTweensOf(camGame.scroll);
-				FlxTween.tween(camGame.scroll, {
-					x: targetCharacter.x + targetCharacter.cameraOffsets[0],
-					y: targetCharacter.y + targetCharacter.cameraOffsets[1]
-				}, 0.75, { ease: FlxEase.quartOut });
+				targetCharacter.canDance = false;
+				targetCharacter.playAnim(event.params[1]);
+				targetCharacter.animation.onFinish.addOnce((_)->{ if (event.params[1] == _) targetCharacter.canDance = true; });
+
 		}
 
 
@@ -408,11 +426,19 @@ class PlayState extends violet.backend.StateBackend {
 		#end
 	}
 
+	@:unreflective var alternator:Bool = false;
+
 	override function beatHit(curBeat:Int) {
 		super.beatHit(curBeat);
+		alternator = !alternator;
 
 		iconOpponent.scale.x = iconOpponent.scale.y = iconOpponent._data.scale * 1.2;
 		iconPlayer.scale.x = iconPlayer.scale.y = iconPlayer._data.scale * 1.2;
+
+		if (sillyBop) {
+			iconPlayer.angle = alternator ? 20 : -20;
+			iconOpponent.angle = alternator ? -20 : 20;
+		}
 
 		if (curBeat % 4 == 0) {
 			FlxTween.cancelTweensOf(camGame);

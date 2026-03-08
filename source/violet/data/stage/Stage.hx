@@ -30,7 +30,6 @@ class Stage {
 
             switch (i.type) {
                 case "StageProp":
-                    trace(Paths.image([this._data.directory, i.assetPath].join("/")));
                     var prop:StageProp = new StageProp(i.position[0], i.position[1], Paths.image([this._data.directory, i.assetPath].join("/")));
                     prop.name = i.name;
                     prop.scrollFactor.set(i.scroll[0] ?? 1, i.scroll[1] ?? 1);
