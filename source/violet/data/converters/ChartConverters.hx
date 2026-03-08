@@ -53,7 +53,7 @@ class ChartConverters {
     public static function convertChartData(chart:Dynamic, from:ChartFormat):ChartData {
         switch (from) {
             case CODENAME:
-                return chart;
+                return new json2object.JsonParser<ChartData>().fromJson(Json.stringify(chart));
             default:
                 return new json2object.JsonParser<ChartData>().fromJson("{}");
         }
