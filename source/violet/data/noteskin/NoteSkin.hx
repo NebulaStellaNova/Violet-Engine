@@ -35,6 +35,9 @@ class NoteSkin {
 	public function getSustainOffsets():Array<Float> {
 		return _data.sustains?.offsets ?? [0, 0];
 	}
+	public function getSplashOffsets():Array<Float> {
+		return _data.splashes?.offsets ?? [0, 0];
+	}
 
 	public function getStrumAssetPath():String {
 		var path:String;
@@ -60,6 +63,16 @@ class NoteSkin {
 		var path:String;
 		function recursion(data:NoteSkinData):Bool {
 			path = Paths.image('game/notes/$id/${data.sustains?.assetPath ?? data?.assetPath ?? 'sustains'}');
+			return Paths.fileExists(path, true);
+		}
+		if (!recursion(_data))
+			recursion(fallback._data);
+		return path;
+	}
+	public function getSplashAssetPath():String {
+		var path:String;
+		function recursion(data:NoteSkinData):Bool {
+			path = Paths.image('game/notes/$id/${data.splashes?.assetPath ?? data?.assetPath ?? 'sustains'}');
 			return Paths.fileExists(path, true);
 		}
 		if (!recursion(_data))
@@ -104,6 +117,19 @@ class NoteSkin {
 		];
 		if (anims.length == 0)
 			return getSustainAnimations(id, mania - 1);
+		return anims;
+	}
+	public function getSplashAnimations(id:Int, mania:Int = 4):Array<NoteAnimationData> {
+		if (mania < 1) return [];
+		var anims:Array<NoteAnimationData> = [
+			for (data in _data.splashes.animations) {
+				if (data.keyCount != mania) continue;
+				if (data.directionId != (id % mania)) continue;
+				data;
+			}
+		];
+		if (anims.length == 0)
+			return getSplashAnimations(id, mania - 1);
 		return anims;
 	}
 

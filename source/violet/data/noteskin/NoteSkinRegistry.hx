@@ -42,6 +42,11 @@ class NoteSkinRegistry {
                 offsets: [0, 0],
                 assetPath: 'sustains',
                 animations: []
+            },
+            splashes: {
+                offsets: [0, 0],
+                assetPath: 'sustains',
+                animations: []
             }
         }
     }

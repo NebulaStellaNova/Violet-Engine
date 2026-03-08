@@ -188,5 +188,67 @@
 				"offsets": [0, 0]
 			}
 		]
+	},
+	"splashes": {
+		"offsets": [75, 75],
+		"assetPath": "splashes",
+		"animations": [
+			{
+				"id": 0,
+				"mania": 4,
+				"name": "1",
+				"prefix": "note impact 1 purple",
+				"offsets": [0, 0]
+			},
+			{
+				"id": 0,
+				"mania": 4,
+				"name": "2",
+				"prefix": "note impact 2 purple",
+				"offsets": [0, 0]
+			},
+			{
+				"id": 1,
+				"mania": 4,
+				"name": "1",
+				"prefix": "note impact 1 blue",
+				"offsets": [0, 0]
+			},
+			{
+				"id": 1,
+				"mania": 4,
+				"name": "2",
+				"prefix": "note impact 2 blue",
+				"offsets": [0, 0]
+			},
+			{
+				"id": 2,
+				"mania": 4,
+				"name": "1",
+				"prefix": "note impact 1 green",
+				"offsets": [0, 0]
+			},
+			{
+				"id": 2,
+				"mania": 4,
+				"name": "2",
+				"prefix": "note impact 2 green",
+				"offsets": [0, 0]
+			},
+			{
+				"id": 3,
+				"mania": 4,
+				"name": "1",
+				"prefix": "note impact 1 red",
+				"offsets": [0, 0]
+			},
+			{
+				"id": 3,
+				"mania": 4,
+				"name": "2",
+				"prefix": "note impact 2 red",
+				"offsets": [0, 0]
+			}
+		]
 	}
 }

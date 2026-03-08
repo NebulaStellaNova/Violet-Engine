@@ -15,4 +15,5 @@ typedef NoteSkinData = {
 	var strums:NotePartMeta;
 	var notes:NotePartMeta;
 	var sustains:NotePartMeta;
+	var splashes:NotePartMeta;
 }

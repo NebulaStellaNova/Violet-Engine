@@ -79,4 +79,26 @@ class Strum extends NovaSprite {
 			willReset = reset;
 		}
 	}
+
+	public function spawnSplash() {
+		final skin:String = skin ?? this.skin ?? 'default';
+		final meta:NoteSkin = NoteSkinRegistry.getNoteSkinByID(skin);
+
+		var splash = new NovaSprite(0, 0, meta.getSplashAssetPath());
+		for (data in meta.getSplashAnimations(ID, parent.keyCount))
+			splash.addAnimFromJSON(data);
+
+		splash.playAnim('${FlxG.random.int(1, 2)}', true); // Make this auto check how many animations lol.
+		// splash.cameras = this.parent.cameras;
+		splash.centerOffsets();
+		splash.centerOrigin();
+		splash.animation.onFinish.add((_)->{ this.parent.remove(splash); splash.destroy(); });
+		splash.x = this.x - (splash.width/2);
+		splash.y = this.y - (splash.height/2);
+		splash.x += meta.getSplashOffsets()[0];
+		splash.y += meta.getSplashOffsets()[1];
+		this.parent.add(splash);
+
+		//var lol:Array<Float> = meta.getSplashOffsets();
+	}
 }

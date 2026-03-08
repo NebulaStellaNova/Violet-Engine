@@ -102,7 +102,7 @@ class StateBackend extends flixel.FlxState {
 		super.update(elapsed);
 
 		if (FlxG.keys.justPressed.TAB)
-			violet.states.PlayState.loadSong('test'/* , 'hard' */);
+			violet.states.PlayState.loadSong('stress', 'hard');
 
 		Conductor.update();
 

@@ -1,5 +1,7 @@
 package violet.states;
 
+import violet.data.Scoring;
+import violet.data.Scoring.Judgement;
 import violet.data.chart.ChartData.ChartEvent;
 import violet.data.stage.Stage;
 import flixel.FlxCamera;
@@ -49,6 +51,8 @@ class PlayState extends violet.backend.StateBackend {
 	public var generalVocals:FlxSound;
 
 	public var defaultCamZoom:Float = 0.7;
+
+	public var score:Int;
 
 	/**
 	 * The amount of beats the countdown lasts for.
@@ -172,6 +176,12 @@ class PlayState extends violet.backend.StateBackend {
 				note.parentStrum.playStrumAnim('confirm', true);
 				for (char in note.parent.characters)
 					char.playSingAnim(note.id);
+
+				var judgement:Judgement = Scoring.judgeNoteHit(note.time - Conductor.songPosition);
+				score += Math.round(judgement.score);
+				if (judgement.rating == "sick" || judgement.rating == "killer") {
+					note.parentStrum.spawnSplash();
+				}
 			}
 			strumLine._onSustainHit = (sustain:Sustain) -> {
 				if (sustain.wasHit && !sustain.parentNote.wasHit) return;
