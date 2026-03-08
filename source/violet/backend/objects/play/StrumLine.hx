@@ -1,11 +1,11 @@
 package violet.backend.objects.play;
 
-import violet.data.character.Character;
 import flixel.group.FlxGroup;
 import flixel.input.keyboard.FlxKey;
 import flixel.math.FlxPoint;
 import openfl.events.KeyboardEvent;
 import violet.backend.audio.Conductor;
+import violet.data.character.Character;
 import violet.data.chart.Chart;
 import violet.data.chart.ChartData;
 import violet.states.PlayState;
@@ -14,7 +14,7 @@ class StrumLine extends FlxGroup {
 
 	public var controllerType:ChartStrumLineType;
 
-	public var characters:Array<Character> = [];
+	public final characters:Array<Character> = [];
 
 	/**
 	 * States whether the strumLine is meant to be managed by the player.
@@ -57,7 +57,7 @@ class StrumLine extends FlxGroup {
 	public var strumScale:Float;
 	public var strumSpacing:Float;
 
-	public var vocals:FlxSound;
+	public final vocals:FlxSound;
 
 	public function new(chartData:_ChartStrumLine) {
 		this.chartData = chartData;

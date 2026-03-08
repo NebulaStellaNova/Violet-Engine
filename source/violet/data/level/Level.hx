@@ -1,7 +1,7 @@
 package violet.data.level;
 
-import flixel.group.FlxSpriteGroup;
 import violet.backend.objects.Bopper;
+import violet.backend.objects.BopperSpriteGroup;
 
 class Level {
 
@@ -60,9 +60,9 @@ class Level {
         return _data.difficulties ?? ["easy", "normal", "hard"];
     }
 
-    public function buildProps():FlxTypedSpriteGroup<Bopper>
+    public function buildProps():TypedBopperSpriteGroup<Bopper>
     {
-        var group:FlxTypedSpriteGroup<Bopper> = new FlxTypedSpriteGroup<Bopper>();
+        var group:TypedBopperSpriteGroup<Bopper> = new TypedBopperSpriteGroup<Bopper>();
         for (i=>propData in _data.props) {
             var propSprite:Bopper = new Bopper(Paths.image(propData.assetPath));
             propSprite.scale.set(propData.scale ?? 1, propData.scale ?? 1);

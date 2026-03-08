@@ -4,6 +4,7 @@ import flixel.group.FlxSpriteGroup;
 import flixel.math.FlxMath;
 import flixel.FlxCamera;
 
+import violet.backend.objects.BopperSpriteGroup;
 import violet.backend.objects.Bopper;
 import violet.data.song.SongRegistry;
 import violet.backend.utils.MathUtil;
@@ -14,7 +15,7 @@ import violet.data.level.Level;
 
 class StoryMenu extends SubStateBackend {
 
-    var charactersSprites:FlxTypedSpriteGroup<FlxTypedSpriteGroup<Bopper>> = new FlxTypedSpriteGroup<FlxTypedSpriteGroup<Bopper>>();
+    var charactersSprites:TypedBopperSpriteGroup<TypedBopperSpriteGroup<Bopper>> = new TypedBopperSpriteGroup<TypedBopperSpriteGroup<Bopper>>();
     var difficultySprites:FlxTypedSpriteGroup<FlxTypedSpriteGroup<NovaSprite>> = new FlxTypedSpriteGroup<FlxTypedSpriteGroup<NovaSprite>>();
 
     var leftArrow:NovaSprite;
@@ -119,7 +120,7 @@ class StoryMenu extends SubStateBackend {
             diffGroup.updateHitbox();
             difficultySprites.add(diffGroup);
 
-            var charGroup:FlxTypedSpriteGroup<Bopper> = level.buildProps();
+            var charGroup:TypedBopperSpriteGroup<Bopper> = level.buildProps();
             charactersSprites.add(charGroup);
         }
         add(weekBG);
@@ -277,16 +278,4 @@ class StoryMenu extends SubStateBackend {
 		});
 	}
 
-    override public function beatHit(beat:Int) {
-        super.beatHit(beat);
-
-        // trace("hello??");
-
-        for (group in charactersSprites.members) {
-            for (charSprite in group.members) {
-                if (beat % charSprite.danceEvery == 0)
-                    charSprite.dance();
-            }
-        }
-    }
 }

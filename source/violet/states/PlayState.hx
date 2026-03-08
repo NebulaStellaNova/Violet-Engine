@@ -2,11 +2,11 @@ package violet.states;
 
 import flixel.FlxCamera;
 import flixel.group.FlxGroup;
-import violet.data.character.Character;
 import violet.backend.audio.Conductor;
 import violet.backend.objects.play.Note;
 import violet.backend.objects.play.StrumLine;
 import violet.backend.objects.play.Sustain;
+import violet.data.character.Character;
 import violet.data.chart.Chart;
 import violet.data.chart.ChartRegistry;
 
@@ -141,8 +141,8 @@ class PlayState extends violet.backend.StateBackend {
 			strumLine.ID = i;
 			strumLines.add(strumLine);
 
-			for(k=>charName in data.characters) {
-				var char = new Character(charName);
+			for(i=>charName in data.characters) {
+				var char = new Character(i * 50, 0, charName, i == 1);
 				strumLine.characters.push(char);
 				add(char);
 			}
@@ -159,9 +159,8 @@ class PlayState extends violet.backend.StateBackend {
 				note.visible = false;
 				generalVocals.resume(); strumLine.vocals.resume();
 				note.parentStrum.playStrumAnim('confirm', true);
-				for (char in note.parent.characters) {
+				for (char in note.parent.characters)
 					char.playSingAnim(note.id);
-				}
 			}
 			strumLine._onSustainHit = (sustain:Sustain) -> {
 				if (sustain.wasHit && !sustain.parentNote.wasHit) return;
@@ -169,6 +168,8 @@ class PlayState extends violet.backend.StateBackend {
 				sustain.visible = false;
 				generalVocals.resume(); strumLine.vocals.resume();
 				sustain.parentStrum.playStrumAnim('confirm', true);
+				for (char in sustain.parent.characters)
+					char.playSingAnim(sustain.id);
 			}
 			strumLine._onNoteMissed = (note:Note) -> {
 				if (note.wasMissed) return;
@@ -180,6 +181,8 @@ class PlayState extends violet.backend.StateBackend {
 					sustain.wasMissed = true;
 					sustain.alpha *= 0.6;
 				}
+				for (char in note.parent.characters)
+					char.playSingAnim(note.id, true);
 			}
 			strumLine._onSustainMissed = (sustain:Sustain) -> {
 				if (sustain.wasMissed) return;
@@ -191,6 +194,8 @@ class PlayState extends violet.backend.StateBackend {
 					sustain.wasMissed = true;
 					sustain.alpha *= 0.6;
 				}
+				for (char in sustain.parent.characters)
+					char.playSingAnim(sustain.id, true);
 			}
 		}
 		add(strumLines);
@@ -210,9 +215,6 @@ class PlayState extends violet.backend.StateBackend {
 			strumLine.generateNotes(Conductor.songPosition);
 
 		callSongScripts('postCreate');
-
-		/* var bg = new Character("bf");
-		add(bg); */
 	}
 
 	override public function update(elapsed:Float):Void {
@@ -290,15 +292,6 @@ class PlayState extends violet.backend.StateBackend {
 		PlayState.difficulty = difficulty;
 		PlayState.variation = variation;
 		FlxG.switchState(() -> new PlayState());
-	}
-
-
-	override function beatHit(curBeat:Int) {
-		super.beatHit(curBeat);
-
-		/* for (strumLine in strumLines)
-			for (char in strumLine.characters)
-				if (curBeat % char.danceEvery == 0) char.dance(); */
 	}
 
 }

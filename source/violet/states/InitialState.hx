@@ -1,6 +1,7 @@
 package violet.states;
 
 import violet.backend.StateBackend;
+import violet.backend.audio.Conductor;
 
 class InitialState extends StateBackend { // for now
 	override public function create():Void {
@@ -26,6 +27,7 @@ class InitialState extends StateBackend { // for now
 
 		FlxG.signals.preUpdate.add(() -> {
 			if (Controls.resetState) {
+				Conductor.pause();
 				ModdingAPI.reloadRegistries();
 				FlxG.resetState();
 			}

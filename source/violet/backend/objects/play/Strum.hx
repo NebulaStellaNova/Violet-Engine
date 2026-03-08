@@ -73,8 +73,7 @@ class Strum extends NovaSprite {
 		if (this.animation.exists(name)) {
 			playAnim(name, forced, reversed, frame);
 			if (!this.anims.exists(name)) this.offset.set();
-			this.offset.x += (frameWidth - width) * 0.5;
-			this.offset.y += (frameHeight - height) * 0.5;
+			centerOffsets();
 			centerOrigin();
 			if (reset) lastHit = Conductor.songPosition;
 			willReset = reset;

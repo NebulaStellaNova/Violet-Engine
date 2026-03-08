@@ -1,11 +1,19 @@
 package violet.backend;
 
+import flixel.FlxBasic;
 import violet.backend.audio.Conductor;
+import violet.backend.objects.IsBopper;
+import violet.backend.scripting.events.EventBase;
+
 #if SCRIPT_SUPPORT
 import violet.backend.scripting.ScriptPack;
 #end
 
 class SubStateBackend extends flixel.FlxSubState {
+
+	#if SCRIPT_SUPPORT
+	public var subStateScripts:ScriptPack = new ScriptPack();
+	#end
 
 	public var curBeat(get, never):Int;
 	function get_curBeat() return Conductor.curBeat;
@@ -26,12 +34,8 @@ class SubStateBackend extends flixel.FlxSubState {
 	function get_measure() return Conductor.curMeasure;
 
 
-	#if SCRIPT_SUPPORT
-	public var subStateScripts:ScriptPack = new ScriptPack();
-	#end
-
 	public var usesLoadingScreen = false;
-	public var stuffToLoad:Array<flixel.FlxBasic> = [];
+	public var stuffToLoad:Array<FlxBasic> = [];
 
 	public static var instance:SubStateBackend;
 
@@ -40,62 +44,60 @@ class SubStateBackend extends flixel.FlxSubState {
 
 		instance = this;
 
+		#if SCRIPT_SUPPORT
 		subStateScripts.parent = this;
-
-		#if (MOD_SUPPORT && SCRIPT_SUPPORT)
-		for (path in ModdingAPI.STATE_PATHS) {
+		for (path in #if MOD_SUPPORT ModdingAPI.STATE_PATHS #else ['data/scripts/states'] #end) {
 			checkForScripts([Paths.ASSETS_FOLDER, path].join("/") + '/${Main.subStateClassName}');
+			#if MOD_SUPPORT
 			for (mod in ModdingAPI.getActiveMods())
 				checkForScripts([ModdingAPI.MOD_FOLDER, mod.folder, path].join("/") + '/${Main.subStateClassName}');
+			#end
 		}
-		callInScripts('create');
 		#end
-		new flixel.util.FlxTimer().start(0.1, (_)->{
-			nextFrame = true;
-		});
+		callInScripts('create');
+
+		new flixel.util.FlxTimer().start(0.1, _ -> nextFrame = true);
 	}
 
-	var nextFrame = false;
-
-	public function callInScripts(what) {
-		subStateScripts.call(what);
-	}
-
-	public function checkForScripts(string:String) {
-		var filePath:String = string;
+	#if SCRIPT_SUPPORT
+	public function checkForScripts(string:String, ?pack:ScriptPack) {
+		pack ??= subStateScripts;
 
 		#if CAN_LUA_SCRIPT
 		for (ext in ModdingAPI.EXT_ALIASES.get("lua")) {
-			if (Paths.fileExists('$filePath.$ext', true)) {
-				var script = new violet.backend.scripting.LuaScript('$filePath.$ext');
-				subStateScripts.addScript(script);
+			if (Paths.fileExists('$string.$ext', true)) {
+				var script = new violet.backend.scripting.LuaScript('$string.$ext');
+				pack.addScript(script);
 			}
 		}
 		#end
 
 		#if CAN_HAXE_SCRIPT
 		for (ext in ModdingAPI.EXT_ALIASES.get("hx")) {
-			if (Paths.fileExists('$filePath.$ext', true)) {
-				var script = new violet.backend.scripting.FunkinScript('$filePath.$ext');
-				subStateScripts.addScript(script);
+			if (Paths.fileExists('$string.$ext', true)) {
+				var script = new violet.backend.scripting.FunkinScript('$string.$ext');
+				pack.addScript(script);
 			}
 		}
 		#end
 
 		#if CAN_HAXE_SCRIPT
 		for (ext in ModdingAPI.EXT_ALIASES.get("py")) {
-			if (Paths.fileExists('$filePath.$ext', true)) {
-				var script = new violet.backend.scripting.PythonScript('$filePath.$ext');
-				subStateScripts.addScript(script);
+			if (Paths.fileExists('$string.$ext', true)) {
+				var script = new violet.backend.scripting.PythonScript('$string.$ext');
+				pack.addScript(script);
 			}
 		}
 		#end
 	}
+	#end
+
+	var nextFrame = false;
 
 	var notificationManager = new haxe.ui.notifications.NotificationManager();
 	var errIndex:Int = 0;
-	override public function update(_) {
-		super.update(_);
+	override public function update(elapsed:Float) {
+		super.update(elapsed);
 
 		if (nextFrame) {
 			if (errIndex > violet.backend.CrashHandler.notifList.length - 1) {
@@ -123,10 +125,18 @@ class SubStateBackend extends flixel.FlxSubState {
 		return objORcall;
 	}
 
-	/* public function runEvent<T:EventBase>(func:String, event:T):T {
-		if (stateScripts == null) return event;
-		return stateScripts.event(func, event);
-	} */
+	public function callInScripts<T>(funcName:String, ?args:Array<Dynamic>, ?def:T):T {
+		return #if SCRIPT_SUPPORT subStateScripts.call(funcName, args, def) ?? #end def;
+	}
+
+	public function runEvent<T:EventBase>(func:String, event:T):T {
+		#if SCRIPT_SUPPORT
+		if (subStateScripts == null) return event;
+		return subStateScripts.event(func, event);
+		#else
+		return event;
+		#end
+	}
 
 	public function debugPrint(text:String, color:String = "WHITE") {
 		/* var txt:FlxText = new FlxText(10, 0, 0, text, 20);
@@ -146,20 +156,32 @@ class SubStateBackend extends flixel.FlxSubState {
 		}); */
 	}
 
-	override function close() {
-		instance = null;
-		super.close();
-	}
-
 	public function stepHit(curStep:Int) {
-		// trace("step hit");
+		forEachAlive(sprite -> {
+			if (sprite is IsBopper)
+				cast(sprite, IsBopper).stepHit(curStep);
+		});
+		callInScripts('stepHit', [curStep]);
 	}
 
-	public function beatHit(theBeat:Int) {
-		// trace("beat hit");
+	public function beatHit(curBeat:Int) {
+		forEachAlive(sprite -> {
+			if (sprite is IsBopper)
+				cast(sprite, IsBopper).beatHit(curBeat);
+		});
+		callInScripts('beatHit', [curBeat]);
 	}
 
-	public function measureHit(theMeasure:Int) {
-		// trace("measure hit");
+	public function measureHit(curMeasure:Int) {
+		forEachAlive(sprite -> {
+			if (sprite is IsBopper)
+				cast(sprite, IsBopper).measureHit(curMeasure);
+		});
+		callInScripts('measureHit', [curMeasure]);
+	}
+
+	override public function destroy():Void {
+		instance = null;
+		super.destroy();
 	}
 }

@@ -2,6 +2,7 @@ package violet.backend;
 
 import flixel.FlxBasic;
 import violet.backend.audio.Conductor;
+import violet.backend.objects.IsBopper;
 import violet.backend.scripting.events.EventBase;
 
 #if SCRIPT_SUPPORT
@@ -57,9 +58,7 @@ class StateBackend extends flixel.FlxState {
 		#end
 		callInScripts('create');
 
-		new flixel.util.FlxTimer().start(0.1, (_)->{
-			nextFrame = true;
-		});
+		new flixel.util.FlxTimer().start(0.1, _ -> nextFrame = true);
 	}
 
 	#if SCRIPT_SUPPORT
@@ -165,14 +164,31 @@ class StateBackend extends flixel.FlxState {
 	}
 
 	public function stepHit(curStep:Int) {
+		forEachAlive(sprite -> {
+			if (sprite is IsBopper)
+				cast(sprite, IsBopper).stepHit(curStep);
+		});
 		callInScripts('stepHit', [curStep]);
 	}
 
 	public function beatHit(curBeat:Int) {
+		forEachAlive(sprite -> {
+			if (sprite is IsBopper)
+				cast(sprite, IsBopper).beatHit(curBeat);
+		});
 		callInScripts('beatHit', [curBeat]);
 	}
 
 	public function measureHit(curMeasure:Int) {
+		forEachAlive(sprite -> {
+			if (sprite is IsBopper)
+				cast(sprite, IsBopper).measureHit(curMeasure);
+		});
 		callInScripts('measureHit', [curMeasure]);
+	}
+
+	override public function destroy():Void {
+		instance = null;
+		super.destroy();
 	}
 }
