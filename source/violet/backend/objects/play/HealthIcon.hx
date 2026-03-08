@@ -20,7 +20,6 @@ class HealthIcon extends NovaSprite {
         if (iconData.isPixel) {
             iconData.scale *= 4.5;
         }
-        trace(iconData);
 
         super(0, 0, iconExists(id) ? Paths.image('icons/$id') : Paths.image('icons/${Constants.DEFAULT_HEALTH_ICON}'));
 

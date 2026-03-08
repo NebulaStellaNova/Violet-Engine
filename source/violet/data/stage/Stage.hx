@@ -1,5 +1,7 @@
 package violet.data.stage;
 
+import violet.backend.utils.NovaUtils;
+import violet.backend.StateBackend;
 import violet.states.PlayState;
 import violet.backend.objects.play.StageProp;
 
@@ -12,6 +14,10 @@ class Stage {
         this.id = id;
 		this._data = StageRegistry.stageDatas.get(id) ?? StageRegistry.stageDatas.get('mainStage');
         this._data.cameraPosition ??= [0, 0];
+
+        if (StageRegistry.stageDatas.get(id) == null) {
+            NovaUtils.addNotification('Stage not found!', 'Could not find stage with ID "$id" using default stage "mainStage."', haxe.ui.notifications.NotificationType.Error);
+        }
 
         FlxG.camera.scroll.x = this._data.cameraPosition[0];
         FlxG.camera.scroll.y = this._data.cameraPosition[1];
