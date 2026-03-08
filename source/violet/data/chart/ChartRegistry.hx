@@ -1,5 +1,6 @@
 package violet.data.chart;
 
+import violet.data.converters.ChartConverters;
 import violet.backend.utils.FileUtil;
 import violet.backend.utils.ParseUtil;
 import violet.data.song.SongRegistry;
@@ -20,7 +21,7 @@ class ChartRegistry {
 					trace('warning:Could not find chart for song ${song.id} of difficulty $diff.');
 					continue;
 				}
-				chartDatas.set('${song.id}:$diff', new json2object.JsonParser<ChartData>().fromJson(ParseUtil.removeJsonComments(FileUtil.getFileContent(jsonPath)), jsonPath));
+				chartDatas.set('${song.id}:$diff', ChartConverters.convertChart(FileUtil.getFileContent(jsonPath)));
 				registerChart(new Chart(song.id, diff));
 			}
 			/* for (variant in song.variants) {

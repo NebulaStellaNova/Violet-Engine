@@ -21,16 +21,12 @@ class Character extends violet.backend.objects.Bopper {
 	public var isSinging:Bool = false;
 
 	/**
-	 *  
-	 *
-	 * Daming - Give me privileges
-	 *
-	 * GENZU - no blackie
-	 *
-	 * Daming - BRO
-	 *
-	 *  
-	*/
+     * # Daming - Give me privileges
+     *
+     * # GENZU - no blackie
+     *
+     * # Daming - BRO
+    */
 	public function new(x:Float = 0, y:Float = 0, id:String = 'bf', faceLeft:Bool = false) {
 		this._data = CharacterRegistry.characterDatas.get(id) ?? CharacterRegistry.characterDatas.get('bf');
 		super(x, y, Paths.image(this._data.assetPath));

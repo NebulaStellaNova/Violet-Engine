@@ -256,6 +256,8 @@ class EngineAsset {
 
 		addHaxelib('flxrhythmconductor', 'git');
 
+		addHaxelib('yaml');
+
 		// debugging
 		// if (isDesktop() && isDebug())
 		// 	addHaxelib('hxcpp-debug-server');
