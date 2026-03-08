@@ -68,6 +68,8 @@ class PlayState extends violet.backend.StateBackend {
 
 	public var scoreTxt:ScoreTxt;
 
+	public var playAsOpponent:Bool = true;
+
 	/**
 	 * The amount of beats the countdown lasts for.
 	 */
@@ -247,6 +249,13 @@ class PlayState extends violet.backend.StateBackend {
 		}
 		add(strumLines);
 		Conductor.onComplete = endSong;
+
+		if (playAsOpponent) {
+			for (strumLine in strumLines) {
+				if (strumLine.controllerType == PLAYER) strumLine.controllerType = OPPONENT;
+				else if (strumLine.controllerType == OPPONENT) strumLine.controllerType = PLAYER;
+			}
+		}
 
 		stage = new Stage(SONG.stage);
 		defaultCamZoom = stage._data.zoom;
