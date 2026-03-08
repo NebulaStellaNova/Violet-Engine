@@ -100,7 +100,10 @@ class StrumLine extends FlxGroup {
 		FlxG.stage.addEventListener(KeyboardEvent.KEY_DOWN, _on_press);
 		FlxG.stage.addEventListener(KeyboardEvent.KEY_UP, _on_release);
 
-		if (chartData.vocalsSuffix == null) vocals = Conductor.addAdditionalTrack(new FlxSound());
+		// Rodney make this work thank.
+		/* if (Paths.fileExists(Paths.vocal(PlayState.song, characters[0].id, PlayState.variation)))
+			vocals = Conductor.addAdditionalTrack(FlxG.sound.load(Cache.sound(Paths.vocal(PlayState.song, characters[0].id, PlayState.variation), 'root', null, true), FlxG.sound.defaultMusicGroup));
+		else  */if (chartData.vocalsSuffix == null) vocals = Conductor.addAdditionalTrack(new FlxSound());
 		else vocals = Conductor.addAdditionalTrack(FlxG.sound.load(Cache.sound(Paths.vocal(PlayState.song, chartData.vocalsSuffix, PlayState.variation), 'root', null, true), FlxG.sound.defaultMusicGroup));
 	}
 

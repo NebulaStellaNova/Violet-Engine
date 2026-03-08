@@ -1,5 +1,6 @@
 package violet.backend.objects;
 
+import flixel.util.typeLimit.OneOfTwo;
 import flixel.FlxCamera;
 import flixel.graphics.FlxGraphic;
 import flixel.graphics.frames.FlxAtlasFrames;
@@ -125,9 +126,11 @@ class NovaSprite extends #if ANIMATE_SUPPORT FlxAnimate #else FlxSprite #end {
 		}
 	}
 
-	public function addAnim(name:String, prefix:String, ?indices:Array<Int>, ?offsets:Array<Float>, fps:Int = 24, looped:Bool = false, label:Bool = false):Void {
+	public function addAnim(name:String, prefix:OneOfTwo<String, Array<Int>>, ?indices:Array<Int>, ?offsets:Array<Float>, fps:Int = 24, looped:Bool = false, label:Bool = false):Void {
 		prefix += "0";
-		if (#if ANIMATE_SUPPORT isAnimate #else false #end) {
+		if (Std.isOfType(prefix, Array)) {
+			this.animation.add(name, prefix, fps, looped);
+		} else if (#if ANIMATE_SUPPORT isAnimate #else false #end) {
 			#if ANIMATE_SUPPORT
 			if (label) {
 				if (indices == null || indices.length == 0)

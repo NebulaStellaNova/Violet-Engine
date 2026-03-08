@@ -1,5 +1,10 @@
 package violet.states;
 
+import violet.backend.objects.play.HealthIcon;
+import violet.data.Constants;
+import flixel.math.FlxMath;
+import violet.backend.utils.MathUtil;
+import violet.backend.objects.play.HealthBar;
 import violet.data.Scoring;
 import violet.data.Scoring.Judgement;
 import violet.data.chart.ChartData.ChartEvent;
@@ -53,6 +58,11 @@ class PlayState extends violet.backend.StateBackend {
 	public var defaultCamZoom:Float = 0.7;
 
 	public var score:Int;
+	public var healthBar:HealthBar;
+	public var health:Float;
+
+	public var iconPlayer:HealthIcon;
+	public var iconOpponent:HealthIcon;
 
 	/**
 	 * The amount of beats the countdown lasts for.
@@ -157,6 +167,12 @@ class PlayState extends violet.backend.StateBackend {
 				var char = new Character(i * 50, 0, charName, i == 1);
 				char.alpha = 0.5;
 				char.stagePosition = data.charStagePosition;
+				if (data.charStagePosition == "boyfriend" && iconPlayer == null) {
+					iconPlayer = new HealthIcon(char._data.healthIcon);
+					iconPlayer.flipX = !iconPlayer.flipX;
+				} else if (data.charStagePosition == "dad" && iconOpponent == null) {
+					iconOpponent = new HealthIcon(char._data.healthIcon);
+				}
 				strumLine.characters.push(char);
 				characters.push(char);
 				// add(char);
@@ -179,9 +195,12 @@ class PlayState extends violet.backend.StateBackend {
 
 				var judgement:Judgement = Scoring.judgeNoteHit(note.time - Conductor.songPosition);
 				score += Math.round(judgement.score);
-				if (judgement.rating == "sick" || judgement.rating == "killer") {
+				if (judgement.rating == "sick" || judgement.rating == "killer" && strumLine.isPlayer) {
 					note.parentStrum.spawnSplash();
 				}
+				if (strumLine.isPlayer)
+					health += Constants.DEFAULT_HEALTH_GAIN;
+
 			}
 			strumLine._onSustainHit = (sustain:Sustain) -> {
 				if (sustain.wasHit && !sustain.parentNote.wasHit) return;
@@ -191,6 +210,8 @@ class PlayState extends violet.backend.StateBackend {
 				sustain.parentStrum.playStrumAnim('confirm', true);
 				for (char in sustain.parent.characters)
 					char.playSingAnim(sustain.id);
+				if (strumLine.isPlayer)
+					health += Constants.DEFAULT_HEALTH_GAIN;
 			}
 			strumLine._onNoteMissed = (note:Note) -> {
 				if (note.wasMissed) return;
@@ -204,6 +225,8 @@ class PlayState extends violet.backend.StateBackend {
 				}
 				for (char in note.parent.characters)
 					char.playSingAnim(note.id, true);
+
+				health -= Constants.DEFAULT_HEALTH_LOSS;
 			}
 			strumLine._onSustainMissed = (sustain:Sustain) -> {
 				if (sustain.wasMissed) return;
@@ -226,6 +249,22 @@ class PlayState extends violet.backend.StateBackend {
 		defaultCamZoom = stage._data.zoom;
 		camGame.zoom = defaultCamZoom;
 
+		healthBar = new HealthBar();
+		healthBar.y = /* isDownscroll ? FlxG.height * 0.1 :  */FlxG.height * 0.9;
+		healthBar.screenCenter(X);
+		healthBar.camera = camHUD;
+		healthBar.leftColor = FlxColor.RED;
+		healthBar.rightColor = FlxColor.LIME;
+		add(healthBar);
+
+		iconPlayer.camera = camHUD;
+		add(iconPlayer);
+
+		iconOpponent.camera = camHUD;
+		add(iconOpponent);
+
+		health = 0.75; // when I set it to 0.5, it MAGICALLY gets set to 0.25 and idk why
+
 		countdownAssets = {
 			images: getCountdownAssetList([null, 'ready', 'set', 'go']),
 			sounds: getCountdownAssetList(['introTHREE', 'introTWO', 'introONE', 'introGO'])
@@ -242,15 +281,26 @@ class PlayState extends violet.backend.StateBackend {
 		callSongScripts('postCreate');
 	}
 
+	var healthLerp = 0.5;
+
 	override public function update(elapsed:Float):Void {
 		super.update(elapsed);
 
-		/* if (FlxG.keys.pressed.A) camGame.scroll.x -= 10;
-		if (FlxG.keys.pressed.D) camGame.scroll.x += 10;
-		if (FlxG.keys.pressed.W) camGame.scroll.y -= 10;
-		if (FlxG.keys.pressed.S) camGame.scroll.y += 10;
-		if (FlxG.keys.pressed.Q) camGame.zoom -= 0.01;
-		if (FlxG.keys.pressed.E) camGame.zoom += 0.01; */
+		health = FlxMath.bound(health, 0, 1);
+
+		healthLerp = MathUtil.lerp(healthLerp, health, 0.1);
+		healthBar.position = healthLerp;
+
+		iconPlayer.scale.x = iconPlayer.scale.y = MathUtil.lerp(iconPlayer.scale.y, iconPlayer._data.scale, 0.2);
+		iconOpponent.scale.x = iconOpponent.scale.y = MathUtil.lerp(iconOpponent.scale.y, iconOpponent._data.scale, 0.2);
+		iconPlayer.updateHitbox();
+		iconOpponent.updateHitbox();
+
+		iconPlayer.x = healthBar.x + healthBar.defaultWidth * (1-healthLerp);
+		iconPlayer.y = healthBar.y + (healthBar.height/2) - (iconPlayer.height/2);
+
+		iconOpponent.x = healthBar.x + healthBar.defaultWidth * (1-healthLerp) - iconOpponent.width;
+		iconOpponent.y = healthBar.y + (healthBar.height/2) - (iconOpponent.height/2);
 
 		for (i in SONG.events) {
 			if (i.time <= Conductor.songPosition) {
@@ -349,10 +399,15 @@ class PlayState extends violet.backend.StateBackend {
 	override function beatHit(curBeat:Int) {
 		super.beatHit(curBeat);
 
+		iconOpponent.scale.x = iconOpponent.scale.y = iconOpponent._data.scale * 1.2;
+		iconPlayer.scale.x = iconPlayer.scale.y = iconPlayer._data.scale * 1.2;
+
 		if (curBeat % 4 == 0) {
 			FlxTween.cancelTweensOf(camGame);
 			camGame.zoom = defaultCamZoom + 0.025;
+			camHUD.zoom = 1 + 0.035;
 			FlxTween.tween(camGame, { zoom: defaultCamZoom }, 1, { ease: FlxEase.quartOut });
+			FlxTween.tween(camHUD, { zoom: 1 }, 1, { ease: FlxEase.quartOut });
 		}
 	}
 

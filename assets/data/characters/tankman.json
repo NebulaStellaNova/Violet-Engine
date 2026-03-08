@@ -12,7 +12,7 @@
   "isPixel": false,
   "assetPath": "characters/tankmanCaptain",
   "healthIcon": {
-    "offsets": [0, 0],
+    "offsets": [50, 0],
     "id": "tankman",
     "flipX": false,
     "isPixel": false,
@@ -53,7 +53,7 @@
     },
     {
       "flipY": false,
-      "offsets": [22,-28],
+      "offsets": [-22,-28],
       "frameRate": 24,
       "prefix": "Tankman Note Left instance 1",
       "flipX": false,
