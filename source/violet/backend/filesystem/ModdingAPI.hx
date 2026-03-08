@@ -43,6 +43,8 @@ class ModdingAPI {
 
 	public static function init():Void {
 		trace("debug:Initializing Modding System...");
+		FlxG.save.data.registeredModIds ??= [];
+		FlxG.save.data.enabledModIds ??= [];
 		(availableMods = [
 			for (path in Paths.readFolder('mods', true)) {
 				if (!Paths.fileExists('$MOD_FOLDER/$path/novamod_meta.json', true) && !Paths.fileExists('$MOD_FOLDER/$path/novamod_meta.jsonc', true)) continue;
@@ -59,8 +61,14 @@ class ModdingAPI {
 			(activeModsIds = FileUtil.getFileContent('$MOD_FOLDER/active-mods.txt').split('\n').filter(id -> return getMod(id) != null)); */
 
 		for (i in availableMods) {
+			if (!FlxG.save.data.registeredModIds.contains(i.id)) {
+				FlxG.save.data.registeredModIds.push(i.id);
+				FlxG.save.data.enabledModIds.push(i.id);
+			}
 			trace('debug:Found mod "${i.title}" with id "${i.id}"');
 		}
+
+		activeModsIds = FlxG.save.data.enabledModIds;
 
 		reloadRegistries();
 	}
@@ -75,11 +83,15 @@ class ModdingAPI {
 		return null;
 	}
 
-	public static function enableMod(id:String)
+	public static function enableMod(id:String) {
 		if (!activeModsIds.contains(id)) activeModsIds.push(id);
+		if (!FlxG.save.data.enabledModIds.contains(id)) FlxG.save.data.enabledModIds.push(id);
+	}
 
-	public static function disableMod(id:String)
+	public static function disableMod(id:String) {
 		if (activeModsIds.contains(id)) activeModsIds.remove(id);
+		if (FlxG.save.data.enabledModIds.contains(id)) FlxG.save.data.enabledModIds.remove(id);
+	}
 
 	public static function checkModEnabled(id:String):Bool
 		return activeModsIds.contains(id);

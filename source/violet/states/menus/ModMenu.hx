@@ -222,6 +222,7 @@ class ModMenu extends SubStateBackend {
 	override public function close() {
 		super.close();
 
+		FlxG.save.flush();
 		// state.onCloseSubState();
 	}
 
