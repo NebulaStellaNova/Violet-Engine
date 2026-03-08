@@ -50,7 +50,11 @@ class EngineAsset {
 	/**
 	 * The directory path**s** to the source code.
 	 */
-	static final sourceCodeDirectories:Array<String> = ['./source', './.haxelib/thx,semver/0,2,2/src'];
+	static final sourceCodeDirectories:Array<String> = ['./source'];
+	/**
+	 * Just put the fucking libs that refuse to load here.
+	 */
+	static final extraLibraries:Array<String> = ['thx.semver'/* , 'rulescript' */];
 	/**
 	 * The class path to the preloader class.
 	 */
@@ -108,10 +112,6 @@ class EngineAsset {
 	 * States if haxe scripting can do custom classes.
 	 */
 	static final customClasses:CompilerFlag = 'CUSTOM_CLASSES';
-	/**
-	 * States if dead code elimination will be disabled.
-	 */
-	static final disableDCE:CompilerFlag = 'DISABLE_DCE';
 
 	/**
 	 * States if the engine allows shaders at all.
@@ -146,6 +146,9 @@ class EngineAsset {
 			return;
 		}
 
+		for (i in extraLibraries)
+			haxelibs.push(new Haxelib(i));
+
 		if (FileSystem.exists('./.haxelib'))
 			setenv('HAXEPATH', './.haxelib');
 
@@ -157,16 +160,15 @@ class EngineAsset {
 		if (isRelease())
 			checkForUpdates.enable();
 		modSupport.enable();
-		// scriptSupport.enable();
+		scriptSupport.enable();
 
-		// usesAnimateAtlas.enable();
+		usesAnimateAtlas.enable();
 
 		// script related
 		if (scriptSupport.exists()) {
 			canHaxeScript.enable();
 			canLuaScript.enable();
 
-			disableDCE.enable();
 			scriptedStates.enable();
 			if (canHaxeScript.exists())
 				customClasses.enable();
@@ -182,7 +184,7 @@ class EngineAsset {
 		if (discordRPC.exists())
 			setHaxedef('DISCORD_DISABLE_IO_THREAD');
 		allowShaders.enable();
-		// if (isWindows()) editWindowBorderColor.enable();
+		// /* if (isWindows())  */editWindowBorderColor.enable();
 		/* Define Setup */
 
 		/* App Setup */
@@ -227,13 +229,14 @@ class EngineAsset {
 
 		var excludeList:Array<String> = [''];
 		// addAssetLibrary('default', false, true); addAssetLibrary('mods');
-		addAssetPath('./assets', './assets', ['*'], excludeList);
+		addAssetPath('./assets', './resources', ['*'], excludeList);
 		if (modSupport.exists()) addAssetPath('./mods', './mods', ['*'], excludeList);
 		/* Path Settings */
 
 		addHaxeMacro('violet.backend.Macro.init()');
 
 		/* Libraries */
+		addHaxelib('hxhardware');
 		// required for flixel, don't put below flixel, causes weird issues
 		addHaxelib('openfl');
 		addHaxelib('lime');
@@ -242,37 +245,41 @@ class EngineAsset {
 		addHaxelib('flixel');
 		addHaxelib('flixel-addons');
 
+		addHaxelib('haxeui-core');
+		addHaxelib('haxeui-flixel');
+
 		if (usesAnimateAtlas.exists())
 			addHaxelib('flixel-animate');
 
 		// json parsing
 		addHaxelib('json2object', 'git');
 
+		addHaxelib('flxrhythmconductor', 'git');
+
 		// debugging
-		if (isDesktop() && isDebug())
-			addHaxelib('hxcpp-debug-server');
+		// if (isDesktop() && isDebug())
+		// 	addHaxelib('hxcpp-debug-server');
 
 		// chart converter
 		addHaxelib('moonchart');
 
-		if ( canHaxeScript.exists()) addHaxelib('rulescript');
-		if ( canLuaScript .exists()) addHaxelib('lscript',        'git');
-		if (  discordRPC  .exists()) addHaxelib('discord-rpc');
-		if (allowVideos   .exists()) addHaxelib('hxvlc');
+		addHaxelib('linc_luajit', 'git');
+		if (canHaxeScript.exists()) addHaxelib('rulescript', 'git');
+		if (canLuaScript.exists()) addHaxelib('lscript', 'git');
+
+		if (discordRPC.exists()) addHaxelib('discord-rpc');
+		if (allowVideos.exists()) addHaxelib('hxvlc');
 		// addHaxelib('thx.semver');
 
-		if (editWindowBorderColor.exists())
-			addHaxelib('hxWindowColorMode');
+		// if (editWindowBorderColor.exists())
+			// addHaxelib('hxWindowColorMode');
 		/* Libraries */
 
-		if (!isDebug())
-			setHaxedef('FLX_NO_DEBUG');
+		// if (!isDebug())
+		setHaxedef('FLX_NO_DEBUG');
 
 		// may add one
 		setHaxedef('FLX_NO_FOCUS_LOST_SCREEN');
-
-		if (disableDCE.exists())
-			addHaxeFlag('-dce no');
 
 		setHaxedef('message.reporting', 'pretty');
 		setHaxedef('message.log-format', 'pretty');

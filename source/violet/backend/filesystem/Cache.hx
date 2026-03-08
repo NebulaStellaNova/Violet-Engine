@@ -9,6 +9,18 @@ import violet.backend.display.BetterBitmapData;
 private class HaxeLogo extends BitmapData {}
 
 class Cache {
+	public static function init():Void {
+		trace("debug:Initializing Cache System...");
+		for (item in Paths.readFolder('sounds/menu')) {
+			sound('menu/$item');
+			trace('debug:Cached "${Paths.sound('menu/$item')}".');
+		}
+		for (item in Paths.readFolder('sounds/miss')) {
+			sound('miss/$item');
+			trace('debug:Cached "${Paths.sound('miss/$item')}".');
+		}
+	}
+
 	static final cache:Map<String, Dynamic> = new Map<String, Dynamic>();
 
 	public static function image(path:String, directory:String = '', ?ext:String = 'png'):FlxGraphic {
@@ -31,11 +43,11 @@ class Cache {
 		return graphic;
 	}
 
-	inline public static function sound(path:String, directory:String = '', ?ext:String = 'ogg', beepWhenNull:Bool = false):Sound
-		return audio(path, [directory, 'sounds'].join('/'), ext, beepWhenNull);
+	inline public static function sound(path:String, directory:String = '', ?ext:String = 'ogg', beepWhenNull:Bool = false, folder:String = 'sounds'):Sound
+		return audio(path, directory == 'root' ? 'root' : [directory, folder].join('/'), ext, beepWhenNull);
 
-	inline public static function music(path:String, directory:String = '', ?ext:String = 'ogg', beepWhenNull:Bool = true):Sound
-		return audio(path, [directory, 'music'].join('/'), ext, beepWhenNull);
+	inline public static function music(path:String, directory:String = '', ?ext:String = 'ogg', beepWhenNull:Bool = true, folder:String = 'music'):Sound
+		return audio(path, directory == 'root' ? 'root' : [directory, folder].join('/'), ext, beepWhenNull);
 
 	static function audio(path:String, directory:String = '', ?ext:String = 'ogg', beepWhenNull:Bool = false):Sound {
 		var audioPath:String = Paths.file(path, directory, ext);

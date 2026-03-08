@@ -1,0 +1,87 @@
+package violet.data.noteskin;
+
+import violet.backend.utils.FileUtil;
+import violet.backend.utils.ParseUtil;
+
+class NoteSkinRegistry {
+
+    public static var noteSkins:Array<NoteSkin> = [];
+    public static var noteSkinDatas:Map<String, NoteSkinData> = new Map<String, NoteSkinData>();
+
+    public static function registerNoteSkins() {
+        noteSkins = [];
+        noteSkinDatas.clear();
+
+        var noteSkinFolder = Paths.readFolder("images/game/notes");
+        for (file in noteSkinFolder) {
+            final jsonPath = Paths.json('images/game/notes/$file/meta');
+            if (!Paths.fileExists(jsonPath, true)) {
+                trace('warning:Could not find meta file for note skin with ID $file. Skipping registration.');
+                continue;
+            }
+            noteSkinDatas.set(file, new json2object.JsonParser<NoteSkinData>().fromJson(ParseUtil.removeJsonComments(FileUtil.getFileContent(jsonPath))));
+            registerNoteSkin(new NoteSkin(file));
+        }
+    }
+
+    public static function getDefaultNoteSkinData():NoteSkinData {
+        return {
+            name: 'default',
+            strums: {
+                offsets: [0, 0],
+                assetPath: 'strums',
+                animations: []
+            },
+            notes: {
+                offsets: [0, 0],
+                assetPath: 'notes',
+                animations: []
+            },
+            sustains: {
+                offsets: [0, 0],
+                assetPath: 'sustains',
+                animations: []
+            }
+        }
+    }
+
+    public static function registerNoteSkin(newSkin:NoteSkin) {
+        for (noteSkin in noteSkins) {
+            if (noteSkin.id == newSkin.id) {
+                trace('warning:Level with ID "${newSkin.id}" is already registered. Skipping duplicate registration.');
+                return;
+            }
+        }
+
+        trace('debug:Found and registered note skin with ID "${newSkin.id}"');
+
+        noteSkins.push(newSkin);
+    }
+
+    public static function getAllNoteSkinIDs():Iterator<String> {
+        return noteSkins.map((noteSkin) -> noteSkin.id).iterator();
+    }
+
+    public static function getAllNoteSkins():Array<NoteSkin> {
+        return noteSkins.copy();
+    }
+
+    public static function doesNoteSkinExist(id:String):Bool {
+        for (noteSkin in noteSkins) {
+            if (noteSkin.id == id) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static function getNoteSkinByID(id:String):Null<NoteSkin> {
+        for (noteSkin in noteSkins) {
+            if (noteSkin.id == id) {
+                return noteSkin;
+            }
+        }
+        return null;
+    }
+
+}

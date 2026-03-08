@@ -93,13 +93,13 @@ class Controls {
 	 */
 	public static var uiDown(get, never):Bool;
 	inline static function get_uiDown():Bool
-		return pressed('ui_down');
+		return pressed('ui_down') || FlxG.mouse.wheel < 0;
 	/**
 	 * When you press up to move through ui elements
 	 */
 	public static var uiUp(get, never):Bool;
 	inline static function get_uiUp():Bool
-		return pressed('ui_up');
+		return pressed('ui_up') || FlxG.mouse.wheel > 0;
 	/**
 	 * When you press right to move through ui elements
 	 */
@@ -162,13 +162,13 @@ class Controls {
 	 */
 	public static var accept(get, never):Bool;
 	inline static function get_accept():Bool
-		return pressed('accept');
+		return pressed('accept') || FlxG.mouse.justPressed;
 	/**
 	 * When "back" is pressed.
 	 */
 	public static var back(get, never):Bool;
 	inline static function get_back():Bool
-		return pressed('back');
+		return pressed('back') || FlxG.mouse.justPressedRight;
 	/**
 	 * When "paused" is pressed.
 	 */
@@ -201,6 +201,12 @@ class Controls {
 	public static var resetState(get, never):Bool;
 	inline static function get_resetState():Bool
 		return pressed('resetState');
+	/**
+	 * When "debugDisplay" is pressed.
+	 */
+	public static var debugDisplay(get, never):Bool;
+	inline static function get_debugDisplay():Bool
+		return pressed('debugDisplay');
 	/**
 	 * When "shortcutState" is pressed.
 	 */
@@ -240,9 +246,10 @@ class Controls {
 
 		'fullscreen' => [F11],
 
-		'botplay' => [F4],
+		'botplay' => [F3],
 		'resetState' => [F5],
-		'shortcutState' => [F6],
+		'shortcutState' => [F4],
+		'debugDisplay' => [F6],
 		'reloadGame' => [F8]
 	];
 	/**

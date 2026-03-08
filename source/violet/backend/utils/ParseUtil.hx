@@ -2,11 +2,10 @@ package violet.backend.utils;
 
 import haxe.Json;
 
-using StringTools;
-
 class ParseUtil {
-	public static function json(path:String, directory:String = ''):Dynamic
+	public static function json(path:String, directory:String = ''):Dynamic {
 		return Json.parse(removeJsonComments(FileUtil.getFileContent(Paths.json(path, directory))));
+	}
 
 	public static function removeJsonComments(str:String) {
 		var split = str.split('');

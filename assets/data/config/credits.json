@@ -1,0 +1,28 @@
+{
+    "credits": [
+        {
+            "title": "Violet Engine | Main Team",
+            "contributors": [
+                {
+                    "name": "Nebula S. Nova",
+                    "role": "Main Coder, Menu Theme",
+                    "icon": "nebula"
+                },
+                {
+                    "name": "Rodney Furball <3",
+                    "role": "Coder"
+                }
+            ]
+        },
+        {
+            "title": "Violet Engine | Github Contributors",
+            "contributors": [
+                {
+                    "name": "Macohi / Sphis",
+                    "role": "Credits Menu",
+                    "icon": "macohi"
+                }
+            ]
+        }
+    ]
+}

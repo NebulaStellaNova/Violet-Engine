@@ -1,7 +1,11 @@
 {
-	"displayName": "test",
+	"displayName": "Test",
 	"bpm": 150.0,
 	"icon": "bf",
 	"coopAllowed": true,
-	"opponentModeAllowed": true
+	"opponentModeAllowed": true,
+	"difficulties": [
+		"NORMAL"
+	],
+	"needsVoices": true
 }

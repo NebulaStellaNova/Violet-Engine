@@ -1,15 +1,18 @@
 package violet.states;
 
-class InitialState extends flixel.FlxState { // for now
+import violet.backend.StateBackend;
+import violet.backend.audio.Conductor;
+
+class InitialState extends StateBackend { // for now
 	override public function create():Void {
 		FlxG.fixedTimestep = false;
-		flixel.FlxSprite.defaultAntialiasing = true; // this ain't a pixel game... yeah ik week 6 exists!
+		FlxSprite.defaultAntialiasing = true; // this ain't a pixel game... yeah ik week 6 exists!
 		FlxG.cameras.useBufferLocking = true;
 
 		super.create();
 
 		#if MOD_SUPPORT
-		Modding.init();
+		ModdingAPI.init();
 		#end
 		#if CHECK_FOR_UPDATES
 		// write this
@@ -20,13 +23,22 @@ class InitialState extends flixel.FlxState { // for now
 		// for later use
 		#end
 
+		new haxe.ui.notifications.NotificationManager().addNotification({title: 'a', body: ''});
+
 		FlxG.signals.preUpdate.add(() -> {
-			if (Controls.resetState)
+			if (Controls.resetState) {
+				Conductor.pause();
+				ModdingAPI.reloadRegistries();
 				FlxG.resetState();
+			}
 			if (Controls.shortcutState)
 				FlxG.switchState(() -> new violet.states.menus.MainMenu());
 		});
 
-		FlxG.switchState(() -> new TitleState());
+		FlxG.camera.visible = false;
+		new flixel.util.FlxTimer().start(0.05, (_)->{
+			FlxG.switchState(SplashState.new);
+			FlxG.camera.visible = true;
+		});
 	}
 }

@@ -3,7 +3,7 @@
   "name": "Girlfriend (Car)",
   "assetPath": "characters/gfCar",
   "startingAnimation": "danceRight",
-  "danceEvery": 2,
+  "danceEvery": 1,
   "cameraOffsets": [0, -200],
   "animations": [
     {

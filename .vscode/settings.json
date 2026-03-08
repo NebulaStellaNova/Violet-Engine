@@ -1,10 +1,16 @@
 {
 	"cSpell.words": [
-		"HAXEPATH",
+		"Datas",
+		"flxrhythmconductor",
+		"haxeui",
+		"hxhardware",
 		"hxjsonast",
 		"hxwindowmode",
+		"jcustomparse",
 		"jignored",
-		"lscript"
+		"jsons",
+		"lscript",
+		"luac"
 	],
 
 	"files.associations": {

@@ -1,21 +1,28 @@
 package violet.states.menus;
 
+import violet.data.Constants;
 import flixel.FlxObject;
 import flixel.math.FlxMath;
-import flixel.tweens.FlxEase;
-import flixel.tweens.FlxTween;
-import flixel.util.FlxTimer;
+
 import violet.backend.StateBackend;
-import violet.backend.objects.ClassData;
-import violet.backend.objects.NovaSprite;
-import violet.backend.objects.NovaText;
 import violet.backend.utils.MathUtil;
 import violet.backend.utils.NovaUtils;
 import violet.backend.utils.ParseUtil;
+import violet.backend.scripting.events.SelectionEvent;
+
+#if debug
+import violet.backend.display.DebugDisplay;
+#end
+
+typedef MenuOffset = {
+	var idle:Array<Float>;
+	var selected:Array<Float>;
+}
 
 typedef MenuAnimations = {
 	var idle:String;
 	var selected:String;
+	var ?offsets:MenuOffset;
 }
 
 typedef MenuItem = {
@@ -35,16 +42,13 @@ typedef MenuData = {
 
 class MainMenu extends StateBackend {
 	public var watermarkTexts = [
-		"Violet Engine v0.1",
-		"THIS IS NOT A FORK"
+		Constants.ENGINE_TITLE + " v" + Constants.ENGINE_VERSION
 	];
-
-	public static var bg_static:NovaSprite;
 
 	public var curSelectedString:String = "";
 	public var bgColorString:String = "";
 
-	public var curSelected:Int = 0;
+	public static var curSelected:Int = 0;
 
 	public var menuData:MenuData;
 
@@ -63,12 +67,13 @@ class MainMenu extends StateBackend {
 	{
 		super.create();
 
+		var modMenu:violet.states.menus.ModMenu = new violet.states.menus.ModMenu();
+
 		// FlxG.camera.color = FlxColor.BLACK;
-		FlxG.camera.fade(FlxColor.BLACK, 0.25, true);
 
 		menuData = ParseUtil.json("data/config/menuData");
 
-		var mult:Float = 1/(menuData.items.length-1);
+		var mult:Float = 1/(menuData.items.length);
 		bg = new NovaSprite(Paths.image(menuData.directory + "/" + menuData.background));
 		bg.setGraphicSize(FlxG.width, FlxG.height);
 		bg.scale.x += mult;
@@ -76,14 +81,14 @@ class MainMenu extends StateBackend {
 		bg.updateHitbox();
 		bg.screenCenter();
 		bg.color = menuData.items[curSelected].color;
-		bg.scrollFactor.set(0, mult);
+		bg.scrollFactor.set(0, mult/2);
 		bg.x = 0;
 		add(bg);
 
 		for (i=>daItem in menuData.items) {
 			var item = new NovaSprite(0, (175*i)+90, Paths.image(menuData.directory + "/" + daItem.item));
-			item.addAnim("selected", daItem.item + " " + daItem.animations.selected, true);
-			item.addAnim("static", daItem.item + " " + daItem.animations.idle, true);
+			item.addAnim("selected", daItem.item + " " + daItem.animations.selected, [], daItem.animations?.offsets?.selected ?? [0, 0], 24, true);
+			item.addAnim("static", daItem.item + " " + daItem.animations.idle, [], daItem.animations?.offsets?.idle ?? [0, 0], 24, true);
 			item.playAnim("static");
 			item.scale.set(daItem.scale ?? 1, daItem.scale ?? 1);
 			item.updateHitbox();
@@ -119,6 +124,19 @@ class MainMenu extends StateBackend {
 		changeSelection(uiCheck());
 		FlxG.camera.snapToTarget();
 		FlxG.camera.followLerp = 0.1;
+
+		FlxG.camera.fade(FlxColor.BLACK, 0.25, true);
+
+		#if debug
+		DebugDisplay.registerVariable("Current Menu Item Index", "curSelected");
+		DebugDisplay.registerVariable("Current Menu Item", "curSelectedString");
+		DebugDisplay.registerVariable("Background Color", "bgColorString");
+		DebugDisplay.registerVariable("Can Select", "canSelect");
+		#end
+
+		NovaUtils.playMenuMusic();
+
+		callInScripts('postCreate');
 	}
 
 	function uiCheck() {
@@ -133,8 +151,12 @@ class MainMenu extends StateBackend {
 
 	override public function update(elapsed:Float)
 	{
+
 		super.update(elapsed);
-		changeSelection(uiCheck());
+		// trace(Main.stateClassName);
+		// trace(Main.subStateClassName);
+		if (Controls.uiUp || Controls.uiDown)
+			changeSelection(uiCheck());
 		bg.color = MathUtil.colorLerp(bg.color, menuData.items[curSelected].color, 0.16);
 		bgColorString = ParseColor.fromInt(bg.color);
 
@@ -149,6 +171,11 @@ class MainMenu extends StateBackend {
 		if (Controls.accept) {
 			pickSelection();
 		}
+
+		if (Controls.back) {
+			// Main.switchState(new ClassData('TitleState')); // Crashes idk why
+		}
+
 		watermarkTexts.sort(function(a, b):Int {
 			if(a.length < b.length) return -1;
 			else if(a.length > b.length) return 1;
@@ -166,15 +193,15 @@ class MainMenu extends StateBackend {
 	}
 
 	public function changeSelection(amt:Int) {
-		// var event:SelectionEvent = new SelectionEvent(FlxMath.wrap(curSelected + amt, 0, menuItems.length-1));
-		/* if (amt != 0) {
-			event = runEvent("onChangeSelection", new SelectionEvent(FlxMath.wrap(curSelected + amt, 0, menuItems.length-1)));
+		var event:SelectionEvent = new SelectionEvent(FlxMath.wrap(curSelected + amt, 0, menuItems.length-1));
+		if (amt != 0) {
+			event = runEvent("changeSelection", new SelectionEvent(FlxMath.wrap(curSelected + amt, 0, menuItems.length-1)));
 			if (event.cancelled) return;
-		} */
-		if (amt != 0/*  && !event.soundCancelled */) {
-			NovaUtils.playSound(Paths.sound("menu/scroll"));
 		}
-		curSelected = FlxMath.wrap(curSelected + amt, 0, menuItems.length-1);//event.selection;
+		if (amt != 0 && !event.soundCancelled) {
+		    NovaUtils.playMenuSFX(NovaUtils.SCROLL);
+		}
+		curSelected = event.selection;
 		for (i => item in menuItems) {
 			if (i == curSelected) {
 				item.updateHitbox();
@@ -195,15 +222,17 @@ class MainMenu extends StateBackend {
 						item.x = FlxG.width - item.width - 20;
 				}
 			}
+			item.offset.x = item.anims.get(i == curSelected ? "selected" : "static").offset[0];
+			item.offset.y =  item.anims.get(i == curSelected ? "selected" : "static").offset[1];
 		}
 		curSelectedString = menuData.items[curSelected].item;
 	}
 
 	public function pickSelection() {
 		if (!canSelect) return;
-		/* var event:SelectionEvent = runEvent("onPickSelection", new SelectionEvent(curSelected));
-		if (!event.soundCancelled) */ NovaUtils.playSound(Paths.sound("menu/confirm"));
-		// if (event.cancelled) return;
+		var event:SelectionEvent = runEvent("pickSelection", new SelectionEvent(curSelected));
+		if (!event.soundCancelled) NovaUtils.playMenuSFX(NovaUtils.CONFIRM);
+		if (event.cancelled) return;
 
 		canSelect = false;
 
@@ -220,7 +249,6 @@ class MainMenu extends StateBackend {
 
 		new FlxTimer().start(0.5, (t)->{
 			if (classData.isSubState) {
-				bg_static = bg;
 				openSubState(classData.target);
 				persistentUpdate = true;
 			} else {

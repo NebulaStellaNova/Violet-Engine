@@ -9,7 +9,7 @@
 				"idle": "basic",
 				"selected": "white"
 			},
-			"state": "source:StoryMenuState",
+			"state": "source:StoryMenu",
 			"color": "#FF00FF"
 		},
 		{
@@ -19,8 +19,21 @@
 				"idle": "basic",
 				"selected": "white"
 			},
-			"state": "source:FreeplayState",
+			"state": "source:FreeplayMenu",
 			"color": "#ff4242"
+		},
+		{
+			"id": "online",
+			"item": "online",
+			"animations": {
+				"idle": "basic",
+				"selected": "white",
+				"offsets": {
+					"selected": [ 0, -20 ]
+				}
+			},
+			"state": "source:OnlineMenu",
+			"color": "#5542FF"
 		},
 		{
 			"id": "mods",
@@ -28,9 +41,12 @@
 			"scale": 1,
 			"animations": {
 				"idle": "basic",
-				"selected": "white"
+				"selected": "white",
+				"offsets": {
+					"selected": [ 0, -10 ]
+				}
 			},
-			"state": "source:ModMenuSubState",
+			"state": "source:ModMenu",
 			"color": "#ffff00"
 		},
 		{
@@ -40,7 +56,7 @@
 				"idle": "basic",
 				"selected": "white"
 			},
-			"state": "source:CreditsState",
+			"state": "source:CreditsMenu",
 			"color": "#42b7ff"
 		},
 		{
@@ -50,7 +66,7 @@
 				"idle": "basic",
 				"selected": "white"
 			},
-			"state": "source:OptionsState",
+			"state": "source:OptionsMenu",
 			"color": "#FFFFFF"
 		}
 	]

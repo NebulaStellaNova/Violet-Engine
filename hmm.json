@@ -1,6 +1,11 @@
 {
   "dependencies": [
     {
+      "name": "lime",
+      "type": "haxelib",
+      "version": null
+    },
+    {
       "name": "discord-rpc",
       "type": "haxelib",
       "version": null
@@ -21,6 +26,16 @@
       "version": null
     },
     {
+      "name": "haxeui-core",
+      "type": "haxelib",
+      "version": null
+    },
+    {
+      "name": "haxeui-flixel",
+      "type": "haxelib",
+      "version": null
+    },
+    {
       "name": "hmm",
       "type": "haxelib",
       "version": null
@@ -31,14 +46,32 @@
       "version": null
     },
     {
+      "name": "flxrhythmconductor",
+      "type": "git",
+      "dir": null,
+      "ref": "main",
+      "url" : "https://github.com/PurSnake/FlxRhythmConductor"
+    },
+    {
       "name": "hxcpp",
-      "type": "haxelib",
-      "version": null
+      "type": "git",
+      "dir": null,
+      "ref": "363d3d0a8d3ac450f5ba1b4c3357353656b71e82",
+      "url": "https://github.com/FunkinCrew/hxcpp"
     },
     {
       "name": "hxcpp-debug-server",
-      "type": "haxelib",
-      "version": null
+      "type": "git",
+      "dir": null,
+      "ref": "7459934666a473a4cc4d066ba4a93ef92f1ce94c",
+      "url": "https://github.com/FunkinCrew/hxcpp-debugger"
+    },
+    {
+      "name": "hxhardware",
+      "type": "git",
+      "dir": null,
+      "ref": "main",
+      "url": "https://github.com/Vortex2Oblivion/hxhardware"
     },
     {
       "name": "hxp",
@@ -58,11 +91,18 @@
       "url": "https://github.com/FunkinCrew/json2object"
     },
     {
+      "name": "linc_luajit",
+      "type": "git",
+      "dir": null,
+      "ref": null,
+      "url": "https://github.com/nebulazorua/linc_luajit.git"
+    },
+    {
       "name": "lscript",
       "type": "git",
       "dir": null,
-      "ref": "main",
-      "url": "https://github.com/SrtHero278/lscript"
+      "ref": "631f29ee29d2b1f8b87af1226a0e33b105d05c96",
+      "url": "https://github.com/SrtHero278/lscript.git"
     },
     {
       "name": "moonchart",
@@ -71,8 +111,10 @@
     },
     {
       "name": "rulescript",
-      "type": "haxelib",
-      "version": null
+      "type": "git",
+      "dir": null,
+      "ref": "dev",
+      "url": "https://github.com/Kriptel/RuleScript.git"
     },
     {
       "name": "thx.semver",

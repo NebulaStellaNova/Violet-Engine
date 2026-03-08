@@ -4,7 +4,7 @@
   "assetPath": "characters/GF_assets",
   "startingAnimation": "danceRight",
   "singTime": 8.0,
-  "danceEvery": 2,
+  "danceEvery": 1,
   "animations": [
     {
       "name": "danceLeft",

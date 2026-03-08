@@ -4,6 +4,6 @@ function create() {
 	var sound = FlxG.sound.load(Paths.sound('Lights_Shut_off'));
 	sound.onComplete = function() {
 		close();
-	};
+	}
 	sound.play();
 }
