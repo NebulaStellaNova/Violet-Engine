@@ -25,8 +25,9 @@ enum ChartFormat {
 class ChartConverters {
     public static function convertChart(rawString:String):ChartData {
         var type:FileType = NONE;
+        var parsedJsonCache:Dynamic = null;
         try {
-            Json.parse(ParseUtil.removeJsonComments(rawString));
+            parsedJsonCache = Json.parse(ParseUtil.removeJsonComments(rawString));
             type = JSON;
         } catch (e:Dynamic) { /* Not a JSON. */ }
         try {
@@ -36,25 +37,23 @@ class ChartConverters {
         // trace('debug:Chart is a $type file.');
         switch (type) {
             case JSON:
-                var chartFormat:ChartFormat = detectJsonChartFormat(rawString);
-                return convertChartData(rawString, chartFormat);
+                var chartFormat:ChartFormat = detectJsonChartFormat(parsedJsonCache);
+                return convertChartData(parsedJsonCache, chartFormat);
             default:
                 return convertChartData("{}", CODENAME);
                 // uhm... guys!
         }
     }
 
-    public static function detectJsonChartFormat(string:String):ChartFormat {
-        var parsedChart:Dynamic = Json.parse(ParseUtil.removeJsonComments(string));
+    public static function detectJsonChartFormat(parsedChart:Dynamic):ChartFormat {
         if (Reflect.getProperty(parsedChart, "codenameChart")) return CODENAME;
-
         return CODENAME;
     }
 
-    public static function convertChartData(rawString:String, from:ChartFormat):ChartData {
+    public static function convertChartData(chart:Dynamic, from:ChartFormat):ChartData {
         switch (from) {
             case CODENAME:
-                return new json2object.JsonParser<ChartData>().fromJson(ParseUtil.removeJsonComments(rawString));
+                return chart;
             default:
                 return new json2object.JsonParser<ChartData>().fromJson("{}");
         }

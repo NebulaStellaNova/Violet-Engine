@@ -1,5 +1,7 @@
 package violet.states;
 
+import violet.data.chart.ChartData.ChartEvent;
+import violet.data.stage.Stage;
 import flixel.FlxCamera;
 import flixel.group.FlxGroup;
 import violet.backend.audio.Conductor;
@@ -40,8 +42,13 @@ class PlayState extends violet.backend.StateBackend {
 	public var camHUD:FlxCamera;
 	public var camGame:FlxCamera;
 
+	public var stage:Stage;
+	public var characters:Array<Character> = [];
+
 	public var strumLines:FlxTypedGroup<StrumLine>;
 	public var generalVocals:FlxSound;
+
+	public var defaultCamZoom:Float = 0.7;
 
 	/**
 	 * The amount of beats the countdown lasts for.
@@ -139,13 +146,16 @@ class PlayState extends violet.backend.StateBackend {
 			strumLine.cameras = [camHUD];
 			strumLine.visible = data.visible;
 			strumLine.ID = i;
+			// strumLine.y -= 50;
 			strumLines.add(strumLine);
 
 			for(i=>charName in data.characters) {
 				var char = new Character(i * 50, 0, charName, i == 1);
 				char.alpha = 0.5;
+				char.stagePosition = data.charStagePosition;
 				strumLine.characters.push(char);
-				add(char);
+				characters.push(char);
+				// add(char);
 			}
 
 			// note interactions
@@ -202,6 +212,10 @@ class PlayState extends violet.backend.StateBackend {
 		add(strumLines);
 		Conductor.onComplete = endSong;
 
+		stage = new Stage(SONG.stage);
+		defaultCamZoom = stage._data.zoom;
+		camGame.zoom = defaultCamZoom;
+
 		countdownAssets = {
 			images: getCountdownAssetList([null, 'ready', 'set', 'go']),
 			sounds: getCountdownAssetList(['introTHREE', 'introTWO', 'introONE', 'introGO'])
@@ -220,6 +234,19 @@ class PlayState extends violet.backend.StateBackend {
 
 	override public function update(elapsed:Float):Void {
 		super.update(elapsed);
+
+		/* if (FlxG.keys.pressed.A) camGame.scroll.x -= 10;
+		if (FlxG.keys.pressed.D) camGame.scroll.x += 10;
+		if (FlxG.keys.pressed.W) camGame.scroll.y -= 10;
+		if (FlxG.keys.pressed.S) camGame.scroll.y += 10;
+		if (FlxG.keys.pressed.Q) camGame.zoom -= 0.01;
+		if (FlxG.keys.pressed.E) camGame.zoom += 0.01; */
+
+		for (i in SONG.events) {
+			if (i.time <= Conductor.songPosition) {
+				handleEvent(i);
+			}
+		}
 	}
 
 	function startCountdown(?saidAssets:CountdownAssets):Void {
@@ -260,6 +287,32 @@ class PlayState extends violet.backend.StateBackend {
 		}
 	}
 
+
+	function handleEvent(event:ChartEvent) {
+		if (event.ran) return;
+		event.ran = true;
+
+		switch (event.type) {
+			case 1:
+				var targetCharacter:Character = strumLines.members[event.params[0]].characters[0];
+				FlxTween.cancelTweensOf(camGame.scroll);
+				FlxTween.tween(camGame.scroll, {
+					x: targetCharacter.x + targetCharacter.cameraOffsets[0],
+					y: targetCharacter.y + targetCharacter.cameraOffsets[1]
+				}, 0.75, { ease: FlxEase.quartOut });
+		}
+
+
+		if (event.name != null) {
+			trace('debug:Ran song event named "${event.name}" with parameters "${event.params.join(", ")}"');
+		} else if (event.type != null) {
+			trace('debug:Ran song event named "${[null, "Camera Movement"][event.type]}" with parameters "${event.params.join(", ")}"');
+		}
+
+		// trace('debug:Ran event ');
+		// trace('debug:$event');
+	}
+
 	function startSong(startDelay:Int = 0):Void {
 		songStarted = true;
 		Conductor.play(true, -Conductor.beatLengthMs * Math.abs(startDelay));
@@ -283,9 +336,22 @@ class PlayState extends violet.backend.StateBackend {
 		#end
 	}
 
+	override function beatHit(curBeat:Int) {
+		super.beatHit(curBeat);
+
+		if (curBeat % 4 == 0) {
+			FlxTween.cancelTweensOf(camGame);
+			camGame.zoom = defaultCamZoom + 0.025;
+			FlxTween.tween(camGame, { zoom: defaultCamZoom }, 1, { ease: FlxEase.quartOut });
+		}
+	}
+
+
+
 	override public function destroy():Void {
 		instance = null;
 		super.destroy();
+		for (i in SONG.events) i.ran = false;
 	}
 
 	public static function loadSong(id:String, difficulty:String = "normal", ?variation:String) {

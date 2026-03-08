@@ -9,6 +9,10 @@ class Character extends violet.backend.objects.Bopper {
 
 	public var idleSuffix:String = null;
 
+	public var stagePosition:String;
+
+	public var cameraOffsets:Array<Float> = [0, 0];
+
 	/**
 	 * Used to help 'singTimer'.
 	 */
@@ -31,6 +35,8 @@ class Character extends violet.backend.objects.Bopper {
 		this._data = CharacterRegistry.characterDatas.get(id) ?? CharacterRegistry.characterDatas.get('bf');
 		super(x, y, Paths.image(this._data.assetPath));
 
+		this.cameraOffsets = this._data.cameraOffsets ?? [0, 0];
+
 		if (faceLeft) flipX = !flipX;
 		if (this._data.flipX ?? false) flipX = !flipX;
 		__baseFlipped = flipX;
@@ -41,6 +47,8 @@ class Character extends violet.backend.objects.Bopper {
 			_data.offsets[0] *= -1;
 			_data.offsets[1] *= -1;
 			this.addAnimFromJSON(_data);
+			_data.offsets[0] *= -1;
+			_data.offsets[1] *= -1; // Reverts AFTER because the data doesnt get refreshed when you load a state LOL.
 		}
 
 		this.danceEvery = this._data.danceEvery ?? (this.animationList.contains('danceLeft') ? 1 : 2);
