@@ -12,15 +12,16 @@ class NoteSkinRegistry {
         noteSkins = [];
         noteSkinDatas.clear();
 
-        var noteSkinFolder = Paths.readFolder("images/game/notes");
+        var noteSkinFolder = Paths.readFolder("data/noteskins");
         for (file in noteSkinFolder) {
-            final jsonPath = Paths.json('images/game/notes/$file/meta');
+            final fileName = file.replace(".json", "");
+            final jsonPath = Paths.json('data/noteskins/$fileName');
             if (!Paths.fileExists(jsonPath, true)) {
                 trace('warning:Could not find meta file for note skin with ID $file. Skipping registration.');
                 continue;
             }
-            noteSkinDatas.set(file, new json2object.JsonParser<NoteSkinData>().fromJson(ParseUtil.removeJsonComments(FileUtil.getFileContent(jsonPath))));
-            registerNoteSkin(new NoteSkin(file));
+            noteSkinDatas.set(fileName, new json2object.JsonParser<NoteSkinData>().fromJson(ParseUtil.removeJsonComments(FileUtil.getFileContent(jsonPath))));
+            registerNoteSkin(new NoteSkin(fileName));
         }
     }
 
