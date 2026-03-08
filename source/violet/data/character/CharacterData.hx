@@ -1,5 +1,7 @@
 package violet.data.character;
 
+import violet.backend.utils.ParseUtil;
+import violet.backend.utils.ParseUtil;
 import thx.semver.Version;
 
 import violet.data.animation.AnimationData;
@@ -127,30 +129,39 @@ typedef HealthIconData = {
      * The ID to use for the health icon.
      * @default The character's ID
      */
-    var id:Null<String>;
+     var id:Null<String>;
 
     /**
      * The scale of the health icon.
      */
+    @:optional
     var scale:Null<Float>;
 
     /**
      * Whether to flip the health icon horizontally.
      * @default false
      */
+    @:optional
     var flipX:Null<Bool>;
 
     /**
      * Multiply scale by 6 and disable antialiasing
      * @default false
      */
+    @:optional
     var isPixel:Null<Bool>;
 
     /**
      * The offset of the health icon, in pixels.
      * @default [0, 25]
      */
+    @:optional
     var offsets:Null<Array<Float>>;
+
+    /**
+     * The color of the icon's side of the health bar.
+     */
+    // var color:Null<ParseColor>;
 }
 
 typedef DeathData = {

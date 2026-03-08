@@ -74,6 +74,9 @@ class Paths {
 	inline public static function music(path:String, directory:String = '', ?ext:String = 'ogg'):String
 		return file(path, directory == 'root' ? 'root' : [directory, 'music'].join('/'), ext);
 
+	inline public static function yaml(path:String, directory:String = '', ?ext:String = 'yaml'):String
+		return file(path, directory, ext);
+
 	inline public static function json(path:String, directory:String = '', ?ext:String = 'json'):String
 		return file(path, directory, ext) != '' ? file(path, directory, ext) : (ext == 'json' ? file(path, directory, ext + 'c') : '');
 
@@ -90,7 +93,7 @@ class Paths {
 		return root('songs/$song/song/${variant != null ? '$variant/' : ''}Inst.ogg');
 
 	inline public static function fileExists(path:String, startFromRoot:Bool = false):Bool
-		return FileSystem.exists(root(path, startFromRoot));
+		return path != "" ? FileSystem.exists(root(path, startFromRoot)) : false;
 
 	inline public static function folderExists(path:String, startFromRoot:Bool = false):Bool
 		return FileSystem.isDirectory(Path.removeTrailingSlashes(root(path, startFromRoot)));

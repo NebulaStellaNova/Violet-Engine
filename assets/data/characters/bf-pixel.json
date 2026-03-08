@@ -8,7 +8,8 @@
   "isPixel": true,
   "healthIcon": {
     "id": "bf-pixel",
-    "isPixel": true
+    "isPixel": true,
+    "offsets": [10, -3]
   },
   "death": {
     "cameraOffsets": [0, 0]

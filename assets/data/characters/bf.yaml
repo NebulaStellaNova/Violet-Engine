@@ -1,0 +1,48 @@
+name: "Boyfriend"
+version: 1.0.0
+assetPath: characters/BOYFRIEND
+flipX: true
+singTime: 8.0
+healthIcon:
+  id: bf
+  scale: 1.0
+  flipX: false
+  isPixel: false
+  offsets: [-3, -10]
+
+animations:
+- name: idle
+  prefix: BF idle dance
+  offsets: [-5, 0]
+
+- name: singLEFT
+  prefix: BF NOTE LEFT0
+  offsets: [12, -6]
+
+- name: singDOWN
+  prefix: BF NOTE DOWN0
+  offsets: [-10, -50]
+
+- name: singUP
+  prefix: BF NOTE UP0
+  offsets: [-29, 27]
+
+- name: singRIGHT
+  prefix: BF NOTE RIGHT0
+  offsets: [-38, -7]
+
+- name: singLEFTmiss
+  prefix: BF NOTE LEFT MISS
+  offsets: [12, 24]
+
+- name: singDOWNmiss
+  prefix: BF NOTE UP MISS
+  offsets: [-29, 27]
+
+- name: singRIGHTmiss
+  prefix: BF NOTE RIGHT MISS
+  offsets: [-30, 21]
+
+- name: hey
+  prefix: BF HEY!!
+  offsets: [7, 4]

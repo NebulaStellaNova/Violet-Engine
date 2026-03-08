@@ -17,6 +17,10 @@ class HealthIcon extends NovaSprite {
         iconData.scale ??= 1;
         iconData.offsets ??= [0, 0];
         iconData.isPixel ??= false;
+        if (iconData.isPixel) {
+            iconData.scale *= 4.5;
+        }
+        trace(iconData);
 
         super(0, 0, iconExists(id) ? Paths.image('icons/$id') : Paths.image('icons/${Constants.DEFAULT_HEALTH_ICON}'));
 
@@ -41,6 +45,13 @@ class HealthIcon extends NovaSprite {
         this.globalOffset.y = iconData.offsets[1] ?? 0;
         this.flipX = iconData.flipX ?? false;
 
+    }
+
+    override function update(elapsed:Float) {
+        super.update(elapsed);
+
+        if (this._data.isPixel)
+            this.antialiasing = false;
     }
 
     function iconExists(id:String) {

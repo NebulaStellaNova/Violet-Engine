@@ -272,7 +272,7 @@ class PlayState extends violet.backend.StateBackend {
 		iconOpponent.camera = camHUD;
 		add(iconOpponent);
 
-		health = 0.75; // when I set it to 0.5, it MAGICALLY gets set to 0.25 and idk why
+		health = 0.5; // Deal with this being weird before songs starts once countdown works.
 
 		countdownAssets = {
 			images: getCountdownAssetList([null, 'ready', 'set', 'go']),

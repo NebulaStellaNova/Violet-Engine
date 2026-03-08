@@ -1,7 +1,11 @@
 package violet.data.character;
 
+import openfl.Assets;
 import violet.backend.utils.FileUtil;
 import violet.backend.utils.ParseUtil;
+
+import yaml.Yaml;
+import yaml.Parser.ParserOptions;
 
 using StringTools;
 
@@ -14,11 +18,24 @@ class CharacterRegistry {
 
         var characterFiles = Paths.readFolder("data/characters");
         for (file in characterFiles) {
-            final jsonPath = Paths.json('data/characters/$file');
-            final charID = file.replace(".json", "");
-            characterDatas.set(charID, new json2object.JsonParser<CharacterData>().fromJson(ParseUtil.removeJsonComments(FileUtil.getFileContent(jsonPath))));
+            var fileSplit = file.split(".");
+            fileSplit.pop();
+            final charID = fileSplit.join(".");
+            // trace(charID);
+            var characterData:CharacterData;
+            // trace('$charID.yaml ' + );
+            // trace('$charID.json ' + );
+            if (Assets.exists(Paths.file('data/characters/$charID.yaml'))) {
+                final options = new ParserOptions();
+                options.maps = false;
+                characterData = Yaml.parse(FileUtil.getFileContent(Paths.file('data/characters/$charID.yaml')), options);
+                characterDatas.set(charID, characterData);
+                trace('debug:Found and registered character with ID "${charID}"');
+            } else if (Assets.exists(Paths.file('data/characters/$charID.json'))) {
+                characterDatas.set(charID, new json2object.JsonParser<CharacterData>().fromJson(ParseUtil.removeJsonComments(FileUtil.getFileContent(Paths.file('data/characters/$charID.json')))));
+                trace('debug:Found and registered character with ID "${charID}"');
+            }
 
-            trace('debug:Found and registered character with ID "${charID}"');
             // registerNoteSkin(new NoteSkin(file));
         }
     }
