@@ -147,6 +147,12 @@ class ModMenu extends SubStateBackend {
 		creditsTitle.x = modInfoBox.x - 65;
 		creditsTitle.y = infoSeperator.y + 75;
 
+		if (FlxG.keys.justPressed.ENTER) {
+			if (ModdingAPI.checkModEnabled(selectedMod.id)) ModdingAPI.disableMod(selectedMod.id);
+			else ModdingAPI.enableMod(selectedMod.id);
+			statusText.loadSprite(Paths.image("menus/modmenu/" + (ModdingAPI.checkModEnabled(selectedMod.id) ? "enabled" : "disabled")));
+		}
+
 		modInfoBox.updateHitbox();
 		statusText.updateHitbox();
 		statusText.x = modInfoBox.x + (modInfoBox.width/2) - (statusText.width/2);
@@ -178,6 +184,12 @@ class ModMenu extends SubStateBackend {
 		for (i in creditsStuff) {
 			creditsStuff.remove(i);
 		}
+
+		statusText.loadSprite(Paths.image("menus/modmenu/" + (ModdingAPI.checkModEnabled(selectedMod.id) ? "enabled" : "disabled")));
+		statusText.updateHitbox();
+		statusText.x = modInfoBox.x + (modInfoBox.width/2) - (statusText.width/2);
+		statusText.y = (modInfoBox.y + modInfoBox.height) - (statusText.height + 20);
+
 
 		var start = creditsTitle.y + creditsTitle.height + 5;
 		for (i in selectedMod.contributors) {

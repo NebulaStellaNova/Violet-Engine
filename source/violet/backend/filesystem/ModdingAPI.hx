@@ -55,8 +55,8 @@ class ModdingAPI {
 				meta;
 			}
 		]);
-		if (Paths.fileExists('$MOD_FOLDER/active-mods.txt', true))
-			(activeModsIds = FileUtil.getFileContent('$MOD_FOLDER/active-mods.txt').split('\n').filter(id -> return getMod(id) != null));
+		/* if (Paths.fileExists('$MOD_FOLDER/active-mods.txt', true))
+			(activeModsIds = FileUtil.getFileContent('$MOD_FOLDER/active-mods.txt').split('\n').filter(id -> return getMod(id) != null)); */
 
 		for (i in availableMods) {
 			trace('debug:Found mod "${i.title}" with id "${i.id}"');
@@ -74,6 +74,15 @@ class ModdingAPI {
 				return meta;
 		return null;
 	}
+
+	public static function enableMod(id:String)
+		if (!activeModsIds.contains(id)) activeModsIds.push(id);
+
+	public static function disableMod(id:String)
+		if (activeModsIds.contains(id)) activeModsIds.remove(id);
+
+	public static function checkModEnabled(id:String):Bool
+		return activeModsIds.contains(id);
 
 	inline public static function getActiveMods():Array<ModMeta>
 		return [for (id in activeModsIds) getMod(id)];
