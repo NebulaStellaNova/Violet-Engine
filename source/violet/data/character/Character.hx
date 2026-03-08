@@ -43,12 +43,12 @@ class Character extends violet.backend.objects.Bopper {
 
 		for (data in this._data.animations) addFrames(Paths.image(data.assetPath));
 		for (data in this._data.animations) {
-			var _data = Reflect.copy(data);
-			_data.offsets[0] *= -1;
-			_data.offsets[1] *= -1;
-			this.addAnimFromJSON(_data);
-			_data.offsets[0] *= -1;
-			_data.offsets[1] *= -1; // Reverts AFTER because the data doesnt get refreshed when you load a state LOL.
+			// were so funny
+			data.offsets[0] *= -1;
+			data.offsets[1] *= -1;
+			this.addAnimFromJSON(data);
+			data.offsets[0] *= -1;
+			data.offsets[1] *= -1;
 		}
 
 		this.danceEvery = this._data.danceEvery ?? (this.animationList.contains('danceLeft') ? 1 : 2);
