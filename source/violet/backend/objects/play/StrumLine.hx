@@ -241,10 +241,12 @@ class StrumLine extends FlxGroup {
 
 				sustain.updateHitbox(); // commenting this out somehow changes NOTHING
 
-				// it's working, sorta (I fucking HATE cliprect bro JUST WORK)
-				var t = FlxMath.bound((Conductor.songPosition - (sustain.time + sustain.parentNote.time)) / sustain.height * 0.45 * sustain.__scrollSpeed, 0, 1);
-				var rect = sustain.clipRect == null ? FlxRect.get() : sustain.clipRect;
-				sustain.clipRect = rect.set(0, sustain.frameHeight * t, sustain.frameWidth, sustain.frameHeight * (1 - t));
+				if (sustain.wasHit) {
+					// it's working, sorta (I fucking HATE cliprect bro JUST WORK)
+					var t = FlxMath.bound((Conductor.songPosition - (sustain.time + sustain.parentNote.time)) / sustain.height * 0.45 * sustain.__scrollSpeed, 0, 1);
+					var rect = sustain.clipRect == null ? FlxRect.get() : sustain.clipRect;
+					sustain.clipRect = rect.set(0, sustain.frameHeight * t, sustain.frameWidth, sustain.frameHeight * (1 - t));
+				}
 
 			}
 		});

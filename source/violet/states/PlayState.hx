@@ -1,5 +1,6 @@
 package violet.states;
 
+import violet.backend.objects.play.ScoreTxt;
 import violet.backend.objects.play.HealthIcon;
 import violet.data.Constants;
 import flixel.math.FlxMath;
@@ -57,12 +58,14 @@ class PlayState extends violet.backend.StateBackend {
 
 	public var defaultCamZoom:Float = 0.7;
 
-	public var score:Int;
+	public var score:Int = 0;
 	public var healthBar:HealthBar;
 	public var health:Float;
 
 	public var iconPlayer:HealthIcon;
 	public var iconOpponent:HealthIcon;
+
+	public var scoreTxt:ScoreTxt;
 
 	/**
 	 * The amount of beats the countdown lasts for.
@@ -193,13 +196,12 @@ class PlayState extends violet.backend.StateBackend {
 				for (char in note.parent.characters)
 					char.playSingAnim(note.id);
 
-				var judgement:Judgement = Scoring.judgeNoteHit(note.time - Conductor.songPosition);
-				score += Math.round(judgement.score);
-				if (judgement.rating == "sick" || judgement.rating == "killer" && strumLine.isPlayer) {
-					note.parentStrum.spawnSplash();
-				}
-				if (strumLine.isPlayer)
+				if (note.parent.isPlayer) {
+					var judgement:Judgement = Scoring.judgeNoteHit(note.time - Conductor.songPosition);
+					if (judgement.rating == "sick" || judgement.rating == "killer") note.parentStrum.spawnSplash();
+					score += Math.round(judgement.score);
 					health += Constants.DEFAULT_HEALTH_GAIN;
+				}
 
 			}
 			strumLine._onSustainHit = (sustain:Sustain) -> {
@@ -257,6 +259,12 @@ class PlayState extends violet.backend.StateBackend {
 		healthBar.rightColor = FlxColor.LIME;
 		add(healthBar);
 
+		scoreTxt = new ScoreTxt();
+		scoreTxt.x = healthBar.x + healthBar.width - scoreTxt.width;
+		scoreTxt.y = healthBar.y + healthBar.height + 5;
+		scoreTxt.camera = camHUD;
+		add(scoreTxt);
+
 		iconPlayer.camera = camHUD;
 		add(iconPlayer);
 
@@ -281,10 +289,14 @@ class PlayState extends violet.backend.StateBackend {
 		callSongScripts('postCreate');
 	}
 
-	var healthLerp = 0.5;
+	var healthLerp:Float = 0.5;
+	var scoreLerp:Float = 0;
 
 	override public function update(elapsed:Float):Void {
 		super.update(elapsed);
+
+		scoreLerp = MathUtil.lerp(scoreLerp, score, 0.1);
+		scoreTxt.value = Math.round(scoreLerp);
 
 		health = FlxMath.bound(health, 0, 1);
 
