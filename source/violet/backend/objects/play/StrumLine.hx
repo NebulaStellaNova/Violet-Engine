@@ -1,10 +1,10 @@
 package violet.backend.objects.play;
 
-import flixel.math.FlxMath;
-import flixel.math.FlxRect;
 import flixel.group.FlxGroup;
 import flixel.input.keyboard.FlxKey;
+import flixel.math.FlxMath;
 import flixel.math.FlxPoint;
+import flixel.math.FlxRect;
 import openfl.events.KeyboardEvent;
 import violet.backend.audio.Conductor;
 import violet.data.character.Character;
@@ -234,8 +234,6 @@ class StrumLine extends FlxGroup {
 					sustain.offset.y = -0.5 * (sustain.height - sustain.frameHeight);
 					// centerOrigin
 					sustain.origin.y = sustain.frameHeight * 0.5;
-
-					sustain.scale.y *= 1.1;
 				}
 
 				sustain.updateHitbox(); // commenting this out somehow changes NOTHING
