@@ -68,7 +68,7 @@ class PlayState extends violet.backend.StateBackend {
 
 	public var scoreTxt:ScoreTxt;
 
-	public var playAsOpponent:Bool = true;
+	public var playAsOpponent:Bool = false;
 
 	/**
 	 * The amount of beats the countdown lasts for.
