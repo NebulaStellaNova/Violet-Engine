@@ -27,16 +27,24 @@ class NoteSkin {
 	}
 
 	public function getStrumOffsets():Array<Float> {
-		return _data.strums?.offsets ?? [0, 0];
+		final offsets:Array<Float> = _data.offsets ?? [0, 0];
+		final partOffsets:Array<Float> = _data.strums?.offsets ?? [0, 0];
+		return [offsets[0] + partOffsets[0], offsets[1] + partOffsets[1]];
 	}
 	public function getNoteOffsets():Array<Float> {
-		return _data.notes?.offsets ?? [0, 0];
+		final offsets:Array<Float> = _data.offsets ?? [0, 0];
+		final partOffsets:Array<Float> = _data.notes?.offsets ?? [0, 0];
+		return [offsets[0] + partOffsets[0], offsets[1] + partOffsets[1]];
 	}
 	public function getSustainOffsets():Array<Float> {
-		return _data.sustains?.offsets ?? [0, 0];
+		final offsets:Array<Float> = _data.offsets ?? [0, 0];
+		final partOffsets:Array<Float> = _data.sustains?.offsets ?? [0, 0];
+		return [offsets[0] + partOffsets[0], offsets[1] + partOffsets[1]];
 	}
 	public function getSplashOffsets():Array<Float> {
-		return _data.splashes?.offsets ?? [0, 0];
+		final offsets:Array<Float> = _data.offsets ?? [0, 0];
+		final partOffsets:Array<Float> = _data.splashes?.offsets ?? [0, 0];
+		return [offsets[0] + partOffsets[0], offsets[1] + partOffsets[1]];
 	}
 
 	public function getStrumAssetPath():String {

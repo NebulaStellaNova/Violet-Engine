@@ -28,6 +28,7 @@ class NoteSkinRegistry {
     public static function getDefaultNoteSkinData():NoteSkinData {
         return {
             name: 'default',
+            offsets: [0, 0],
             strums: {
                 offsets: [0, 0],
                 assetPath: 'strums',

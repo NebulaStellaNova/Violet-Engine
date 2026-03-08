@@ -11,6 +11,7 @@ typedef NotePartMeta = {
 typedef NoteSkinData = {
 	var name:String;
 	var ?assetPath:String;
+	@:default([0, 0]) var ?offsets:Array<Float>;
 	@:default('default') var ?fallback:String;
 	var strums:NotePartMeta;
 	var notes:NotePartMeta;

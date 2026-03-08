@@ -1,5 +1,6 @@
 {
 	"name": "Funkin'",
+	"offsets": [28, -25],
 	"strums": {
 		"offsets": [0, 0],
 		"assetPath": "strums",
