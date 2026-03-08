@@ -1,24 +1,23 @@
 package violet.states;
 
-import violet.backend.objects.play.ScoreTxt;
-import violet.backend.objects.play.HealthIcon;
-import violet.data.Constants;
-import flixel.math.FlxMath;
-import violet.backend.utils.MathUtil;
-import violet.backend.objects.play.HealthBar;
-import violet.data.Scoring;
-import violet.data.Scoring.Judgement;
-import violet.data.chart.ChartData.ChartEvent;
-import violet.data.stage.Stage;
 import flixel.FlxCamera;
 import flixel.group.FlxGroup;
+import flixel.math.FlxMath;
 import violet.backend.audio.Conductor;
+import violet.backend.objects.play.HealthBar;
+import violet.backend.objects.play.HealthIcon;
 import violet.backend.objects.play.Note;
+import violet.backend.objects.play.ScoreTxt;
 import violet.backend.objects.play.StrumLine;
 import violet.backend.objects.play.Sustain;
+import violet.backend.utils.MathUtil;
+import violet.data.Constants;
+import violet.data.Scoring;
 import violet.data.character.Character;
 import violet.data.chart.Chart;
+import violet.data.chart.ChartData.ChartEvent;
 import violet.data.chart.ChartRegistry;
+import violet.data.stage.Stage;
 
 #if SCRIPT_SUPPORT
 import violet.backend.scripting.ScriptPack;
