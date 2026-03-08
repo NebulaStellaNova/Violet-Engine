@@ -387,7 +387,7 @@ class PlayState extends violet.backend.StateBackend {
 			case "Play Animation":
 				var targetCharacter:Character = strumLines.members[event.params[0]].characters[0];
 				targetCharacter.canDance = false;
-				targetCharacter.playAnim(event.params[1]);
+				targetCharacter.playAnim(event.params[1], true);
 				targetCharacter.animation.onFinish.addOnce((_)->{ if (event.params[1] == _) targetCharacter.canDance = true; });
 
 		}
