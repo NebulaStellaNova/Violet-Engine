@@ -205,7 +205,7 @@ class PlayState extends violet.backend.StateBackend {
 			strumLine._onSustainHit = (sustain:Sustain) -> {
 				if (sustain.wasHit && !sustain.parentNote.wasHit) return;
 				sustain.wasHit = true;
-				sustain.visible = false;
+				// sustain.visible = false;
 				generalVocals.resume(); strumLine.vocals.resume();
 				sustain.parentStrum.playStrumAnim('confirm', true);
 				for (char in sustain.parent.characters)

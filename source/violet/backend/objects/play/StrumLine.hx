@@ -1,5 +1,8 @@
 package violet.backend.objects.play;
 
+import flixel.math.FlxMath;
+import violet.backend.utils.MathUtil;
+import flixel.math.FlxRect;
 import flixel.group.FlxGroup;
 import flixel.input.keyboard.FlxKey;
 import flixel.math.FlxPoint;
@@ -232,7 +235,17 @@ class StrumLine extends FlxGroup {
 					sustain.offset.y = -0.5 * (sustain.height - sustain.frameHeight);
 					// centerOrigin
 					sustain.origin.y = sustain.frameHeight * 0.5;
+
+					sustain.scale.y *= 1.1;
 				}
+
+				sustain.updateHitbox(); // commenting this out somehow changes NOTHING
+
+				// it's working, sorta (I fucking HATE cliprect bro JUST WORK)
+				var t = FlxMath.bound((Conductor.songPosition - (sustain.time + sustain.parentNote.time)) / sustain.height * 0.45 * sustain.__scrollSpeed, 0, 1);
+				var rect = sustain.clipRect == null ? FlxRect.get() : sustain.clipRect;
+				sustain.clipRect = rect.set(0, sustain.frameHeight * t, sustain.frameWidth, sustain.frameHeight * (1 - t));
+
 			}
 		});
 	}
