@@ -36,6 +36,7 @@ class Character extends violet.backend.objects.Bopper {
 		super(x, y, Paths.image(this._data.assetPath));
 
 		if (faceLeft) flipX = !flipX;
+		if (this._data.flipX ?? false) flipX = !flipX;
 		__baseFlipped = flipX;
 
 		for (data in this._data.animations) addFrames(Paths.image(data.assetPath));

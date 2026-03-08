@@ -143,6 +143,7 @@ class PlayState extends violet.backend.StateBackend {
 
 			for(i=>charName in data.characters) {
 				var char = new Character(i * 50, 0, charName, i == 1);
+				char.alpha = 0.5;
 				strumLine.characters.push(char);
 				add(char);
 			}
