@@ -57,4 +57,11 @@ class HealthIcon extends NovaSprite {
     function iconExists(id:String) {
         return Assets.exists(Paths.image('icons/$id'));
     }
+
+    override function destroy() {
+        super.destroy();
+        if (this._data.isPixel) {
+            this._data.scale /= 4.5;
+        }
+    }
 }
