@@ -95,12 +95,9 @@ function create() {
         capsuleGroup.add(textGroup);
     }
 
-    FlxTimer.wait(0.3, ()->{
-        xPos = 0;
+    FlxTimer.wait(0, ()->{
+        xPos = 315;
     });
-
-    FlxTween.tween
-
 }
 
 function update() {
