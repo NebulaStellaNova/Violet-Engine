@@ -35,6 +35,9 @@ class Strum extends NovaSprite {
 	 */
 	public var willReset:Bool = false;
 
+	public var splashes(default, never):Array<NovaSprite> = [];
+	public var holdCovers(default, never):Array<NovaSprite> = [];
+
 	public function new(parent:StrumLine, id:Int) {
 		super();
 		this.parent = parent;
@@ -92,13 +95,54 @@ class Strum extends NovaSprite {
 		// splash.cameras = this.parent.cameras;
 		splash.centerOffsets();
 		splash.centerOrigin();
-		splash.animation.onFinish.add((_)->{ this.parent.remove(splash); splash.destroy(); });
+		splash.animation.onFinish.add((_)->{
+			this.parent.remove(splash);
+			this.splashes.remove(splash);
+			splash.destroy();
+		});
 		splash.x = this.x - (splash.width/2);
 		splash.y = this.y - (splash.height/2);
 		splash.x += meta.getSplashOffsets()[0];
 		splash.y += meta.getSplashOffsets()[1];
 		this.parent.add(splash);
+		this.splashes.push(splash);
+	}
 
-		//var lol:Array<Float> = meta.getSplashOffsets();
+
+	public function spawnHoldCover() {
+		final skin:String = skin ?? this.skin ?? 'default';
+		final meta:NoteSkin = NoteSkinRegistry.getNoteSkinByID(skin);
+
+		var holdCover = new NovaSprite(0, 0, meta.getHoldCoverAssetPath());
+		for (data in meta.getHoldCoverAnimations(ID, parent.keyCount)) holdCover.addAnimFromData(data);
+
+		holdCover.playAnim('idle', true); // Make this auto check how many animations lol.
+		// splash.cameras = this.parent.cameras;
+		holdCover.centerOffsets();
+		holdCover.centerOrigin();
+		holdCover.animation.onFinish.add((_)->{
+			if (_ == "end") {
+				this.parent.remove(holdCover);
+				holdCover.destroy();
+			}
+		});
+		holdCover.x = this.x - (holdCover.width/2);
+		holdCover.y = this.y - (holdCover.height/2);
+		holdCover.x += meta.getHoldCoverOffsets()[0];
+		holdCover.y += meta.getHoldCoverOffsets()[1];
+		this.parent.add(holdCover);
+		this.holdCovers.push(holdCover);
+
+	}
+
+	public var sustainBlacklist:Array<Sustain> = [];
+	public function endHoldCover(pop:Bool, sustain:Sustain) {
+		if (sustainBlacklist.contains(sustain)) return;
+		sustainBlacklist.push(sustain);
+		for (i in holdCovers) {
+			this.holdCovers.remove(i);
+			i.playAnim("end", true);
+			if (!pop) i.animation.finish();
+		}
 	}
 }

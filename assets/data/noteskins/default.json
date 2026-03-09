@@ -190,6 +190,72 @@
 			}
 		]
 	},
+	"holdcovers": {
+		"offsets": [70, 127],
+		"assetPath": "holdcovers",
+		"animations": [
+			{
+				"id": 0,
+				"mania": 4,
+				"name": "idle",
+				"prefix": "holdCoverPurple",
+				"offsets": [0, 0],
+				"looped": true
+			},
+			{
+				"id": 0,
+				"mania": 4,
+				"name": "end",
+				"prefix": "holdCoverEndPurple",
+				"offsets": [0, 0]
+			},
+			{
+				"id": 1,
+				"mania": 4,
+				"name": "idle",
+				"prefix": "holdCoverBlue",
+				"offsets": [0, 0],
+				"looped": true
+			},
+			{
+				"id": 1,
+				"mania": 4,
+				"name": "end",
+				"prefix": "holdCoverEndBlue",
+				"offsets": [0, 0]
+			},
+			{
+				"id": 2,
+				"mania": 4,
+				"name": "idle",
+				"prefix": "holdCoverGreen",
+				"offsets": [0, 0],
+				"looped": true
+			},
+			{
+				"id": 2,
+				"mania": 4,
+				"name": "end",
+				"prefix": "holdCoverEndGreen",
+				"offsets": [0, 0]
+			},
+			{
+				"id": 3,
+				"mania": 4,
+				"name": "idle",
+				"prefix": "holdCoverRed",
+				"offsets": [0, 0],
+				"looped": true
+			},
+			{
+				"id": 3,
+				"mania": 4,
+				"name": "end",
+				"prefix": "holdCoverEndRed",
+				"offsets": [0, 0]
+			}
+		]
+	},
 	"splashes": {
 		"offsets": [75, 75],
 		"assetPath": "splashes",

@@ -46,6 +46,11 @@ class NoteSkinRegistry {
                 offsets: [0, 0],
                 assetPath: 'sustains',
                 animations: []
+            },
+            holdcovers: {
+                offsets: [0, 0],
+                assetPath: 'holdcovers',
+                animations: []
             }
         }
     }

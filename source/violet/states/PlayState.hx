@@ -205,6 +205,10 @@ class PlayState extends violet.backend.StateBackend {
 					health += Constants.DEFAULT_HEALTH_GAIN;
 				}
 
+				if (note.length > 10) {
+					note.parentStrum.spawnHoldCover();
+				}
+
 			}
 			strumLine._onSustainHit = (sustain:Sustain) -> {
 				if (sustain.wasHit && !sustain.parentNote.wasHit) return;

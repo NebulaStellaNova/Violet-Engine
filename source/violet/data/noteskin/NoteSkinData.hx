@@ -17,4 +17,5 @@ typedef NoteSkinData = {
 	var notes:NotePartMeta;
 	var sustains:NotePartMeta;
 	var splashes:NotePartMeta;
+	var holdcovers:NotePartMeta;
 }

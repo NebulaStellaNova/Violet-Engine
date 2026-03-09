@@ -38,6 +38,19 @@ class StrumLine extends FlxGroup {
 	public final notes:FlxTypedGroup<Note>;
 	public final sustains:FlxTypedGroup<Sustain>;
 
+	public var splashes(get, never):Array<NovaSprite>;
+	function get_splashes() {
+		var value = [];
+		for (i in members) {
+			if (Std.isOfType(i, Strum)) {
+				value = value.concat((cast i).splashes);
+			}
+		}
+		return value;
+	}
+
+	// public var holdCovers(get, never):Array<NovaSprite> = [];
+
 	public static var generalScrollSpeed:Float = 1;
 	public var scrollSpeed:Null<Float>;
 
@@ -243,6 +256,10 @@ class StrumLine extends FlxGroup {
 					var t = FlxMath.bound((Conductor.songPosition - (sustain.time + sustain.parentNote.time)) / sustain.height * 0.45 * sustain.__scrollSpeed, 0, 1);
 					var rect = sustain.clipRect == null ? FlxRect.get() : sustain.clipRect;
 					sustain.clipRect = rect.set(0, sustain.frameHeight * t, sustain.frameWidth, sustain.frameHeight * (1 - t));
+
+					if (sustain.isEnd && sustain.clipRect.height <= 0) {
+						sustain.parentStrum.endHoldCover(sustain.parent.isPlayer, sustain);
+					}
 				}
 
 			}
