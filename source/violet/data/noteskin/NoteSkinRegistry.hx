@@ -1,6 +1,5 @@
 package violet.data.noteskin;
 
-import violet.backend.utils.FileUtil;
 import violet.backend.utils.ParseUtil;
 
 class NoteSkinRegistry {
@@ -12,15 +11,14 @@ class NoteSkinRegistry {
         noteSkins = [];
         noteSkinDatas.clear();
 
-        var noteSkinFolder = Paths.readFolder("data/noteskins");
-        for (file in noteSkinFolder) {
+        for (file in Paths.readFolder("data/noteskins")) {
             final fileName = file.replace(".json", "");
-            final jsonPath = Paths.json('data/noteskins/$fileName');
-            if (!Paths.fileExists(jsonPath, true)) {
+            final jsonPath = 'data/noteskins/$fileName';
+            if (!Paths.fileExists(Paths.json(jsonPath), true)) {
                 trace('warning:Could not find meta file for note skin with ID $file. Skipping registration.');
                 continue;
             }
-            noteSkinDatas.set(fileName, new json2object.JsonParser<NoteSkinData>().fromJson(ParseUtil.removeJsonComments(FileUtil.getFileContent(jsonPath))));
+            noteSkinDatas.set(fileName, ParseUtil.json(jsonPath));
             registerNoteSkin(new NoteSkin(fileName));
         }
     }

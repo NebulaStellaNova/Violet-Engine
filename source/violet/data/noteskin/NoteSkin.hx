@@ -9,8 +9,8 @@ class NoteSkin {
 
 	public var fallback(get, never):NoteSkin;
 	function get_fallback():NoteSkin {
-		if (_data == null || _data.fallback == null) return null;
-		return NoteSkinRegistry.getNoteSkinByID(_data.fallback);
+		if (_data == null || getFallbackID() == null) return null;
+		return NoteSkinRegistry.getNoteSkinByID(getFallbackID());
 	}
 
 	public function new(id:String) {
