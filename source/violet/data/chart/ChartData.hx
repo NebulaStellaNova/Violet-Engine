@@ -35,7 +35,7 @@ typedef ChartNote = {
 	var time:Float;
 	var id:Int;
 	var type:Int;
-	@:alias('sLen') var length:Float;
+	var sLen:Float;
 }
 
 typedef ChartEvent = {

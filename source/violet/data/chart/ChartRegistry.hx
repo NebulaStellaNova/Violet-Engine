@@ -6,7 +6,8 @@ import violet.backend.utils.ParseUtil;
 import violet.data.song.SongRegistry;
 
 typedef ChartCache = {
-	var content:String;
+	var filePath:String;
+	var fileExt:String;
 }
 
 class ChartRegistry {
@@ -22,12 +23,20 @@ class ChartRegistry {
 		var chartList:Array<String> = [];
 		for (song in SongRegistry.getAllSongs()) {
 			for (diff in song.difficulties) {
+				final yamlPath = Paths.yaml('songs/${song.songName}/charts/$diff');
 				final jsonPath = Paths.json('songs/${song.songName}/charts/$diff');
-				if (!Paths.fileExists(jsonPath, true)) {
-					trace('warning:Could not find chart for song ${song.id} of difficulty $diff.');
+				if (yamlPath != "") {
+					chartCache.set('${song.id}:$diff', { filePath: yamlPath, fileExt: "yaml" });
 					continue;
 				}
-				chartCache.set('${song.id}:$diff', { content: FileUtil.getFileContent(jsonPath) });
+				if (jsonPath != "") {
+					chartCache.set('${song.id}:$diff', { filePath: jsonPath, fileExt: "json" });
+					continue;
+				}
+				/* if (!Paths.fileExists(jsonPath, true)) {
+					trace('warning:Could not find chart for song ${song.id} of difficulty $diff.');
+					continue;
+				} */
 			}
 		}
 	}
@@ -35,7 +44,7 @@ class ChartRegistry {
 	public static function fetchChart(id:String):ChartData {
 		if (chartDatas.exists(id)) return chartDatas.get(id);
 
-		var data = ChartConverters.convertChart(chartCache.get(id).content);
+		var data = ChartConverters.convertChart(chartCache.get(id));
 		chartDatas.set(id, data);
 		return data;
 	}
