@@ -40,7 +40,7 @@ class NovaUtils {
 
 	public static function playMenuMusic():Void {
 		if (CURRENT_MUSIC != Constants.MENU_MUSIC) {
-			playMusic(Constants.MENU_MUSIC);
+			playMusic(Constants.MENU_MUSIC).volume = 0.5;
 		}
 	}
 
@@ -48,7 +48,7 @@ class NovaUtils {
 		FlxG.sound.play(Cache.sound('menu/${['scroll', 'cancel', 'confirm'][which]}'));
 	}
 
-	public static function playMusic(path:String, volume:Float = 1, folder:String = 'music'):Void {
+	public static function playMusic(path:String, volume:Float = 1, folder:String = 'music'):FlxSound {
 		var musicPath:Array<String> = path.split('/');
 		CURRENT_MUSIC = path;
 		if (folder == 'music')
@@ -63,6 +63,7 @@ class NovaUtils {
 		Conductor.initCallbacks();
 		Conductor.initCallbacksSubState();
 		if (metaData != null && metaData.bpm != null && metaData.signature != null) Conductor.setInitialBPM(metaData.bpm, metaData.signature[0], metaData.signature[1]);
+		return FlxG.sound.music;
 	}
 
 	inline public static function getTimerPrecise():Float {
