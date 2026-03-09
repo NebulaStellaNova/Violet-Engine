@@ -19,6 +19,7 @@ class Strum extends NovaSprite {
 			reloadSkin(value);
 		return skin = value;
 	}
+	var skinMeta:NoteSkin;
 
 	/**
 	 * Used to help "glowLength".
@@ -35,8 +36,8 @@ class Strum extends NovaSprite {
 	 */
 	public var willReset:Bool = false;
 
-	public var splashes(default, never):Array<NovaSprite> = [];
-	public var holdCovers(default, never):Array<NovaSprite> = [];
+	public final splashes:Array<NovaSprite> = [];
+	public final holdCovers:Array<NovaSprite> = [];
 
 	public function new(parent:StrumLine, id:Int) {
 		super();
@@ -70,6 +71,16 @@ class Strum extends NovaSprite {
 		if (willReset && animation?.name != 'static')
 			if (glowLength > 0 ? (lastHit + (Conductor.stepLengthMs * glowLength) < Conductor.songPosition) : (animation.name == null || animation.finished))
 				playStrumAnim(parent.isComputer ? 'static' : 'press');
+
+		for (holdCover in holdCovers) {
+			if (holdCover == null) continue;
+			if (holdCover.exists && holdCover.animation.name != 'end') {
+				holdCover.x = this.x - (holdCover.width/2);
+				holdCover.y = this.y - (holdCover.height/2);
+				holdCover.x += skinMeta.getHoldCoverOffsets()[0];
+				holdCover.y += skinMeta.getHoldCoverOffsets()[1];
+			}
+		}
 	}
 
 	public function playStrumAnim(name:String, reset:Bool = false, forced:Bool = true, reversed:Bool = false, frame:Int = 0):Void {
@@ -85,10 +96,10 @@ class Strum extends NovaSprite {
 
 	public function spawnSplash() {
 		final skin:String = skin ?? this.skin ?? 'default';
-		final meta:NoteSkin = NoteSkinRegistry.getNoteSkinByID(skin);
+		this.skinMeta = NoteSkinRegistry.getNoteSkinByID(skin);
 
-		var splash = new NovaSprite(0, 0, meta.getSplashAssetPath());
-		for (data in meta.getSplashAnimations(ID, parent.keyCount))
+		var splash = new NovaSprite(0, 0, skinMeta.getSplashAssetPath());
+		for (data in skinMeta.getSplashAnimations(ID, parent.keyCount))
 			splash.addAnimFromData(data);
 
 		splash.playAnim('${FlxG.random.int(1, 2)}', true); // Make this auto check how many animations lol.
@@ -102,40 +113,39 @@ class Strum extends NovaSprite {
 		});
 		splash.x = this.x - (splash.width/2);
 		splash.y = this.y - (splash.height/2);
-		splash.x += meta.getSplashOffsets()[0];
-		splash.y += meta.getSplashOffsets()[1];
+		splash.x += skinMeta.getSplashOffsets()[0];
+		splash.y += skinMeta.getSplashOffsets()[1];
 		this.parent.add(splash);
 		this.splashes.push(splash);
 	}
 
 
 	public function spawnHoldCover() {
-		final skin:String = skin ?? this.skin ?? 'default';
-		final meta:NoteSkin = NoteSkinRegistry.getNoteSkinByID(skin);
+		var holdCover = new NovaSprite(0, 0, skinMeta.getHoldCoverAssetPath());
+		for (data in skinMeta.getHoldCoverAnimations(ID, parent.keyCount)) holdCover.addAnimFromData(data);
 
-		var holdCover = new NovaSprite(0, 0, meta.getHoldCoverAssetPath());
-		for (data in meta.getHoldCoverAnimations(ID, parent.keyCount)) holdCover.addAnimFromData(data);
-
-		holdCover.playAnim('idle', true); // Make this auto check how many animations lol.
-		// splash.cameras = this.parent.cameras;
+		holdCover.playAnim('start', true); // Make this auto check how many animations lol.
 		holdCover.centerOffsets();
 		holdCover.centerOrigin();
-		holdCover.animation.onFinish.add((_)->{
-			if (_ == "end") {
-				this.parent.remove(holdCover);
-				holdCover.destroy();
+		holdCover.animation.onFinish.add(name -> {
+			switch (name) {
+				case 'start':
+					holdCover.playAnim('hold', true);
+				case 'end':
+					this.parent.remove(holdCover);
+					holdCover.destroy();
 			}
 		});
 		holdCover.x = this.x - (holdCover.width/2);
 		holdCover.y = this.y - (holdCover.height/2);
-		holdCover.x += meta.getHoldCoverOffsets()[0];
-		holdCover.y += meta.getHoldCoverOffsets()[1];
+		holdCover.x += skinMeta.getHoldCoverOffsets()[0];
+		holdCover.y += skinMeta.getHoldCoverOffsets()[1];
 		this.parent.add(holdCover);
 		this.holdCovers.push(holdCover);
 
 	}
 
-	public var sustainBlacklist:Array<Note> = [];
+	public final sustainBlacklist:Array<Note> = [];
 	public function endHoldCover(pop:Bool, parentNote:Null<Note>) {
 		if (parentNote != null) {
 			if (sustainBlacklist.contains(parentNote)) return;

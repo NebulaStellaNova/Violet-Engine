@@ -40,6 +40,7 @@ class Sustain extends NovaSprite {
 	public var skin(get, set):String;
 	inline function get_skin():String return parentNote.skin;
 	inline function set_skin(value:String):String return parentNote.skin = value;
+	var skinMeta:NoteSkin;
 
 	/**
 	 * States if this is the end piece of a sustain tail.
@@ -93,11 +94,11 @@ class Sustain extends NovaSprite {
 		this.anims.clear();
 		animation.destroyAnimations();
 		final skin:String = skin ?? this.skin ?? 'default';
-		final meta:NoteSkin = NoteSkinRegistry.getNoteSkinByID(skin);
-		loadSprite(meta.getSustainAssetPath());
-		for (data in meta.getSustainAnimations(id, parent.keyCount))
+		this.skinMeta = NoteSkinRegistry.getNoteSkinByID(skin);
+		loadSprite(skinMeta.getSustainAssetPath());
+		for (data in skinMeta.getSustainAnimations(id, parent.keyCount))
 			addAnimFromData(data);
-		var lol:Array<Float> = meta.getSustainOffsets();
+		var lol:Array<Float> = skinMeta.getSustainOffsets();
 		globalOffset.set(lol[0], lol[1]);
 
 		playAnim(isEnd ? 'end' : 'tail', true); updateHitbox();

@@ -85,7 +85,7 @@ class NoteSkin {
 	public function getSplashAssetPath():String {
 		var path:String;
 		function recursion(data:NoteSkinData):Bool {
-			path = Paths.image('game/notes/$id/${data.splashes?.assetPath ?? data?.assetPath ?? 'sustains'}');
+			path = Paths.image('game/notes/$id/${data.splashes?.assetPath ?? data?.assetPath ?? 'splashes'}');
 			return Paths.fileExists(path, true);
 		}
 		if (!recursion(_data))
@@ -95,7 +95,7 @@ class NoteSkin {
 	public function getHoldCoverAssetPath():String {
 		var path:String;
 		function recursion(data:NoteSkinData):Bool {
-			path = Paths.image('game/notes/$id/${data.holdcovers?.assetPath ?? data?.assetPath ?? 'sustains'}');
+			path = Paths.image('game/notes/$id/${data.holdcovers?.assetPath ?? data?.assetPath ?? 'holdcovers'}');
 			return Paths.fileExists(path, true);
 		}
 		if (!recursion(_data))

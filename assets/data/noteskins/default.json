@@ -197,7 +197,14 @@
 			{
 				"id": 0,
 				"mania": 4,
-				"name": "idle",
+				"name": "start",
+				"prefix": "holdCoverStartPurple",
+				"offsets": [0, 0]
+			},
+			{
+				"id": 0,
+				"mania": 4,
+				"name": "hold",
 				"prefix": "holdCoverPurple",
 				"offsets": [0, 0],
 				"looped": true
@@ -212,7 +219,14 @@
 			{
 				"id": 1,
 				"mania": 4,
-				"name": "idle",
+				"name": "start",
+				"prefix": "holdCoverStartBlue",
+				"offsets": [0, 0]
+			},
+			{
+				"id": 1,
+				"mania": 4,
+				"name": "hold",
 				"prefix": "holdCoverBlue",
 				"offsets": [0, 0],
 				"looped": true
@@ -227,7 +241,14 @@
 			{
 				"id": 2,
 				"mania": 4,
-				"name": "idle",
+				"name": "start",
+				"prefix": "holdCoverStartGreen",
+				"offsets": [0, 0]
+			},
+			{
+				"id": 2,
+				"mania": 4,
+				"name": "hold",
 				"prefix": "holdCoverGreen",
 				"offsets": [0, 0],
 				"looped": true
@@ -242,7 +263,14 @@
 			{
 				"id": 3,
 				"mania": 4,
-				"name": "idle",
+				"name": "start",
+				"prefix": "holdCoverStartRed",
+				"offsets": [0, 0]
+			},
+			{
+				"id": 3,
+				"mania": 4,
+				"name": "hold",
 				"prefix": "holdCoverRed",
 				"offsets": [0, 0],
 				"looped": true
