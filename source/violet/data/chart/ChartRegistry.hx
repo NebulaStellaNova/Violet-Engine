@@ -16,8 +16,9 @@ class ChartRegistry {
 
 	public static function registerCharts() {
 		trace('debug:Registering charts...');
-		// charts.resize(0);
+		charts.resize(0);
 		chartDatas.clear();
+		chartCache.clear();
 		var chartList:Array<String> = [];
 		for (song in SongRegistry.getAllSongs()) {
 			for (diff in song.difficulties) {
