@@ -191,63 +191,66 @@ class PlayState extends violet.backend.StateBackend {
 			}
 			strumLine._onNoteHit = (note:Note) -> {
 				if (note.wasHit) return;
-				note.wasHit = true;
-				note.visible = false;
+				note.wasHit = true; note.visible = false;
 				generalVocals.resume(); strumLine.vocals.resume();
 				note.parentStrum.playStrumAnim('confirm', true);
-				for (char in note.parent.characters)
+				for (char in strumLine.characters)
 					char.playSingAnim(note.id);
 
-				if (note.parent.isPlayer) {
-					var judgement:Judgement = Scoring.judgeNoteHit(note.time - Conductor.songPosition);
-					if (judgement.rating == "sick" || judgement.rating == "killer") note.parentStrum.spawnSplash();
+				if (strumLine.isPlayer) {
+					var judgement:Judgement = Scoring.judgeNoteHit(note.time - Conductor.framePosition);
+					if (judgement.splash) note.parentStrum.spawnSplash();
 					score += Math.round(judgement.score);
 					health += Constants.DEFAULT_HEALTH_GAIN;
 				}
-
-				if (note.length > 10) {
+				if (note.length > 10)
 					note.parentStrum.spawnHoldCover();
-				}
-
 			}
 			strumLine._onSustainHit = (sustain:Sustain) -> {
 				if (sustain.wasHit && !sustain.parentNote.wasHit) return;
-				sustain.wasHit = true;
-				// sustain.visible = false;
+				sustain.wasHit = true; // sustain.visible = false;
 				generalVocals.resume(); strumLine.vocals.resume();
 				sustain.parentStrum.playStrumAnim('confirm', true);
-				for (char in sustain.parent.characters)
+				for (char in strumLine.characters)
 					char.playSingAnim(sustain.id);
 				if (strumLine.isPlayer)
 					health += Constants.DEFAULT_HEALTH_GAIN;
+				if (sustain.isEnd) {
+					sustain.parentStrum.holdCover?.playAnim('end', true);
+					if (strumLine.isComputer) sustain.parentStrum.holdCover?.animation.finish();
+					sustain.parentStrum.holdCover = null;
+				}
 			}
 			strumLine._onNoteMissed = (note:Note) -> {
 				if (note.wasMissed) return;
-				note.wasMissed = true;
-				note.alpha *= 0.6;
-				FlxG.sound.play(Cache.sound('miss/${FlxG.random.int(1, 3)}'), 0.7);
+				note.wasMissed = true; note.alpha *= 0.6;
 				generalVocals.pause(); strumLine.vocals.pause();
+				FlxG.sound.play(Cache.sound('miss/${FlxG.random.int(1, 3)}'), 0.7);
 				for (sustain in Note.filterTail(note.tail, true)) {
 					sustain.wasMissed = true;
 					sustain.alpha *= 0.6;
 				}
-				for (char in note.parent.characters)
+				for (char in strumLine.characters)
 					char.playSingAnim(note.id, true);
-
 				health -= Constants.DEFAULT_HEALTH_LOSS;
+				note.parentStrum.holdCover?.playAnim('end', true);
+				if (strumLine.isComputer) note.parentStrum.holdCover?.animation.finish();
+				note.parentStrum.holdCover = null;
 			}
 			strumLine._onSustainMissed = (sustain:Sustain) -> {
 				if (sustain.wasMissed) return;
-				sustain.wasMissed = true;
-				sustain.alpha *= 0.6;
-				FlxG.sound.play(Cache.sound('miss/${FlxG.random.int(1, 3)}'), 0.7);
+				sustain.wasMissed = true; sustain.alpha *= 0.6;
 				generalVocals.pause(); strumLine.vocals.pause();
+				FlxG.sound.play(Cache.sound('miss/${FlxG.random.int(1, 3)}'), 0.7);
 				for (sustain in Note.filterTail(sustain.parentNote.tail, true)) {
 					sustain.wasMissed = true;
 					sustain.alpha *= 0.6;
 				}
-				for (char in sustain.parent.characters)
+				for (char in strumLine.characters)
 					char.playSingAnim(sustain.id, true);
+				sustain.parentStrum.holdCover?.playAnim('end', true);
+				if (strumLine.isComputer) sustain.parentStrum.holdCover?.animation.finish();
+				sustain.parentStrum.holdCover = null;
 			}
 		}
 		add(strumLines);

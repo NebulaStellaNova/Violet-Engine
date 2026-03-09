@@ -37,7 +37,7 @@ class Strum extends NovaSprite {
 	public var willReset:Bool = false;
 
 	public final splashes:Array<NovaSprite> = [];
-	public final holdCovers:Array<NovaSprite> = [];
+	public var holdCover:NovaSprite;
 
 	public function new(parent:StrumLine, id:Int) {
 		super();
@@ -72,14 +72,12 @@ class Strum extends NovaSprite {
 			if (glowLength > 0 ? (lastHit + (Conductor.stepLengthMs * glowLength) < Conductor.songPosition) : (animation.name == null || animation.finished))
 				playStrumAnim(parent.isComputer ? 'static' : 'press');
 
-		for (holdCover in holdCovers) {
-			if (holdCover == null) continue;
-			if (holdCover.exists && holdCover.animation.name != 'end') {
-				holdCover.x = this.x - (holdCover.width/2);
-				holdCover.y = this.y - (holdCover.height/2);
-				holdCover.x += skinMeta.getHoldCoverOffsets()[0];
-				holdCover.y += skinMeta.getHoldCoverOffsets()[1];
-			}
+		if (holdCover == null) return;
+		if (holdCover.exists && holdCover.animation.name != 'end') {
+			holdCover.x = this.x - (holdCover.width/2);
+			holdCover.y = this.y - (holdCover.height/2);
+			holdCover.x += skinMeta.getHoldCoverOffsets()[0];
+			holdCover.y += skinMeta.getHoldCoverOffsets()[1];
 		}
 	}
 
@@ -94,66 +92,58 @@ class Strum extends NovaSprite {
 		}
 	}
 
-	public function spawnSplash() {
-		final splash:NovaSprite = cast parent.recycle(NovaSprite, () -> return new NovaSprite(0, 0, skinMeta.getSplashAssetPath()));
-		if (splash.fileName != Paths.getFileName(skinMeta.getSplashAssetPath(), true))
-			splash.loadSprite(skinMeta.getSplashAssetPath()); // jic
-		for (data in skinMeta.getSplashAnimations(ID, parent.keyCount)) splash.addAnimFromData(data);
+	public function spawnSplash():Void {
+		final splash:NovaSprite = new NovaSprite(skinMeta.getSplashAssetPath()); // cast parent.recycle(NovaSprite, () -> return new NovaSprite(skinMeta.getSplashAssetPath()));
+		// if (splash.filePath != skinMeta.getSplashAssetPath())
+		// 	splash.loadSprite(skinMeta.getSplashAssetPath()); // jic
 
-		splash.playAnim('${FlxG.random.int(1, 2)}', true); // Make this auto check how many animations lol.
+		for (data in skinMeta.getSplashAnimations(ID, parent.keyCount))
+			splash.addAnimFromData(data);
+		// splash.visible = true;
+
+		splash.playAnim(FlxG.random.getObject(splash.animationList), true);
 		splash.centerOffsets();
 		splash.centerOrigin();
 		splash.animation.onFinish.add(name -> {
-			this.parent.remove(splash);
 			this.splashes.remove(splash);
-			splash.kill();
+			// splash.visible = false;
+			splash.destroy();
 		});
 		splash.x = this.x - (splash.width/2);
 		splash.y = this.y - (splash.height/2);
 		splash.x += skinMeta.getSplashOffsets()[0];
 		splash.y += skinMeta.getSplashOffsets()[1];
-		this.parent.add(splash);
 		this.splashes.push(splash);
+		this.parent.add(splash);
 	}
 
 
-	public function spawnHoldCover() {
-		final holdCover:NovaSprite = cast parent.recycle(NovaSprite, () -> return new NovaSprite(0, 0, skinMeta.getHoldCoverAssetPath()));
-		if (holdCover.fileName != Paths.getFileName(skinMeta.getHoldCoverAssetPath(), true))
-			holdCover.loadSprite(skinMeta.getHoldCoverAssetPath()); // jic
-		for (data in skinMeta.getHoldCoverAnimations(ID, parent.keyCount)) holdCover.addAnimFromData(data);
+	public function spawnHoldCover():Void {
+		if (holdCover != null) {
+			holdCover.playAnim('end', true);
+			holdCover.animation.finish();
+		}
+		final holdCover:NovaSprite = holdCover = new NovaSprite(skinMeta.getHoldCoverAssetPath()); // cast parent.recycle(NovaSprite, () -> return new NovaSprite(skinMeta.getHoldCoverAssetPath()));
+		// if (holdCover.filePath != skinMeta.getHoldCoverAssetPath())
+		// 	holdCover.loadSprite(skinMeta.getHoldCoverAssetPath()); // jic
 
-		holdCover.playAnim('start', true); // Make this auto check how many animations lol.
-		holdCover.centerOffsets();
-		holdCover.centerOrigin();
+		for (data in skinMeta.getHoldCoverAnimations(ID, parent.keyCount))
+			holdCover.addAnimFromData(data);
+		// holdCover.visible = true;
+
+		holdCover.playAnim('start', true);
 		holdCover.animation.onFinish.add(name -> {
 			switch (name) {
 				case 'start':
 					holdCover.playAnim('hold', true);
 				case 'end':
 					this.parent.remove(holdCover);
-					holdCover.kill();
+					// holdCover.visible = false;
+					holdCover.destroy();
 			}
 		});
-		holdCover.x = this.x - (holdCover.width/2);
-		holdCover.y = this.y - (holdCover.height/2);
-		holdCover.x += skinMeta.getHoldCoverOffsets()[0];
-		holdCover.y += skinMeta.getHoldCoverOffsets()[1];
+		holdCover.centerOffsets();
+		holdCover.centerOrigin();
 		this.parent.add(holdCover);
-		this.holdCovers.push(holdCover);
-
-	}
-
-	public final sustainBlacklist:Array<Note> = [];
-	public function endHoldCover(pop:Bool, parentNote:Null<Note>) {
-		if (parentNote != null) {
-			if (sustainBlacklist.contains(parentNote)) return;
-			sustainBlacklist.push(parentNote);
-		}
-		for (i in holdCovers) {
-			this.holdCovers.remove(i);
-			i.playAnim("end", true);
-			if (!pop) i.animation.finish();
-		}
 	}
 }

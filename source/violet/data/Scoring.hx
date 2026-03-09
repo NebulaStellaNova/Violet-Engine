@@ -1,8 +1,7 @@
 package violet.data;
 
-import violet.backend.audio.Conductor;
-
 typedef Judgement = {
+    var splash:Bool;
     var score:Float;
     var rating:String;
 }
@@ -30,7 +29,7 @@ class Scoring {
 
     public static function judgeNoteHit(ms:Float):Judgement {
         var msAbs = Math.abs(ms);
-        var judgement:Judgement = { score: 0, rating: 'miss' };
+        var judgement:Judgement = { splash: false, score: 0, rating: 'miss' };
 
         if (enableKiller && msAbs < killerWindow) {
             judgement.rating = 'killer';
@@ -45,6 +44,9 @@ class Scoring {
         } else {
             judgement.rating = 'miss';
         }
+
+        if (judgement.rating == 'sick' || judgement.rating == 'killer')
+            judgement.splash = true;
 
         if (msAbs > missThreshold) {
             judgement.score = missScore;
