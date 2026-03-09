@@ -31,7 +31,7 @@ class Chart {
 	public final chartVariant:Null<String>;
 
 	public function new(id:String, diff:String, ?variant:String) {
-		this._data = ChartRegistry.chartDatas.get('$id:$diff${variant == null ? '' : ':${variant}'}');
+		this._data = ChartRegistry.fetchChart('$id:$diff${variant == null ? '' : ':${variant}'}');
 		this.id = id;
 
 		stage = _data.stage;

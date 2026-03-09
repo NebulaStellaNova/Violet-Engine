@@ -5,13 +5,18 @@ import violet.backend.utils.FileUtil;
 import violet.backend.utils.ParseUtil;
 import violet.data.song.SongRegistry;
 
+typedef ChartCache = {
+	var content:String;
+}
+
 class ChartRegistry {
 	public static var charts:Array<Chart> = [];
+	public static var chartCache:Map<String, ChartCache> = new Map<String, ChartCache>();
 	public static var chartDatas:Map<String, ChartData> = new Map<String, ChartData>();
 
 	public static function registerCharts() {
 		trace('debug:Registering charts...');
-		charts.resize(0);
+		// charts.resize(0);
 		chartDatas.clear();
 		var chartList:Array<String> = [];
 		for (song in SongRegistry.getAllSongs()) {
@@ -21,8 +26,8 @@ class ChartRegistry {
 					trace('warning:Could not find chart for song ${song.id} of difficulty $diff.');
 					continue;
 				}
-				chartDatas.set('${song.id}:$diff', ChartConverters.convertChart(FileUtil.getFileContent(jsonPath)));
-				registerChart(new Chart(song.id, diff));
+				chartCache.set('${song.id}:$diff', { content: FileUtil.getFileContent(jsonPath) });
+				// registerChart(new Chart(song.id, diff));
 			}
 			/* for (variant in song.variants) {
 				for (diff in song.difficulties) {
@@ -38,7 +43,15 @@ class ChartRegistry {
 		}
 	}
 
-	public static function registerChart(chart:Chart) {
+	public static function fetchChart(id:String):ChartData {
+		if (chartDatas.exists(id)) return chartDatas.get(id);
+
+		var data = ChartConverters.convertChart(chartCache.get(id).content);
+		chartDatas.set(id, data);
+		return data;
+	}
+
+	/* public static function registerChart(chart:Chart) {
 		for (existingChart in charts) {
 			if (existingChart.id == chart.id && existingChart.chartDifficulty == chart.chartDifficulty && existingChart.chartVariant == chart.chartVariant) {
 				trace('warning:Chart is already registered. Skipping duplicate registration.');
@@ -47,14 +60,9 @@ class ChartRegistry {
 		}
 		trace('debug:Found and registered chart with ID "${chart.id}:${chart.chartDifficulty}${chart.chartVariant == null ? '' : ':${chart.chartVariant}'}"');
 		charts.push(chart);
-	}
+	} */
 
-	public static function getChart(songID:String, diff:String, ?variant:String):Null<Chart> {
-		for (chart in charts) {
-			if (chart.id == songID && chart.chartDifficulty == diff && chart.chartVariant == variant) {
-				return chart;
-			}
-		}
-		return null;
+	public static function getChart(songID:String, diff:String, ?variant:String):Chart {
+		return new Chart(songID, diff, variant);
 	}
 }
