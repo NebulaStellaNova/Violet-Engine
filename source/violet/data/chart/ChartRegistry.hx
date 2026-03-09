@@ -28,19 +28,7 @@ class ChartRegistry {
 					continue;
 				}
 				chartCache.set('${song.id}:$diff', { content: FileUtil.getFileContent(jsonPath) });
-				// registerChart(new Chart(song.id, diff));
 			}
-			/* for (variant in song.variants) {
-				for (diff in song.difficulties) {
-					final jsonPath = Paths.json('songs/${song.songName}/charts/$variant/$diff');
-					if (!Paths.fileExists(jsonPath, true)) {
-						trace('warning:Could not find chart for song ${song.id} ${variant.charAt(0).toUpperCase() + variant.substr(1)} of difficulty $diff.');
-						continue;
-					}
-					chartDatas.set('${song.id}:$diff:$variant', new json2object.JsonParser<ChartData>().fromJson(ParseUtil.removeJsonComments(FileUtil.getFileContent(jsonPath)), jsonPath));
-					registerChart(new Chart(song.id, diff, variant));
-				}
-			} */
 		}
 	}
 
@@ -51,17 +39,6 @@ class ChartRegistry {
 		chartDatas.set(id, data);
 		return data;
 	}
-
-	/* public static function registerChart(chart:Chart) {
-		for (existingChart in charts) {
-			if (existingChart.id == chart.id && existingChart.chartDifficulty == chart.chartDifficulty && existingChart.chartVariant == chart.chartVariant) {
-				trace('warning:Chart is already registered. Skipping duplicate registration.');
-				return;
-			}
-		}
-		trace('debug:Found and registered chart with ID "${chart.id}:${chart.chartDifficulty}${chart.chartVariant == null ? '' : ':${chart.chartVariant}'}"');
-		charts.push(chart);
-	} */
 
 	public static function getChart(songID:String, diff:String, ?variant:String):Chart {
 		return new Chart(songID, diff, variant);
