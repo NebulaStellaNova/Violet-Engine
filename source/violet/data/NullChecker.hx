@@ -3,7 +3,7 @@ package violet.data;
 import violet.data.animation.AnimationData;
 
 class NullChecker {
-	public static function checkAnimations(anims:Array<AnimationData>):Array<AnimationData> {
+	public static function checkAnimations<T:AnimationData>(anims:Array<T>):Array<T> {
 		for (anim in anims) {
 			anim.offsets ??= [0, 0];
 			anim.looped ??= false;

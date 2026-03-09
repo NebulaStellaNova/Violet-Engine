@@ -114,7 +114,7 @@ class NoteSkin {
 		];
 		if (anims.length == 0)
 			return getStrumAnimations(id, mania - 1);
-		return cast NullChecker.checkAnimations(cast anims);
+		return NullChecker.checkAnimations(anims);
 	}
 	public function getNoteAnimations(id:Int, mania:Int = 4):Array<NoteAnimationData> {
 		if (mania < 1) return [];
@@ -127,7 +127,7 @@ class NoteSkin {
 		];
 		if (anims.length == 0)
 			return getNoteAnimations(id, mania - 1);
-		return cast NullChecker.checkAnimations(cast anims);
+		return NullChecker.checkAnimations(anims);
 	}
 	public function getSustainAnimations(id:Int, mania:Int = 4):Array<NoteAnimationData> {
 		if (mania < 1) return [];
@@ -140,7 +140,7 @@ class NoteSkin {
 		];
 		if (anims.length == 0)
 			return getSustainAnimations(id, mania - 1);
-		return cast NullChecker.checkAnimations(cast anims);
+		return NullChecker.checkAnimations(anims);
 	}
 	public function getSplashAnimations(id:Int, mania:Int = 4):Array<NoteAnimationData> {
 		if (mania < 1) return [];
@@ -153,7 +153,7 @@ class NoteSkin {
 		];
 		if (anims.length == 0)
 			return getSplashAnimations(id, mania - 1);
-		return cast NullChecker.checkAnimations(cast anims);
+		return NullChecker.checkAnimations(anims);
 	}
 	public function getHoldCoverAnimations(id:Int, mania:Int = 4):Array<NoteAnimationData> {
 		if (mania < 1) return [];
@@ -166,7 +166,7 @@ class NoteSkin {
 		];
 		if (anims.length == 0)
 			return getSplashAnimations(id, mania - 1);
-		return cast NullChecker.checkAnimations(cast anims);
+		return NullChecker.checkAnimations(anims);
 	}
 
 }
