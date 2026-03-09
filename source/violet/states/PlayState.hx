@@ -264,8 +264,16 @@ class PlayState extends violet.backend.StateBackend {
 		healthBar.y = /* isDownscroll ? FlxG.height * 0.1 :  */FlxG.height * 0.9;
 		healthBar.screenCenter(X);
 		healthBar.camera = camHUD;
-		healthBar.leftColor = FlxColor.RED;
-		healthBar.rightColor = FlxColor.LIME;
+		if (strumLines.members[0].characters[0]._data.healthIcon.color != null) {
+			healthBar.leftColor = strumLines.members[0].characters[0]._data.healthIcon.color;
+		} else {
+			healthBar.leftColor = FlxColor.RED;
+		}
+		if (strumLines.members[1].characters[0]._data.healthIcon.color != null) {
+			healthBar.rightColor = strumLines.members[1].characters[0]._data.healthIcon.color;
+		} else {
+			healthBar.rightColor = FlxColor.LIME;
+		}
 		add(healthBar);
 
 		scoreTxt = new ScoreTxt();

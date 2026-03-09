@@ -1,5 +1,6 @@
 package violet.data.character;
 
+import violet.backend.utils.ParseUtil.ParseColor;
 import thx.semver.Version;
 import violet.data.animation.AnimationData;
 
@@ -152,7 +153,7 @@ typedef HealthIconData = {
     /**
      * The color of the icon's side of the health bar.
      */
-    // var ?color:ParseColor;
+    var ?color:ParseColor;
 }
 
 typedef DeathData = {

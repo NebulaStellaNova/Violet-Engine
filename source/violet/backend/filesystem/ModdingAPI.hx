@@ -73,11 +73,11 @@ class ModdingAPI {
 	public static var availableMods(default, null):Array<ModMeta> = [];
 	public static var activeModsIds(default, null):Array<String> = [];
 
-	public static function getMod(id:String):Null<ModMeta> {
+	public static function getMod(id:String):ModMeta {
 		for (meta in availableMods)
 			if (meta.id == id)
 				return meta;
-		return null;
+		return {id: "null", folder: null, mod_version: "0.0.0", tag: "null"};
 	}
 
 	public static function enableMod(id:String) {
