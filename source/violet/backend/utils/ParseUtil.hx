@@ -122,9 +122,6 @@ abstract ParseColor(String) {
 		return color.blue;
 	}
 
-	inline public function nullCheck(nullColor:ParseColor):ParseColor
-		return this ??= nullColor;
-
 	@:from inline public static function fromString(from:String):ParseColor
 		return cast FlxColor.fromString(from ?? 'white').toWebString();
 	@:to inline public function toString():String
