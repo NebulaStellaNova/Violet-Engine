@@ -53,7 +53,7 @@ class Strum extends NovaSprite {
 		final meta:NoteSkin = NoteSkinRegistry.getNoteSkinByID(skin);
 		loadSprite(meta.getStrumAssetPath());
 		for (data in meta.getStrumAnimations(ID, parent.keyCount))
-			addAnimFromJSON(data);
+			addAnimFromData(data);
 		var lol:Array<Float> = meta.getStrumOffsets();
 		globalOffset.set(lol[0], lol[1]);
 
@@ -86,7 +86,7 @@ class Strum extends NovaSprite {
 
 		var splash = new NovaSprite(0, 0, meta.getSplashAssetPath());
 		for (data in meta.getSplashAnimations(ID, parent.keyCount))
-			splash.addAnimFromJSON(data);
+			splash.addAnimFromData(data);
 
 		splash.playAnim('${FlxG.random.int(1, 2)}', true); // Make this auto check how many animations lol.
 		// splash.cameras = this.parent.cameras;

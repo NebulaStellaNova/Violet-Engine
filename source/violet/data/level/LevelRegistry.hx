@@ -1,6 +1,5 @@
 package violet.data.level;
 
-import violet.backend.utils.FileUtil;
 import violet.backend.utils.ParseUtil;
 
 class LevelRegistry {
@@ -13,8 +12,7 @@ class LevelRegistry {
         levelDatas.clear();
         var levelFiles = Paths.readFolder("data/levels");
         for (levelFile in levelFiles) {
-            final jsonPath = Paths.json('data/levels/$levelFile');
-            levelDatas.set(levelFile.replace(".json", ""), new json2object.JsonParser<LevelData>().fromJson(ParseUtil.removeJsonComments(FileUtil.getFileContent(jsonPath)), jsonPath));
+            levelDatas.set(levelFile.replace(".json", ""), ParseUtil.json('data/levels/$levelFile'));
             registerLevel(new Level(levelFile.replace(".json", "")));
         }
     }
@@ -40,8 +38,8 @@ class LevelRegistry {
         }
         trace('debug:Found and registered level with ID "${newLevel.id}"');
         // Preload title graphic
-        newLevel.buildTitleGraphic();
-        newLevel.buildProps();
+        newLevel.buildTitleGraphic().destroy();
+        newLevel.buildProps().destroy();
         levels.push(newLevel);
     }
 

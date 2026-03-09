@@ -92,53 +92,53 @@ class NoteSkin {
 		if (mania < 1) return [];
 		var anims:Array<NoteAnimationData> = [
 			for (data in _data.strums.animations) {
-				if (data.keyCount != mania) continue;
-				if (data.directionId != (id % mania)) continue;
+				if (data.mania != mania) continue;
+				if (data.id != (id % mania)) continue;
 				data;
 			}
 		];
 		if (anims.length == 0)
 			return getStrumAnimations(id, mania - 1);
-		return anims;
+		return cast NullChecker.checkAnimations(cast anims);
 	}
 	public function getNoteAnimations(id:Int, mania:Int = 4):Array<NoteAnimationData> {
 		if (mania < 1) return [];
 		var anims:Array<NoteAnimationData> = [
 			for (data in _data.notes.animations) {
-				if (data.keyCount != mania) continue;
-				if (data.directionId != (id % mania)) continue;
+				if (data.mania != mania) continue;
+				if (data.id != (id % mania)) continue;
 				data;
 			}
 		];
 		if (anims.length == 0)
 			return getNoteAnimations(id, mania - 1);
-		return anims;
+		return cast NullChecker.checkAnimations(cast anims);
 	}
 	public function getSustainAnimations(id:Int, mania:Int = 4):Array<NoteAnimationData> {
 		if (mania < 1) return [];
 		var anims:Array<NoteAnimationData> = [
 			for (data in _data.sustains.animations) {
-				if (data.keyCount != mania) continue;
-				if (data.directionId != (id % mania)) continue;
+				if (data.mania != mania) continue;
+				if (data.id != (id % mania)) continue;
 				data;
 			}
 		];
 		if (anims.length == 0)
 			return getSustainAnimations(id, mania - 1);
-		return anims;
+		return cast NullChecker.checkAnimations(cast anims);
 	}
 	public function getSplashAnimations(id:Int, mania:Int = 4):Array<NoteAnimationData> {
 		if (mania < 1) return [];
 		var anims:Array<NoteAnimationData> = [
 			for (data in _data.splashes.animations) {
-				if (data.keyCount != mania) continue;
-				if (data.directionId != (id % mania)) continue;
+				if (data.mania != mania) continue;
+				if (data.id != (id % mania)) continue;
 				data;
 			}
 		];
 		if (anims.length == 0)
 			return getSplashAnimations(id, mania - 1);
-		return anims;
+		return cast NullChecker.checkAnimations(cast anims);
 	}
 
 }

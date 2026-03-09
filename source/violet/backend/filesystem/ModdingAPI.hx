@@ -1,27 +1,25 @@
 #if MOD_SUPPORT
 package violet.backend.filesystem;
 
-import json2object.JsonParser;
 import thx.semver.Version;
-import violet.backend.utils.FileUtil;
 import violet.backend.utils.ParseUtil;
 
 typedef ModContributor = {
 	var name:String;
-	@:default('#FFFFFF') var color:ParseColor;
+	var color:ParseColor;
 	var ?role:String;
 	var icon:String;
 	var ?url:String;
 }
 
 typedef ModMeta = {
-	@:jignored var ?folder:String;
+	var ?folder:String;
 	var id:String;
 	var ?title:String;
 	var ?description:String;
 	var tag:String;
 	var ?contributors:Array<ModContributor>;
-	@:alias('mod_version') var version:Version;
+	var mod_version:Version;
 }
 
 class ModdingAPI {
@@ -47,18 +45,17 @@ class ModdingAPI {
 		FlxG.save.data.enabledModIds ??= [];
 		(availableMods = [
 			for (path in Paths.readFolder('mods', true)) {
-				if (!Paths.fileExists('$MOD_FOLDER/$path/novamod_meta.json', true) && !Paths.fileExists('$MOD_FOLDER/$path/novamod_meta.jsonc', true)) continue;
-				var meta:ModMeta = null;
-				if (Paths.fileExists('$MOD_FOLDER/$path/novamod_meta.json', true)) meta = new JsonParser<ModMeta>().fromJson(ParseUtil.removeJsonComments(FileUtil.getFileContent('$MOD_FOLDER/$path/novamod_meta.json')), '$MOD_FOLDER/$path/novamod_meta.json');
-				if (Paths.fileExists('$MOD_FOLDER/$path/novamod_meta.jsonc', true)) meta = new JsonParser<ModMeta>().fromJson(ParseUtil.removeJsonComments(FileUtil.getFileContent('$MOD_FOLDER/$path/novamod_meta.jsonc')), '$MOD_FOLDER/$path/novamod_meta.jsonc');
+				var meta:ModMeta = ParseUtil.json('$MOD_FOLDER/$path/novamod_meta', 'root');
 				if (meta == null) continue;
+
+				// null check all properties and set defaults
 				meta.folder = path;
 				meta.title ??= meta.folder;
+				for (contributor in meta.contributors)
+					contributor.color ??= FlxColor.WHITE;
 				meta;
 			}
 		]);
-		/* if (Paths.fileExists('$MOD_FOLDER/active-mods.txt', true))
-			(activeModsIds = FileUtil.getFileContent('$MOD_FOLDER/active-mods.txt').split('\n').filter(id -> return getMod(id) != null)); */
 
 		for (i in availableMods) {
 			if (!FlxG.save.data.registeredModIds.contains(i.id)) {
@@ -115,8 +112,7 @@ class ModdingAPI {
 
 class ModIcon extends NovaSprite {
 	override public function new(modId:String) {
-		// super(violet.backend.filesystem.Cache.image('$MOD_FOLDER/$modId/novamod_icon', 'root'));
-		super(Paths.file('${ModdingAPI.MOD_FOLDER}/$modId/novamod_icon', 'root', 'png'));
+		super(Paths.image('${ModdingAPI.MOD_FOLDER}/$modId/novamod_icon', 'root'));
 	}
 }
 #end

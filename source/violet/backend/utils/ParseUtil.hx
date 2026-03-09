@@ -1,10 +1,26 @@
 package violet.backend.utils;
 
 import haxe.Json;
+import yaml.Parser;
+import yaml.Yaml;
 
 class ParseUtil {
 	public static function json(path:String, directory:String = ''):Dynamic {
-		return Json.parse(removeJsonComments(FileUtil.getFileContent(Paths.json(path, directory))));
+		try {
+			return Json.parse(removeJsonComments(FileUtil.getFileContent(Paths.json(path, directory))));
+		} catch(error:haxe.Exception)
+			try {
+				return Json.parse(removeJsonComments(FileUtil.getFileContent(Paths.json(path, directory, 'jsonc'))));
+			} catch(error:haxe.Exception)
+				return null;
+	}
+
+	public static function yaml(path:String, directory:String = ''):Dynamic {
+		try {
+			final options = new ParserOptions(); options.maps = false;
+			return Yaml.parse(FileUtil.getFileContent(Paths.yaml(path, directory)), options);
+		} catch(error:haxe.Exception)
+			return null;
 	}
 
 	public static function removeJsonComments(str:String) {

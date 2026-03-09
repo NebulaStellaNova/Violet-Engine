@@ -1,12 +1,12 @@
 package violet.backend.objects;
 
-import flixel.util.typeLimit.OneOfTwo;
 import flixel.FlxCamera;
 import flixel.graphics.FlxGraphic;
 import flixel.graphics.frames.FlxAtlasFrames;
 import flixel.math.FlxPoint;
 import flixel.math.FlxRect;
 import flixel.system.FlxAssets;
+import flixel.util.typeLimit.OneOfTwo;
 import openfl.display.BitmapData;
 import openfl.net.URLLoader;
 import openfl.net.URLLoaderDataFormat;
@@ -150,7 +150,7 @@ class NovaSprite extends #if ANIMATE_SUPPORT FlxAnimate #else FlxSprite #end {
 		this.anims.set(name, {offset: offsets != null ? [-offsets[0] ?? 0, -offsets[1] ?? 0] : [0, 0]});
 	}
 
-	public function addAnimFromJSON(data:AnimationData):Void {
+	public function addAnimFromData(data:AnimationData):Void {
 		addAnim(data.name, data.prefix, data.frameIndices, data.offsets, data.frameRate, data.looped, data.byLabel);
 	}
 

@@ -1,10 +1,10 @@
 package violet.backend;
 
-import violet.backend.utils.NovaUtils;
 import flixel.FlxBasic;
 import violet.backend.audio.Conductor;
 import violet.backend.objects.IsBopper;
 import violet.backend.scripting.events.EventBase;
+import violet.backend.utils.NovaUtils;
 
 #if SCRIPT_SUPPORT
 import violet.backend.scripting.ScriptPack;
@@ -105,7 +105,7 @@ class StateBackend extends flixel.FlxState {
 		super.update(elapsed);
 
 		if (FlxG.keys.justPressed.TAB)
-			violet.states.PlayState.loadSong('stress', 'hard');
+			violet.states.PlayState.loadSong('test');
 
 		Conductor.update();
 

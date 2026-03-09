@@ -1,7 +1,7 @@
 package violet.data.character;
 
-import violet.backend.utils.NovaUtils;
 import violet.backend.audio.Conductor;
+import violet.backend.utils.NovaUtils;
 
 class Character extends violet.backend.objects.Bopper {
 
@@ -46,12 +46,13 @@ class Character extends violet.backend.objects.Bopper {
 		if (this._data.flipX ?? false) flipX = !flipX;
 		__baseFlipped = flipX;
 
+		NullChecker.checkAnimations(this._data.animations);
 		for (data in this._data.animations) addFrames(Paths.image(data.assetPath));
 		for (data in this._data.animations) {
 			// were so funny
 			data.offsets[0] *= -1;
 			data.offsets[1] *= -1;
-			this.addAnimFromJSON(data);
+			this.addAnimFromData(data);
 			data.offsets[0] *= -1;
 			data.offsets[1] *= -1;
 		}
