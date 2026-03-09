@@ -27,16 +27,15 @@ class ChartRegistry {
 				final jsonPath = Paths.json('songs/${song.songName}/charts/$diff');
 				if (yamlPath != "") {
 					chartCache.set('${song.id}:$diff', { filePath: yamlPath, fileExt: "yaml" });
+					trace('debug:Found and registered chart for song with ID "${song.id}" for difficulty "$diff"');
 					continue;
 				}
 				if (jsonPath != "") {
 					chartCache.set('${song.id}:$diff', { filePath: jsonPath, fileExt: "json" });
+					trace('debug:Found and registered chart for song with ID "${song.id}" for difficulty "$diff"');
 					continue;
 				}
-				/* if (!Paths.fileExists(jsonPath, true)) {
-					trace('warning:Could not find chart for song ${song.id} of difficulty $diff.');
-					continue;
-				} */
+				trace('warning:Could not find chart for song "${song.id}" for difficulty "$diff"');
 			}
 		}
 	}

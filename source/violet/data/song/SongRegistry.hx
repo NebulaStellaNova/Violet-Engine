@@ -24,7 +24,7 @@ class SongRegistry {
             var folderName = songID.replace("-", " ");
             final jsonPath = Paths.json('songs/$folderName/meta');
             if (!Paths.fileExists(jsonPath, true)) {
-                trace('warning:Could not find meta file for song with ID $folderName. Skipping registration.');
+                trace('warning:Could not find meta file for song with ID "$folderName". Skipping registration.');
                 continue;
             }
             songDatas.set(songID, new json2object.JsonParser<SongData>().fromJson(ParseUtil.removeJsonComments(FileUtil.getFileContent(jsonPath)), jsonPath));
