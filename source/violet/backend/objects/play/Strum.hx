@@ -95,18 +95,18 @@ class Strum extends NovaSprite {
 	}
 
 	public function spawnSplash() {
-		var splash = new NovaSprite(0, 0, skinMeta.getSplashAssetPath());
-		for (data in skinMeta.getSplashAnimations(ID, parent.keyCount))
-			splash.addAnimFromData(data);
+		final splash:NovaSprite = cast parent.recycle(NovaSprite, () -> return new NovaSprite(0, 0, skinMeta.getSplashAssetPath()));
+		if (splash.fileName != Paths.getFileName(skinMeta.getSplashAssetPath(), true))
+			splash.loadSprite(skinMeta.getSplashAssetPath()); // jic
+		for (data in skinMeta.getSplashAnimations(ID, parent.keyCount)) splash.addAnimFromData(data);
 
 		splash.playAnim('${FlxG.random.int(1, 2)}', true); // Make this auto check how many animations lol.
-		// splash.cameras = this.parent.cameras;
 		splash.centerOffsets();
 		splash.centerOrigin();
-		splash.animation.onFinish.add((_)->{
+		splash.animation.onFinish.add(name -> {
 			this.parent.remove(splash);
 			this.splashes.remove(splash);
-			splash.destroy();
+			splash.kill();
 		});
 		splash.x = this.x - (splash.width/2);
 		splash.y = this.y - (splash.height/2);
@@ -118,7 +118,9 @@ class Strum extends NovaSprite {
 
 
 	public function spawnHoldCover() {
-		var holdCover = new NovaSprite(0, 0, skinMeta.getHoldCoverAssetPath());
+		final holdCover:NovaSprite = cast parent.recycle(NovaSprite, () -> return new NovaSprite(0, 0, skinMeta.getHoldCoverAssetPath()));
+		if (holdCover.fileName != Paths.getFileName(skinMeta.getHoldCoverAssetPath(), true))
+			holdCover.loadSprite(skinMeta.getHoldCoverAssetPath()); // jic
 		for (data in skinMeta.getHoldCoverAnimations(ID, parent.keyCount)) holdCover.addAnimFromData(data);
 
 		holdCover.playAnim('start', true); // Make this auto check how many animations lol.
@@ -130,7 +132,7 @@ class Strum extends NovaSprite {
 					holdCover.playAnim('hold', true);
 				case 'end':
 					this.parent.remove(holdCover);
-					holdCover.destroy();
+					holdCover.kill();
 			}
 		});
 		holdCover.x = this.x - (holdCover.width/2);
