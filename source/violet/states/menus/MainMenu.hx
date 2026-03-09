@@ -28,8 +28,9 @@ typedef MenuAnimations = {
 typedef MenuItem = {
 	var id:String;
 	var item:String;
-	var state:String;
 	var scale:Float;
+	var state:String;
+	var disabled:Bool;
 	var color:ParseColor;
 	var animations:MenuAnimations;
 }
@@ -94,6 +95,7 @@ class MainMenu extends StateBackend {
 			item.updateHitbox();
 			item.centerOrigin();
 			item.centerOffsets();
+			if (daItem.disabled) item.color = FlxColor.interpolate(item.color, FlxColor.BLACK, 0.25);
 			//item.screenCenter(X);
 			menuItems.push(item);
 			add(item);
@@ -193,9 +195,13 @@ class MainMenu extends StateBackend {
 	}
 
 	public function changeSelection(amt:Int) {
-		var event:SelectionEvent = new SelectionEvent(FlxMath.wrap(curSelected + amt, 0, menuItems.length-1));
+		var target = FlxMath.wrap(curSelected + amt, 0, menuItems.length-1);
+		while (menuData.items[target].disabled) {
+			target = FlxMath.wrap(target + amt, 0, menuItems.length-1);
+		}
+		var event:SelectionEvent = new SelectionEvent(target);
 		if (amt != 0) {
-			event = runEvent("changeSelection", new SelectionEvent(FlxMath.wrap(curSelected + amt, 0, menuItems.length-1)));
+			event = runEvent("changeSelection", new SelectionEvent(target));
 			if (event.cancelled) return;
 		}
 		if (amt != 0 && !event.soundCancelled) {
