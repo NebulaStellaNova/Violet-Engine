@@ -54,11 +54,11 @@ class Strum extends NovaSprite {
 		this.anims.clear();
 		animation.destroyAnimations();
 		final skin:String = skin ?? this.skin ?? 'default';
-		final meta:NoteSkin = NoteSkinRegistry.getNoteSkinByID(skin);
-		loadSprite(meta.getStrumAssetPath());
-		for (data in meta.getStrumAnimations(ID, parent.keyCount))
+		this.skinMeta = NoteSkinRegistry.getNoteSkinByID(skin);
+		loadSprite(skinMeta.getStrumAssetPath());
+		for (data in skinMeta.getStrumAnimations(ID, parent.keyCount))
 			addAnimFromData(data);
-		var lol:Array<Float> = meta.getStrumOffsets();
+		var lol:Array<Float> = skinMeta.getStrumOffsets();
 		globalOffset.set(lol[0], lol[1]);
 
 		playAnim(lastAnim, true, wasReversed); updateHitbox();
@@ -95,9 +95,6 @@ class Strum extends NovaSprite {
 	}
 
 	public function spawnSplash() {
-		final skin:String = skin ?? this.skin ?? 'default';
-		this.skinMeta = NoteSkinRegistry.getNoteSkinByID(skin);
-
 		var splash = new NovaSprite(0, 0, skinMeta.getSplashAssetPath());
 		for (data in skinMeta.getSplashAnimations(ID, parent.keyCount))
 			splash.addAnimFromData(data);
