@@ -135,10 +135,12 @@ class Strum extends NovaSprite {
 
 	}
 
-	public var sustainBlacklist:Array<Sustain> = [];
-	public function endHoldCover(pop:Bool, sustain:Sustain) {
-		if (sustainBlacklist.contains(sustain)) return;
-		sustainBlacklist.push(sustain);
+	public var sustainBlacklist:Array<Note> = [];
+	public function endHoldCover(pop:Bool, parentNote:Null<Note>) {
+		if (parentNote != null) {
+			if (sustainBlacklist.contains(parentNote)) return;
+			sustainBlacklist.push(parentNote);
+		}
 		for (i in holdCovers) {
 			this.holdCovers.remove(i);
 			i.playAnim("end", true);

@@ -226,6 +226,11 @@ class StrumLine extends FlxGroup {
 			pos.resize(0);
 
 			for (sustain in note.tail) {
+
+				if ((sustain.wasMissed || sustain.parentNote.wasMissed) && Math.abs((Conductor.framePosition - (note.time + sustain.time))) >= 0) {
+					sustain.parentStrum.endHoldCover(false, null);
+				}
+
 				final pos:Array<Float> = [strum.x, strum.y];
 				disPos = 0.45 * (Conductor.framePosition - (note.time + sustain.time)) * Math.abs(sustain.__scrollSpeed) * Math.abs(scale.x / scale.y);
 
@@ -258,9 +263,10 @@ class StrumLine extends FlxGroup {
 					sustain.clipRect = rect.set(0, sustain.frameHeight * t, sustain.frameWidth, sustain.frameHeight * (1 - t));
 
 					if (sustain.isEnd && sustain.clipRect.height <= 0) {
-						sustain.parentStrum.endHoldCover(sustain.parent.isPlayer, sustain);
+						sustain.parentStrum.endHoldCover(sustain.parent.isPlayer, sustain.parentNote);
 					}
 				}
+
 
 			}
 		});
