@@ -1,0 +1,125 @@
+events:
+  - type: 1
+    params:
+      - 1
+    time: 3200
+  - type: 1
+    params:
+      - 0
+    time: 6400
+  - type: 1
+    params:
+      - 1
+    time: 9600
+  - type: 1
+    params:
+      - 0
+    time: 12800
+  - type: 1
+    params:
+      - 1
+    time: 14400
+  - type: 1
+    params:
+      - 0
+    time: 16000
+  - type: 1
+    params:
+      - 1
+    time: 17600
+  - type: 1
+    params:
+      - 0
+    time: 19200
+  - type: 1
+    params:
+      - 1
+    time: 20800
+  - type: 1
+    params:
+      - 0
+    time: 22400
+  - type: 1
+    params:
+      - 1
+    time: 24000
+  - type: 1
+    params:
+      - 0
+    time: 25600
+  - type: 1
+    params:
+      - 1
+    time: 28800
+  - type: 1
+    params:
+      - 0
+    time: 32000
+  - type: 1
+    params:
+      - 1
+    time: 35200
+  - type: 1
+    params:
+      - 0
+    time: 38400
+  - type: 1
+    params:
+      - 1
+    time: 41600
+  - type: 1
+    params:
+      - 0
+    time: 44800
+  - type: 1
+    params:
+      - 1
+    time: 48000
+  - type: 1
+    params:
+      - 0
+    time: 51200
+  - type: 1
+    params:
+      - 1
+    time: 57600
+  - type: 1
+    params:
+      - 0
+    time: 64000
+  - type: 1
+    params:
+      - 1
+    time: 70400
+  - type: 1
+    params:
+      - 0
+    time: 76800
+  - type: 1
+    params:
+      - 1
+    time: 80000
+  - type: 1
+    params:
+      - 0
+    time: 83200
+  - type: 1
+    params:
+      - 1
+    time: 86400
+  - type: 1
+    params:
+      - 0
+    time: 89600
+  - type: 1
+    params:
+      - 1
+    time: 92800
+  - type: 1
+    params:
+      - 0
+    time: 96000
+  - type: 1
+    params:
+      - 1
+    time: 99200

@@ -7,6 +7,7 @@ import violet.data.song.SongRegistry;
 
 typedef ChartCache = {
 	var filePath:String;
+	var eventsPath:String;
 	var fileExt:String;
 }
 
@@ -25,16 +26,18 @@ class ChartRegistry {
 			for (diff in song.difficulties) {
 				final yamlPath = Paths.yaml('songs/${song.songName}/charts/$diff');
 				final jsonPath = Paths.json('songs/${song.songName}/charts/$diff');
+				final eventsYamlPath = Paths.yaml('songs/${song.songName}/events');
 				if (yamlPath != "") {
-					chartCache.set('${song.id}:$diff', { filePath: yamlPath, fileExt: "yaml" });
+					chartCache.set('${song.id}:$diff', { filePath: yamlPath, fileExt: "yaml", eventsPath: eventsYamlPath });
 					trace('debug:Found and registered chart for song with ID "${song.id}" for difficulty "$diff"');
 					continue;
 				}
 				if (jsonPath != "") {
-					chartCache.set('${song.id}:$diff', { filePath: jsonPath, fileExt: "json" });
+					chartCache.set('${song.id}:$diff', { filePath: jsonPath, fileExt: "json", eventsPath: eventsYamlPath });
 					trace('debug:Found and registered chart for song with ID "${song.id}" for difficulty "$diff"');
 					continue;
 				}
+
 				trace('warning:Could not find chart for song "${song.id}" for difficulty "$diff"');
 			}
 		}

@@ -48,15 +48,22 @@ class ChartConverters {
             Yaml.write(chartCache.filePath.replace('.${chartCache.fileExt}', ".yaml"), convertChartData(parsedCache,  detectJsonChartFormat(parsedCache)));
         }
 
+        var convertedChart:ChartData;
         switch (type) {
             case OBJECT:
                 var chartFormat:ChartFormat = detectJsonChartFormat(parsedCache);
-                return convertChartData(parsedCache, chartFormat);
+                convertedChart = convertChartData(parsedCache, chartFormat);
             default:
-                return convertChartData("{}", CODENAME);
+                convertedChart = convertChartData("{}", CODENAME);
                 // uhm... guys!
         }
 
+        if (chartCache.eventsPath != "") {
+            final options = new ParserOptions(); options.maps = false;
+            final parsedEvents = Yaml.parse(FileUtil.getFileContent(chartCache.eventsPath), options);
+            convertedChart.events = convertedChart.events.concat(parsedEvents.events);
+        }
+        return convertedChart;
 
     }
 
