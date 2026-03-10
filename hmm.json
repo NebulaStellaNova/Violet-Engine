@@ -1,75 +1,61 @@
 {
   "dependencies": [
     {
-      "name": "lime",
-      "type": "haxelib",
-      "version": null
-    },
-    {
-      "name": "discord-rpc",
-      "type": "haxelib",
-      "version": null
-    },
-    {
       "name": "flixel",
       "type": "haxelib",
-      "version": null
-    },
-    {
-      "name": "yaml",
-      "type": "haxelib",
-      "version": null
+      "dir": null,
+      "version": "6.1.2"
     },
     {
       "name": "flixel-addons",
       "type": "haxelib",
-      "version": null
+      "dir": null,
+      "version": "4.0.1"
     },
     {
       "name": "flixel-animate",
       "type": "haxelib",
-      "version": null
-    },
-    {
-      "name": "haxeui-core",
-      "type": "haxelib",
-      "version": null
-    },
-    {
-      "name": "haxeui-flixel",
-      "type": "haxelib",
-      "version": null
-    },
-    {
-      "name": "hmm",
-      "type": "haxelib",
-      "version": null
-    },
-    {
-      "name": "hxWindowColorMode",
-      "type": "haxelib",
-      "version": null
+      "dir": null,
+      "version": "1.5.0"
     },
     {
       "name": "flxrhythmconductor",
       "type": "git",
       "dir": null,
       "ref": "main",
-      "url" : "https://github.com/PurSnake/FlxRhythmConductor"
+      "url": "https://github.com/PurSnake/FlxRhythmConductor"
+    },
+    {
+      "name": "haxeui-core",
+      "type": "haxelib",
+      "dir": null,
+      "version": "1.7.0"
+    },
+    {
+      "name": "haxeui-flixel",
+      "type": "haxelib",
+      "dir": null,
+      "version": "1.7.0"
     },
     {
       "name": "hxcpp",
       "type": "git",
       "dir": null,
-      "ref": "363d3d0a8d3ac450f5ba1b4c3357353656b71e82",
+      "ref": "funkin",
       "url": "https://github.com/FunkinCrew/hxcpp"
     },
     {
       "name": "hxcpp-debug-server",
       "type": "git",
       "dir": null,
-      "ref": "7459934666a473a4cc4d066ba4a93ef92f1ce94c",
+      "ref": "master",
       "url": "https://github.com/FunkinCrew/hxcpp-debugger"
+    },
+    {
+      "name": "hxdiscord_rpc",
+      "type": "haxelib",
+      "dir": null,
+      "version": "1.3.0"
     },
     {
       "name": "hxhardware",
@@ -81,12 +67,20 @@
     {
       "name": "hxp",
       "type": "haxelib",
-      "version": null
+      "dir": null,
+      "version": "1.3.1"
     },
     {
       "name": "hxvlc",
       "type": "haxelib",
-      "version": null
+      "dir": null,
+      "version": "2.2.5"
+    },
+    {
+      "name": "hxWindowColorMode",
+      "type": "haxelib",
+      "dir": null,
+      "version": "0.2.1"
     },
     {
       "name": "json2object",
@@ -96,35 +90,55 @@
       "url": "https://github.com/FunkinCrew/json2object"
     },
     {
+      "name": "lime",
+      "type": "haxelib",
+      "dir": null,
+      "version": "8.3.1"
+    },
+    {
       "name": "linc_luajit",
       "type": "git",
       "dir": null,
-      "ref": null,
-      "url": "https://github.com/nebulazorua/linc_luajit.git"
+      "ref": "master",
+      "url": "https://github.com/superpowers04/linc_luajit"
     },
     {
       "name": "lscript",
       "type": "git",
       "dir": null,
-      "ref": "631f29ee29d2b1f8b87af1226a0e33b105d05c96",
-      "url": "https://github.com/SrtHero278/lscript.git"
+      "ref": "main",
+      "url": "https://github.com/SrtHero278/lscript"
     },
     {
       "name": "moonchart",
       "type": "haxelib",
-      "version": null
+      "dir": null,
+      "version": "0.5.1"
     },
     {
       "name": "rulescript",
       "type": "git",
       "dir": null,
-      "ref": "dev",
-      "url": "https://github.com/Kriptel/RuleScript.git"
+      "ref": "master",
+      "url": "https://github.com/Kriptel/RuleScript"
+    },
+    {
+      "name": "thx.core",
+      "type": "haxelib",
+      "dir": null,
+      "version": "0.44.0"
     },
     {
       "name": "thx.semver",
       "type": "haxelib",
-      "version": null
+      "dir": null,
+      "version": "0.2.2"
+    },
+    {
+      "name": "yaml",
+      "type": "haxelib",
+      "dir": null,
+      "version": "2.0.1"
     }
   ]
 }

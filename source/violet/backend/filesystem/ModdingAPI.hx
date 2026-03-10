@@ -7,18 +7,22 @@ import violet.backend.utils.ParseUtil;
 typedef ModContributor = {
 	var name:String;
 	var color:ParseColor;
-	var ?role:String;
+	@:optional var role:String;
 	var icon:String;
-	var ?url:String;
+	@:optional var url:String;
 }
 
 typedef ModMeta = {
-	var ?folder:String;
+	@:optional var folder:String;
 	var id:String;
-	var ?title:String;
-	var ?description:String;
-	var tag:String;
-	var ?contributors:Array<ModContributor>;
+	var title:String;
+	var description:String;
+	var tags:Array<String>; // For mod sorting
+	var contributors:Array<ModContributor>;
+
+	// Not enforced like V-Slice, it is literally only for backwards compatibility.
+	@:optional var api_version:Version;
+
 	var mod_version:Version;
 }
 
@@ -30,6 +34,7 @@ class ModdingAPI {
 	];
 
 	public static var MOD_FOLDER:String = 'mods';
+	public static var API_VERSION:Version = "0.0.0";
 
 	public static var EXT_ALIASES:Map<String, Array<String>> = [
 		'lua' => ['lua', 'luac', 'luas'],
@@ -77,7 +82,7 @@ class ModdingAPI {
 		for (meta in availableMods)
 			if (meta.id == id)
 				return meta;
-		return {id: "null", folder: null, mod_version: "0.0.0", tag: "null"};
+		return {id: "null", title: "Unknown Mod", description: "You don't have any mod metadata!", folder: null, mod_version: "0.0.0", api_version: API_VERSION, tags: []};
 	}
 
 	public static function enableMod(id:String) {
