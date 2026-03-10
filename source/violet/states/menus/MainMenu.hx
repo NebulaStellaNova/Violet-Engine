@@ -61,6 +61,8 @@ class MainMenu extends StateBackend {
 
 	public var canSelect:Bool = true;
 
+	public var substateTrans:Bool = true;
+
 	public var menuAlignment:String = "left";
 	public var watermarkAlignment:String = "right";
 
@@ -192,6 +194,11 @@ class MainMenu extends StateBackend {
 		if (canSelect) {
 			leftWatermark.y = FlxG.height - leftWatermark.getHeight() - 5;
 		}
+
+		if (FlxG.keys.justPressed.SEVEN) {
+			substateTrans = false;
+			openSubState(new violet.states.debug.EditorPickerMenu());
+		}
 	}
 
 	public function changeSelection(amt:Int) {
@@ -270,6 +277,10 @@ class MainMenu extends StateBackend {
 
 	override function closeSubState() {
 		super.closeSubState();
+		if (!substateTrans) {
+			substateTrans = true;
+			return;
+		}
 		for (i in menuItems) {
 			FlxTween.tween(i, { x: i.x + FlxG.width }, 0.5, { ease: FlxEase.smootherStepOut, onComplete: (_)-> canSelect = true });
 		}
