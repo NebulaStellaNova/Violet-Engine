@@ -173,10 +173,10 @@ class PlayState extends violet.backend.StateBackend {
 				char.alpha = 0.5;
 				char.stagePosition = data.charStagePosition;
 				if (data.charStagePosition == "boyfriend" && iconPlayer == null) {
-					iconPlayer = new HealthIcon(char._data.healthIcon);
+					iconPlayer = new HealthIcon({ id: "face" }/* char._data.healthIcon */);
 					iconPlayer.flipX = !iconPlayer.flipX;
 				} else if (data.charStagePosition == "dad" && iconOpponent == null) {
-					iconOpponent = new HealthIcon(char._data.healthIcon);
+					iconOpponent = new HealthIcon({ id: "face" }/* char._data.healthIcon */);
 				}
 				strumLine.characters.push(char);
 				characters.push(char);
@@ -271,16 +271,16 @@ class PlayState extends violet.backend.StateBackend {
 		healthBar.y = /* isDownscroll ? FlxG.height * 0.1 :  */FlxG.height * 0.9;
 		healthBar.screenCenter(X);
 		healthBar.camera = camHUD;
-		if (strumLines.members[0].characters[0]._data.healthIcon.color != null) {
+		/* if (strumLines.members[0].characters[0]._data.healthIcon.color != null) {
 			healthBar.leftColor = strumLines.members[0].characters[0]._data.healthIcon.color;
-		} else {
+		} else { */
 			healthBar.leftColor = FlxColor.RED;
-		}
-		if (strumLines.members[1].characters[0]._data.healthIcon.color != null) {
+		// }
+		/* if (strumLines.members[1].characters[0]._data.healthIcon.color != null) {
 			healthBar.rightColor = strumLines.members[1].characters[0]._data.healthIcon.color;
-		} else {
+		} else { */
 			healthBar.rightColor = FlxColor.LIME;
-		}
+		// }
 		add(healthBar);
 
 		scoreTxt = new ScoreTxt();
