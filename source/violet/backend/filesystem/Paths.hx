@@ -62,6 +62,13 @@ class Paths {
 	inline public static function font(path:String, directory:String = '', ?ext:String = 'ttf'):String
 		return file(path, directory == 'root' ? 'root' : [directory, 'fonts'].join('/'), ext);
 
+	inline public static function xml(path:String, directory:String = '', ?ext:String = 'xml'):String
+		return file(path, directory == 'root' ? 'root' : [directory].join('/'), ext);
+
+	inline public static function ui(path:String, directory:String = ''):String {
+		return xml('data/ui/$path', directory);
+	}
+
 	inline public static function image(path:String, directory:String = '', ?ext:String = 'png'):String
 		return file(path, directory == 'root' ? 'root' : [directory, 'images'].join('/'), ext);
 

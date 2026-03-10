@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menubar id="menubar" width="100%" height="5%">
+    <style>
+        .menu {
+        // The width of the individual menu items
+        width: 120px;
+        }
+    </style>
+
+    <menu text="File" width="300">
+        <menu-item id="newStage" text="New" shortcutText="Ctrl + N"/>
+        <menu-separator />
+        <menu-item id="saveStage" text="Save" shortcutText="Ctrl + S" />
+        <menu-item id="saveStageAs" text="Save As" shortcutText="Ctrl + Shift + S" />
+        <menu-item id="saveStageForPsych" text="Save For Psych" shortcutText="(Coming Soon)"
+            disabled="true" />
+        <menu-item id="saveStageForCNE" text="Save For Codename Engine" shortcutText="(Coming Soon)"
+            disabled="true" />
+        <menu-separator />
+        <menu-item id="deleteStage" text="Delete Stage" style="color: indianred"/>
+        <menu-separator />
+        <menu-item id="exitToMenu" text="Exit To Menu" shortcutText="Ctrl + Q" />
+    </menu>
+
+    <!-- <menu text="Edit" width="300">
+        <menu-item id="undo" text="Undo" shortcutText="Ctrl + Z"/>
+        <menu-item id="redo" text="Redo" shortcutText="Ctrl + Y"/>
+
+        I couldn't get onClick to work so I'm removing this
+    </menu> -->
+    <!-- <menu text="Windows">
+    <menu-item id="stageDataWindow" text="Stage Data" />
+  </menu> -->
+
+    
+    <menu text="View" width="300">
+        <menu-item id="resetCamera" text="Set Zoom to Stage Zoom" shortcutText="Ctrl + Shift + R" />
+        <menu-separator />
+        <menucheckbox id="showXYLines" text=" Show X and Y lines" />
+        <menu-separator />
+        <menu-item id="viewFromPlayer" text="View Stage From Player" disabled="false" />
+        <menu-item id="viewFromOpponent" text="View Stage From Opponent" disabled="false" />
+        <menu-item id="viewFromSpectator" text="View Stage From Spectator" disabled="false" />
+        <menu-separator />
+        <menucheckbox id="viewPlayerBounds" text=" Show Player Camera Bounds" />
+        <menucheckbox id="viewOpponentBounds" text=" Show Opponent Camera Bounds" />
+        <menucheckbox id="viewSpectatorBounds" text=" Show Spectator Camera Bounds" />
+    </menu>
+
+    <menu text="Audio" width="300">
+        <menu text="Editor Music">
+            <vbox width="100%">
+                <listview id="musicMenu" width="300" height="400" selectedIndex="0">
+
+                </listview>
+            </vbox>
+        </menu>
+        <vbox width="100%" style="padding: 12px;">
+            <menu-separator />
+            <spacer height="10%" />
+            <label id="editorMusicVolume" text="Editor Music - 100%" />
+            <slider id="menubarItemVolumeInstrumental" width="100%" majorTicks="10" minorTicks="5"
+                pos="100" />
+        </vbox>
+    </menu>
+
+    <menu text="Preferences" width="300">
+        <menucheckbox id="precacheStages" text=" Pre-Load Stages" shortcutText="(Reload Required)" tooltip="Disable this if you're experiencing lag.\n\n(REQUIRES YOU RELOAD THE EDITOR)"/>
+        <menucheckbox id="precacheCharacters" text=" Pre-Load Characters" shortcutText="(Reload Required)" tooltip="Disable this if you're experiencing lag.\n\n(REQUIRES YOU RELOAD THE EDITOR)"/>
+    </menu>
+
+    <menu text="Help" width="300">
+        <menu-item id="userGuide" text="User Guide" shortcutText="F1" />
+        <menu-item id="checkForUpdates" text="Check for Updates" shortcutText="(Coming Soon)"
+            disabled="true" />
+        <menu-item id="redownloadEditor" text="Re-Download Editor" shortcutText="(Coming Soon)"
+            disabled="true" />
+    </menu>
+
+    <spacer width="100%" />
+    <label text="" verticalAlign="center" id="menuBarTitle" />
+</menubar>

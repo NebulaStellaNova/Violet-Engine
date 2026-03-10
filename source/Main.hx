@@ -45,11 +45,7 @@ class Main extends openfl.display.Sprite {
 		super();
 		instance = this;
 
-		haxe.ui.Toolkit.init();
-		haxe.ui.Toolkit.theme = 'dark'; // don't be cringe
-		haxe.ui.Toolkit.styleSheet.parse(".body, .label, .link, .textfield, .textarea { font-name: \"Inconsolata\"; font-size: 14px; font-bold: true; }");
-		// Toolkit.theme = 'light'; // embrace cringe
-		haxe.ui.Toolkit.autoScale = false;
+		violet.boot.HaxeUIHelper.init();
 
 		/* FlxG.signals.postStateSwitch.add(()->{
 			@:privateAccess violet.backend.CrashHandler.notificationManager = null;//new haxe.ui.notifications.NotificationManager();

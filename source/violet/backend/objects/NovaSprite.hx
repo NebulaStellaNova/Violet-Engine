@@ -121,6 +121,11 @@ class NovaSprite extends #if ANIMATE_SUPPORT FlxAnimate #else FlxSprite #end {
 		return cast super.makeGraphic(finalWidth, finalHeight, color, unique, key);
 	}
 
+	override function setGraphicSize(width:Float = 0.0, height:Float = 0.0) {
+		super.setGraphicSize(width, height);
+		updateHitbox();
+	}
+
 	public function playAnim(name:String, forced:Bool = false, reversed:Bool = false, frame:Int = 0):Void {
 		if (this.animation.exists(name)) {
 			this.animation.play(name, forced, reversed, frame);

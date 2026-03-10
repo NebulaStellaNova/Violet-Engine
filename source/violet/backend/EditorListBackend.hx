@@ -8,7 +8,7 @@ import violet.backend.objects.Alphabet;
 
 typedef EditorListOption = {
     var title:String;
-    var ?description:String; // TODO: make it work
+    var ?description:String;
     var ?onClick:Void->Void;
     var ?disabled:Bool;
 }
