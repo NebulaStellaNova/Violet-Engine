@@ -41,7 +41,7 @@ class Character extends violet.backend.objects.Bopper {
             NovaUtils.addNotification('Character not found!', 'Could not find character with ID "$id" using default character "bf."', haxe.ui.notifications.NotificationType.Error);
         }
 
-		this.cameraOffsets = this._data.cameraOffsets ?? [0, 0];
+		this.cameraOffsets = this._data.cameraOffsets?.copy() ?? [0, 0];
 
 		if (faceLeft) flipX = !flipX;
 		if (this._data.flipX ?? false) flipX = !flipX;
