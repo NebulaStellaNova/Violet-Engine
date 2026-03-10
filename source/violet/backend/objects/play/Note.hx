@@ -128,6 +128,13 @@ class Note extends NovaSprite {
 		playAnim('note', true); updateHitbox();
 	}
 
+	/* override public function draw() {
+		final prevY:Float = y;
+		y = FlxG.height - y - height;
+		super.draw();
+		y = prevY;
+	} */
+
 	/**
 	 * Filters an array of notes.
 	 * @param notes An array of notes.

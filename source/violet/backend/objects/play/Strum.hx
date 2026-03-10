@@ -81,6 +81,13 @@ class Strum extends NovaSprite {
 		}
 	}
 
+	/* override public function draw() {
+		final prevY:Float = y;
+		y = FlxG.height - y - height;
+		super.draw();
+		y = prevY;
+	} */
+
 	public function playStrumAnim(name:String, reset:Bool = false, forced:Bool = true, reversed:Bool = false, frame:Int = 0):Void {
 		if (this.animation.exists(name)) {
 			playAnim(name, forced, reversed, frame);

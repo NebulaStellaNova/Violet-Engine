@@ -103,4 +103,11 @@ class Sustain extends NovaSprite {
 
 		playAnim(isEnd ? 'end' : 'tail', true); updateHitbox();
 	}
+
+	/* override public function draw() {
+		final prevY:Float = y;
+		y = FlxG.height - y - height;
+		super.draw();
+		y = prevY;
+	} */
 }
