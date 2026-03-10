@@ -435,7 +435,7 @@ class Project extends HXProject {
 	 * @param version The version of the library to add. Optional.
 	 */
 	inline public function addHaxelib(name:String, ?version:LibraryVersion):Void {
-		var addLib:Bool = !FileSystem.exists('./.haxelib');
+		/* var addLib:Bool = !FileSystem.exists('./.haxelib');
 		if (!addLib)
 			if (name != null && version != null)
 				addLib = FileSystem.exists('./.haxelib/$name/$version');
@@ -443,8 +443,8 @@ class Project extends HXProject {
 				addLib = FileSystem.exists('./.haxelib/$name');
 		if (addLib) {
 			info('Added library "$name"${version == null ? '' : ' version "$version"'}.');
-			haxelibs.push(new Haxelib(name, version));
-		}
+		} */
+		haxelibs.push(new Haxelib(name, version));
 	}
 
 	/**
