@@ -27,7 +27,9 @@ class SongRegistry {
                 trace('warning:Could not find meta file for song with ID "$folderName". Skipping registration.');
                 continue;
             }
-            songDatas.set(songID, new json2object.JsonParser<SongData>().fromJson(ParseUtil.removeJsonComments(FileUtil.getFileContent(jsonPath)), jsonPath));
+            var songData:SongData = new json2object.JsonParser<SongData>().fromJson(ParseUtil.removeJsonComments(FileUtil.getFileContent(jsonPath)), jsonPath);
+            songData.difficulties ??= ["EASY", "NORMAL", "HARD"];
+            songDatas.set(songID, songData);
             registerSong(new Song(songID));
         }
     }
