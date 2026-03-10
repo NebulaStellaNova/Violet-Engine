@@ -233,7 +233,7 @@ class Project extends HXProject {
 		if (modSupport.exists()) addAssetPath('./mods', './mods', ['*'], excludeList);
 		/* Path Settings */
 
-		// addHaxeMacro('violet.backend.Macro.init()');
+		addHaxeMacro('violet.backend.Macro.init()');
 
 		/* Libraries */
 		addHaxelib('hxhardware');
