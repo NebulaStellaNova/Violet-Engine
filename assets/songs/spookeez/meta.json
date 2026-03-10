@@ -1,8 +1,16 @@
 {
-	"displayName": "Spookeez",
-	"bpm": 150.0,
+	"opponentModeAllowed": true,
 	"icon": "spooky",
+	"difficulties": [
+		"easy",
+		"normal",
+		"hard"
+	],
 	"color": "#223344",
 	"coopAllowed": true,
-	"opponentModeAllowed": true
+	"stepsPerBeat": 4,
+	"displayName": "Spookeez",
+	"beatsPerMeasure": 4,
+	"needsVoices": true,
+	"bpm": 150
 }
