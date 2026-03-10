@@ -1,8 +1,16 @@
 {
-	"displayName": "Thorns",
-	"bpm": 190.0,
+	"opponentModeAllowed": true,
 	"icon": "spirit",
+	"difficulties": [
+		"easy",
+		"normal",
+		"hard"
+	],
 	"color": "#FF78BF",
 	"coopAllowed": true,
-	"opponentModeAllowed": true
+	"stepsPerBeat": 4,
+	"displayName": "Thorns",
+	"beatsPerMeasure": 4,
+	"needsVoices": true,
+	"bpm": 190
 }
