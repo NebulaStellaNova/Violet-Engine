@@ -1,8 +1,16 @@
 {
-	"displayName": "Philly Nice",
-	"bpm": 175.0,
+	"opponentModeAllowed": true,
 	"icon": "pico",
+	"difficulties": [
+		"easy",
+		"normal",
+		"hard"
+	],
 	"color": "#941653",
 	"coopAllowed": true,
-	"opponentModeAllowed": true
+	"stepsPerBeat": 4,
+	"displayName": "Philly Nice",
+	"beatsPerMeasure": 4,
+	"needsVoices": true,
+	"bpm": 175
 }
