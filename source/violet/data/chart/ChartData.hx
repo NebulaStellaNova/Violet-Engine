@@ -35,13 +35,17 @@ typedef ChartNote = {
 	var time:Float;
 	var id:Int;
 	var type:Int;
-	@:alias('sLen') var length:Float;
+	var sLen:Float;
 }
 
 typedef ChartEvent = {
-	var name:String;
+	var name:Null<String>;
 	var time:Float;
 	var params:Array<Dynamic>;
+	var ran:Bool; // used for playstate
+				  // TODO: make it not use this
+
+	var type:Null<Int>; // DEPRECTATED: please use name.
 }
 
 enum abstract ChartStrumLineType(Int) from Int to Int {

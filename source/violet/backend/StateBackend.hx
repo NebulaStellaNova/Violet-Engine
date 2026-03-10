@@ -4,6 +4,7 @@ import flixel.FlxBasic;
 import violet.backend.audio.Conductor;
 import violet.backend.objects.IsBopper;
 import violet.backend.scripting.events.EventBase;
+import violet.backend.utils.NovaUtils;
 
 #if SCRIPT_SUPPORT
 import violet.backend.scripting.ScriptPack;
@@ -41,6 +42,8 @@ class StateBackend extends flixel.FlxState {
 
 	override public function create() {
 		super.create();
+
+		NovaUtils.NOTIFICATION_MANAGER = null;
 
 		Conductor.init();
 
@@ -96,13 +99,13 @@ class StateBackend extends flixel.FlxState {
 
 	var nextFrame = false;
 
-	var notificationManager = new haxe.ui.notifications.NotificationManager();
+	public var notificationManager = new haxe.ui.notifications.NotificationManager();
 	var errIndex:Int = 0;
 	override public function update(elapsed:Float) {
 		super.update(elapsed);
 
 		if (FlxG.keys.justPressed.TAB)
-			violet.states.PlayState.loadSong('test'/* , 'hard' */);
+			violet.states.PlayState.loadSong('test');
 
 		Conductor.update();
 

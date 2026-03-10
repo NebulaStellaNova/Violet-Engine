@@ -32,6 +32,7 @@
 					"selected": [ 0, -20 ]
 				}
 			},
+			"disabled": true,
 			"state": "source:OnlineMenu",
 			"color": "#5542FF"
 		},
@@ -66,6 +67,7 @@
 				"idle": "basic",
 				"selected": "white"
 			},
+			"disabled": true,
 			"state": "source:OptionsMenu",
 			"color": "#FFFFFF"
 		}

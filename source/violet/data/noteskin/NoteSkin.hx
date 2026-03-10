@@ -9,8 +9,8 @@ class NoteSkin {
 
 	public var fallback(get, never):NoteSkin;
 	function get_fallback():NoteSkin {
-		if (_data == null || _data.fallback == null) return null;
-		return NoteSkinRegistry.getNoteSkinByID(_data.fallback);
+		if (_data == null || getFallbackID() == null) return null;
+		return NoteSkinRegistry.getNoteSkinByID(getFallbackID());
 	}
 
 	public function new(id:String) {
@@ -27,13 +27,29 @@ class NoteSkin {
 	}
 
 	public function getStrumOffsets():Array<Float> {
-		return _data.strums?.offsets ?? [0, 0];
+		final offsets:Array<Float> = _data.offsets ?? [0, 0];
+		final partOffsets:Array<Float> = _data.strums?.offsets ?? [0, 0];
+		return [offsets[0] + partOffsets[0], offsets[1] + partOffsets[1]];
 	}
 	public function getNoteOffsets():Array<Float> {
-		return _data.notes?.offsets ?? [0, 0];
+		final offsets:Array<Float> = _data.offsets ?? [0, 0];
+		final partOffsets:Array<Float> = _data.notes?.offsets ?? [0, 0];
+		return [offsets[0] + partOffsets[0], offsets[1] + partOffsets[1]];
 	}
 	public function getSustainOffsets():Array<Float> {
-		return _data.sustains?.offsets ?? [0, 0];
+		final offsets:Array<Float> = _data.offsets ?? [0, 0];
+		final partOffsets:Array<Float> = _data.sustains?.offsets ?? [0, 0];
+		return [offsets[0] + partOffsets[0], offsets[1] + partOffsets[1]];
+	}
+	public function getSplashOffsets():Array<Float> {
+		final offsets:Array<Float> = _data.offsets ?? [0, 0];
+		final partOffsets:Array<Float> = _data.splashes?.offsets ?? [0, 0];
+		return [offsets[0] + partOffsets[0], offsets[1] + partOffsets[1]];
+	}
+	public function getHoldCoverOffsets():Array<Float> {
+		final offsets:Array<Float> = _data.offsets ?? [0, 0];
+		final partOffsets:Array<Float> = _data.holdcovers?.offsets ?? [0, 0];
+		return [offsets[0] + partOffsets[0], offsets[1] + partOffsets[1]];
 	}
 
 	public function getStrumAssetPath():String {
@@ -66,45 +82,91 @@ class NoteSkin {
 			recursion(fallback._data);
 		return path;
 	}
+	public function getSplashAssetPath():String {
+		var path:String;
+		function recursion(data:NoteSkinData):Bool {
+			path = Paths.image('game/notes/$id/${data.splashes?.assetPath ?? data?.assetPath ?? 'splashes'}');
+			return Paths.fileExists(path, true);
+		}
+		if (!recursion(_data))
+			recursion(fallback._data);
+		return path;
+	}
+	public function getHoldCoverAssetPath():String {
+		var path:String;
+		function recursion(data:NoteSkinData):Bool {
+			path = Paths.image('game/notes/$id/${data.holdcovers?.assetPath ?? data?.assetPath ?? 'holdcovers'}');
+			return Paths.fileExists(path, true);
+		}
+		if (!recursion(_data))
+			recursion(fallback._data);
+		return path;
+	}
 
 	public function getStrumAnimations(id:Int, mania:Int = 4):Array<NoteAnimationData> {
 		if (mania < 1) return [];
 		var anims:Array<NoteAnimationData> = [
 			for (data in _data.strums.animations) {
-				if (data.keyCount != mania) continue;
-				if (data.directionId != (id % mania)) continue;
+				if (data.mania != mania) continue;
+				if (data.id != (id % mania)) continue;
 				data;
 			}
 		];
 		if (anims.length == 0)
 			return getStrumAnimations(id, mania - 1);
-		return anims;
+		return NullChecker.checkAnimations(anims);
 	}
 	public function getNoteAnimations(id:Int, mania:Int = 4):Array<NoteAnimationData> {
 		if (mania < 1) return [];
 		var anims:Array<NoteAnimationData> = [
 			for (data in _data.notes.animations) {
-				if (data.keyCount != mania) continue;
-				if (data.directionId != (id % mania)) continue;
+				if (data.mania != mania) continue;
+				if (data.id != (id % mania)) continue;
 				data;
 			}
 		];
 		if (anims.length == 0)
 			return getNoteAnimations(id, mania - 1);
-		return anims;
+		return NullChecker.checkAnimations(anims);
 	}
 	public function getSustainAnimations(id:Int, mania:Int = 4):Array<NoteAnimationData> {
 		if (mania < 1) return [];
 		var anims:Array<NoteAnimationData> = [
 			for (data in _data.sustains.animations) {
-				if (data.keyCount != mania) continue;
-				if (data.directionId != (id % mania)) continue;
+				if (data.mania != mania) continue;
+				if (data.id != (id % mania)) continue;
 				data;
 			}
 		];
 		if (anims.length == 0)
 			return getSustainAnimations(id, mania - 1);
-		return anims;
+		return NullChecker.checkAnimations(anims);
+	}
+	public function getSplashAnimations(id:Int, mania:Int = 4):Array<NoteAnimationData> {
+		if (mania < 1) return [];
+		var anims:Array<NoteAnimationData> = [
+			for (data in _data.splashes.animations) {
+				if (data.mania != mania) continue;
+				if (data.id != (id % mania)) continue;
+				data;
+			}
+		];
+		if (anims.length == 0)
+			return getSplashAnimations(id, mania - 1);
+		return NullChecker.checkAnimations(anims);
+	}
+	public function getHoldCoverAnimations(id:Int, mania:Int = 4):Array<NoteAnimationData> {
+		if (mania < 1) return [];
+		var anims:Array<NoteAnimationData> = [
+			for (data in _data.holdcovers.animations) {
+				if (data.mania != mania) continue;
+				if (data.id != (id % mania)) continue;
+				data;
+			}
+		];
+		if (anims.length == 0)
+			return getSplashAnimations(id, mania - 1);
+		return NullChecker.checkAnimations(anims);
 	}
 
 }

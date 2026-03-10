@@ -2,7 +2,9 @@ package violet.backend.objects.play;
 
 import flixel.group.FlxGroup;
 import flixel.input.keyboard.FlxKey;
+import flixel.math.FlxMath;
 import flixel.math.FlxPoint;
+import flixel.math.FlxRect;
 import openfl.events.KeyboardEvent;
 import violet.backend.audio.Conductor;
 import violet.data.character.Character;
@@ -35,6 +37,19 @@ class StrumLine extends FlxGroup {
 	public final strums:FlxTypedGroup<Strum>;
 	public final notes:FlxTypedGroup<Note>;
 	public final sustains:FlxTypedGroup<Sustain>;
+
+	public var splashes(get, never):Array<NovaSprite>;
+	function get_splashes() {
+		var value = [];
+		for (i in members) {
+			if (Std.isOfType(i, Strum)) {
+				value = value.concat((cast i).splashes);
+			}
+		}
+		return value;
+	}
+
+	// public var holdCovers(get, never):Array<NovaSprite> = [];
 
 	public static var generalScrollSpeed:Float = 1;
 	public var scrollSpeed:Null<Float>;
@@ -100,7 +115,10 @@ class StrumLine extends FlxGroup {
 		FlxG.stage.addEventListener(KeyboardEvent.KEY_DOWN, _on_press);
 		FlxG.stage.addEventListener(KeyboardEvent.KEY_UP, _on_release);
 
-		if (chartData.vocalsSuffix == null) vocals = Conductor.addAdditionalTrack(new FlxSound());
+		// Rodney make this work thank.
+		/* if (Paths.fileExists(Paths.vocal(PlayState.song, characters[0].id, PlayState.variation)))
+			vocals = Conductor.addAdditionalTrack(FlxG.sound.load(Cache.sound(Paths.vocal(PlayState.song, characters[0].id, PlayState.variation), 'root', null, true), FlxG.sound.defaultMusicGroup));
+		else */ if (chartData.vocalsSuffix == null) vocals = Conductor.addAdditionalTrack(new FlxSound());
 		else vocals = Conductor.addAdditionalTrack(FlxG.sound.load(Cache.sound(Paths.vocal(PlayState.song, chartData.vocalsSuffix, PlayState.variation), 'root', null, true), FlxG.sound.defaultMusicGroup));
 	}
 
@@ -129,7 +147,7 @@ class StrumLine extends FlxGroup {
 	public function generateNotes(?time:Float):Void {
 		for (data in chartData.notes) {
 			if (data.time < time ?? Math.NEGATIVE_INFINITY) continue;
-			notes.add(new Note(this, data.id, data.time, data.length));
+			notes.add(new Note(this, data.id, data.time, data.sLen));
 		}
 	}
 
@@ -229,6 +247,15 @@ class StrumLine extends FlxGroup {
 					sustain.offset.y = -0.5 * (sustain.height - sustain.frameHeight);
 					// centerOrigin
 					sustain.origin.y = sustain.frameHeight * 0.5;
+				}
+
+				sustain.updateHitbox(); // commenting this out somehow changes NOTHING
+
+				if (sustain.wasHit) {
+					// it's working, sorta (I fucking HATE cliprect bro JUST WORK)
+					var t = FlxMath.bound((Conductor.songPosition - (sustain.time + sustain.parentNote.time)) / sustain.height * 0.45 * sustain.__scrollSpeed, 0, 1);
+					var rect = sustain.clipRect == null ? FlxRect.get() : sustain.clipRect;
+					sustain.clipRect = rect.set(0, sustain.frameHeight * t, sustain.frameWidth, sustain.frameHeight * (1 - t));
 				}
 			}
 		});

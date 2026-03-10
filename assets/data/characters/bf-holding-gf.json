@@ -6,7 +6,8 @@
   "singTime": 8.0,
   "renderType": "multisparrow",
   "healthIcon": {
-    "id": "bf"
+    "id": "bf",
+    "offsets": [0, -50]
   },
   "animations": [
     {

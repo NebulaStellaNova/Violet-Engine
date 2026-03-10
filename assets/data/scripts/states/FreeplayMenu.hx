@@ -1,6 +1,7 @@
 
 import violet.data.song.SongRegistry;
 import openfl.filters.GlowFilter;
+import violet.states.PlayState;
 
 var curSelected:Int = 0;
 var canSelect:Bool = true;
@@ -33,7 +34,7 @@ function create() {
     backingImage.setGraphicSize(FlxG.width / 0.8);
     backingImage.updateHitbox();
     backingImage.screenCenter(Y);
-    backingImage.x += 315;
+    backingImage.x = -backingImage.width - 150;
     backingImage.shader = angleMaskShader;
 
     var screenshot = new GenzuSprite(0, 0, Paths.image("menus/freeplay/screenshot-2025-12-27-02-36-39"));
@@ -47,19 +48,20 @@ function create() {
     backingCard.setGraphicSize(FlxG.width / 0.8, FlxG.height / 0.8);
     backingCard.scale.x = backingCard.scale.y;
     backingCard.scale.x = backingCard.scale.y *= 1.1;
-    backingCard.x -= 160;
+    backingCard.x = -backingCard.width;
     backingCard.updateHitbox();
     backingCard.screenCenter(Y);
     backingCard.color = 0xFFFFD863;
-    add(backingCard);
 
     add(backingImage);
+    add(backingCard);
+
+    FlxTween.tween(backingCard, {x: -160}, 0.7, {ease: FlxEase.quintOut});
+    FlxTween.tween(backingImage, {x: 315}, 0.7, {ease: FlxEase.quintOut, startDelay: 0.1});
 
     for (i => song in SongRegistry.songs) {
-
-        trace(song.displayName);
-
         var capsuleGroup = new FlxTypedSpriteGroup(xPos, 0);
+
         capsuleGroup.cameras = [camHUD];
 
         capsule = new GenzuSprite(0, 0, Paths.image("menus/freeplay/capsule/freeplayCapsule"));
@@ -73,52 +75,49 @@ function create() {
         add(capsuleGroup);
         daCapsules.push(capsuleGroup);
 
-
         var textGroup = new FlxTypedSpriteGroup(0, 0);
-
-        // for (i in 0...3) {
-            var txt = new NovaText(0, 0, null, song.displayName, 40);
-            txt.setFont(Paths.font("5by7"));
-            txt.updateHitbox();
-            txt.x += 120;
-            txt.y += 42;
-            txt.color = glowColor;
-            txt.shader = blur;
-            textGroup.add(txt);
-        // }
+        var txt = new NovaText(0, 0, null, song.displayName, 40);
+        txt.setFont(Paths.font("5by7"));
+        txt.updateHitbox();
+        txt.x += 120;
+        txt.y += 42;
+        txt.color = glowColor;
+        txt.shader = blur;
+        textGroup.add(txt);
 
         var txt2 = new NovaText(0, 0, null, song.displayName, 40);
         txt2.setFont(Paths.font("5by7"));
         txt2.updateHitbox();
         txt2.x += 120;
         txt2.y += 42;
-        /* txt2.textField.filters = [
-            new openfl.filters.GlowFilter(glowColor, 1, 5, 5, 210, BitmapFilterQuality.MEDIUM),
-            // new openfl.filters.BlurFilter(5, 5, BitmapFilterQuality.LOW)
-        ]; */
         textGroup.add(txt2);
 
         capsuleGroup.add(textGroup);
     }
 
-    FlxTimer.wait(0.3, ()->{
+    FlxTimer.wait(0, ()->{
         xPos = 315;
     });
 }
 
 function update() {
+    if (Controls.back) exit();
 
-
-    if (controls.back) exit();
-
-    if (controls.uiUp) {
+    if (Controls.uiUp) {
+        NovaUtils.playMenuSFX(NovaUtils.SCROLL);
         curSelected = FlxMath.wrap(curSelected - 1, 0, SongRegistry.songs.length - 1);
     }
 
-    if (controls.uiDown) {
+    if (Controls.uiDown) {
+        NovaUtils.playMenuSFX(NovaUtils.SCROLL);
         curSelected = FlxMath.wrap(curSelected + 1, 0, SongRegistry.songs.length - 1);
     }
 
+    if (Controls.accept) {
+        playSong(SongRegistry.songs[curSelected].id, "normal");
+    }
+
+    // not sure why I did it like this but imn not changing it lmaooo (make this a function later lol)
     for (i in 0...daCapsules.length) {
         var capsule = daCapsules[i].members[0];
         capsule.playAnim(curSelected == i ? "selected" : "idle");
@@ -135,6 +134,10 @@ function update() {
         daCapsules[i].y = lerp(daCapsules[i].y, ((FlxG.height / 2) + 140 * (i - curSelected)) - 140, 0.2);
     }
 
+}
+
+function playSong(?id:String, ?difficulty:String, ?variation:String) {
+    PlayState.loadSong(id, difficulty);
 }
 
 function exit() {

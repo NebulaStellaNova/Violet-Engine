@@ -1,6 +1,5 @@
 package violet.data.noteskin;
 
-import violet.backend.utils.FileUtil;
 import violet.backend.utils.ParseUtil;
 
 class NoteSkinRegistry {
@@ -12,21 +11,22 @@ class NoteSkinRegistry {
         noteSkins = [];
         noteSkinDatas.clear();
 
-        var noteSkinFolder = Paths.readFolder("images/game/notes");
-        for (file in noteSkinFolder) {
-            final jsonPath = Paths.json('images/game/notes/$file/meta');
-            if (!Paths.fileExists(jsonPath, true)) {
+        for (file in Paths.readFolder("data/noteskins")) {
+            final fileName = file.replace(".json", "");
+            final jsonPath = 'data/noteskins/$fileName';
+            if (!Paths.fileExists(Paths.json(jsonPath), true)) {
                 trace('warning:Could not find meta file for note skin with ID $file. Skipping registration.');
                 continue;
             }
-            noteSkinDatas.set(file, new json2object.JsonParser<NoteSkinData>().fromJson(ParseUtil.removeJsonComments(FileUtil.getFileContent(jsonPath))));
-            registerNoteSkin(new NoteSkin(file));
+            noteSkinDatas.set(fileName, ParseUtil.json(jsonPath));
+            registerNoteSkin(new NoteSkin(fileName));
         }
     }
 
     public static function getDefaultNoteSkinData():NoteSkinData {
         return {
             name: 'default',
+            offsets: [0, 0],
             strums: {
                 offsets: [0, 0],
                 assetPath: 'strums',
@@ -40,6 +40,16 @@ class NoteSkinRegistry {
             sustains: {
                 offsets: [0, 0],
                 assetPath: 'sustains',
+                animations: []
+            },
+            splashes: {
+                offsets: [0, 0],
+                assetPath: 'sustains',
+                animations: []
+            },
+            holdcovers: {
+                offsets: [0, 0],
+                assetPath: 'holdcovers',
                 animations: []
             }
         }

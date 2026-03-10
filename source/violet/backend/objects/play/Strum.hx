@@ -19,6 +19,7 @@ class Strum extends NovaSprite {
 			reloadSkin(value);
 		return skin = value;
 	}
+	var skinMeta:NoteSkin;
 
 	/**
 	 * Used to help "glowLength".
@@ -35,6 +36,9 @@ class Strum extends NovaSprite {
 	 */
 	public var willReset:Bool = false;
 
+	public final splashes:Array<NovaSprite> = [];
+	public var holdCover:NovaSprite;
+
 	public function new(parent:StrumLine, id:Int) {
 		super();
 		this.parent = parent;
@@ -50,11 +54,11 @@ class Strum extends NovaSprite {
 		this.anims.clear();
 		animation.destroyAnimations();
 		final skin:String = skin ?? this.skin ?? 'default';
-		final meta:NoteSkin = NoteSkinRegistry.getNoteSkinByID(skin);
-		loadSprite(meta.getStrumAssetPath());
-		for (data in meta.getStrumAnimations(ID, parent.keyCount))
-			addAnimFromJSON(data);
-		var lol:Array<Float> = meta.getStrumOffsets();
+		this.skinMeta = NoteSkinRegistry.getNoteSkinByID(skin);
+		loadSprite(skinMeta.getStrumAssetPath());
+		for (data in skinMeta.getStrumAnimations(ID, parent.keyCount))
+			addAnimFromData(data);
+		var lol:Array<Float> = skinMeta.getStrumOffsets();
 		globalOffset.set(lol[0], lol[1]);
 
 		playAnim(lastAnim, true, wasReversed); updateHitbox();
@@ -67,6 +71,14 @@ class Strum extends NovaSprite {
 		if (willReset && animation?.name != 'static')
 			if (glowLength > 0 ? (lastHit + (Conductor.stepLengthMs * glowLength) < Conductor.songPosition) : (animation.name == null || animation.finished))
 				playStrumAnim(parent.isComputer ? 'static' : 'press');
+
+		if (holdCover == null) return;
+		if (holdCover.exists && holdCover.animation.name != 'end') {
+			holdCover.x = this.x - (holdCover.width/2);
+			holdCover.y = this.y - (holdCover.height/2);
+			holdCover.x += skinMeta.getHoldCoverOffsets()[0];
+			holdCover.y += skinMeta.getHoldCoverOffsets()[1];
+		}
 	}
 
 	public function playStrumAnim(name:String, reset:Bool = false, forced:Bool = true, reversed:Bool = false, frame:Int = 0):Void {
@@ -78,5 +90,60 @@ class Strum extends NovaSprite {
 			if (reset) lastHit = Conductor.songPosition;
 			willReset = reset;
 		}
+	}
+
+	public function spawnSplash():Void {
+		final splash:NovaSprite = new NovaSprite(skinMeta.getSplashAssetPath()); // cast parent.recycle(NovaSprite, () -> return new NovaSprite(skinMeta.getSplashAssetPath()));
+		// if (splash.filePath != skinMeta.getSplashAssetPath())
+		// 	splash.loadSprite(skinMeta.getSplashAssetPath()); // jic
+
+		for (data in skinMeta.getSplashAnimations(ID, parent.keyCount))
+			splash.addAnimFromData(data);
+		// splash.visible = true;
+
+		splash.playAnim(FlxG.random.getObject(splash.animationList), true);
+		splash.centerOffsets();
+		splash.centerOrigin();
+		splash.animation.onFinish.add(name -> {
+			this.splashes.remove(splash);
+			// splash.visible = false;
+			splash.destroy();
+		});
+		splash.x = this.x - (splash.width/2);
+		splash.y = this.y - (splash.height/2);
+		splash.x += skinMeta.getSplashOffsets()[0];
+		splash.y += skinMeta.getSplashOffsets()[1];
+		this.splashes.push(splash);
+		this.parent.add(splash);
+	}
+
+
+	public function spawnHoldCover():Void {
+		if (holdCover != null) {
+			holdCover.playAnim('end', true);
+			holdCover.animation.finish();
+		}
+		final holdCover:NovaSprite = holdCover = new NovaSprite(skinMeta.getHoldCoverAssetPath()); // cast parent.recycle(NovaSprite, () -> return new NovaSprite(skinMeta.getHoldCoverAssetPath()));
+		// if (holdCover.filePath != skinMeta.getHoldCoverAssetPath())
+		// 	holdCover.loadSprite(skinMeta.getHoldCoverAssetPath()); // jic
+
+		for (data in skinMeta.getHoldCoverAnimations(ID, parent.keyCount))
+			holdCover.addAnimFromData(data);
+		// holdCover.visible = true;
+
+		holdCover.playAnim('start', true);
+		holdCover.animation.onFinish.add(name -> {
+			switch (name) {
+				case 'start':
+					holdCover.playAnim('hold', true);
+				case 'end':
+					this.parent.remove(holdCover);
+					// holdCover.visible = false;
+					holdCover.destroy();
+			}
+		});
+		holdCover.centerOffsets();
+		holdCover.centerOrigin();
+		this.parent.add(holdCover);
 	}
 }

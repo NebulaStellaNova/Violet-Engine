@@ -19,43 +19,36 @@ typedef AnimationData = {
 	/**
 	 * The offset to use for the animation.
 	 */
-	@:default([0, 0])
 	var ?offsets:Array<Float>;
 
 	/**
 	 * Whether the animation should loop or not.
 	 */
-	@:default(false)
 	var ?looped:Bool;
 
 	/**
 	 * Whether the animation's sprites should be flipped horizontally.
 	 */
-	@:default(false)
 	var ?flipX:Bool;
 
 	/**
 	 * Whether the animation's sprites should be flipped vertically.
 	 */
-	@:default(false)
 	var ?flipY:Bool;
 
 	/**
 	 * The frame rate of the animation.
 	 */
-	@:default(24)
 	var ?frameRate:Int;
 
 	/**
 	 * If you want this animation to use only certain frames of an animation with a given prefix,
 	 * select them here.
 	 */
-	@:default([])
 	var ?frameIndices:Array<Int>;
 
 	/**
 	 * Used to determine whether when adding via an atlas if it should get the animation via a frame label name.
 	 */
-	@:default(false)
 	var ?byLabel:Bool;
 }

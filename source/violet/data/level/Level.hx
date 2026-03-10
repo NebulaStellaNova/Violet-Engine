@@ -47,7 +47,7 @@ class Level {
      */
     public function isVisible():Bool
     {
-        return _data.visible;
+        return _data.visible ?? true;
     }
 
     // TODO: Background Related Stuff
@@ -57,29 +57,30 @@ class Level {
      */
     public function getDifficulties():Array<String>
     {
-        return _data.difficulties ?? ["easy", "normal", "hard"];
+        if (_data.difficulties == null) return ["easy", "normal", "hard"];
+        return _data.difficulties.copy();
     }
 
     public function buildProps():TypedBopperSpriteGroup<Bopper>
     {
         var group:TypedBopperSpriteGroup<Bopper> = new TypedBopperSpriteGroup<Bopper>();
-        for (i=>propData in _data.props) {
+        for (i=>propData in _data.props ?? []) {
             var propSprite:Bopper = new Bopper(Paths.image(propData.assetPath));
             propSprite.scale.set(propData.scale ?? 1, propData.scale ?? 1);
             propSprite.flipX = propData.flipX ?? false;
             propSprite.alpha = propData.alpha ?? 1;
-            propSprite.antialiasing = propData.isPixel != null ? !propData.isPixel : true;
-            propSprite.danceEvery = propData.danceEvery != null ? propData.danceEvery : 1.0;
+            propSprite.antialiasing = !(propData.isPixel ?? false);
+            propSprite.danceEvery = propData.danceEvery ?? 1;
 
-            for (i in propData.animations) {
-                propSprite.addAnimFromJSON(i);
-            }
+            for (i in NullChecker.checkAnimations(propData.animations))
+                propSprite.addAnimFromData(i);
             propSprite.updateHitbox();
             propSprite.playAnim('idle', true);
 
-            propSprite.x = propData.offsets != null ? propData.offsets[0] : 0;
+            propData.offsets ??= [0, 0];
+            propSprite.x = propData.offsets[0] ?? 0;
             propSprite.x += FlxG.width * 0.25 * i;
-            propSprite.y = propData.offsets != null ? propData.offsets[1] : 0;
+            propSprite.y = propData.offsets[1] ?? 0;
 
             group.add(propSprite);
         }

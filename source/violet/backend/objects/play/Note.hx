@@ -1,7 +1,7 @@
 package violet.backend.objects.play;
 
-import violet.backend.audio.Conductor;
 import flixel.util.FlxSort;
+import violet.backend.audio.Conductor;
 import violet.data.noteskin.NoteSkin;
 import violet.data.noteskin.NoteSkinRegistry;
 
@@ -42,6 +42,7 @@ class Note extends NovaSprite {
 			reloadSkin(value, true);
 		return skin = value;
 	}
+	var skinMeta:NoteSkin;
 
 	/**
 	 * The scroll speed of this note.
@@ -116,11 +117,11 @@ class Note extends NovaSprite {
 		this.anims.clear();
 		animation.destroyAnimations();
 		final skin:String = skin ?? this.skin ?? 'default';
-		final meta:NoteSkin = NoteSkinRegistry.getNoteSkinByID(skin);
-		loadSprite(meta.getNoteAssetPath());
-		for (data in meta.getNoteAnimations(id, parent.keyCount))
-			addAnimFromJSON(data);
-		var lol:Array<Float> = meta.getNoteOffsets();
+		this.skinMeta = NoteSkinRegistry.getNoteSkinByID(skin);
+		loadSprite(skinMeta.getNoteAssetPath());
+		for (data in skinMeta.getNoteAnimations(id, parent.keyCount))
+			addAnimFromData(data);
+		var lol:Array<Float> = skinMeta.getNoteOffsets();
 		globalOffset.set(lol[0], lol[1]);
 		if (effectTail) for (sustain in tail) sustain.reloadSkin(skin);
 

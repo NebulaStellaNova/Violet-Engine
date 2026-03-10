@@ -1,59 +1,57 @@
 package violet.data.chart;
 
+import violet.data.converters.ChartConverters;
 import violet.backend.utils.FileUtil;
 import violet.backend.utils.ParseUtil;
 import violet.data.song.SongRegistry;
 
+typedef ChartCache = {
+	var filePath:String;
+	var eventsPath:String;
+	var fileExt:String;
+}
+
 class ChartRegistry {
 	public static var charts:Array<Chart> = [];
+	public static var chartCache:Map<String, ChartCache> = new Map<String, ChartCache>();
 	public static var chartDatas:Map<String, ChartData> = new Map<String, ChartData>();
 
 	public static function registerCharts() {
 		trace('debug:Registering charts...');
 		charts.resize(0);
 		chartDatas.clear();
+		chartCache.clear();
 		var chartList:Array<String> = [];
 		for (song in SongRegistry.getAllSongs()) {
 			for (diff in song.difficulties) {
+				final yamlPath = Paths.yaml('songs/${song.songName}/charts/$diff');
 				final jsonPath = Paths.json('songs/${song.songName}/charts/$diff');
-				if (!Paths.fileExists(jsonPath, true)) {
-					trace('warning:Could not find chart for song ${song.id} of difficulty $diff.');
+				final eventsYamlPath = Paths.yaml('songs/${song.songName}/events');
+				if (yamlPath != "") {
+					chartCache.set('${song.id}:$diff', { filePath: yamlPath, fileExt: "yaml", eventsPath: eventsYamlPath });
+					trace('debug:Found and registered chart for song with ID "${song.id}" for difficulty "$diff"');
 					continue;
 				}
-				chartDatas.set('${song.id}:$diff', new json2object.JsonParser<ChartData>().fromJson(ParseUtil.removeJsonComments(FileUtil.getFileContent(jsonPath)), jsonPath));
-				registerChart(new Chart(song.id, diff));
-			}
-			/* for (variant in song.variants) {
-				for (diff in song.difficulties) {
-					final jsonPath = Paths.json('songs/${song.songName}/charts/$variant/$diff');
-					if (!Paths.fileExists(jsonPath, true)) {
-						trace('warning:Could not find chart for song ${song.id} ${variant.charAt(0).toUpperCase() + variant.substr(1)} of difficulty $diff.');
-						continue;
-					}
-					chartDatas.set('${song.id}:$diff:$variant', new json2object.JsonParser<ChartData>().fromJson(ParseUtil.removeJsonComments(FileUtil.getFileContent(jsonPath)), jsonPath));
-					registerChart(new Chart(song.id, diff, variant));
+				if (jsonPath != "") {
+					chartCache.set('${song.id}:$diff', { filePath: jsonPath, fileExt: "json", eventsPath: eventsYamlPath });
+					trace('debug:Found and registered chart for song with ID "${song.id}" for difficulty "$diff"');
+					continue;
 				}
-			} */
+
+				trace('warning:Could not find chart for song "${song.id}" for difficulty "$diff"');
+			}
 		}
 	}
 
-	public static function registerChart(chart:Chart) {
-		for (existingChart in charts) {
-			if (existingChart.id == chart.id && existingChart.chartDifficulty == chart.chartDifficulty && existingChart.chartVariant == chart.chartVariant) {
-				trace('warning:Chart is already registered. Skipping duplicate registration.');
-				return;
-			}
-		}
-		trace('debug:Found and registered chart with ID "${chart.id}:${chart.chartDifficulty}${chart.chartVariant == null ? '' : ':${chart.chartVariant}'}"');
-		charts.push(chart);
+	public static function fetchChart(id:String):ChartData {
+		if (chartDatas.exists(id)) return chartDatas.get(id);
+
+		var data = ChartConverters.convertChart(chartCache.get(id));
+		chartDatas.set(id, data);
+		return data;
 	}
 
-	public static function getChart(songID:String, diff:String, ?variant:String):Null<Chart> {
-		for (chart in charts) {
-			if (chart.id == songID && chart.chartDifficulty == diff && chart.chartVariant == variant) {
-				return chart;
-			}
-		}
-		return null;
+	public static function getChart(songID:String, diff:String, ?variant:String):Chart {
+		return new Chart(songID, diff, variant);
 	}
 }

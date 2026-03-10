@@ -1,9 +1,16 @@
 package violet.backend.utils;
 
+import openfl.desktop.NotificationType;
+import haxe.ui.notifications.NotificationType;
+import flixel.FlxCamera;
+import haxe.ui.notifications.Notification;
 import haxe.io.Path;
+import haxe.ui.core.Screen;
 import violet.data.Constants;
 import violet.backend.audio.Conductor;
 import flixel.graphics.frames.FlxAtlasFrames;
+
+import haxe.ui.notifications.NotificationManager;
 
 class NovaUtils {
 
@@ -13,9 +20,27 @@ class NovaUtils {
 
 	public static var CURRENT_MUSIC:String = "";
 
+	public static var NOTIFICATION_MANAGER:NotificationManager;
+	public static var NOTIFICATION_CAMERA:FlxCamera;
+
+	public static function addNotification(title:String, body:String, type:NotificationType = NotificationType.Default, expiryMs:Int = 10000) {
+		var notificationData:haxe.ui.notifications.NotificationData = {title: title, body: body, type: type, expiryMs: expiryMs};
+		if (NOTIFICATION_CAMERA == null) {
+			NOTIFICATION_CAMERA = new FlxCamera();
+			NOTIFICATION_CAMERA.bgColor = FlxColor.TRANSPARENT;
+			FlxG.cameras.add(NOTIFICATION_CAMERA, false);
+		}
+		if (NOTIFICATION_MANAGER == null) {
+			NOTIFICATION_MANAGER = new NotificationManager();
+		}
+		var notification = NOTIFICATION_MANAGER.addNotification(notificationData);
+
+		notification.camera = NOTIFICATION_CAMERA;
+	}
+
 	public static function playMenuMusic():Void {
 		if (CURRENT_MUSIC != Constants.MENU_MUSIC) {
-			playMusic(Constants.MENU_MUSIC);
+			playMusic(Constants.MENU_MUSIC).volume = 0.5;
 		}
 	}
 
@@ -23,7 +48,7 @@ class NovaUtils {
 		FlxG.sound.play(Cache.sound('menu/${['scroll', 'cancel', 'confirm'][which]}'));
 	}
 
-	public static function playMusic(path:String, volume:Float = 1, folder:String = 'music'):Void {
+	public static function playMusic(path:String, volume:Float = 1, folder:String = 'music'):FlxSound {
 		var musicPath:Array<String> = path.split('/');
 		CURRENT_MUSIC = path;
 		if (folder == 'music')
@@ -38,6 +63,7 @@ class NovaUtils {
 		Conductor.initCallbacks();
 		Conductor.initCallbacksSubState();
 		if (metaData != null && metaData.bpm != null && metaData.signature != null) Conductor.setInitialBPM(metaData.bpm, metaData.signature[0], metaData.signature[1]);
+		return FlxG.sound.music;
 	}
 
 	inline public static function getTimerPrecise():Float {

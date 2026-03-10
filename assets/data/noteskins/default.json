@@ -1,5 +1,6 @@
 {
 	"name": "Funkin'",
+	"offsets": [28, -25],
 	"strums": {
 		"offsets": [0, 0],
 		"assetPath": "strums",
@@ -185,6 +186,162 @@
 				"mania": 4,
 				"name": "end",
 				"prefix": "red hold end",
+				"offsets": [0, 0]
+			}
+		]
+	},
+	"holdcovers": {
+		"offsets": [70, 127],
+		"assetPath": "holdcovers",
+		"animations": [
+			{
+				"id": 0,
+				"mania": 4,
+				"name": "start",
+				"prefix": "holdCoverStartPurple",
+				"offsets": [0, 0]
+			},
+			{
+				"id": 0,
+				"mania": 4,
+				"name": "hold",
+				"prefix": "holdCoverPurple",
+				"offsets": [0, 0],
+				"looped": true
+			},
+			{
+				"id": 0,
+				"mania": 4,
+				"name": "end",
+				"prefix": "holdCoverEndPurple",
+				"offsets": [0, 0]
+			},
+			{
+				"id": 1,
+				"mania": 4,
+				"name": "start",
+				"prefix": "holdCoverStartBlue",
+				"offsets": [0, 0]
+			},
+			{
+				"id": 1,
+				"mania": 4,
+				"name": "hold",
+				"prefix": "holdCoverBlue",
+				"offsets": [0, 0],
+				"looped": true
+			},
+			{
+				"id": 1,
+				"mania": 4,
+				"name": "end",
+				"prefix": "holdCoverEndBlue",
+				"offsets": [0, 0]
+			},
+			{
+				"id": 2,
+				"mania": 4,
+				"name": "start",
+				"prefix": "holdCoverStartGreen",
+				"offsets": [0, 0]
+			},
+			{
+				"id": 2,
+				"mania": 4,
+				"name": "hold",
+				"prefix": "holdCoverGreen",
+				"offsets": [0, 0],
+				"looped": true
+			},
+			{
+				"id": 2,
+				"mania": 4,
+				"name": "end",
+				"prefix": "holdCoverEndGreen",
+				"offsets": [0, 0]
+			},
+			{
+				"id": 3,
+				"mania": 4,
+				"name": "start",
+				"prefix": "holdCoverStartRed",
+				"offsets": [0, 0]
+			},
+			{
+				"id": 3,
+				"mania": 4,
+				"name": "hold",
+				"prefix": "holdCoverRed",
+				"offsets": [0, 0],
+				"looped": true
+			},
+			{
+				"id": 3,
+				"mania": 4,
+				"name": "end",
+				"prefix": "holdCoverEndRed",
+				"offsets": [0, 0]
+			}
+		]
+	},
+	"splashes": {
+		"offsets": [75, 75],
+		"assetPath": "splashes",
+		"animations": [
+			{
+				"id": 0,
+				"mania": 4,
+				"name": "1",
+				"prefix": "note impact 1 purple",
+				"offsets": [0, 0]
+			},
+			{
+				"id": 0,
+				"mania": 4,
+				"name": "2",
+				"prefix": "note impact 2 purple",
+				"offsets": [0, 0]
+			},
+			{
+				"id": 1,
+				"mania": 4,
+				"name": "1",
+				"prefix": "note impact 1 blue",
+				"offsets": [0, 0]
+			},
+			{
+				"id": 1,
+				"mania": 4,
+				"name": "2",
+				"prefix": "note impact 2 blue",
+				"offsets": [0, 0]
+			},
+			{
+				"id": 2,
+				"mania": 4,
+				"name": "1",
+				"prefix": "note impact 1 green",
+				"offsets": [0, 0]
+			},
+			{
+				"id": 2,
+				"mania": 4,
+				"name": "2",
+				"prefix": "note impact 2 green",
+				"offsets": [0, 0]
+			},
+			{
+				"id": 3,
+				"mania": 4,
+				"name": "1",
+				"prefix": "note impact 1 red",
+				"offsets": [0, 0]
+			},
+			{
+				"id": 3,
+				"mania": 4,
+				"name": "2",
+				"prefix": "note impact 2 red",
 				"offsets": [0, 0]
 			}
 		]

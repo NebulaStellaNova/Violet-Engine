@@ -1,6 +1,7 @@
 package violet.data.character;
 
 import violet.backend.audio.Conductor;
+import violet.backend.utils.NovaUtils;
 
 class Character extends violet.backend.objects.Bopper {
 
@@ -8,6 +9,10 @@ class Character extends violet.backend.objects.Bopper {
 	public var _data:CharacterData;
 
 	public var idleSuffix:String = null;
+
+	public var stagePosition:String;
+
+	public var cameraOffsets:Array<Float> = [0, 0];
 
 	/**
 	 * Used to help 'singTimer'.
@@ -21,29 +26,35 @@ class Character extends violet.backend.objects.Bopper {
 	public var isSinging:Bool = false;
 
 	/**
-	 *  
-	 *
-	 * Daming - Give me privileges
-	 *
-	 * GENZU - no blackie
-	 *
-	 * Daming - BRO
-	 *
-	 *  
-	*/
+     * # Daming - Give me privileges
+     *
+     * # GENZU - no blackie
+     *
+     * # Daming - BRO
+    */
 	public function new(x:Float = 0, y:Float = 0, id:String = 'bf', faceLeft:Bool = false) {
 		this._data = CharacterRegistry.characterDatas.get(id) ?? CharacterRegistry.characterDatas.get('bf');
 		super(x, y, Paths.image(this._data.assetPath));
 
+		if (CharacterRegistry.characterDatas.get(id) == null) {
+            NovaUtils.addNotification('Character not found!', 'Could not find character with ID "$id" using default character "bf."', haxe.ui.notifications.NotificationType.Error);
+        }
+
+		this.cameraOffsets = this._data.cameraOffsets ?? [0, 0];
+
 		if (faceLeft) flipX = !flipX;
+		if (this._data.flipX ?? false) flipX = !flipX;
 		__baseFlipped = flipX;
 
+		NullChecker.checkAnimations(this._data.animations);
 		for (data in this._data.animations) addFrames(Paths.image(data.assetPath));
 		for (data in this._data.animations) {
-			var _data = Reflect.copy(data);
-			_data.offsets[0] *= -1;
-			_data.offsets[1] *= -1;
-			this.addAnimFromJSON(_data);
+			// were so funny
+			data.offsets[0] *= -1;
+			data.offsets[1] *= -1;
+			this.addAnimFromData(data);
+			data.offsets[0] *= -1;
+			data.offsets[1] *= -1;
 		}
 
 		this.danceEvery = this._data.danceEvery ?? (this.animationList.contains('danceLeft') ? 1 : 2);
@@ -73,7 +84,10 @@ class Character extends violet.backend.objects.Bopper {
 			}
 	}
 
+	public var canDance:Bool = true; // For play animation event;
+
 	override public function dance(force:Bool = false) {
+		if (!canDance) return;
 		final suffix:String = idleSuffix != null ? '-$idleSuffix' : '';
 		if (this.animationList.contains('danceLeft$suffix')) {
 			if (this.animation.name != 'danceLeft$suffix' && this.animation.name != 'danceRight$suffix' && !force) return;

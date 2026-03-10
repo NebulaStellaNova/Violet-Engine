@@ -1,5 +1,6 @@
 package violet.data.level;
 
+import violet.backend.utils.ParseUtil;
 import violet.data.animation.AnimationData;
 
 typedef LevelData = {
@@ -11,40 +12,34 @@ typedef LevelData = {
 	/**
 	 * The graphic for the level, as seen in the scrolling list.
 	 */
-	@:jcustomparse(violet.data.DataParse.stringNotEmpty)
 	var titleAsset:String;
 
 	/**
 	 * The props to display over the colored background.
 	 * In the base game this is usually Boyfriend and the opponent.
 	 */
-	@:default([])
 	var props:Array<LevelPropData>;
 
 	/**
 	 * The difficulties for the level.
 	 */
-	@:default(['easy', 'normal', 'hard'])
 	var ?difficulties:Array<String>;
 
 	/**
 	 * Whether this week is visible in the story menu.
 	 * @default `true`
 	 */
-	@:default(true)
 	var ?visible:Bool;
 
 	/**
 	 * The list of song IDs included in this level.
 	 */
-	@:default(['bopeebo'])
 	var songs:Array<String>;
 
 	/**
 	 * The background for the level behind the props.
 	 */
-	@:default('#F9CF51')
-	var ?background:String;
+	var ?background:ParseColor;
 }
 
 /**
@@ -61,20 +56,17 @@ typedef LevelPropData =
 	 * The scale to render the prop at.
 	 * @default 1.0
 	 */
-	@:default(1.0)
 	var ?scale:Float;
 
 	/**
 	 * The opacity to render the prop at.
 	 * @default 1.0
 	 */
-	@:default(1.0)
 	var ?alpha:Float;
 
 	/**
 	 * If true, the prop is a pixel sprite, and will be rendered without smoothing.
 	 */
-	@:default(false)
 	var ?isPixel:Bool;
 
 	/**
@@ -83,26 +75,22 @@ typedef LevelPropData =
 	 * Supports up to 0.25 precision.
 	 * @default 1.0
 	 */
-	@:default(1.0)
 	var ?danceEvery:Float;
 
 	/**
 	 * The offset on the position to render the prop at.
 	 * @default [0.0, 0.0]
 	 */
-	@:default([0, 0])
 	var ?offsets:Array<Float>;
 
 	/**
 	 * A set of animations to play on the prop.
 	 * If default/empty, the prop will be static.
 	 */
-	@:default([])
 	var ?animations:Array<AnimationData>;
 
 	/**
 	 * Flips the sprite on X axis.
 	 */
-	@:default(false)
 	var ?flipX:Bool;
 }
