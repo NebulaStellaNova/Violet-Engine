@@ -1,11 +1,7 @@
 events: []
 stage: mainStage
-scrollSpeed: 1.6
 strumLines:
-  - characters:
-      - "bf-pixel"
-    type: 0
-    position: dad
+  - keyCount: 4
     notes:
       - type: 0
         sLen: 0
@@ -98,11 +94,11 @@ strumLines:
       - type: 0
         sLen: 0
         time: 26399.998
-        id: 3
+        id: 2
       - type: 0
         sLen: 0
         time: 26399.998
-        id: 2
+        id: 3
       - type: 0
         sLen: 0
         time: 27199.998
@@ -122,11 +118,11 @@ strumLines:
       - type: 0
         sLen: 0
         time: 27999.998
-        id: 3
+        id: 1
       - type: 0
         sLen: 0
         time: 27999.998
-        id: 1
+        id: 3
       - type: 0
         sLen: 0
         time: 28199.998
@@ -138,11 +134,11 @@ strumLines:
       - type: 0
         sLen: 0
         time: 28399.998
-        id: 3
+        id: 1
       - type: 0
         sLen: 0
         time: 28399.998
-        id: 1
+        id: 3
       - type: 0
         sLen: 0
         time: 31999.998
@@ -360,15 +356,15 @@ strumLines:
         time: 47200
         id: 1
       - type: 0
-        sLen: 400
+        sLen: 300
         time: 47600
         id: 1
       - type: 0
-        sLen: 800
+        sLen: 700
         time: 51200
         id: 0
       - type: 0
-        sLen: 800
+        sLen: 700
         time: 51200
         id: 1
       - type: 0
@@ -376,14 +372,14 @@ strumLines:
         time: 52599.9961
         id: 1
       - type: 0
-        sLen: 800
+        sLen: 700
+        time: 52799.9961
+        id: 1
+      - type: 0
+        sLen: 700
         time: 52799.9961
         id: 3
       - type: 0
-        sLen: 800
-        time: 52799.9961
-        id: 1
-      - type: 0
         sLen: 0
         time: 53999.9961
         id: 1
@@ -392,39 +388,39 @@ strumLines:
         time: 53999.9961
         id: 2
       - type: 0
-        sLen: 800
-        time: 54399.9961
-        id: 2
-      - type: 0
-        sLen: 800
+        sLen: 700
         time: 54399.9961
         id: 0
+      - type: 0
+        sLen: 700
+        time: 54399.9961
+        id: 2
       - type: 0
         sLen: 0
         time: 55799.9961
         id: 3
       - type: 0
-        sLen: 800
+        sLen: 700
         time: 55999.9961
         id: 2
       - type: 0
-        sLen: 800
+        sLen: 700
         time: 55999.9961
         id: 3
       - type: 0
         sLen: 0
         time: 57199.9961
-        id: 2
+        id: 1
       - type: 0
         sLen: 0
         time: 57199.9961
-        id: 1
+        id: 2
       - type: 0
         sLen: 700
         time: 59999.9961
         id: 0
       - type: 0
-        sLen: 499.999969
+        sLen: 499.999968999997
         time: 60199.9961
         id: 1
       - type: 0
@@ -432,25 +428,25 @@ strumLines:
         time: 60399.9961
         id: 2
       - type: 0
-        sLen: 0
+        sLen: 100
         time: 60599.9961
         id: 3
       - type: 0
-        sLen: 800
+        sLen: 700
         time: 60799.9961
-        id: 3
+        id: 0
       - type: 0
-        sLen: 800
-        time: 60799.9961
-        id: 2
-      - type: 0
-        sLen: 800
+        sLen: 700
         time: 60799.9961
         id: 1
       - type: 0
-        sLen: 800
+        sLen: 700
         time: 60799.9961
-        id: 0
+        id: 2
+      - type: 0
+        sLen: 700
+        time: 60799.9961
+        id: 3
       - type: 0
         sLen: 0
         time: 63199.9961
@@ -512,7 +508,7 @@ strumLines:
         time: 64399.9961
         id: 0
       - type: 0
-        sLen: 499.999969
+        sLen: 499.999968999997
         time: 64599.9961
         id: 3
       - type: 0
@@ -520,7 +516,7 @@ strumLines:
         time: 65199.9961
         id: 3
       - type: 0
-        sLen: 400
+        sLen: 399.999999999993
         time: 65399.9961
         id: 0
       - type: 0
@@ -556,7 +552,7 @@ strumLines:
         time: 67800
         id: 2
       - type: 0
-        sLen: 449.999969
+        sLen: 449.999968999997
         time: 67850
         id: 0
       - type: 0
@@ -612,7 +608,7 @@ strumLines:
         time: 70800
         id: 3
       - type: 0
-        sLen: 499.999969
+        sLen: 499.999968999997
         time: 71000
         id: 0
       - type: 0
@@ -656,7 +652,7 @@ strumLines:
         time: 74200
         id: 2
       - type: 0
-        sLen: 449.999969
+        sLen: 449.999968999997
         time: 74250
         id: 3
       - type: 0
@@ -968,7 +964,7 @@ strumLines:
         time: 88800
         id: 1
       - type: 0
-        sLen: 3200
+        sLen: 3100
         time: 89600
         id: 0
       - type: 0
@@ -1051,10 +1047,12 @@ strumLines:
         sLen: 300
         time: 98800
         id: 3
-  - characters:
-      - bf
-    type: 1
-    position: boyfriend
+    position: dad
+    characters:
+      - "bf-pixel"
+    type: 0
+    visible: true
+  - keyCount: 4
     notes:
       - type: 0
         sLen: 0
@@ -1147,11 +1145,11 @@ strumLines:
       - type: 0
         sLen: 0
         time: 29599.998
-        id: 3
+        id: 2
       - type: 0
         sLen: 0
         time: 29599.998
-        id: 2
+        id: 3
       - type: 0
         sLen: 0
         time: 30399.998
@@ -1171,11 +1169,11 @@ strumLines:
       - type: 0
         sLen: 0
         time: 31199.998
-        id: 3
+        id: 1
       - type: 0
         sLen: 0
         time: 31199.998
-        id: 1
+        id: 3
       - type: 0
         sLen: 0
         time: 31399.998
@@ -1187,11 +1185,11 @@ strumLines:
       - type: 0
         sLen: 0
         time: 31599.998
-        id: 3
+        id: 1
       - type: 0
         sLen: 0
         time: 31599.998
-        id: 1
+        id: 3
       - type: 0
         sLen: 0
         time: 35200
@@ -1409,7 +1407,7 @@ strumLines:
         time: 50400
         id: 1
       - type: 0
-        sLen: 400
+        sLen: 300
         time: 50800
         id: 1
       - type: 0
@@ -1417,7 +1415,7 @@ strumLines:
         time: 53599.9961
         id: 0
       - type: 0
-        sLen: 499.999969
+        sLen: 499.999968999997
         time: 53799.9961
         id: 1
       - type: 0
@@ -1425,45 +1423,45 @@ strumLines:
         time: 53999.9961
         id: 2
       - type: 0
-        sLen: 0
+        sLen: 100
         time: 54199.9961
         id: 3
       - type: 0
-        sLen: 800
+        sLen: 700
         time: 54399.9961
-        id: 3
+        id: 0
       - type: 0
-        sLen: 800
+        sLen: 700
+        time: 54399.9961
+        id: 1
+      - type: 0
+        sLen: 700
         time: 54399.9961
         id: 2
       - type: 0
-        sLen: 800
+        sLen: 700
         time: 54399.9961
-        id: 1
+        id: 3
       - type: 0
-        sLen: 800
-        time: 54399.9961
-        id: 0
-      - type: 0
-        sLen: 800
-        time: 57599.9961
-        id: 1
-      - type: 0
-        sLen: 800
+        sLen: 700
         time: 57599.9961
         id: 0
+      - type: 0
+        sLen: 700
+        time: 57599.9961
+        id: 1
       - type: 0
         sLen: 0
         time: 58999.9961
         id: 1
       - type: 0
-        sLen: 800
-        time: 59199.9961
-        id: 3
-      - type: 0
-        sLen: 800
+        sLen: 700
         time: 59199.9961
         id: 1
+      - type: 0
+        sLen: 700
+        time: 59199.9961
+        id: 3
       - type: 0
         sLen: 0
         time: 60399.9961
@@ -1473,11 +1471,11 @@ strumLines:
         time: 60399.9961
         id: 2
       - type: 0
-        sLen: 800
+        sLen: 700
         time: 60799.9961
         id: 0
       - type: 0
-        sLen: 800
+        sLen: 700
         time: 60799.9961
         id: 2
       - type: 0
@@ -1485,21 +1483,21 @@ strumLines:
         time: 62199.9961
         id: 3
       - type: 0
-        sLen: 800
+        sLen: 700
         time: 62399.9961
         id: 2
       - type: 0
-        sLen: 800
+        sLen: 700
         time: 62399.9961
         id: 3
       - type: 0
         sLen: 0
         time: 63599.9961
-        id: 2
+        id: 1
       - type: 0
         sLen: 0
         time: 63599.9961
-        id: 1
+        id: 2
       - type: 0
         sLen: 0
         time: 70400
@@ -1513,7 +1511,7 @@ strumLines:
         time: 70800
         id: 0
       - type: 0
-        sLen: 499.999969
+        sLen: 499.999968999997
         time: 71000
         id: 3
       - type: 0
@@ -1557,7 +1555,7 @@ strumLines:
         time: 74200
         id: 2
       - type: 0
-        sLen: 449.999969
+        sLen: 449.999968999997
         time: 74250
         id: 0
       - type: 0
@@ -1853,7 +1851,7 @@ strumLines:
         time: 89466.6641
         id: 0
       - type: 0
-        sLen: 3200
+        sLen: 3100
         time: 92800
         id: 0
       - type: 0
@@ -1893,13 +1891,13 @@ strumLines:
         time: 95600
         id: 3
       - type: 0
-        sLen: 300
-        time: 99200
-        id: 2
-      - type: 0
         sLen: 700
         time: 99200
         id: 0
+      - type: 0
+        sLen: 300
+        time: 99200
+        id: 2
       - type: 0
         sLen: 0
         time: 99600
@@ -1911,49 +1909,55 @@ strumLines:
       - type: 0
         sLen: 300
         time: 100000
-        id: 3
-      - type: 0
-        sLen: 300
-        time: 100000
         id: 1
       - type: 0
         sLen: 300
-        time: 100400
-        id: 2
+        time: 100000
+        id: 3
       - type: 0
         sLen: 300
         time: 100400
         id: 0
       - type: 0
         sLen: 300
-        time: 100800
-        id: 3
+        time: 100400
+        id: 2
       - type: 0
         sLen: 700
         time: 100800
         id: 1
+      - type: 0
+        sLen: 300
+        time: 100800
+        id: 3
       - type: 0
         sLen: 300
         time: 101200
         id: 2
       - type: 0
-        sLen: 300
-        time: 101600
-        id: 3
-      - type: 0
         sLen: 700
         time: 101600
         id: 1
       - type: 0
         sLen: 300
+        time: 101600
+        id: 3
+      - type: 0
+        sLen: 300
         time: 102000
         id: 2
-  - position: girlfriend
+    position: boyfriend
+    characters:
+      - bf
+    type: 1
+    visible: true
+  - keyCount: 4
     notes: []
+    position: girlfriend
+    type: 0
+    visible: false
     characters:
       - gf
-    visible: false
-    type: 0
     strumLinePos: 0.5
-codenameChart: true
+scrollSpeed: 1.6
 noteTypes: []
