@@ -1,6 +1,6 @@
 
-import violet.data.song.SongRegistry;
 import openfl.filters.GlowFilter;
+import violet.data.song.SongRegistry;
 import violet.states.PlayState;
 
 var curSelected:Int = 0;
@@ -114,7 +114,7 @@ function update() {
     }
 
     if (Controls.accept) {
-        playSong(SongRegistry.songs[curSelected].id, "normal");
+        playSong(SongRegistry.songs[curSelected].id, "hard");
     }
 
     // not sure why I did it like this but imn not changing it lmaooo (make this a function later lol)
