@@ -1,14 +1,16 @@
 {
-	"displayName": "Stress",
-	"bpm": 178.0,
+	"opponentModeAllowed": true,
 	"icon": "tankman",
+	"difficulties": [
+		"easy",
+		"normal",
+		"hard"
+	],
 	"color": "#F6B604",
 	"coopAllowed": true,
-	"opponentModeAllowed": true,
-	"variations": ["pico"],
-	"difficulties": [
-		"EASY",
-		"NORMAL",
-		"HARD"
-	]
+	"stepsPerBeat": 4,
+	"displayName": "Stress",
+	"beatsPerMeasure": 4,
+	"needsVoices": true,
+	"bpm": 178
 }
