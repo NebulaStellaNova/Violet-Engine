@@ -1961,3 +1961,4 @@ strumLines:
     strumLinePos: 0.5
 scrollSpeed: 1.6
 noteTypes: []
+codenameChart: true
