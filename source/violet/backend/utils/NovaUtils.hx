@@ -1,5 +1,6 @@
 package violet.backend.utils;
 
+import haxe.ui.components.Label;
 import openfl.desktop.NotificationType;
 import haxe.ui.notifications.NotificationType;
 import flixel.FlxCamera;
@@ -34,6 +35,7 @@ class NovaUtils {
 			NOTIFICATION_MANAGER = new NotificationManager();
 		}
 		var notification = NOTIFICATION_MANAGER.addNotification(notificationData);
+		notification.closeButton.destroy();
 
 		notification.camera = NOTIFICATION_CAMERA;
 	}
