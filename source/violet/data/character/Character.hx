@@ -1,5 +1,6 @@
 package violet.data.character;
 
+import openfl.display.IGraphicsData;
 import violet.backend.audio.Conductor;
 import violet.backend.utils.NovaUtils;
 
@@ -99,4 +100,8 @@ class Character extends violet.backend.objects.Bopper {
 		}
 	}
 
+	override function beatHit(beat:Int) {
+		if (beat % danceEvery == 0 && !isSinging && canDance)
+			dance(true);
+	}
 }

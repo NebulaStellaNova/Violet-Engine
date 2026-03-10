@@ -172,12 +172,12 @@ class PlayState extends violet.backend.StateBackend {
 				var char = new Character(i * 50, 0, charName, i == 1);
 				char.alpha = 0.5;
 				char.stagePosition = data.charStagePosition;
-				if (data.charStagePosition == "boyfriend" && iconPlayer == null) {
-					iconPlayer = new HealthIcon({ id: "face" }/* char._data.healthIcon */);
+				iconPlayer = new HealthIcon({ id: "face" }/* char._data.healthIcon */);
+				iconOpponent = new HealthIcon({ id: "face" }/* char._data.healthIcon */);
+				/* if (data.charStagePosition == "boyfriend" && iconPlayer == null) {
 					iconPlayer.flipX = !iconPlayer.flipX;
 				} else if (data.charStagePosition == "dad" && iconOpponent == null) {
-					iconOpponent = new HealthIcon({ id: "face" }/* char._data.healthIcon */);
-				}
+				} */
 				strumLine.characters.push(char);
 				characters.push(char);
 				// add(char);
@@ -264,6 +264,7 @@ class PlayState extends violet.backend.StateBackend {
 		}
 
 		stage = new Stage(SONG.stage);
+		stage.load(characters);
 		defaultCamZoom = stage._data.zoom;
 		camGame.zoom = defaultCamZoom;
 
@@ -410,8 +411,13 @@ class PlayState extends violet.backend.StateBackend {
 			case "Play Animation":
 				var targetCharacter:Character = strumLines.members[event.params[0]].characters[0];
 				targetCharacter.canDance = false;
+				targetCharacter.isSinging = false;
 				targetCharacter.playAnim(event.params[1], true);
-				targetCharacter.animation.onFinish.addOnce((_)->{ if (event.params[1] == _) targetCharacter.canDance = true; });
+				targetCharacter.animation.onFinish.addOnce((_)->{
+					if (_ == event.params[1]) {
+						targetCharacter.canDance = true;
+					}
+				});
 
 		}
 

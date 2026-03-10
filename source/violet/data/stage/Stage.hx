@@ -1,17 +1,20 @@
 package violet.data.stage;
 
+import flixel.FlxBasic;
+import violet.data.character.Character;
 import violet.backend.utils.NovaUtils;
 import violet.backend.StateBackend;
 import violet.states.PlayState;
 import violet.backend.objects.play.StageProp;
 
-class Stage {
+class Stage extends flixel.group.FlxGroup {
 
     public var id:String;
     public var _data:StageData;
 
     public function new(id:String) {
-        this.id = id;
+        super();
+        this.id = id ?? 'mainStage';
 		this._data = StageRegistry.stageDatas.get(id) ?? StageRegistry.stageDatas.get('mainStage');
         this._data.cameraPosition ??= [0, 0];
 
@@ -21,7 +24,12 @@ class Stage {
 
         FlxG.camera.scroll.x = this._data.cameraPosition[0];
         FlxG.camera.scroll.y = this._data.cameraPosition[1];
+    }
 
+    public function load(characters:Array<Character>) {
+        for (i in members) {
+            remove(i);
+        }
         for (i in this._data.props) {
             i.scroll ??= [1, 1];
             i.scale ??= [1, 1];
@@ -42,10 +50,10 @@ class Stage {
                     prop.scale.set(i.scale[0] ?? 1, i.scale[1] ?? 1);
                     prop.flipX = i.flipX ?? false;
                     prop.flipY = i.flipY ?? false;
-                    FlxG.state.add(prop);
+                    add(prop);
                 case "Character":
                     i.cameraOffsets ??= [0, 0];
-                    for (char in PlayState.instance.characters) {
+                    for (char in characters) {
                         if (positionalArrays.get(i.id).contains(char.stagePosition.toLowerCase())) {
                             if (i.id == "player") char.flipX = !char.flipX;
                             char.x = i.position[0] - (char.width/2);
@@ -55,12 +63,25 @@ class Stage {
                             char.visible = i.visible;
                             char.cameraOffsets[0] += i.cameraOffsets[0];
                             char.cameraOffsets[1] += i.cameraOffsets[1];
-                            FlxG.state.add(char);
+                            add(char);
                         }
                     }
             }
         }
+    }
 
-        // StateBackend.instance :D
+    public function reload(characters:Array<Character>) { load(characters); }
+
+    override function add(basic:FlxBasic):FlxBasic {
+        FlxG.state.add(basic);
+        return super.add(basic);
+    }
+    override function insert(position:Int, object:FlxBasic):FlxBasic {
+        FlxG.state.insert(position, object);
+        return super.insert(position, object);
+    }
+    override function remove(basic:FlxBasic, splice:Bool = false):FlxBasic {
+        FlxG.state.remove(basic, splice);
+        return super.remove(basic, splice);
     }
 }
