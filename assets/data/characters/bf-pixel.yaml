@@ -5,6 +5,7 @@ flipX: true
 singTime: 8
 isPixel: true
 healthIcon: bf-pixel
+offsets: [50, -30]
 death:
   cameraOffsets:
     - 0

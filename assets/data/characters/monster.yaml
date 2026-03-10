@@ -1,6 +1,8 @@
 version: 1.0.0
 name: Monster
 assetPath: characters/Monster_Assets
+offsets: [0, -170]
+cameraOffsets: [0, -100]
 animations:
   - name: idle
     prefix: monster idle

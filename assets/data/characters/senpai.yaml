@@ -4,6 +4,8 @@ assetPath: characters/senpai
 singTime: 8
 isPixel: true
 scale: 6
+offsets: [100, 0]
+cameraOffsets: [100, 300]
 healthIcon: senpai
 animations:
   - name: idle

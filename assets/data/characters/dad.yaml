@@ -2,6 +2,8 @@ version: 1.0.0
 name: Daddy Dearest
 assetPath: characters/daddyDearest
 singTime: 8
+offsets: [0, -75]
+cameraOffsets: [0, 75]
 animations:
   - name: idle
     prefix: idle

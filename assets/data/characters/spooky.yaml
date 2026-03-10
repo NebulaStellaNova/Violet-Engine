@@ -2,6 +2,8 @@ version: 1.0.0
 name: Spooky Kids
 assetPath: characters/SpookyKids
 singTime: 8
+offsets: [0, -230]
+cameraOffsets: [-30, -150]
 startingAnimation: danceRight
 animations:
   - name: danceLeft

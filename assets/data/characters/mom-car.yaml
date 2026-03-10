@@ -3,9 +3,8 @@ name: Mommy Mearest (Car)
 assetPath: characters/momCar
 singTime: 8
 healthIcon: mom
-cameraOffsets:
-  - 0
-  - -100
+offsets: [125, -250]
+cameraOffsets: [0, -70]
 animations:
   - name: idle
     prefix: Mom Idle0

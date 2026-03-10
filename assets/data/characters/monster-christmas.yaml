@@ -2,6 +2,8 @@ version: 1.0.0
 name: Monster (Christmas)
 assetPath: characters/monsterChristmas
 healthIcon: monster
+offsets: [0, -170]
+cameraOffsets: [0, -100]
 animations:
   - name: idle
     prefix: monster idle

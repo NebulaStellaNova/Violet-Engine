@@ -1,6 +1,8 @@
 version: 1.0.0
 name: Mommy and Daddy (Festive)
 assetPath: characters/mom_dad_christmas_assets
+offsets: [0, -100]
+cameraOffsets: [200, 0]
 animations:
   - name: idle
     prefix: Parent Christmas Idle
