@@ -1,15 +1,9 @@
-name: "Boyfriend"
+name: Boyfriend
 version: 1.0.0
 assetPath: characters/BOYFRIEND
 flipX: true
 singTime: 8.0
-healthIcon:
-  id: bf
-  scale: 1.0
-  flipX: false
-  isPixel: false
-  offsets: [-3, -10]
-
+healthIcon: bf
 animations:
 - name: idle
   prefix: BF idle dance

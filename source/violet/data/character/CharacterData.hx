@@ -33,9 +33,9 @@ typedef CharacterData = {
     var ?scale:Float;
 
     /**
-     * Optional data about the health icon for the character.
+     * Fuck the niggas. /ref
      */
-    var ?healthIcon:HealthIconData;
+    var ?healthIcon:String;
 
     /**
      * Optional data about the death animation for the character.
