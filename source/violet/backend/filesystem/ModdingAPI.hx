@@ -82,7 +82,7 @@ class ModdingAPI {
 		for (meta in availableMods)
 			if (meta.id == id)
 				return meta;
-		return {id: "null", title: "Unknown Mod", description: "You don't have any mod metadata!", folder: null, mod_version: "0.0.0", api_version: API_VERSION, tags: []};
+		return {id: "null", title: "Unknown Mod", description: "You don't have any mod metadata!", folder: null, mod_version: "0.0.0", api_version: API_VERSION, tags: [], contributors: []};
 	}
 
 	public static function enableMod(id:String) {
