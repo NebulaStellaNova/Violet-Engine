@@ -1,11 +1,9 @@
 mkdir .haxelib
 haxelib fixrepo
 @REM INSTALL HAXELIB LIBS
-haxelib install lime
-haxelib install openfl
 haxelib install flixel
 haxelib install flixel-addons --skip-dependencies
-haxelib install flixel-animate  --skip-dependencies
+haxelib install flixel-animate --skip-dependencies
 haxelib install haxeui-core
 haxelib install haxeui-flixel --skip-dependencies
 haxelib install hxdiscord_rpc --skip-dependencies
