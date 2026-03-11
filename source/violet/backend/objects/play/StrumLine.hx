@@ -18,6 +18,8 @@ class StrumLine extends FlxGroup {
 
 	public final characters:Array<Character> = [];
 
+	public var downscroll:Bool = false;
+
 	/**
 	 * States whether the strumLine is meant to be managed by the player.
 	 */
@@ -39,13 +41,9 @@ class StrumLine extends FlxGroup {
 	public final sustains:FlxTypedGroup<Sustain>;
 
 	public var splashes(get, never):Array<NovaSprite>;
-	function get_splashes() {
-		var value = [];
-		for (i in members) {
-			if (Std.isOfType(i, Strum)) {
-				value = value.concat((cast i).splashes);
-			}
-		}
+	function get_splashes():Array<NovaSprite> {
+		var value:Array<NovaSprite> = [];
+		for (strum in strums) value = value.concat(strum.splashes);
 		return value;
 	}
 

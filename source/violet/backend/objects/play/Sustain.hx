@@ -104,10 +104,17 @@ class Sustain extends NovaSprite {
 		playAnim(isEnd ? 'end' : 'tail', true); updateHitbox();
 	}
 
-	/* override public function draw() {
-		final prevY:Float = y;
-		y = FlxG.height - y - height;
-		super.draw();
-		y = prevY;
-	} */
+	override public function draw():Void {
+		if (parent.downscroll) {
+			final prevY:Float = y;
+			y = FlxG.height - y - height;
+			// flipping the x too so visuals aren't flipped
+			flipX = !flipX; flipY = !flipY;
+			globalOffset.y *= -1;
+			super.draw();
+			globalOffset.y *= -1;
+			flipX = !flipX; flipY = !flipY;
+			y = prevY;
+		} else super.draw();
+	}
 }

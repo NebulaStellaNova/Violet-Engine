@@ -77,16 +77,21 @@ class Strum extends NovaSprite {
 			holdCover.x = this.x - (holdCover.width/2);
 			holdCover.y = this.y - (holdCover.height/2);
 			holdCover.x += skinMeta.getHoldCoverOffsets()[0];
-			holdCover.y += skinMeta.getHoldCoverOffsets()[1];
+			holdCover.y += skinMeta.getHoldCoverOffsets()[1] * (parent.downscroll ? 0 : 1);
+			if (parent.downscroll) holdCover.y = FlxG.height - holdCover.y - holdCover.height;
 		}
 	}
 
-	/* override public function draw() {
-		final prevY:Float = y;
-		y = FlxG.height - y - height;
-		super.draw();
-		y = prevY;
-	} */
+	override public function draw():Void {
+		if (parent.downscroll) {
+			final prevY:Float = y;
+			y = FlxG.height - y - height;
+			globalOffset.y *= -1;
+			super.draw();
+			globalOffset.y *= -1;
+			y = prevY;
+		} else super.draw();
+	}
 
 	public function playStrumAnim(name:String, reset:Bool = false, forced:Bool = true, reversed:Bool = false, frame:Int = 0):Void {
 		if (this.animation.exists(name)) {
@@ -119,7 +124,8 @@ class Strum extends NovaSprite {
 		splash.x = this.x - (splash.width/2);
 		splash.y = this.y - (splash.height/2);
 		splash.x += skinMeta.getSplashOffsets()[0];
-		splash.y += skinMeta.getSplashOffsets()[1];
+		splash.y += skinMeta.getSplashOffsets()[1] * (parent.downscroll ? 0 : 1);
+		if (parent.downscroll) splash.y = FlxG.height - splash.y - splash.height;
 		this.splashes.push(splash);
 		this.parent.add(splash);
 	}

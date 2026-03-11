@@ -1,12 +1,12 @@
 package;
 
-import violet.data.Constants;
 import flixel.FlxState;
 import flixel.util.FlxStringUtil;
 import lime.app.Application;
 import thx.semver.Version;
 import violet.backend.display.DebugDisplay;
 import violet.backend.utils.ParseUtil;
+import violet.data.Constants;
 
 class Main extends openfl.display.Sprite {
 	/**
@@ -70,12 +70,13 @@ class Main extends openfl.display.Sprite {
 		// write this
 		#end
 
-		@:privateAccess Constants.ENGINE_VERSION = lime.app.Application.current.meta.get('version');
-
-		#if CHECK_FOR_UPDATES
-		@:privateAccess Constants.LATEST_ENGINE_VERSION = lime.app.Application.current.meta.get('version');
-		@:privateAccess Constants.UPDATE_AVAILABLE = false;
-		#end
+		@:privateAccess {
+			Constants.ENGINE_VERSION = lime.app.Application.current.meta.get('version');
+			#if CHECK_FOR_UPDATES
+			Constants.LATEST_ENGINE_VERSION = lime.app.Application.current.meta.get('version');
+			Constants.UPDATE_AVAILABLE = false;
+			#end
+		}
 
 		hxhardware.CPU.init();
 		var startFPS:Int = Application.current.window.displayMode.refreshRate;
