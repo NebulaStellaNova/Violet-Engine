@@ -27,8 +27,7 @@ typedef ModMeta = {
 }
 
 class ModdingAPI {
-	@:unreflective
-	public static var BLACKLISTED_IMPORTS:Array<Class<Dynamic>> = [
+	@:unreflective public static var BLACKLISTED_IMPORTS:Array<Class<Dynamic>> = [
 		sys.io.File,
 		sys.FileSystem
 	];
