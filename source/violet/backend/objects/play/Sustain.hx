@@ -124,4 +124,10 @@ class Sustain extends NovaSprite {
 		if (frames != null) frame = frames.frames[animation.frameIndex];
 		return value;
 	}
+
+	override public function destroy():Void {
+		super.destroy();
+		if (clipRect != null)
+			clipRect.put();
+	}
 }
