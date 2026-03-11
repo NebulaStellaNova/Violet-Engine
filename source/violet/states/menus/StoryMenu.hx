@@ -243,7 +243,7 @@ class StoryMenu extends SubStateBackend {
         curSelected = FlxMath.wrap(curSelected + direction, 0, levelList.length - 1);
         updateTrackList();
         if (playSound)
-		    NovaUtils.playMenuSFX(NovaUtils.SCROLL);
+		    NovaUtils.playMenuSFX(SCROLL);
     }
 
     function changeDifficulty(direction:Int) {
@@ -258,7 +258,7 @@ class StoryMenu extends SubStateBackend {
         if (!canInteract) return;
         canInteract = false;
         isFlashing = true;
-        NovaUtils.playMenuSFX(NovaUtils.CONFIRM);
+        NovaUtils.playMenuSFX(CONFIRM);
         new FlxTimer().start(1.25, (_)->{
             storyCam.fade(0.25, ()->{
                 PlayState.playlist = levelList[curSelected].getSongs();
@@ -283,7 +283,7 @@ class StoryMenu extends SubStateBackend {
 
     function exit() {
         if (!canInteract) return;
-		NovaUtils.playMenuSFX(NovaUtils.CANCEL);
+		NovaUtils.playMenuSFX(CANCEL);
 
         updateAlpha = false;
 		FlxTween.tween(cast(_parentState, MainMenu).bg, {x: 0 }, 0.5*2, { ease: FlxEase.quadInOut, startDelay: 0.4 });

@@ -126,7 +126,7 @@ class EditorListBackend extends violet.backend.SubStateBackend {
 			debugCurSelected = FlxMath.wrap(debugCurSelected + (amt != 0 ? amt : 1), 0, options.length-1);
 		}
         if (debugCurSelected != prevSelected/*  && !event.soundCancelled */) {
-		    NovaUtils.playMenuSFX(NovaUtils.SCROLL);
+		    NovaUtils.playMenuSFX(SCROLL);
 		}
 
         for (i=>item in items) item.alpha = i == debugCurSelected ? 1 : 0.5;

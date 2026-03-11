@@ -180,20 +180,20 @@ class FreeplayMenu extends SubStateBackend {
 			exit();
 
 		if (Controls.uiUp && canSelect) {
-			NovaUtils.playMenuSFX(NovaUtils.SCROLL);
+			NovaUtils.playMenuSFX(SCROLL);
 			changeSelection(-1);
 			changeDiff(0);
 		}
 
 		if (Controls.uiDown && canSelect) {
-			NovaUtils.playMenuSFX(NovaUtils.SCROLL);
+			NovaUtils.playMenuSFX(SCROLL);
 			changeSelection(1);
 			changeDiff(0);
 		}
 
 		if (Controls.uiLeft && canSelect) {
 			changeDiff(-1);
-			NovaUtils.playMenuSFX(NovaUtils.SCROLL);
+			NovaUtils.playMenuSFX(SCROLL);
 
 			selector1.x -= 10;
 			FlxTween.cancelTweensOf(selector1);
@@ -202,7 +202,7 @@ class FreeplayMenu extends SubStateBackend {
 
 		if (Controls.uiRight && canSelect) {
 			changeDiff(1);
-			NovaUtils.playMenuSFX(NovaUtils.SCROLL);
+			NovaUtils.playMenuSFX(SCROLL);
 
 			selector2.x += 10;
 			FlxTween.cancelTweensOf(selector2);
@@ -274,7 +274,7 @@ class FreeplayMenu extends SubStateBackend {
 		var icon:GenzuSprite = cast iconGroup.members[0];
 		icon.playAnim("confirm", true);
 
-		NovaUtils.playMenuSFX(NovaUtils.CONFIRM);
+		NovaUtils.playMenuSFX(CONFIRM);
 		FlxTimer.wait(1, () -> {
 			camHUD.fade(FlxColor.BLACK, 0.5, false, () -> {
 				FlxTimer.wait(0.5, () -> {
@@ -285,11 +285,9 @@ class FreeplayMenu extends SubStateBackend {
 	}
 
 	function exit() {
-		NovaUtils.playMenuSFX(NovaUtils.CANCEL);
+		NovaUtils.playMenuSFX(CANCEL);
 
-		if (canSelect == false)
-			return;
-
+		if (!canSelect) return;
 		canSelect = false;
 
 		FlxTween.cancelTweensOf(ostText);

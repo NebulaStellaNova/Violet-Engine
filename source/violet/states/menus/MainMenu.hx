@@ -212,7 +212,7 @@ class MainMenu extends StateBackend {
 			if (event.cancelled) return;
 		}
 		if (amt != 0 && !event.soundCancelled) {
-		    NovaUtils.playMenuSFX(NovaUtils.SCROLL);
+		    NovaUtils.playMenuSFX(SCROLL);
 		}
 		curSelected = event.selection;
 		for (i => item in menuItems) {
@@ -244,7 +244,7 @@ class MainMenu extends StateBackend {
 	public function pickSelection() {
 		if (!canSelect) return;
 		var event:SelectionEvent = runEvent("pickSelection", new SelectionEvent(curSelected));
-		if (!event.soundCancelled) NovaUtils.playMenuSFX(NovaUtils.CONFIRM);
+		if (!event.soundCancelled) NovaUtils.playMenuSFX(CONFIRM);
 		if (event.cancelled) return;
 
 		canSelect = false;

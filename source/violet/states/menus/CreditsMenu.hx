@@ -148,7 +148,7 @@ class CreditsMenu extends violet.backend.SubStateBackend {
 
 			FlxTween.tween(cast(_parentState, MainMenu).bg, {x: 0 }, 0.5*2, { ease: FlxEase.quadInOut, startDelay: 0.4 });
 
-			NovaUtils.playMenuSFX(NovaUtils.CANCEL);
+			NovaUtils.playMenuSFX(CANCEL);
 			FlxTween.tween(bgOverlay, {alpha: 0}, 2);
 			for (obj in creditObjects.members)
 				FlxTween.tween(obj, {alpha: 0}, 1);

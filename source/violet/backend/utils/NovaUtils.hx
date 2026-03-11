@@ -1,7 +1,6 @@
 package violet.backend.utils;
 
 import haxe.ui.components.Label;
-import openfl.desktop.NotificationType;
 import haxe.ui.notifications.NotificationType;
 import flixel.FlxCamera;
 import haxe.ui.notifications.Notification;
@@ -13,18 +12,20 @@ import flixel.graphics.frames.FlxAtlasFrames;
 
 import haxe.ui.notifications.NotificationManager;
 
-class NovaUtils {
+enum abstract MenuSFX(Int) {
+	var SCROLL;
+	var CANCEL;
+	var CONFIRM;
+}
 
-	public static var SCROLL:Int = 0;
-	public static var CANCEL:Int = 1;
-	public static var CONFIRM:Int = 2;
+class NovaUtils {
 
 	public static var CURRENT_MUSIC:String = "";
 
 	public static var NOTIFICATION_MANAGER:NotificationManager;
 	public static var NOTIFICATION_CAMERA:FlxCamera;
 
-	public static function addNotification(title:String, body:String, type:NotificationType = NotificationType.Default, expiryMs:Int = 10000) {
+	public static function addNotification(title:String, body:String, type:NotificationType = Default, expiryMs:Int = 10000) {
 		var notificationData:haxe.ui.notifications.NotificationData = {title: title, body: body, type: type, expiryMs: expiryMs};
 		if (NOTIFICATION_CAMERA == null) {
 			NOTIFICATION_CAMERA = new FlxCamera();
@@ -46,8 +47,15 @@ class NovaUtils {
 		}
 	}
 
-	public static function playMenuSFX(which:Int):Void {
-		FlxG.sound.play(Cache.sound('menu/${['scroll', 'cancel', 'confirm'][which]}'));
+	public static function playMenuSFX(which:MenuSFX, volume:Float = 1):FlxSound {
+		final bruh = switch (which) {
+			case SCROLL: 'scroll';
+			case CANCEL: 'cancel';
+			case CONFIRM: 'confirm';
+		}
+		final sound = FlxG.sound.play(Cache.sound('menu/$bruh'), volume);
+		sound.persist = true;
+		return sound;
 	}
 
 	public static function playMusic(path:String, volume:Float = 1, folder:String = 'music'):FlxSound {

@@ -227,7 +227,7 @@ class ModMenu extends SubStateBackend {
 	}
 
 	function exit() {
-		NovaUtils.playMenuSFX(NovaUtils.CANCEL);
+		NovaUtils.playMenuSFX(CANCEL);
 
 		FlxTween.tween(modInfoBox, {x: FlxG.width + 200 }, 0.5, { ease: FlxEase.smootherStepIn });
 
