@@ -20,7 +20,7 @@ animations:
       - 0
       - 0
     frameRate: 24
-    prefix: Tankman Idle Dance instance 1
+    prefix: Tankman Idle Dance
     flipX: false
     name: idle
   - flipY: false
@@ -28,7 +28,7 @@ animations:
       - -90
       - -13
     frameRate: 24
-    prefix: Tankman Right Note instance 1
+    prefix: Tankman Right Note
     flipX: false
     name: singLEFT
   - flipY: false
@@ -36,7 +36,7 @@ animations:
       - 63
       - -105
     frameRate: 24
-    prefix: Tankman DOWN note instance 1
+    prefix: Tankman DOWN note
     flipX: false
     name: singDOWN
   - flipY: false
@@ -44,7 +44,7 @@ animations:
       - 0
       - 50
     frameRate: 24
-    prefix: Tankman UP note instance 1
+    prefix: Tankman UP note
     flipX: false
     name: singUP
   - flipY: false
@@ -52,7 +52,7 @@ animations:
       - 68
       - -23
     frameRate: 24
-    prefix: Tankman Note Left instance 1
+    prefix: Tankman Note Left
     flipX: false
     name: singRIGHT
   - flipY: false
@@ -60,7 +60,7 @@ animations:
       - 92
       - -28
     frameRate: 24
-    prefix: PRETTY GOOD tankman instance 1
+    prefix: PRETTY GOOD tankman
     flipX: false
     name: good!
   - flipY: false
@@ -68,7 +68,7 @@ animations:
       - 100
       - 17
     frameRate: 24
-    prefix: TANKMAN UGH instance 1
+    prefix: TANKMAN UGH
     flipX: false
     name: singUP-alt
   - flipY: false

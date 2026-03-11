@@ -9,7 +9,7 @@ cameraOffsets: [100, 300]
 healthIcon: senpai-angry
 animations:
   - name: idle
-    prefix: Angry Senpai Idle instance 1
+    prefix: Angry Senpai Idle
     offsets:
       - 0
       - 0

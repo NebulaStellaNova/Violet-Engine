@@ -54,7 +54,7 @@ props:
   scroll: [0.4, 0.4]
   animations:
     - name: smokeLeft
-      prefix: SmokeBlurLeft instance 1
+      prefix: SmokeBlurLeft
       looped: true
   startingAnimation: smokeLeft
 
@@ -66,7 +66,7 @@ props:
   scroll: [0.4, 0.4]
   animations:
     - name: smokeRight
-      prefix: SmokeRight instance 1
+      prefix: SmokeRight
       looped: true
   startingAnimation: smokeRight
 
@@ -79,7 +79,7 @@ props:
   danceEvery: 1
   animations:
     - name: idle
-      prefix: watchtower gradient color instance 1
+      prefix: watchtower gradient color
   startingAnimation: idle
 
 - name: tankRolling
@@ -132,7 +132,7 @@ props:
   danceEvery: 1
   animations:
     - name: idle
-      prefix: fg tankhead far right instance 1
+      prefix: fg tankhead far right
       looped: false
   startingAnimation: idle
 
@@ -145,7 +145,7 @@ props:
   danceEvery: 1
   animations:
     - name: idle
-      prefix: foreground man 3 instance 1
+      prefix: foreground man 3
       looped: false
   startingAnimation: idle
 
@@ -156,7 +156,7 @@ props:
   scroll: [3.5, 2.5]
   animations:
     - name: idle
-      prefix: fg tankhead 4 instance 1
+      prefix: fg tankhead 4
       looped: false
   startingAnimation: idle
 
@@ -168,7 +168,7 @@ props:
   danceEvery: 1
   animations:
     - name: idle
-      prefix: fg tankman bobbin 3 instance 1
+      prefix: fg tankman bobbin 3
       looped: false
   startingAnimation: idle
 
@@ -180,7 +180,7 @@ props:
   danceEvery: 1
   animations:
     - name: idle
-      prefix: fg tankhead far right instance 1
+      prefix: fg tankhead far right
       looped: false
   startingAnimation: idle
 
@@ -193,6 +193,6 @@ props:
   danceEvery: 1
   animations:
     - name: idle
-      prefix: fg tankhead 5 instance 1
+      prefix: fg tankhead 5
       looped: false
   startingAnimation: idle
