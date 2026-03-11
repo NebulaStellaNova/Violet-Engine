@@ -4,20 +4,20 @@ haxelib fixrepo
 haxelib install lime
 haxelib install openfl
 haxelib install flixel
-haxelib install flixel-addons
-haxelib install flixel-animate
+haxelib install flixel-addons --skip-dependencies
+haxelib install flixel-animate  --skip-dependencies
 haxelib install haxeui-core
-haxelib install haxeui-flixel
-haxelib install hxdiscord_rpc
+haxelib install haxeui-flixel --skip-dependencies
+haxelib install hxdiscord_rpc --skip-dependencies
 haxelib install hxp
-haxelib install hxvlc
+haxelib install hxvlc --skip-dependencies
 haxelib install hxWindowColorMode
 haxelib install moonchart
 haxelib install thx.core
 haxelib install thx.semver
 haxelib install yaml
 @REM INSTALL GIT LIBS
-haxelib git flxrhythmconductor https://github.com/PurSnake/FlxRhythmConductor
+haxelib git flxrhythmconductor https://github.com/PurSnake/FlxRhythmConductor --skip-dependencies
 haxelib git hxcpp https://github.com/FunkinCrew/hxcpp
 haxelib git hxcpp-debug-server https://github.com/FunkinCrew/hxcpp-debugger
 haxelib git hxhardware https://github.com/Vortex2Oblivion/hxhardware
