@@ -69,8 +69,10 @@ class Strum extends NovaSprite {
 		super.update(elapsed);
 
 		if (willReset && animation?.name != 'static')
-			if (glowLength > 0 ? (lastHit + (Conductor.stepLengthMs * glowLength) < Conductor.songPosition) : (animation.name == null || animation.finished))
-				playStrumAnim(parent.isComputer ? 'static' : 'press');
+			if (glowLength > 0 ? (lastHit + (Conductor.stepLengthMs * glowLength) < Conductor.songPosition) : (animation.name == null || animation.finished)) {
+				var targetAnim = parent.isComputer ? 'static' : 'press';
+				if (animation.name != targetAnim) playStrumAnim(targetAnim, true);
+			}
 
 		if (holdCover == null) return;
 		if (holdCover.exists && holdCover.animation.name != 'end') {
