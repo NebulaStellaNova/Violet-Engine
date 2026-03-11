@@ -59,7 +59,7 @@ class Cache {
 
 		if (sound == null) {
 			trace('error:No sound data from path "$audioPath".');
-			return beepWhenNull ? Sound.fromFile('flixel/sounds/beep.ogg') : null;
+			return /* beepWhenNull ? Sound.fromFile('flixel/sounds/beep.ogg') : */ null;
 		}
 		cache.set(audioPath, sound);
 		return sound;

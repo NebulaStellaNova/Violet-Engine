@@ -61,7 +61,11 @@ class ChartConverters {
         if (chartCache.eventsPath != "") {
             final options = new ParserOptions(); options.maps = false;
             final parsedEvents = Yaml.parse(FileUtil.getFileContent(chartCache.eventsPath), options);
-            convertedChart.events = convertedChart.events.concat(parsedEvents.events);
+            convertedChart.events ??= [];
+            for (i in parsedEvents.events ?? []) {
+                convertedChart.events.push(i);
+            }
+            // convertedChart.events = convertedChart.events.concat(parsedEvents.events);
         }
         return convertedChart;
 
