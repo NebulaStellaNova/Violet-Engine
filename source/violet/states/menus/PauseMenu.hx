@@ -7,12 +7,12 @@ import violet.backend.audio.Conductor;
 class PauseMenu extends EditorListBackend {
 
     public var pauseMenuOptions:Array<EditorListOption> = [
-        { title: "Resume", disabled: false },
-        { title: "Restart Song", disabled: false },
-        { title: "Change Difficulty", disabled: true },
-        { title: "Change Options", disabled: true },
-        { title: "Enable Practice Mode", disabled: true },
-        { title: "Exit To Menu", disabled: false }
+        { title: "RESUME", disabled: false },
+        { title: "RESTART SONG", disabled: false },
+        { title: "CHANGE DIFFICULTY", disabled: true },
+        { title: "CHANGE OPTIONS", disabled: true },
+        { title: "ENABLE PRACTICE MODE", disabled: true },
+        { title: "EXIT TO MENU", disabled: false }
     ];
 
     public dynamic function resume() {

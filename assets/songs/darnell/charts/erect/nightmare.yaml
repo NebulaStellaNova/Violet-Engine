@@ -4873,7 +4873,7 @@ strumLines:
         time: 139258.516129032
         id: 3
     characters:
-      - pico
+      - pico-playable
     type: 1
     vocalsSuffix: pico-erect
   - keyCount: 4

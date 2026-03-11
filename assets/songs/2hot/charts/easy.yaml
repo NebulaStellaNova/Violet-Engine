@@ -3190,7 +3190,7 @@ strumLines:
         time: 118351.648351648
         type: 2
     characters:
-      - pico
+      - pico-playable
     type: 1
     visible: true
     strumSpacing: 1

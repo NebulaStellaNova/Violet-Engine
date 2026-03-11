@@ -4165,7 +4165,7 @@ strumLines:
     visible: true
     type: 1
     characters:
-      - pico
+      - pico-playable
     strumPos:
       - 0
       - 50

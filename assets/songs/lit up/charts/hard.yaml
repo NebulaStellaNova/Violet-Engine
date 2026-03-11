@@ -3432,7 +3432,7 @@ strumLines:
     strumLinePos: 0.7
     type: 1
     characters:
-      - pico
+      - pico-playable
   - keyCount: 4
     strumScale: 1
     position: girlfriend

@@ -14,7 +14,7 @@ animations:
     offsets:
       - 0
       - 0
-  - name: singRIGHT
+  - name: singLEFT
     prefix: Pico Note Right0
     offsets:
       - -50
@@ -29,7 +29,7 @@ animations:
     offsets:
       - 21
       - 28
-  - name: singLEFT
+  - name: singRIGHT
     prefix: Pico NOTE LEFT0
     offsets:
       - 84

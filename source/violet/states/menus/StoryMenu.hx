@@ -39,7 +39,7 @@ class StoryMenu extends SubStateBackend {
     var weekBG:FlxSprite;
     var bottomBox:FlxSprite;
 
-    var canInteract:Bool = false;
+    var canInteract:Bool = true;
 
     override public function create() {
         super.create();

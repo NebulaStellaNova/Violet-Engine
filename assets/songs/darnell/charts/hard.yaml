@@ -1650,7 +1650,7 @@ strumLines:
     position: boyfriend
     type: 1
     characters:
-      - pico
+      - pico-playable
     strumLinePos: 0.7
     vocalsSuffix: pico
   - visible: false
