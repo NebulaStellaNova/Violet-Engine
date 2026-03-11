@@ -7,13 +7,13 @@ import violet.backend.utils.ParseUtil;
 typedef ModContributor = {
 	var name:String;
 	var color:ParseColor;
-	@:optional var role:String;
+	var ?role:String;
 	var icon:String;
-	@:optional var url:String;
+	var ?url:String;
 }
 
 typedef ModMeta = {
-	@:optional var folder:String;
+	var ?folder:String;
 	var id:String;
 	var title:String;
 	var description:String;
@@ -21,7 +21,7 @@ typedef ModMeta = {
 	var contributors:Array<ModContributor>;
 
 	// Not enforced like V-Slice, it is literally only for backwards compatibility.
-	@:optional var api_version:Version;
+	var ?api_version:Version;
 
 	var mod_version:Version;
 }

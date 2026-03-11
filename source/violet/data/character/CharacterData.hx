@@ -1,7 +1,7 @@
 package violet.data.character;
 
-import violet.backend.utils.ParseUtil.ParseColor;
 import thx.semver.Version;
+import violet.backend.utils.ParseUtil;
 import violet.data.animation.AnimationData;
 
 /**
@@ -113,8 +113,7 @@ typedef CharacterData = {
      * Various settings for the prop.
      * Only available for texture atlases.
      */
-    /* @:optional
-    var atlasSettings:funkin.data.stage.StageData.TextureAtlasData; */
+    // var ?atlasSettings:funkin.data.stage.StageData.TextureAtlasData;
 };
 
 /**
