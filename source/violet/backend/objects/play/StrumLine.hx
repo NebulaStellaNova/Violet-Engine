@@ -178,15 +178,8 @@ class StrumLine extends FlxGroup {
 		if (isPlayer) {
 			for (i => input in currentInputs)
 				if (input) for (sustain in Note.filterTail(sustains.members, i))
-					if ((sustain.time + sustain.parentNote.time) <= Conductor.songPosition) {
-						sustain.parentStrum.isHolding = true;
+					if ((sustain.time + sustain.parentNote.time) <= Conductor.songPosition)
 						_onSustainHit(sustain);
-
-						if (sustain.isEnd && !isComputer) {
-							// True...
-							sustain.parentStrum.playStrumAnim('press', true);
-						}
-					}
 		}
 
 		super.update(elapsed);
@@ -283,7 +276,6 @@ class StrumLine extends FlxGroup {
 				} else if (backNote.time < frontNote.time)
 					frontNote = backNote;
 			}
-			frontNote.parentStrum.isHolding = false;
 			_onNoteHit(frontNote);
 		} else _onVoidTap(inputId);
 	}

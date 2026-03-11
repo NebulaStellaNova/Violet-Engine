@@ -29,14 +29,12 @@ class Strum extends NovaSprite {
 	 * The amount of time in steps the animation can be forced to last.
 	 * If set to 0 the animation that is played plays out normally.
 	 */
-	public var glowLength:Float = 4;
+	public var glowLength:Float = 1.2;
 
 	/**
 	 * If true after the "glowlength" is reached the animation will go back to "static".
 	 */
 	public var willReset:Bool = false;
-
-	public var isHolding:Bool = false;
 
 	public final splashes:Array<NovaSprite> = [];
 	public var holdCover:NovaSprite;
@@ -70,9 +68,10 @@ class Strum extends NovaSprite {
 	override public function update(elapsed:Float):Void {
 		super.update(elapsed);
 
-		if (willReset && animation?.name != 'static' && (parent.isComputer || !isHolding))
+		if (willReset && animation?.name != 'static')
 			if (glowLength > 0 ? (lastHit + (Conductor.stepLengthMs * glowLength) < Conductor.songPosition) : (animation.name == null || animation.finished)) {
-				if (animation.name != 'static') playStrumAnim('static', true);
+				var targetAnim = parent.isComputer ? 'static' : 'press';
+				if (animation.name != targetAnim) playStrumAnim(targetAnim, true);
 			}
 
 		if (holdCover == null) return;
