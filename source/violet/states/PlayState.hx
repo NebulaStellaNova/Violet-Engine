@@ -25,17 +25,6 @@ import violet.data.stage.Stage;
 import violet.backend.scripting.ScriptPack;
 #end
 
-typedef CountdownAssets = {
-	/**
-	 * Countdown images.
-	 */
-	var images:Array<String>;
-	/**
-	 * Countdown sounds.
-	 */
-	var sounds:Array<String>;
-}
-
 class PlayState extends violet.backend.StateBackend {
 
 	public static var instance:PlayState;
@@ -71,38 +60,15 @@ class PlayState extends violet.backend.StateBackend {
 
 	public var playAsOpponent:Bool = false;
 
+	public var countdownSprites:Array<String> = [null, 'ready', 'set', 'go'];
+	public var countdownSounds:Array<String> = ['introTHREE', 'introTWO', 'introONE', 'introGO'];
+
 	/**
 	 * The amount of beats the countdown lasts for.
 	 */
 	public var countdownLength(default, set):Int = 4;
 	inline function set_countdownLength(value:Int):Int
 		return countdownLength = Std.int(Math.max(value, 1));
-	/**
-	 * This timer that tracks the countdown steps.
-	 */
-	public final countdownTimer:FlxTimer = new FlxTimer();
-	/**
-	 * The assets what will be used in the countdown.
-	 */
-	public var countdownAssets:CountdownAssets;
-	/**
-	 * Sets up the listings for the countdownAssets variable.
-	 * @param root The path to the assets.
-	 * @param parts List of assets to get from root var path.
-	 * @param suffix Adds a suffix to each item of the parts array.
-	 * @return Array<String> ~ The mod paths of the items.
-	 */
-	inline public static function getCountdownAssetList(root:String = 'countdown/funkin', parts:Array<String>, ?suffix:String):Array<String> {
-		return [
-			for (part in parts) {
-				final asset:String = part == null ? null : '${haxe.io.Path.addTrailingSlash(root)}$part${flixel.util.FlxStringUtil.isNullOrEmpty(suffix) ? '' : '-$suffix'}';
-				// attempts to cache the asset, I don't feel like adding a bool to specify this shit
-				if (Paths.fileExists(Paths.image(asset), true)) Cache.image(asset);
-				if (Paths.fileExists(Paths.sound(asset), true)) Cache.sound(asset);
-				asset;
-			}
-		];
-	}
 
 	/**
 	 * States if the countdown has started.
@@ -301,15 +267,10 @@ class PlayState extends violet.backend.StateBackend {
 
 		health = 0.5; // Deal with this being weird before songs starts once countdown works.
 
-		countdownAssets = {
-			images: getCountdownAssetList([null, 'ready', 'set', 'go']),
-			sounds: getCountdownAssetList(['introTHREE', 'introTWO', 'introONE', 'introGO'])
-		}
-
 		callSongScripts('create');
 
-		// startCountdown();
-		startSong();
+		startCountdown();
+		// startSong();
 
 		for (strumLine in strumLines)
 			strumLine.generateNotes(Conductor.songPosition);
@@ -358,42 +319,40 @@ class PlayState extends violet.backend.StateBackend {
 		}
 	}
 
-	function startCountdown(?saidAssets:CountdownAssets):Void {
-		saidAssets ??= countdownAssets;
-		final assets:CountdownAssets = {
-			images: saidAssets.images.copy(),
-			sounds: saidAssets.sounds.copy()
+	var countdownTick = 0;
+
+	function startCountdown():Void {
+		tickCountdown();
+	}
+
+	function tickCountdown() {
+		if (countdownTick == countdownLength) {
+			new FlxTimer().start(Conductor.beatLengthMs / 1000, _ -> startSong());
+			return;
 		}
-		assets.images.reverse();
-		assets.sounds.reverse();
-
-		countdownStarted = true;
-		if (countdownLength >= 1) {
-			countdownTimer.start(Conductor.beatLengthMs / 1000, timer -> {
-				if (!songStarted)
-					startSong(countdownLength);
-
-				final assetIndex:Int = timer.loopsLeft - 1;
-
-				final soundAsset:String = assets.sounds[assetIndex];
-				if (Paths.fileExists(Paths.sound(soundAsset), true))
-					FlxG.sound.play(Cache.sound(soundAsset));
-
-				final imageAsset:String = assets.images[assetIndex];
-				if (Paths.fileExists(Paths.image(imageAsset), true)) {
-					final sprite:NovaSprite = new NovaSprite(imageAsset);
-					sprite.cameras = [camHUD];
-					sprite.screenCenter();
-					add(sprite);
-
-					FlxTween.tween(sprite, {alpha: 0}, Conductor.beatLengthMs / 1.2 / 1000, {
-						ease: FlxEase.cubeInOut,
-						onComplete: tween ->
-							sprite.destroy()
-					});
-				}
-			}, countdownLength + 1);
-		}
+		new FlxTimer().start(Conductor.beatLengthMs / 1000, _ -> {
+			if (countdownSounds[countdownTick] != null) FlxG.sound.play(Paths.sound('game/countdown/funkin/${countdownSounds[countdownTick]}'));
+			if (countdownSprites[countdownTick] != null) {
+				var countdownSprite:NovaSprite = new NovaSprite(Paths.image('game/countdown/funkin/${countdownSprites[countdownTick]}'));
+				countdownSprite.camera = camHUD;
+				countdownSprite.scale.set(0.8, 0.8);
+				countdownSprite.updateHitbox();
+				countdownSprite.screenCenter();
+				countdownSprite.alpha = 0;
+				add(countdownSprite);
+				var ms = Conductor.beatLengthMs / 1000;
+				FlxTween.tween(countdownSprite, { alpha: 1 }, ms/4);
+				FlxTween.tween(countdownSprite, { alpha: 0 }, ms/4, { startDelay: (ms/4)*3 });
+				FlxTween.tween(countdownSprite, { y: countdownSprite.y + 200 }, ms, { ease: FlxEase.backIn, onComplete: (_)->{
+					remove(countdownSprite);
+					countdownSprite.destroy();
+				}});
+			}
+			countdownTick++;
+			tickCountdown();
+			beatHit(0-countdownTick);
+		});
+		//
 	}
 
 
