@@ -52,10 +52,6 @@ class Project extends HXProject {
 	 */
 	static final sourceCodeDirectories:Array<String> = ['./source'];
 	/**
-	 * Just put the fucking libs that refuse to load here.
-	 */
-	static final extraLibraries:Array<String> = ['thx.semver'/* , 'rulescript' */];
-	/**
 	 * The class path to the preloader class.
 	 */
 	static final preloaderClassPath:String = 'flixel.system.FlxPreloader';
@@ -146,10 +142,7 @@ class Project extends HXProject {
 			return;
 		}
 
-		for (i in extraLibraries)
-			haxelibs.push(new Haxelib(i));
-
-		// if (FileSystem.exists('./.haxelib'))
+		if (FileSystem.exists('./.haxelib'))
 			setenv('HAXEPATH', './.haxelib');
 
 		for (i in [8, 16, 32, 64, 128, 256, 512])
@@ -236,7 +229,7 @@ class Project extends HXProject {
 		addHaxeMacro('violet.backend.Macro.init()');
 
 		/* Libraries */
-		addHaxelib('hxhardware');
+		addHaxelib('hxhardware', 'git');
 		// required for flixel, don't put below flixel, causes weird issues
 		addHaxelib('openfl');
 		addHaxelib('lime');
@@ -252,24 +245,24 @@ class Project extends HXProject {
 			addHaxelib('flixel-animate');
 
 		// json parsing
-		addHaxelib('json2object');
-		addHaxelib('flxrhythmconductor');
+		addHaxelib('json2object', 'git');
+		addHaxelib('flxrhythmconductor', 'git');
 		addHaxelib('yaml');
 
 		// debugging
 		// if (isDesktop() && isDebug())
-		// 	addHaxelib('hxcpp-debug-server');
+		// 	addHaxelib('hxcpp-debug-server', 'git');
 
 		// chart converter
 		addHaxelib('moonchart');
 
-		addHaxelib('linc_luajit');
-		if (canHaxeScript.exists()) addHaxelib('rulescript');
-		if (canLuaScript.exists()) addHaxelib('lscript');
+		addHaxelib('linc_luajit', 'git');
+		if (canHaxeScript.exists()) addHaxelib('rulescript', 'git');
+		if (canLuaScript.exists()) addHaxelib('lscript', 'git');
 
 		if (discordRPC.exists()) addHaxelib('hxdiscord_rpc');
 		if (allowVideos.exists()) addHaxelib('hxvlc');
-		// addHaxelib('thx.semver');
+		addHaxelib('thx.semver');
 
 		// if (editWindowBorderColor.exists())
 			// addHaxelib('hxWindowColorMode');
@@ -437,10 +430,8 @@ class Project extends HXProject {
 	inline public function addHaxelib(name:String, ?version:LibraryVersion):Void {
 		var addLib:Bool = !FileSystem.exists('./.haxelib');
 		if (!addLib)
-			if (name != null && version != null)
-				addLib = FileSystem.exists('./.haxelib/$name/$version');
-			else if (name != null && version == null)
-				addLib = FileSystem.exists('./.haxelib/$name');
+			if (version != null) addLib = FileSystem.exists('./.haxelib/${name.replace('.', ',')}/$version');
+			else addLib = FileSystem.exists('./.haxelib/${name.replace('.', ',')}');
 		if (addLib) {
 			info('Added library "$name"${version == null ? '' : ' version "$version"'}.');
 			haxelibs.push(new Haxelib(name, version));
