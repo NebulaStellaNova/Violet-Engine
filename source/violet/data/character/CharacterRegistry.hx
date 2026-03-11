@@ -10,6 +10,7 @@ class CharacterRegistry {
 	public static var characterDatas:Map<String, CharacterData> = new Map<String, CharacterData>();
 
 	public static function registerCharacters() {
+        trace('debug:<yellow>Registering characters...');
 		characterDatas.clear();
 
 		for (file in Paths.readFolder("data/characters")) {
@@ -17,11 +18,11 @@ class CharacterRegistry {
 			final filePath:String = 'data/characters/$charID';
 
 			var characterData:CharacterData = null;
-			if (Assets.exists(Paths.yaml(filePath))) characterData = ParseUtil.yaml(filePath);
-			else if (Assets.exists(Paths.json(filePath))) characterData = ParseUtil.json(filePath);
+			if (Paths.yaml(filePath) != "") characterData = ParseUtil.yaml(filePath);
+			else if (Paths.json(filePath) != "") characterData = ParseUtil.json(filePath);
 			if (characterData != null) {
 				characterDatas.set(charID, characterData);
-				trace('debug:Found and registered character with ID "${charID}"');
+				trace('debug:<cyan>Found and registered character with ID "<magenta>${charID}<cyan>"');
 			}
 		}
 	}

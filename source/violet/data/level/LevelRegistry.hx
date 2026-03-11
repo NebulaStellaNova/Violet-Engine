@@ -7,7 +7,7 @@ class LevelRegistry {
     public static var levelDatas:Map<String, LevelData> = new Map<String, LevelData>();
 
     public static function registerLevels() {
-        trace("debug:Registering levels...");
+        trace('debug:<yellow>Registering levels...');
         levels = [];
         levelDatas.clear();
         var levelFiles = Paths.readFolder("data/levels");
@@ -36,7 +36,7 @@ class LevelRegistry {
                 return;
             }
         }
-        trace('debug:Found and registered level with ID "${newLevel.id}"');
+        trace('debug:<cyan>Found and registered level with ID "<magenta>${newLevel.id}<cyan>"');
         // Preload title graphic
         newLevel.buildTitleGraphic().destroy();
         newLevel.buildProps().destroy();

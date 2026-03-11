@@ -74,13 +74,14 @@ class Logs {
 	public static function init() {
 		nativeTrace = Log.trace;
 		Log.trace = traceCallback;
-
+		Sys.println("\n-----------------------------------------------------------------------------");
 		trace(  "error:Error Message           (tag = 'error:'  )");
 		trace("warning:Warning Message         (tag = 'warning:')");
 		trace(    "sys:System Message          (tag = 'sys:'    )");
 		trace( "system:System Message (alt)    (tag = 'system:' )");
 		trace(  "debug:Debug Message           (tag = 'debug:'  )");
 		trace(    "log:Log Message (default)   (tag = 'log:'    )");
+		Sys.println(  "-----------------------------------------------------------------------------\n");
 	}
 
 	public static function log(value:Dynamic, type:LogType = LogMessage, ?infos:PosInfos) {
@@ -110,6 +111,8 @@ class Logs {
 			string = string.replace("#" + field, Reflect.getProperty(ConsoleColors, field));
 			string = string.replace("$" + field.toLowerCase(), Reflect.getProperty(ConsoleColors, field));
 			string = string.replace("$" + field, Reflect.getProperty(ConsoleColors, field));
+			string = string.replace('<$field>', Reflect.getProperty(ConsoleColors, field));
+			string = string.replace('<${field.toLowerCase()}>', Reflect.getProperty(ConsoleColors, field));
 		}
 		return string;
 	}

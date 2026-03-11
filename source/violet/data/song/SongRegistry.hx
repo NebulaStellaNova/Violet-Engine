@@ -12,7 +12,7 @@ class SongRegistry {
     public static var songDatas:Map<String, SongData> = new Map<String, SongData>();
 
     public static function registerSongs() {
-        trace("debug:Registering songs...");
+        trace('debug:<yellow>Registering songs...');
         // Implementation for registering songs goes here
         songs = [];
         songDatas.clear();
@@ -41,7 +41,7 @@ class SongRegistry {
                 return;
             }
         }
-        trace('debug:Found and registered song with ID "${song.id}"');
+        trace('debug:<cyan>Found and registered song with ID "<magenta>${song.id}<cyan>"');
         songs.push(song);
     }
 

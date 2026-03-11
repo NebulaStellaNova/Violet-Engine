@@ -17,7 +17,7 @@ class ChartRegistry {
 	public static var chartDatas:Map<String, ChartData> = new Map<String, ChartData>();
 
 	public static function registerCharts() {
-		trace('debug:Registering charts...');
+        trace('debug:<yellow>Registering charts...');
 		charts.resize(0);
 		chartDatas.clear();
 		chartCache.clear();
@@ -29,16 +29,16 @@ class ChartRegistry {
 				final eventsYamlPath = Paths.yaml('songs/${song.songName}/events');
 				if (yamlPath != "") {
 					chartCache.set('${song.id}:$diff', { filePath: yamlPath, fileExt: "yaml", eventsPath: eventsYamlPath });
-					trace('debug:Found and registered chart for song with ID "${song.id}" for difficulty "$diff"');
+					trace('debug:<cyan>Found and registered chart for song with ID "<magenta>${song.id}<cyan>" for difficulty "<magenta>$diff<cyan>"');
 					continue;
 				}
 				if (jsonPath != "") {
 					chartCache.set('${song.id}:$diff', { filePath: jsonPath, fileExt: "json", eventsPath: eventsYamlPath });
-					trace('debug:Found and registered chart for song with ID "${song.id}" for difficulty "$diff"');
+					trace('debug:<cyan>Found and registered chart for song with ID "<magenta>${song.id}<cyan>" for difficulty "<magenta>$diff<cyan>"');
 					continue;
 				}
 
-				trace('warning:Could not find chart for song "${song.id}" for difficulty "$diff"');
+				trace('warning:<red>Could not find chart for song "${song.id}" for difficulty "$diff"');
 			}
 		}
 	}

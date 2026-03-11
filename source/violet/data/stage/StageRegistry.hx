@@ -14,6 +14,8 @@ class StageRegistry {
     public static var stageDatas:Map<String, StageData> = new Map<String, StageData>();
 
     public static function registerStages() {
+        trace('debug:<yellow>Registering stages...');
+
         stageDatas.clear();
 
         var stageFiles = Paths.readFolder("data/stages");
@@ -26,7 +28,7 @@ class StageRegistry {
 
             stageDatas.set(stageID, fileData);
 
-            trace('debug:Found and registered stage with ID "${stageID}"');
+            trace('debug:<cyan>Found and registered stage with ID "<magenta>${stageID}<cyan>"');
         }
     }
 }

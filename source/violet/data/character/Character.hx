@@ -34,8 +34,11 @@ class Character extends violet.backend.objects.Bopper {
      * # Daming - BRO
     */
 	public function new(x:Float = 0, y:Float = 0, id:String = 'bf', faceLeft:Bool = false) {
+		this.id = id;
 		this._data = CharacterRegistry.characterDatas.get(id) ?? CharacterRegistry.characterDatas.get('bf');
 		super(x, y, Paths.image(this._data.assetPath));
+
+		this._data.healthIcon ??= this.id;
 
 		if (CharacterRegistry.characterDatas.get(id) == null) {
             NovaUtils.addNotification('Character not found!', 'Could not find character with ID "$id" using default character "bf."', haxe.ui.notifications.NotificationType.Error);

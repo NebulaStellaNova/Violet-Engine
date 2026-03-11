@@ -44,7 +44,7 @@ class ModdingAPI {
 	public static var STATE_PATHS = ['data/scripts/states'];
 
 	public static function init():Void {
-		trace("debug:Initializing Modding System...");
+		trace("debug:<yellow>Initializing Modding System...");
 		FlxG.save.data.registeredModIds ??= [];
 		FlxG.save.data.enabledModIds ??= [];
 		(availableMods = [
@@ -66,7 +66,7 @@ class ModdingAPI {
 				FlxG.save.data.registeredModIds.push(i.id);
 				FlxG.save.data.enabledModIds.push(i.id);
 			}
-			trace('debug:Found mod "${i.title}" with id "${i.id}"');
+			trace('debug:<cyan>Found mod "<magenta>${i.title}<cyan>" with id "<magenta>${i.id}<cyan>"');
 		}
 
 		activeModsIds = FlxG.save.data.enabledModIds;
@@ -103,12 +103,13 @@ class ModdingAPI {
 
 	private static var registered:Bool = false;
 	public static function reloadRegistries():Void {
-		trace('debug:${registered ? "Reloading" : "Initializing"} Registries...');
+		trace('debug:<magenta>${registered ? "Reloading" : "Initializing"} Registries...');
 		registered = true;
 		violet.data.noteskin.NoteSkinRegistry.registerNoteSkins();
 		violet.data.level.LevelRegistry.registerLevels();
 		violet.data.song.SongRegistry.registerSongs();
 		violet.data.stage.StageRegistry.registerStages();
+		violet.data.icon.HealthIconRegistry.registerIcons();
 		violet.data.character.CharacterRegistry.registerCharacters();
 		violet.data.chart.ChartRegistry.registerCharts();
 	}

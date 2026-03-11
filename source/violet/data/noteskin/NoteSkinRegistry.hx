@@ -8,6 +8,7 @@ class NoteSkinRegistry {
     public static var noteSkinDatas:Map<String, NoteSkinData> = new Map<String, NoteSkinData>();
 
     public static function registerNoteSkins() {
+        trace('debug:<yellow>Registering note skins...');
         noteSkins = [];
         noteSkinDatas.clear();
 
@@ -63,7 +64,7 @@ class NoteSkinRegistry {
             }
         }
 
-        trace('debug:Found and registered note skin with ID "${newSkin.id}"');
+        trace('debug:<cyan>Found and registered note skin with ID "<magenta>${newSkin.id}<cyan>"');
 
         noteSkins.push(newSkin);
     }

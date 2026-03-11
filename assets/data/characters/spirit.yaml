@@ -4,6 +4,7 @@ assetPath: characters/spirit
 singTime: 8
 isPixel: true
 scale: 6
+healthIcon: spirit
 animations:
   - name: idle
     prefix: idle spirit_

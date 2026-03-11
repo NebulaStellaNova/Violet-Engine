@@ -5,7 +5,7 @@ import flixel.group.FlxGroup;
 import flixel.math.FlxMath;
 import violet.backend.audio.Conductor;
 import violet.backend.objects.play.HealthBar;
-import violet.backend.objects.play.HealthIcon;
+import violet.data.icon.HealthIcon;
 import violet.backend.objects.play.Note;
 import violet.backend.objects.play.ScoreTxt;
 import violet.backend.objects.play.StrumLine;
@@ -172,12 +172,12 @@ class PlayState extends violet.backend.StateBackend {
 				var char = new Character(i * 50, 0, charName, i == 1);
 				char.alpha = 0.5;
 				char.stagePosition = data.charStagePosition;
-				iconPlayer = new HealthIcon({ id: "face" }/* char._data.healthIcon */);
-				iconOpponent = new HealthIcon({ id: "face" }/* char._data.healthIcon */);
-				/* if (data.charStagePosition == "boyfriend" && iconPlayer == null) {
+				if (data.charStagePosition == "boyfriend" && iconPlayer == null) {
+					iconPlayer = new HealthIcon(char._data.healthIcon);
 					iconPlayer.flipX = !iconPlayer.flipX;
-				} else if (data.charStagePosition == "dad" && iconOpponent == null) {
-				} */
+				} else if (iconOpponent == null) {
+					iconOpponent = new HealthIcon(char._data.healthIcon);
+				}
 				strumLine.characters.push(char);
 				characters.push(char);
 				// add(char);
@@ -272,16 +272,16 @@ class PlayState extends violet.backend.StateBackend {
 		healthBar.y = /* isDownscroll ? FlxG.height * 0.1 :  */FlxG.height * 0.9;
 		healthBar.screenCenter(X);
 		healthBar.camera = camHUD;
-		/* if (strumLines.members[0].characters[0]._data.healthIcon.color != null) {
-			healthBar.leftColor = strumLines.members[0].characters[0]._data.healthIcon.color;
-		} else { */
+		if (iconOpponent._data.color != null) {
+			healthBar.leftColor = iconOpponent._data.color;
+		} else {
 			healthBar.leftColor = FlxColor.RED;
-		// }
-		/* if (strumLines.members[1].characters[0]._data.healthIcon.color != null) {
-			healthBar.rightColor = strumLines.members[1].characters[0]._data.healthIcon.color;
-		} else { */
+		}
+		if (iconPlayer._data.color != null) {
+			healthBar.rightColor = iconPlayer._data.color;
+		} else {
 			healthBar.rightColor = FlxColor.LIME;
-		// }
+		}
 		add(healthBar);
 
 		scoreTxt = new ScoreTxt();
