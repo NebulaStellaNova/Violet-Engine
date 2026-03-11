@@ -1,5 +1,6 @@
 package;
 
+import violet.backend.options.Options;
 import flixel.FlxState;
 import flixel.util.FlxStringUtil;
 import lime.app.Application;
@@ -77,6 +78,8 @@ class Main extends openfl.display.Sprite {
 			Constants.UPDATE_AVAILABLE = false;
 			#end
 		}
+
+		Options.init();
 
 		hxhardware.CPU.init();
 		var startFPS:Int = Application.current.window.displayMode.refreshRate;
