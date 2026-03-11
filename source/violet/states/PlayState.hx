@@ -407,7 +407,7 @@ class PlayState extends violet.backend.StateBackend {
 			FlxTween.tween(camGame.scroll, {
 				x: targetCharacter.x + targetCharacter.cameraOffsets[0],
 				y: targetCharacter.y + targetCharacter.cameraOffsets[1]
-			}, 0.75, { ease: FlxEase.quartOut });
+			}, (Conductor.stepLengthMs / 1000) * 16, { ease: FlxEase.expoOut });
 		}
 
 		switch (event.type) {
