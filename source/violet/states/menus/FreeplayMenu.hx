@@ -114,7 +114,7 @@ class FreeplayMenu extends SubStateBackend {
 
 		for (i => song in SongRegistry.songs) {
 			var yOffset = 10;
-			var startY = (FlxG.height / 2) + spacing * (i - 0) - spacing + yOffset;
+			var startY = (FlxG.height / 2) + spacing * (i - curSelectedSong) - spacing + yOffset;
 			var capsuleGroup = new FlxSpriteGroup(-1000, startY);
 
 			capsuleGroup.cameras = [camHUD];
@@ -169,7 +169,7 @@ class FreeplayMenu extends SubStateBackend {
 		add(ostText);
 
 		playInst();
-		changeSelection(curSelectedSong);
+		changeSelection(0);
 		changeDiff(0, true);
 	}
 
