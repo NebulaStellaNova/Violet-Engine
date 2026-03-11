@@ -1,5 +1,6 @@
 package violet.backend.objects.play;
 
+import flixel.math.FlxRect;
 import violet.backend.audio.Conductor;
 import violet.data.noteskin.NoteSkin;
 import violet.data.noteskin.NoteSkinRegistry;
@@ -116,5 +117,11 @@ class Sustain extends NovaSprite {
 			flipX = !flipX; flipY = !flipY;
 			y = prevY;
 		} else super.draw();
+	}
+
+	override function set_clipRect(value:FlxRect):FlxRect {
+		clipRect = value;
+		if (frames != null) frame = frames.frames[animation.frameIndex];
+		return value;
 	}
 }

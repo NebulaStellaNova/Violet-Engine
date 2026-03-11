@@ -89,6 +89,11 @@ class Main extends openfl.display.Sprite {
 		addChild(new DebugDisplay());
 		FlxG.game.focusLostFramerate = 30;
 		FlxG.mouse.useSystemCursor = true;
+
+		#if FLX_DEBUG
+		// literally just cause nebs pause bind is backslash
+		FlxG.debugger.toggleKeys.remove(BACKSLASH);
+		#end
 	}
 
 	public static function switchState(targetClass:Dynamic) {

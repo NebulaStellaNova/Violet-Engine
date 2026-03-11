@@ -58,7 +58,7 @@ class NoteSkin {
 			path = Paths.image('game/notes/$id/${data.strums?.assetPath ?? data?.assetPath ?? 'strums'}');
 			return Paths.fileExists(path, true);
 		}
-		if (!recursion(_data))
+		if (!recursion(_data) && fallback != null)
 			recursion(fallback._data);
 		return path;
 	}
@@ -68,7 +68,7 @@ class NoteSkin {
 			path = Paths.image('game/notes/$id/${data.notes?.assetPath ?? data?.assetPath ?? 'notes'}');
 			return Paths.fileExists(path, true);
 		}
-		if (!recursion(_data))
+		if (!recursion(_data) && fallback != null)
 			recursion(fallback._data);
 		return path;
 	}
@@ -78,7 +78,7 @@ class NoteSkin {
 			path = Paths.image('game/notes/$id/${data.sustains?.assetPath ?? data?.assetPath ?? 'sustains'}');
 			return Paths.fileExists(path, true);
 		}
-		if (!recursion(_data))
+		if (!recursion(_data) && fallback != null)
 			recursion(fallback._data);
 		return path;
 	}
@@ -88,7 +88,7 @@ class NoteSkin {
 			path = Paths.image('game/notes/$id/${data.splashes?.assetPath ?? data?.assetPath ?? 'splashes'}');
 			return Paths.fileExists(path, true);
 		}
-		if (!recursion(_data))
+		if (!recursion(_data) && fallback != null)
 			recursion(fallback._data);
 		return path;
 	}
@@ -98,14 +98,14 @@ class NoteSkin {
 			path = Paths.image('game/notes/$id/${data.holdcovers?.assetPath ?? data?.assetPath ?? 'holdcovers'}');
 			return Paths.fileExists(path, true);
 		}
-		if (!recursion(_data))
+		if (!recursion(_data) && fallback != null)
 			recursion(fallback._data);
 		return path;
 	}
 
 	public function getStrumAnimations(id:Int, mania:Int = 4):Array<NoteAnimationData> {
 		if (mania < 1) return [];
-		var anims:Array<NoteAnimationData> = [
+		final anims:Array<NoteAnimationData> = [
 			for (data in _data.strums.animations) {
 				if (data.mania != mania) continue;
 				if (data.id != (id % mania)) continue;
@@ -118,7 +118,7 @@ class NoteSkin {
 	}
 	public function getNoteAnimations(id:Int, mania:Int = 4):Array<NoteAnimationData> {
 		if (mania < 1) return [];
-		var anims:Array<NoteAnimationData> = [
+		final anims:Array<NoteAnimationData> = [
 			for (data in _data.notes.animations) {
 				if (data.mania != mania) continue;
 				if (data.id != (id % mania)) continue;
@@ -131,7 +131,7 @@ class NoteSkin {
 	}
 	public function getSustainAnimations(id:Int, mania:Int = 4):Array<NoteAnimationData> {
 		if (mania < 1) return [];
-		var anims:Array<NoteAnimationData> = [
+		final anims:Array<NoteAnimationData> = [
 			for (data in _data.sustains.animations) {
 				if (data.mania != mania) continue;
 				if (data.id != (id % mania)) continue;
@@ -144,7 +144,7 @@ class NoteSkin {
 	}
 	public function getSplashAnimations(id:Int, mania:Int = 4):Array<NoteAnimationData> {
 		if (mania < 1) return [];
-		var anims:Array<NoteAnimationData> = [
+		final anims:Array<NoteAnimationData> = [
 			for (data in _data.splashes.animations) {
 				if (data.mania != mania) continue;
 				if (data.id != (id % mania)) continue;
@@ -157,7 +157,7 @@ class NoteSkin {
 	}
 	public function getHoldCoverAnimations(id:Int, mania:Int = 4):Array<NoteAnimationData> {
 		if (mania < 1) return [];
-		var anims:Array<NoteAnimationData> = [
+		final anims:Array<NoteAnimationData> = [
 			for (data in _data.holdcovers.animations) {
 				if (data.mania != mania) continue;
 				if (data.id != (id % mania)) continue;
