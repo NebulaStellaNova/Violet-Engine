@@ -29,7 +29,6 @@ class StoryMenu extends SubStateBackend {
 
     var curSelected:Int = 0;
     static var curDifficulty:Int = 1;
-    var curDifficultyString:String;
     var levelList:Array<Level> = [];
 
     var storyCam:FlxCamera;
@@ -41,8 +40,6 @@ class StoryMenu extends SubStateBackend {
     var bottomBox:FlxSprite;
 
     var canInteract:Bool = false;
-
-    var isFlashing:Bool = false;
 
     override public function create() {
         super.create();
@@ -167,15 +164,8 @@ class StoryMenu extends SubStateBackend {
         });
     }
 
-    var time:Float = 0;
-
     override public function update(elapsed:Float) {
         super.update(elapsed);
-		time += elapsed;
-
-        if (isFlashing)
-			titleGraphics[curSelected].color = (time % 0.1 > 0.05) ? FlxColor.WHITE : 0xFF33ffff;
-
         if (Controls.back) {
 			exit();
             canInteract = false;
@@ -186,10 +176,6 @@ class StoryMenu extends SubStateBackend {
 
         leftArrow.scale.x = leftArrow.scale.y = Controls.uiLeftPress ? 0.9 : 1.0;
         rightArrow.scale.x = rightArrow.scale.y = Controls.uiRightPress ? 0.9 : 1.0;
-
-        if (Controls.accept) {
-            selectLevel();
-        }
 
         if (Controls.uiDown) {
             scroll(1);
@@ -250,22 +236,7 @@ class StoryMenu extends SubStateBackend {
         if (!canInteract) return;
         var difficulties = levelList[curSelected].getDifficulties();
         curDifficulty = FlxMath.wrap(curDifficulty + direction, 0, difficulties.length - 1);
-        curDifficultyString = difficulties[curDifficulty];
         // FlxG.sound.play(Cache.sound('menu/scroll'));
-    }
-
-    function selectLevel() {
-        if (!canInteract) return;
-        canInteract = false;
-        isFlashing = true;
-        NovaUtils.playMenuSFX(NovaUtils.CONFIRM);
-        new FlxTimer().start(1.25, (_)->{
-            storyCam.fade(0.25, ()->{
-                PlayState.playlist = levelList[curSelected].getSongs();
-                PlayState.playlist.shift(); // Get rid of the song we boutta load
-                PlayState.loadSong(levelList[curSelected].getSongs()[0], curDifficultyString);
-            });
-        });
     }
 
     function updateTrackList() {
