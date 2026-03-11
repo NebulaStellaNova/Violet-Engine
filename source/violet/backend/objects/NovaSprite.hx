@@ -67,6 +67,12 @@ class NovaSprite extends #if ANIMATE_SUPPORT FlxAnimate #else FlxSprite #end {
 				this.animated = true;
 				this.frames = NovaUtils.getSparrowFrames(path);
 				this.onLoaded();
+			} else if (Paths.fileExists(path.replace(".png", ".txt"), true)) {
+				this.filePath = path;
+				this.fileName = Paths.getFileName(path, true);
+				this.animated = true;
+				this.frames = FlxAtlasFrames.fromSpriteSheetPacker(path, path.replace(".png", ".txt"));
+				this.onLoaded();
 			} else {
 				this.loadGraphic(path);
 				this.updateHitbox();
