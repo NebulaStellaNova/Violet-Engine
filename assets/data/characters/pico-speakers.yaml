@@ -5,7 +5,7 @@ startingAnimation: idle
 singTime: 8
 offsets:
   - 250
-  - -125
+  - 25
 animations:
   - name: idle
     prefix: Pico shoot 1

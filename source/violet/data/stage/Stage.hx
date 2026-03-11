@@ -35,6 +35,8 @@ class Stage extends flixel.group.FlxGroup {
             i.scale ??= [1, 1];
             i.alpha ??= 1;
             i.visible ??= true;
+            i.color ??= FlxColor.WHITE;
+            // trace(i);
 
             var positionalArrays = [
                 "player" => ["boyfriend", i.id],
@@ -43,6 +45,15 @@ class Stage extends flixel.group.FlxGroup {
             ];
 
             switch (i.type) {
+                case "Solid":
+                    var prop:StageProp = new StageProp(i.position[0], i.position[1]);
+                    prop.name = i.name;
+                    prop.makeGraphic(1, 1, i.color);
+                    prop.scale.set(i.width ?? 0, i.height ?? 0);
+                    prop.scrollFactor.set(i.scroll[0] ?? 1, i.scroll[1] ?? 1);
+                    prop.updateHitbox();
+                    add(prop);
+
                 case "StageProp":
                     var prop:StageProp = new StageProp(i.position[0], i.position[1], Paths.image([this._data.directory, i.assetPath].join("/")));
                     prop.name = i.name;
@@ -50,7 +61,14 @@ class Stage extends flixel.group.FlxGroup {
                     prop.scale.set(i.scale[0] ?? 1, i.scale[1] ?? 1);
                     prop.flipX = i.flipX ?? false;
                     prop.flipY = i.flipY ?? false;
+                    prop.color = i.color;
+                    prop.updateHitbox();
+                    for (i in i?.animations ?? []) {
+                        prop.addAnimFromData(i);
+                    }
+                    prop.playAnim(i.startingAnimation ??= prop.animationList[0], true);
                     add(prop);
+
                 case "Character":
                     i.cameraOffsets ??= [0, 0];
                     for (char in characters) {

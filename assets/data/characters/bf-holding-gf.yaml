@@ -4,6 +4,8 @@ assetPath: characters/bfAndGF
 flipX: true
 singTime: 8
 healthIcon: bf
+offsets: [0, -50]
+cameraOffsets: [50, -50]
 animations:
   - name: singUP
     prefix: BF Dead with GF Loop

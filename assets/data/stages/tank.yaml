@@ -1,0 +1,198 @@
+name: Tankman Battlefield
+zoom: 0.9
+version: 1.0.0
+directory: stages/week7
+props:
+- name: solid
+  type: Solid
+  color: '#E3A26D'
+  position: [-500, -1000]
+  width: 2400
+  height: 2000
+  scroll: [0, 0]
+
+- name: tankSky
+  assetPath: tankSky
+  type: StageProp
+  position: [-100, 0]
+  scale: [1500, 1.2]
+  scroll: [0, 0]
+
+- name: mountains
+  assetPath: mountains2
+  type: StageProp
+  position: [-500, -35]
+  scale: [1.2, 1.2]
+  scroll: [0.2, 0.2]
+
+- name: buildings
+  assetPath: tankBuildings
+  type: StageProp
+  position: [-260, -35]
+  scale: [1.1, 1.1]
+  scroll: [0.3, 0.3]
+
+- name: ruins
+  assetPath: cityruins2
+  type: StageProp
+  position: [-200, 150]
+  scale: [1.1, 1.1]
+  scroll: [0.35, 0.35]
+
+- name: clouds2
+  assetPath: tankClouds
+  type: StageProp
+  scale: [1, 1]
+  position: [0, 0]
+  scroll: [0.4, 0.4]
+  alpha: 0
+
+- name: smokeLeft
+  assetPath: smokeLeft
+  type: StageProp
+  position: [-380, -40]
+  scroll: [0.4, 0.4]
+  animations:
+    - name: smokeLeft
+      prefix: SmokeBlurLeft instance 1
+      looped: true
+  startingAnimation: smokeLeft
+
+- name: smokeRight
+  assetPath: smokeRight
+  type: StageProp
+  position: [1050, -35]
+  scale: [1, 1]
+  scroll: [0.4, 0.4]
+  animations:
+    - name: smokeRight
+      prefix: SmokeRight instance 1
+      looped: true
+  startingAnimation: smokeRight
+
+- name: watchtower
+  assetPath: tankWatchtower
+  type: StageProp
+  position: [-35, 110]
+  scroll: [0.5, 0.5]
+  scale: [0.85, 0.85]
+  danceEvery: 1
+  animations:
+    - name: idle
+      prefix: watchtower gradient color instance 1
+  startingAnimation: idle
+
+- name: tankRolling
+  assetPath: tankRolling
+  type: StageProp
+  position: [300, 300]
+  scale: [1, 1]
+  scroll: [0.5, 0.5]
+  animations:
+    - name: roll
+      prefix: BG tank w lighting
+      looped: true
+  startingAnimation: roll
+
+- name: tankGround
+  type: StageProp
+  assetPath: tankGround
+  position: [-420, -150]
+  scroll: [1, 1]
+  scale: [1.15, 1.15]
+
+- id: spectator
+  type: Character
+  position: [675, 720]
+  cameraOffsets: [-270, -125]
+
+- name: tankBricks
+  type: StageProp
+  assetPath: bricksGround
+  position: [438, 715]
+  scroll: [1, 1]
+  scale: [1.15, 1.15]
+
+- id: opponent
+  type: Character
+  position: [230.5, 996]
+  cameraOffsets: [-220, -250]
+
+- id: player
+  type: Character
+  position: [1050, 985]
+  cameraOffsets: [-600, -250]
+
+- name: tankmanAudience0
+  assetPath: tank0
+  type: StageProp
+  position: [-500, 650]
+  scale: [1, 1]
+  scroll: [1.7, 1.5]
+  danceEvery: 1
+  animations:
+    - name: idle
+      prefix: fg tankhead far right instance 1
+      looped: false
+  startingAnimation: idle
+
+- name: tankmanAudience2
+  assetPath: tank2
+  type: StageProp
+  position: [360, 980]
+  scale: [1, 1]
+  scroll: [1.5, 1.5]
+  danceEvery: 1
+  animations:
+    - name: idle
+      prefix: foreground man 3 instance 1
+      looped: false
+  startingAnimation: idle
+
+- name: tankmanAudience3
+  assetPath: tank3
+  type: StageProp
+  position: [1050, 1240]
+  scroll: [3.5, 2.5]
+  animations:
+    - name: idle
+      prefix: fg tankhead 4 instance 1
+      looped: false
+  startingAnimation: idle
+
+- name: tankmanAudience4
+  assetPath: tank4
+  type: StageProp
+  position: [1200, 900]
+  scroll: [1.5, 1.5]
+  danceEvery: 1
+  animations:
+    - name: idle
+      prefix: fg tankman bobbin 3 instance 1
+      looped: false
+  startingAnimation: idle
+
+- name: tankmanAudience5
+  assetPath: tank5
+  type: StageProp
+  position: [1550, 700]
+  scroll: [1.5, 1.5]
+  danceEvery: 1
+  animations:
+    - name: idle
+      prefix: fg tankhead far right instance 1
+      looped: false
+  startingAnimation: idle
+
+- name: tankmanAudience1
+  assetPath: tank1
+  type: StageProp
+  position: [-300, 750]
+  scale: [1, 1]
+  scroll: [2, 0.2]
+  danceEvery: 1
+  animations:
+    - name: idle
+      prefix: fg tankhead 5 instance 1
+      looped: false
+  startingAnimation: idle
