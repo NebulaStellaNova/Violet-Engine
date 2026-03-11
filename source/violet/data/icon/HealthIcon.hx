@@ -7,6 +7,7 @@ class HealthIcon extends NovaSprite {
 
     public var id:String;
     public var _data:HealthIconData;
+    public var isOpponent:Bool = false;
 
     public function new(id:String) {
         this.id = id;
@@ -33,11 +34,12 @@ class HealthIcon extends NovaSprite {
             this.animation.addByPrefix("fromWinning", "fromWinning", 24, false);
             this.animation.addByPrefix("fromLosing", "fromLosing", 24, false); */
         } else {
-            this.loadGraphic(this.filePath, true, 150, 150);
-            this.addAnim("idle", [0], 0, false, false);
-            this.addAnim("losing", [1], 0, false, false);
+            var frameSize = iconData.isPixel ? 32 : 150;
+            this.loadGraphic(this.filePath, true, frameSize, frameSize);
+            this.animation.add("idle", [0], 1, false, false);
+            this.animation.add("losing", [1], 1, false, false);
             if (animation.numFrames >= 3) {
-                this.addAnim("winning", [2], 0, false, false);
+                this.animation.add("winning", [2], 1, false, false);
             }
         }
 
@@ -45,6 +47,18 @@ class HealthIcon extends NovaSprite {
         this.globalOffset.x = iconData.offsets[0] ?? 0;
         this.globalOffset.y = iconData.offsets[1] ?? 0;
 
+    }
+
+    public function updateFromHealth(value:Float) {
+        if (isOpponent) value = 1-value;
+        if (this.animation.exists('winning')) {
+            if (value >= 0.75) playAnim('winning');
+            if (value < 0.75 && value > 0.25) playAnim('idle');
+            if (value <= 0.25) playAnim('losing');
+        } else {
+            if (value > 0.25) playAnim('idle');
+            if (value <= 0.25) playAnim('losing');
+        }
     }
 
     override function update(elapsed:Float) {

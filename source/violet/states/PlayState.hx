@@ -294,6 +294,7 @@ class PlayState extends violet.backend.StateBackend {
 		add(iconPlayer);
 
 		iconOpponent.camera = camHUD;
+		iconOpponent.isOpponent = true;
 		add(iconOpponent);
 
 		health = 0.5; // Deal with this being weird before songs starts once countdown works.
@@ -340,6 +341,9 @@ class PlayState extends violet.backend.StateBackend {
 
 		iconOpponent.x = healthBar.x + healthBar.defaultWidth * (1-healthLerp) - iconOpponent.width;
 		iconOpponent.y = healthBar.y + (healthBar.height/2) - (iconOpponent.height/2);
+
+		iconPlayer.updateFromHealth(health);
+		iconOpponent.updateFromHealth(health);
 
 		for (i in SONG.events) {
 			if (i.time <= Conductor.songPosition) {
@@ -423,9 +427,9 @@ class PlayState extends violet.backend.StateBackend {
 
 
 		if (event.name != null) {
-			trace('debug:Ran song event named "${event.name}" with parameters "${event.params.join(", ")}"');
+			trace('debug:Ran song event named "<yellow>${event.name}<reset>" with parameters "<yellow>${event.params.join(", ")}<reset>"');
 		} else if (event.type != null) {
-			trace('debug:Ran song event named "${[null, "Camera Movement"][event.type]}" with parameters "${event.params.join(", ")}"');
+			trace('debug:Ran song event named "<yellow>${[null, "Camera Movement"][event.type]}<reset>" with parameters "<yellow>${event.params.join(", ")}<reset>"');
 		}
 
 		// trace('debug:Ran event ');
