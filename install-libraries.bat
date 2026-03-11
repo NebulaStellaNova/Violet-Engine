@@ -1,6 +1,7 @@
 mkdir .haxelib
 haxelib fixrepo
 @REM INSTALL HAXELIB LIBS
+haxelib install lime
 haxelib install openfl
 haxelib install flixel
 haxelib install flixel-addons --skip-dependencies
@@ -16,7 +17,6 @@ haxelib install thx.core
 haxelib install thx.semver
 haxelib install yaml
 @REM INSTALL GIT LIBS
-haxelib git lime https://github.com/FunkinCrew/lime
 haxelib git flxrhythmconductor https://github.com/PurSnake/FlxRhythmConductor --skip-dependencies
 haxelib git hxcpp https://github.com/FunkinCrew/hxcpp
 haxelib git hxcpp-debug-server https://github.com/FunkinCrew/hxcpp-debugger
