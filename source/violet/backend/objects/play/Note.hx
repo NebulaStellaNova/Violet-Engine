@@ -101,10 +101,11 @@ class Note extends NovaSprite {
 		skin = 'default';
 		preventAutoSkinSet = false;
 
-		var roundedLength:Int = Math.round(tailLength / Conductor.stepLengthMs);
+		final stepLengthMs:Float = flixel.addons.sound.FlxRhythmConductorUtil.getStepLengthMs(flixel.addons.sound.FlxRhythmConductor.instance.getCurrentTimeChangeBPMAccurate(time));
+		final roundedLength:Int = Math.round(tailLength / stepLengthMs);
 		if (roundedLength > 1) {
 			for (susNote in 0...roundedLength)
-				tail.push(new Sustain(this, (Conductor.stepLengthMs * susNote), susNote == (roundedLength - 1)));
+				tail.push(new Sustain(this, (stepLengthMs * susNote), susNote == (roundedLength - 1)));
 			tail.sort(sortTail);
 		}
 		reloadSkin(true);

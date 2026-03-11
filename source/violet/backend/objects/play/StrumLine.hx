@@ -244,17 +244,12 @@ class StrumLine extends FlxGroup {
 				sustain.setPosition(pos[0], pos[1]);
 				pos.resize(0);
 
-				// prevent scaling on sustain end
-				if (!sustain.isEnd) { // also temp placement
-					sustain.setGraphicSize(sustain.width, 45 * Math.abs(sustain.__scrollSpeed));
-					// updateHitbox
-					sustain.height = Math.abs(sustain.scale.y) * sustain.frameHeight;
-					sustain.offset.y = -0.5 * (sustain.height - sustain.frameHeight);
-					// centerOrigin
-					sustain.origin.y = sustain.frameHeight * 0.5;
+				// temp placement?
+				if (!sustain.isEnd) { // prevent scaling on sustain end
+					sustain.scale.y = (flixel.addons.sound.FlxRhythmConductorUtil.getStepLengthMs(flixel.addons.sound.FlxRhythmConductor.instance.getCurrentTimeChangeBPMAccurate(note.time)) * 0.45 * Math.abs(sustain.__scrollSpeed)) / sustain.frameHeight;
+					sustain.updateHitbox();
+					// sustain.origin.y = 0;
 				}
-
-				sustain.updateHitbox(); // commenting this out somehow changes NOTHING
 
 				if (sustain.wasHit) {
 					// it's working, sorta (I fucking HATE cliprect bro JUST WORK)
