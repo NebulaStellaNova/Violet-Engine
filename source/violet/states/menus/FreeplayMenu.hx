@@ -77,7 +77,6 @@ class FreeplayMenu extends SubStateBackend {
 		diffSprite = new GenzuSprite(0, 0, Paths.image("menus/freeplay/difficulties/easy"));
 		diffSprite.scale.set(1.3, 1.3);
 		diffSprite.camera = camHUD;
-		add(diffSprite);
 
 		selector1 = new GenzuSprite(-250, 10, Paths.image("menus/freeplay/difficulties/selector"));
 		selector1.scale.set(1.28, 1.28);
@@ -163,6 +162,7 @@ class FreeplayMenu extends SubStateBackend {
 		// xPos = 315;
 
 		add(black);
+		add(diffSprite);
 		add(selector1);
 		add(selector2);
 		add(freeplayText);
@@ -309,6 +309,8 @@ class FreeplayMenu extends SubStateBackend {
 		FlxTween.tween(black, {y: -300}, 0.5, {ease: FlxEase.expoIn, startDelay: 0.4});
 		FlxTween.tween(backingImage, {x: -backingImage.width - 160}, 0.5, {ease: FlxEase.expoIn, startDelay: 0.5});
 		FlxTween.tween(backingCard, {x: -backingCard.width - 160}, 0.5, {ease: FlxEase.expoIn, startDelay: 0.6});
+
+		FlxTween.tween(cast(_parentState, MainMenu).bg, {x: 0 }, 0.5*2, { ease: FlxEase.quadInOut, startDelay: 0.6 });
 
 		var origin = curSelectedSong - 1;
 

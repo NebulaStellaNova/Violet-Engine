@@ -157,10 +157,12 @@ class PlayState extends violet.backend.StateBackend {
 			// note interactions
 			final ghostTapping:Bool = true;
 			strumLine._onVoidTap = (id:Int) -> {
+				if (!Conductor.instrumental.playing) return;
 				if (!ghostTapping) FlxG.sound.play(Cache.sound('miss/${FlxG.random.int(1, 3)}'), 0.7);
 				strumLine.strums.members[id].playStrumAnim('press', ghostTapping);
 			}
 			strumLine._onNoteHit = (note:Note) -> {
+				if (!Conductor.instrumental.playing) return;
 				if (note.wasHit) return;
 				note.wasHit = true; note.visible = false;
 				generalVocals.resume(); strumLine.vocals.resume();
@@ -178,6 +180,7 @@ class PlayState extends violet.backend.StateBackend {
 					note.parentStrum.spawnHoldCover();
 			}
 			strumLine._onSustainHit = (sustain:Sustain) -> {
+				if (!Conductor.instrumental.playing) return;
 				if (sustain.wasHit && !sustain.parentNote.wasHit) return;
 				sustain.wasHit = true; // sustain.visible = false;
 				generalVocals.resume(); strumLine.vocals.resume();
@@ -193,6 +196,7 @@ class PlayState extends violet.backend.StateBackend {
 				}
 			}
 			strumLine._onNoteMissed = (note:Note) -> {
+				if (!Conductor.instrumental.playing) return;
 				if (note.wasMissed) return;
 				note.wasMissed = true; note.alpha *= 0.6;
 				generalVocals.pause(); strumLine.vocals.pause();
@@ -209,6 +213,7 @@ class PlayState extends violet.backend.StateBackend {
 				note.parentStrum.holdCover = null;
 			}
 			strumLine._onSustainMissed = (sustain:Sustain) -> {
+				if (!Conductor.instrumental.playing) return;
 				if (sustain.wasMissed) return;
 				sustain.wasMissed = true; sustain.alpha *= 0.6;
 				generalVocals.pause(); strumLine.vocals.pause();
@@ -292,7 +297,7 @@ class PlayState extends violet.backend.StateBackend {
 	override public function update(elapsed:Float):Void {
 		super.update(elapsed);
 
-		if (Controls.accept) {
+		if (Controls.accept && !FlxG.mouse.justPressed) {
 			fuckYouRodney.active = false;
 			openSubState(new PauseMenu());
 		}
