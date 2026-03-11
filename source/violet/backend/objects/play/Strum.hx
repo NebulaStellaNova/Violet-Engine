@@ -36,6 +36,8 @@ class Strum extends NovaSprite {
 	 */
 	public var willReset:Bool = false;
 
+	public var isHolding:Bool = false;
+
 	public final splashes:Array<NovaSprite> = [];
 	public var holdCover:NovaSprite;
 
@@ -68,10 +70,9 @@ class Strum extends NovaSprite {
 	override public function update(elapsed:Float):Void {
 		super.update(elapsed);
 
-		if (willReset && animation?.name != 'static')
+		if (willReset && animation?.name != 'static' && (parent.isComputer || !isHolding))
 			if (glowLength > 0 ? (lastHit + (Conductor.stepLengthMs * glowLength) < Conductor.songPosition) : (animation.name == null || animation.finished)) {
-				var targetAnim = parent.isComputer ? 'static' : 'press';
-				if (animation.name != targetAnim) playStrumAnim(targetAnim, true);
+				if (animation.name != 'static') playStrumAnim('static', true);
 			}
 
 		if (holdCover == null) return;
