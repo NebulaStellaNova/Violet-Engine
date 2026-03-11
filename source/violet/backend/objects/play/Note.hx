@@ -91,6 +91,7 @@ class Note extends NovaSprite {
 	 */
 	public var wasMissed:Bool = false;
 
+	public var noteType:String = "default";
 
 	public function new(parent:StrumLine, id:Int, time:Float, tailLength:Float) {
 		super(-10000, -10000);

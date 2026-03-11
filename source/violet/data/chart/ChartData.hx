@@ -34,8 +34,8 @@ typedef ChartStrumLine = {
 typedef ChartNote = {
 	var time:Float;
 	var id:Int;
-	var type:Int;
 	var sLen:Float;
+	var ?type:Int;
 }
 
 typedef ChartEvent = {
