@@ -63,6 +63,7 @@ class PlayState extends violet.backend.StateBackend {
 
 	public var countdownSprites:Array<String> = [null, 'ready', 'set', 'go'];
 	public var countdownSounds:Array<String> = ['introTHREE', 'introTWO', 'introONE', 'introGO'];
+	public var fuckYouRodney:FlxTimer = new FlxTimer();
 
 
 	/**
@@ -292,6 +293,7 @@ class PlayState extends violet.backend.StateBackend {
 		super.update(elapsed);
 
 		if (Controls.accept) {
+			fuckYouRodney.active = false;
 			openSubState(new PauseMenu());
 		}
 
@@ -334,10 +336,10 @@ class PlayState extends violet.backend.StateBackend {
 
 	function tickCountdown() {
 		if (countdownTick == countdownLength) {
-			new FlxTimer().start(Conductor.beatLengthMs / 1000, _ -> startSong());
+			fuckYouRodney = new FlxTimer().start(Conductor.beatLengthMs / 1000, _ -> startSong());
 			return;
 		}
-		new FlxTimer().start(Conductor.beatLengthMs / 1000, _ -> {
+		fuckYouRodney = new FlxTimer().start(Conductor.beatLengthMs / 1000, _ -> {
 			if (countdownSounds[countdownTick] != null) FlxG.sound.play(Paths.sound('game/countdown/funkin/${countdownSounds[countdownTick]}'));
 			if (countdownSprites[countdownTick] != null) {
 				var countdownSprite:NovaSprite = new NovaSprite(Paths.image('game/countdown/funkin/${countdownSprites[countdownTick]}'));
@@ -458,6 +460,10 @@ class PlayState extends violet.backend.StateBackend {
 		}
 	}
 
+	override function closeSubState() {
+		super.closeSubState();
+		fuckYouRodney.active = true;
+	}
 
 
 	override public function destroy():Void {
