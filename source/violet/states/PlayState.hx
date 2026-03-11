@@ -1,5 +1,7 @@
 package violet.states;
 
+import violet.states.debug.EditorPickerMenu;
+import violet.states.menus.PauseMenu;
 import flixel.FlxCamera;
 import flixel.group.FlxGroup;
 import flixel.math.FlxMath;
@@ -320,6 +322,10 @@ class PlayState extends violet.backend.StateBackend {
 
 	override public function update(elapsed:Float):Void {
 		super.update(elapsed);
+
+		if (Controls.accept) {
+			openSubState(new PauseMenu());
+		}
 
 		scoreLerp = MathUtil.lerp(scoreLerp, score, 0.1);
 		scoreTxt.value = Math.round(scoreLerp);

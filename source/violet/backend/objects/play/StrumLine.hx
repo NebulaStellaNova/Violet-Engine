@@ -261,6 +261,7 @@ class StrumLine extends FlxGroup {
 
 	final currentInputs:Array<Bool> = [];
 	function _on_press(event:KeyboardEvent):Void {
+		if (FlxG.state.subState != null) return;
 		if (isComputer) return;
 		final inputId:Int = getKeyFromEvent(['note_left', 'note_down', 'note_up', 'note_right'], event.keyCode);
 		if (inputId < 0 || inputId >= strums.length) return;
@@ -284,6 +285,7 @@ class StrumLine extends FlxGroup {
 		} else _onVoidTap(inputId);
 	}
 	function _on_release(event:KeyboardEvent):Void {
+		if (FlxG.state.subState != null) return;
 		if (isComputer) return;
 		final inputId:Int = getKeyFromEvent(['note_left', 'note_down', 'note_up', 'note_right'], event.keyCode);
 		if (inputId < 0 || inputId >= strums.length) return;

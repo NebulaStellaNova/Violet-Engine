@@ -15,6 +15,8 @@ typedef EditorListOption = {
 
 class EditorListBackend extends violet.backend.SubStateBackend {
 
+    public var showLocks:Bool = true;
+
     var options:Array<EditorListOption> = [];
 
     public var items:Array<Alphabet> = [];
@@ -24,6 +26,8 @@ class EditorListBackend extends violet.backend.SubStateBackend {
     var exitScrollY:Float = 0;
 
     var subCamera:FlxCamera;
+
+    var bg:NovaSprite;
 
     var descriptionTxt:FlxText;
     var descriptionBox:NovaSprite;
@@ -44,13 +48,14 @@ class EditorListBackend extends violet.backend.SubStateBackend {
         if (needsFailSafe) options.push({ title: "Uh Oh!", description: "All options are disabled so in order to not cause recursion this option was created."});
 
         subCamera = new FlxCamera();
+        subCamera.bgColor = FlxColor.TRANSPARENT;
         FlxG.cameras.add(subCamera, false);
 
         FlxG.state.persistentDraw = false;
         FlxG.state.persistentUpdate = false;
 
-		var bg = new NovaSprite(Paths.image("menus/mainmenu/menuBGdesat"));
         var offset = (options.length-1) * 100;
+		bg = new NovaSprite(Paths.image("menus/mainmenu/menuBGdesat"));
 		bg.setGraphicSize(FlxG.width + offset, FlxG.height + offset);
         bg.updateHitbox();
         bg.screenCenter();
@@ -66,13 +71,15 @@ class EditorListBackend extends violet.backend.SubStateBackend {
             option.y += i * 100;
             if (data.disabled) {
                 for (i in option.letters) i.color = FlxColor.interpolate(i.color, FlxColor.BLACK, 0.5);
-                var lock = new NovaSprite(Paths.image("menus/lock-bold"));
-                lock.antialiasing = true;
-                lock.scale.set(0.8, 0.8);
-                lock.updateHitbox();
-                lock.x = option.letters[0].x + (option.width/2) - (lock.width/2);
-                lock.y = option.letters[0].y + (option.height/2) - (lock.height/2);
-                option.add(lock);
+                if (showLocks) {
+                    var lock = new NovaSprite(Paths.image("menus/lock-bold"));
+                    lock.antialiasing = true;
+                    lock.scale.set(0.8, 0.8);
+                    lock.updateHitbox();
+                    lock.x = option.letters[0].x + (option.width/2) - (lock.width/2);
+                    lock.y = option.letters[0].y + (option.height/2) - (lock.height/2);
+                    option.add(lock);
+                }
             }
             add(option);
             items.push(option);
@@ -95,6 +102,8 @@ class EditorListBackend extends violet.backend.SubStateBackend {
         scroll(0);
     }
 
+    var frame = 0;
+
     override function update(elapsed:Float) {
         if (Controls.uiUp) scroll(-1);
         if (Controls.uiDown) scroll(1);
@@ -103,9 +112,11 @@ class EditorListBackend extends violet.backend.SubStateBackend {
             close();
         }
 
-        if (Controls.accept) {
+        if (Controls.accept && frame > 3) {
             pickOption(options[debugCurSelected]);
         }
+
+        frame++;
     }
 
     function scroll(amt:Int) {
