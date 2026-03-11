@@ -32,6 +32,7 @@ class PlayState extends violet.backend.StateBackend {
 	public static var song:String;
 	public static var difficulty:String;
 	public static var variation:Null<String>;
+	public static var playlist:Array<String> = [];
 
 	#if SCRIPT_SUPPORT
 	public var songScripts:ScriptPack = new ScriptPack();
@@ -62,6 +63,7 @@ class PlayState extends violet.backend.StateBackend {
 
 	public var countdownSprites:Array<String> = [null, 'ready', 'set', 'go'];
 	public var countdownSounds:Array<String> = ['introTHREE', 'introTWO', 'introONE', 'introGO'];
+
 
 	/**
 	 * The amount of beats the countdown lasts for.
@@ -276,6 +278,11 @@ class PlayState extends violet.backend.StateBackend {
 			strumLine.generateNotes(Conductor.songPosition);
 
 		callSongScripts('postCreate');
+
+		camHUD.fade(0.001);
+		new FlxTimer().start(0.1, (_)->{
+			camHUD.fade(0.5, true);
+		});
 	}
 
 	var healthLerp:Float = 0.5;
@@ -408,7 +415,11 @@ class PlayState extends violet.backend.StateBackend {
 
 	function endSong():Void {
 		songEnded = true;
-		FlxG.switchState(violet.states.menus.MainMenu.new);
+		if (playlist.length == 0) {
+			FlxG.switchState(violet.states.menus.MainMenu.new);
+		} else {
+			loadSong(playlist.shift(), difficulty, variation);
+		}
 	}
 
 	public function callSongScripts<T>(funcName:String, ?args:Array<Dynamic>, ?def:T):T {
