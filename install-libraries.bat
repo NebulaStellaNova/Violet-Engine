@@ -15,7 +15,7 @@ haxelib install yaml
 @REM INSTALL GIT LIBS
 haxelib git flxrhythmconductor https://github.com/PurSnake/FlxRhythmConductor --skip-dependencies
 haxelib git hxcpp https://github.com/FunkinCrew/hxcpp
-haxelib git lemon-ui https://github.com/NebulaStellaNova/LemonUI
+haxelib git lemon-ui https://github.com/NebulaStellaNova/LemonUI --skip-dependencies
 haxelib git hxcpp-debug-server https://github.com/FunkinCrew/hxcpp-debugger
 haxelib git hxhardware https://github.com/Vortex2Oblivion/hxhardware
 haxelib git linc_luajit https://github.com/superpowers04/linc_luajit
