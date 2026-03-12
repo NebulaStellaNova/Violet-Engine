@@ -102,6 +102,8 @@ class PlayState extends violet.backend.StateBackend {
 		ModdingAPI.checkForScripts('songs/$song/scripts', songScripts);
 		ModdingAPI.checkForScripts('songs/$song/scripts/$difficulty', songScripts);
 
+		songScripts.parent = this;
+
 		/* #if SCRIPT_SUPPORT
 		songScripts.parent = this;
 		final scriptPaths:Array<String> = ['$song/scripts', '$song/scripts/$difficulty'];
@@ -167,6 +169,7 @@ class PlayState extends violet.backend.StateBackend {
 		}
 
 		stage = new Stage(SONG.stage);
+		stage.stageScripts.parent = this;
 		stage.load(characters);
 		defaultCamZoom = stage._data.zoom;
 		camGame.zoom = defaultCamZoom;
@@ -224,8 +227,8 @@ class PlayState extends violet.backend.StateBackend {
 	override public function update(elapsed:Float):Void {
 		super.update(elapsed);
 
-		songScripts.call("update", [elapsed]);
-		songScripts.call("onUpdate", [elapsed]);
+		callSongScripts("update", [elapsed]);
+		callSongScripts("onUpdate", [elapsed]);
 
 		if (Controls.accept && !FlxG.mouse.justPressed) {
 			countdownTimer.active = false;
@@ -255,8 +258,8 @@ class PlayState extends violet.backend.StateBackend {
 			}
 		}
 
-		songScripts.call("postUpdate", [elapsed]);
-		songScripts.call("onUpdatePost", [elapsed]);
+		callSongScripts("postUpdate", [elapsed]);
+		callSongScripts("onUpdatePost", [elapsed]);
 	}
 
 	function onVoidTap(id:Int, strumLine:StrumLine) {
@@ -439,9 +442,9 @@ class PlayState extends violet.backend.StateBackend {
 		}
 	}
 
-	public function callSongScripts<T>(funcName:String, ?args:Array<Dynamic>, ?def:T):T {
-		return #if SCRIPT_SUPPORT songScripts.call(funcName, args, def) ?? #end def;
-	}
+	/* public function callSongScripts<T>(funcName:String, ?args:Array<Dynamic>, ?def:T):T {
+		return #if SCRIPT_SUPPORT callSongScripts(funcName, args, def) ?? #end def;
+	} */
 
 	public function runSongEvent<T:violet.backend.scripting.events.EventBase>(func:String, event:T):T {
 		#if SCRIPT_SUPPORT
@@ -457,14 +460,14 @@ class PlayState extends violet.backend.StateBackend {
 		songScripts.set('curStep', curStep);
 		songScripts.set('curBeat', curBeat);
 
-		songScripts.call('stepHit', [curStep]);
-		songScripts.call('postStepHit', [curStep]);
+		callSongScripts('stepHit', [curStep]);
+		callSongScripts('postStepHit', [curStep]);
 	}
 
 	override function beatHit(curBeat:Int) {
 		super.beatHit(curBeat);
 
-		songScripts.call('beatHit', [curBeat]);
+		callSongScripts('beatHit', [curBeat]);
 
 		if (curBeat % 4 == 0) {
 			FlxTween.cancelTweensOf(camGame);
@@ -474,12 +477,17 @@ class PlayState extends violet.backend.StateBackend {
 			FlxTween.tween(camHUD, { zoom: 1 }, 1, { ease: FlxEase.quartOut });
 		}
 
-		songScripts.call('postBeatHit', [curBeat]);
+		callSongScripts('postBeatHit', [curBeat]);
 	}
 
 	override function closeSubState() {
 		super.closeSubState();
 		countdownTimer.active = true;
+	}
+
+	function callSongScripts(func:String, ?params:Array<Dynamic>) {
+		songScripts.call(func, params);
+		stage.stageScripts.call(func, params);
 	}
 
 	override public function destroy():Void {

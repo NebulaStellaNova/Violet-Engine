@@ -1,5 +1,6 @@
 package violet.data.stage;
 
+import violet.backend.scripting.ScriptPack;
 import flixel.FlxBasic;
 import violet.data.character.Character;
 import violet.backend.utils.NovaUtils;
@@ -9,14 +10,18 @@ import violet.backend.objects.play.StageProp;
 
 class Stage extends flixel.group.FlxGroup {
 
+    public var stageScripts:ScriptPack = new ScriptPack();
+
     public var id:String;
     public var _data:StageData;
 
     public function new(id:String) {
         super();
-        this.id = id ?? 'mainStage';
+        this.id = StageRegistry.stageDatas.get(id) != null ? id : 'mainStage';
 		this._data = StageRegistry.stageDatas.get(id) ?? StageRegistry.stageDatas.get('mainStage');
         this._data.cameraPosition ??= [0, 0];
+
+        ModdingAPI.checkForScripts('data/stages', id, stageScripts);
 
         if (StageRegistry.stageDatas.get(id) == null) {
             NovaUtils.addNotification('Stage not found!', 'Could not find stage with ID "$id" using default stage "mainStage."', haxe.ui.notifications.NotificationType.Error);
@@ -53,6 +58,7 @@ class Stage extends flixel.group.FlxGroup {
                     prop.scrollFactor.set(i.scroll[0] ?? 1, i.scroll[1] ?? 1);
                     prop.updateHitbox();
                     add(prop);
+                    stageScripts.set(i?.id ?? i.name, prop);
 
                 case "StageProp":
                     var prop:StageProp = new StageProp(i.position[0], i.position[1], Paths.image([this._data.directory, i.assetPath].join("/")));
@@ -68,6 +74,7 @@ class Stage extends flixel.group.FlxGroup {
                     }
                     prop.playAnim(i.startingAnimation ??= prop.animationList[0], true);
                     add(prop);
+                    stageScripts.set(i?.id ?? i.name, prop);
 
                 case "Character":
                     i.cameraOffsets ??= [0, 0];

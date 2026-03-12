@@ -122,14 +122,16 @@ class ModdingAPI {
 
 	#if SCRIPT_SUPPORT
 
-	public static function checkForScripts(path:String, pack:ScriptPack, ?fileName:String) {
+	public static function checkForScripts(path:String, ?fileName:String = null, pack:ScriptPack) {
 		var scriptList = [for (file in Paths.readFolder('${Paths.ASSETS_FOLDER}/$path', true)) '${Paths.ASSETS_FOLDER}/$path/$file' ];
 		for (mod in getActiveMods()) {
 			scriptList = scriptList.concat([for (file in Paths.readFolder('$MOD_FOLDER/${mod.folder}/$path', true)) '$MOD_FOLDER/${mod.folder}/$path/$file' ]);
 		}
-		if (fileName != null) scriptList.filter((value)->{
-			return Paths.getFileName(value) == fileName;
-		});
+		if (fileName != null) {
+			for (i in scriptList) {
+				if (Paths.getFileName(i, true) != fileName) scriptList.remove(i);
+			}
+		}
 		for (file in scriptList) {
 
 			#if CAN_HAXE_SCRIPT

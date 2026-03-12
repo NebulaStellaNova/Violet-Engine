@@ -160,8 +160,8 @@ class StoryMenu extends SubStateBackend {
         FlxTween.tween(bottomBox, { y: 0 }, 0.5, { ease: FlxEase.backOut, startDelay: 0.4 });
         FlxTween.tween(scoreText, { y: 11 }, 0.5, { ease: FlxEase.backOut, startDelay: 0.6 });
         FlxTween.tween(levelText, { y: 11 }, 0.5, { ease: FlxEase.backOut, startDelay: 0.6 });
-        FlxTween.tween(trackText, { x: (FlxG.width/2) - (trackText.getWidth()/2) - 450 }, 0.5, { ease: FlxEase.backOut, startDelay: 0.6 });
-        FlxTween.tween(difficultySprites, { x: 920 }, 0.5, { ease: FlxEase.backOut, startDelay: 0.6 });
+        FlxTween.tween(trackText, { x: (FlxG.width/2) - (trackText.getWidth()/2) - 450 }, 0.5, { ease: FlxEase.expoOut, startDelay: 0.6 });
+        FlxTween.tween(difficultySprites, { x: 920 }, 0.5, { ease: FlxEase.expoOut, startDelay: 0.6 });
         FlxTimer.wait(1.2, ()->{
             canInteract = true;
         });
