@@ -30,12 +30,12 @@ class Capsule extends FlxSpriteGroup {
 		capsule.playAnim("idle");
 		add(capsule);
 
-		bpmText = new GenzuSprite(116, 95, Paths.image("menus/freeplay/capsule/text/bpmtext"));
+		bpmText = new GenzuSprite(110, 95, Paths.image("menus/freeplay/capsule/text/bpmtext"));
 		bpmText.updateHitbox();
 		bpmText.scale.set(1.1, 1.1);
 		add(bpmText);
 
-		difficultyText = new GenzuSprite(450, 95, Paths.image("menus/freeplay/capsule/text/difficultytext"));
+		difficultyText = new GenzuSprite(460, 95, Paths.image("menus/freeplay/capsule/text/difficultytext"));
 		difficultyText.updateHitbox();
 		difficultyText.scale.set(1.1, 1.1);
 		add(difficultyText);
@@ -48,7 +48,7 @@ class Capsule extends FlxSpriteGroup {
 		}
 
 		for (i in 0...3) {
-			var num:CapsuleNumber = new CapsuleNumber(165 + (i * 14), 92, false, 0);
+			var num:CapsuleNumber = new CapsuleNumber(155 + (i * 14), 92, false, 0);
 			add(num);
 
 			bpmNumbers.push(num);
@@ -94,7 +94,7 @@ class Capsule extends FlxSpriteGroup {
 	}
 
 	public function playConfirm() {
-		capsule.playAnim("confirm", true);
+
 		icon.playAnim("confirm", true);
 	}
 
