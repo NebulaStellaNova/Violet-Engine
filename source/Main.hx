@@ -47,7 +47,7 @@ class Main extends openfl.display.Sprite {
 		super();
 		instance = this;
 
-		lemonui.Constants.FONT_REGULAR = Paths.font('Inconsolata-Regular.ttf');
+		lemonui.Constants.FONT_REGULAR = Paths.font('Inconsolata-Medium.ttf');
 		lemonui.Constants.FONT_BOLD = Paths.font('Inconsolata-Bold.ttf');
 
 		// violet.boot.HaxeUIHelper.init();

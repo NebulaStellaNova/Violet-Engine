@@ -129,10 +129,12 @@ class ModdingAPI {
 		for (mod in getActiveMods()) {
 			scriptList = scriptList.concat([for (file in Paths.readFolder('$MOD_FOLDER/${mod.folder}/$path', true)) '$MOD_FOLDER/${mod.folder}/$path/$file' ]);
 		}
+		var finalList:Array<String> = [];
 		if (fileName != null) {
 			for (i in scriptList) {
-				if (Paths.getFileName(i, true) != fileName) scriptList.remove(i);
+				if (Paths.getFileName(i, true) == fileName) finalList.push(i);
 			}
+			scriptList = finalList;
 		}
 		for (file in scriptList) {
 
