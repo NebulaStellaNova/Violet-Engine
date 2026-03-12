@@ -301,6 +301,7 @@ class PlayState extends violet.backend.StateBackend {
 			score += Math.round(judgement.score);
 			health += Constants.DEFAULT_HEALTH_GAIN;
 		}
+
 		if (note.length > 10)
 			note.parentStrum.spawnHoldCover();
 	}
@@ -312,13 +313,18 @@ class PlayState extends violet.backend.StateBackend {
 		note.wasMissed = true; note.alpha *= 0.6;
 		generalVocals.pause(); note.parent.vocals.pause();
 		FlxG.sound.play(Cache.sound('miss/${FlxG.random.int(1, 3)}'), 0.7);
+
 		for (sustain in Note.filterTail(note.tail, true)) {
 			sustain.wasMissed = true;
 			sustain.alpha *= 0.6;
 		}
+
 		for (char in note.parent.characters)
 			char.playSingAnim(note.id, true);
+
+		score -= Math.round(Scoring.missScore);
 		health -= Constants.DEFAULT_HEALTH_LOSS;
+
 		note.parentStrum.holdCover?.playAnim('end', true);
 		if (note.parent.isComputer) note.parentStrum.holdCover?.animation.finish();
 		note.parentStrum.holdCover = null;
