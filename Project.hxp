@@ -147,7 +147,7 @@ class Project extends HXProject {
 			return;
 		}
 
-		setHaxedef("no-deprecation-warnings");
+		setHaxedef('no-deprecation-warnings');
 
 		if (FileSystem.exists('./.haxelib'))
 			setenv('HAXEPATH', './.haxelib');
@@ -175,17 +175,15 @@ class Project extends HXProject {
 
 			info('Scripting was enabled.');
 		}
-
 		if (isDesktop())
 			discordRPC.enable();
-
-		// If a HL version of HXVLC gets made, move this.
-		allowVideos.enable();
+		// if (isDesktop() || isMobile())
+		// 	allowVideos.enable();
 
 		if (discordRPC.exists())
 			setHaxedef('DISCORD_DISABLE_IO_THREAD');
 		allowShaders.enable();
-		// /* if (isWindows())  */editWindowBorderColor.enable();
+		// if (isWindows()) editWindowBorderColor.enable();
 		/* Define Setup */
 
 		/* App Setup */
@@ -229,13 +227,9 @@ class Project extends HXProject {
 			sources.push(path);
 
 		var excludeList:Array<String> = [''];
-		addAssetLibrary('default', false, true);
-		addAssetPath('assets', 'resources', true, 'default', ['*'], excludeList);
+		addAssetPath('./assets', './resources', ['*'], excludeList);
+		if (modSupport.exists()) addAssetPath('./mods', './mods', ['*'], excludeList);
 
-		if (modSupport.exists()) {
-			addAssetLibrary('mods', false, false);
-			addAssetPath('mods', null, true, 'mods', ['*'], excludeList);
-		}
 		/* Path Settings */
 
 		addHaxeMacro('violet.backend.Macro.init()');
@@ -243,17 +237,14 @@ class Project extends HXProject {
 		/* Libraries */
 		addHaxelib('hxhardware', 'git');
 		// required for flixel, don't put below flixel, causes weird issues
-		addHaxelib('lime', '8.3.1');
-		addHaxelib('openfl', '9.5.1');
+		addHaxelib('lime');
+		addHaxelib('openfl');
 
 		// the game engine
 		addHaxelib('flixel');
 		addHaxelib('flixel-addons');
 
 		addHaxelib('lemon-ui', 'git');
-
-		// addHaxelib('haxeui-core');
-		// addHaxelib('haxeui-flixel');
 
 		if (usesAnimateAtlas.exists())
 			addHaxelib('flixel-animate');
@@ -269,18 +260,15 @@ class Project extends HXProject {
 		// chart converter
 		addHaxelib('moonchart');
 
-		if (canHaxeScript.exists()) addHaxelib('rulescript', 'git');
+		if (canHaxeScript.exists())
+			addHaxelib('rulescript', 'git');
 		if (canLuaScript.exists()) {
-			addHaxelib('linc_luajit', 'git'); // WHY WAS THIS OUTSIDE THE LUA DEFINE :sob:
 			addHaxelib('lscript', 'git');
+			addHaxelib('linc_luajit', 'git');
 		}
 
-		if (discordRPC.exists())
-			addHaxelib('hxdiscord_rpc');
-
-		if (allowVideos.exists())
-			addHaxelib('hxvlc');
-
+		if (discordRPC.exists()) addHaxelib('hxdiscord_rpc');
+		if (allowVideos.exists()) addHaxelib('hxvlc');
 		addHaxelib('thx.semver');
 
 		// if (editWindowBorderColor.exists())

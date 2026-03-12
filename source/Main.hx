@@ -1,13 +1,13 @@
 package;
 
-import violet.boot.DiscordRPC;
-import violet.backend.options.Options;
 import flixel.FlxState;
 import flixel.util.FlxStringUtil;
 import lime.app.Application;
 import thx.semver.Version;
 import violet.backend.display.DebugDisplay;
+import violet.backend.options.Options;
 import violet.backend.utils.ParseUtil;
+import violet.boot.DiscordRPC;
 import violet.data.Constants;
 
 class Main extends openfl.display.Sprite {
@@ -66,7 +66,7 @@ class Main extends openfl.display.Sprite {
 		hxwindowmode.WindowColorMode.redrawWindowHeader();
 		#end
 
-		#if (windows && cpp)
+		#if windows
 		violet.external.windows.WinAPI.setDarkMode(violet.external.windows.WinAPI.isSystemDarkMode());
 		#end
 
@@ -74,7 +74,6 @@ class Main extends openfl.display.Sprite {
 		hxvlc.util.Handle.init();
 		#end
 		#if DISCORD_RICH_PRESENCE
-		// Maybe put the Discord code inside the Discord flag...
 		DiscordRPC.init();
 		#end
 
@@ -88,9 +87,7 @@ class Main extends openfl.display.Sprite {
 
 		Options.init();
 
-		#if hxhardware
 		hxhardware.CPU.init();
-		#end
 
 		var startFPS:Int = Application.current.window.displayMode.refreshRate;
 		new flixel.FlxGame(1280, 720, violet.states.InitialState, startFPS, startFPS, true);
