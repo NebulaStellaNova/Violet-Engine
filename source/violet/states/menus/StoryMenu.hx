@@ -40,6 +40,8 @@ class StoryMenu extends SubStateBackend {
     var weekBG:FlxSprite;
     var bottomBox:FlxSprite;
 
+    var weekBGColorTween:FlxTween;
+
     var canInteract:Bool = false;
 
     var isFlashing:Bool = false;
@@ -55,7 +57,7 @@ class StoryMenu extends SubStateBackend {
         topBar.camera = storyCam;
         topBar.scrollFactor.set();
 
-        weekBG = new NovaSprite(0, -500).makeGraphic(FlxG.width, 500, 0xFFF9CF51);
+        weekBG = new NovaSprite(0, -500).makeGraphic(FlxG.width, 500, 0xFFFFFFFF);
         weekBG.camera = storyCam;
         weekBG.scrollFactor.set();
 
@@ -151,6 +153,7 @@ class StoryMenu extends SubStateBackend {
         add(trackText);
 
         updateTrackList();
+        weekBG.color = levelList[curSelected]._data.background.toFlxColor();
 
         trackText.x = -trackText.getWidth();
 
@@ -241,6 +244,10 @@ class StoryMenu extends SubStateBackend {
     function scroll(direction:Int, playSound:Bool = true) {
         if (!canInteract) return;
         curSelected = FlxMath.wrap(curSelected + direction, 0, levelList.length - 1);
+
+        weekBGColorTween?.cancel();
+        weekBGColorTween = FlxTween.color(weekBG, 0.35, weekBG.color, levelList[curSelected]._data.background.toFlxColor(), {ease: FlxEase.expoOut});
+
         updateTrackList();
         if (playSound)
 		    NovaUtils.playMenuSFX(SCROLL);
