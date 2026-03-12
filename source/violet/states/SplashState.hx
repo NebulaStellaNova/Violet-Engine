@@ -36,7 +36,8 @@ class SplashState extends violet.backend.StateBackend {
     override public function update(elapsed:Float) {
         super.update(elapsed);
 
-        if (haxeLogo.animation.curAnim.curFrame == 36 && !playedSound) {
+        // `animation` is nullable.
+        if (haxeLogo.animation?.curAnim?.curFrame == 36 && !playedSound) {
             playedSound = true;
             FlxG.sound.play(Cache.sound('haxeIntro'));
         }

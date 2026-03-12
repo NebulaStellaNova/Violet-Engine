@@ -231,7 +231,7 @@ class Project extends HXProject {
 
 		var excludeList:Array<String> = [''];
 		addAssetLibrary('default', false, true);
-		addAssetPath('assets', null, true, 'default', ['*'], excludeList);
+		addAssetPath('assets', 'resources', true, 'default', ['*'], excludeList);
 
 		if (modSupport.exists()) {
 			addAssetLibrary('mods', false, false);
