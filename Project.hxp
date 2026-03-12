@@ -235,8 +235,8 @@ class Project extends HXProject {
 		/* Libraries */
 		addHaxelib('hxhardware', 'git');
 		// required for flixel, don't put below flixel, causes weird issues
-		addHaxelib('lime');
-		addHaxelib('openfl');
+		addHaxelib('lime', '8.3.1');
+		addHaxelib('openfl', '9.5.1');
 
 		// the game engine
 		addHaxelib('flixel');
