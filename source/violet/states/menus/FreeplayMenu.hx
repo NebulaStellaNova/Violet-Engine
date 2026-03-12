@@ -27,6 +27,8 @@ typedef AlbumData = {
 }
 
 class FreeplayMenu extends SubStateBackend {
+	public static var skipTransition:Bool = false;
+
 	static var curSelectedSong:Int = 0;
 	static var curSelectedDiff:Int = 0;
 	static var curSelectedVar:Int = 0;
@@ -52,14 +54,13 @@ class FreeplayMenu extends SubStateBackend {
 	var dj:GenzuSprite;
 	var selector1:GenzuSprite;
 	var selector2:GenzuSprite;
-	static var skipTransition:Bool = false;
 
 	var songs:Array<Song> = [];
 
 	override function create() {
 		super.create();
 
-		skipTransition =false;
+		skipTransition = false;
 
 		camHUD = new FlxCamera();
 		camHUD.bgColor = FlxColor.TRANSPARENT;
