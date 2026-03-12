@@ -142,8 +142,8 @@ class Project extends HXProject {
 			if (hasDefine("web"))
 				message = 'None of that, thank you! I don\'t want people using the engine for web ports.\nIf you don\'t remember, there used to be so many that base game wasn\'t first in search results!';
 
+			// We don't need a return statement, error() stops the app anyway.
 			error(message);
-			return;
 		}
 
 		if (FileSystem.exists('./.haxelib'))
