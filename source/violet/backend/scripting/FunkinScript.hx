@@ -1,6 +1,7 @@
 #if CAN_HAXE_SCRIPT
-
 package violet.backend.scripting;
+
+import violet.backend.utils.NovaUtils;
 
 import flixel.*;
 import flixel.group.FlxGroup;
@@ -118,7 +119,10 @@ class FunkinScript extends Script {
 		} catch (e) {
 			// trace('error:${e.message}');
 			var data:Array<String> = e.message.split(":");
-			// violet.backend.CrashHandler.errorNotif('Novamod Script Exception!', 'Error executing "$fileName": ${data[2]},\nOn Line #${data[1]}');
+			var scriptString = data.shift();
+			var lineNum = data.shift();
+			var errorMsg = data.join(':');
+			NovaUtils.addNotification('Novamod Script Exception!', 'Error executing "$fileName":${errorMsg}\nOn Line #${lineNum}', ERROR);
 		}
 		return null;
 	}
@@ -131,7 +135,14 @@ class FunkinScript extends Script {
 	public function executeScript():Void {
 		if (executed) return;
 		internalScript.getParser(HxParser).allowAll();
-		internalScript.tryExecute(scriptCode);
+		internalScript.tryExecute(scriptCode, (exception:haxe.Exception) -> {
+			var data:Array<String> = exception.message.split(":");
+			var scriptString = data.shift();
+			var lineNum = data.shift();
+			var errorMsg = data.join(':');
+			NovaUtils.addNotification('Novamod Script Exception!', 'Error executing "$fileName":${errorMsg}\nOn Line #${lineNum}', ERROR);
+			return exception;
+		});
 		executed = true;
 	}
 }

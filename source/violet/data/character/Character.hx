@@ -44,7 +44,7 @@ class Character extends violet.backend.objects.Bopper {
 		this._data.healthIcon ??= this.id;
 
 		if (CharacterRegistry.characterDatas.get(id) == null) {
-            NovaUtils.addNotification('Character not found!', 'Could not find character with ID "$id" using default character "bf."');
+            NovaUtils.addNotification('Character not found!', 'Could not find character with ID "$id" using default character "bf."', ERROR);
         }
 
 		this.cameraOffsets = this._data.cameraOffsets?.copy() ?? [0, 0];

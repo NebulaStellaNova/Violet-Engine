@@ -12,13 +12,23 @@ enum abstract MenuSFX(Int) {
 	var CONFIRM;
 }
 
+enum NotificationType {
+	ERROR;
+	DEFAULT;
+}
+
 class NovaUtils {
 
 	public static var CURRENT_MUSIC:String = "";
 
 	public static var NOTIFICATION_CAMERA:FlxCamera;
 
-	public static function addNotification(title:String, body:String, expiryMs:Int = 10000) {}
+	public static function addNotification(title:String, body:String, expiryMs:Int = 10000, type:NotificationType = DEFAULT) {
+		var notification = lemonui.controllers.NotificationController.instance.addNotification(title, body, expiryMs/1000);
+		if (type == ERROR) {
+			notification.componentColor = 0xFF591818;
+		}
+	}
 
 	public static function playMenuMusic():Void {
 		if (CURRENT_MUSIC != Constants.MENU_MUSIC) {

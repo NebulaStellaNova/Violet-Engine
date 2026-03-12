@@ -241,6 +241,8 @@ class Project extends HXProject {
 		addHaxelib('flixel');
 		addHaxelib('flixel-addons');
 
+		addHaxelib('lemon-ui', 'git');
+
 		// addHaxelib('haxeui-core');
 		// addHaxelib('haxeui-flixel');
 
