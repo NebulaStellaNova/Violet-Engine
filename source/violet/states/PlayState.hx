@@ -1,10 +1,5 @@
 package violet.states;
 
-import violet.backend.scripting.events.EventBase;
-import violet.backend.scripting.events.SongEvent;
-import violet.backend.scripting.events.SustainHitEvent;
-import violet.backend.scripting.events.NoteHitEvent;
-import violet.backend.options.Options;
 import flixel.FlxCamera;
 import flixel.group.FlxGroup;
 import flixel.math.FlxMath;
@@ -15,6 +10,7 @@ import violet.backend.objects.play.ScoreTxt;
 import violet.backend.objects.play.StrumLine;
 import violet.backend.objects.play.Sustain;
 import violet.backend.options.Options;
+import violet.backend.scripting.events.EventBase;
 import violet.backend.scripting.events.NoteHitEvent;
 import violet.backend.scripting.events.SongEvent;
 import violet.backend.scripting.events.SustainHitEvent;
@@ -31,6 +27,10 @@ import violet.states.menus.PauseMenu;
 
 #if SCRIPT_SUPPORT
 import violet.backend.scripting.ScriptPack;
+#end
+
+#if debug
+import violet.backend.display.DebugDisplay;
 #end
 
 class PlayState extends violet.backend.StateBackend {
@@ -232,6 +232,13 @@ class PlayState extends violet.backend.StateBackend {
 				camHUD.fade(0.5, true);
 			});
 		}
+
+		#if debug
+		DebugDisplay.registerVariable("Current Song", "song");
+		DebugDisplay.registerVariable("Current Difficulty", "difficulty");
+		DebugDisplay.registerVariable("Current Variantion", "variation");
+		if (playlist.length != 0) DebugDisplay.registerVariable("Playlist Items", "playlist");
+		#end
 	}
 
 	var healthLerp:Float = 0.5;
@@ -346,7 +353,7 @@ class PlayState extends violet.backend.StateBackend {
 		final event:SustainHitEvent = runSongEvent("sustainHit", new SustainHitEvent(sustain));
 		if (event.cancelled) return;
 
-		sustain.wasHit = true; // sustain.visible = false;
+		sustain.wasHit = true;
 		generalVocals.resume(); sustain.parent.vocals.resume();
 		if (event.playStrumAnim) sustain.parentStrum.playStrumAnim('confirm', true);
 
@@ -358,6 +365,7 @@ class PlayState extends violet.backend.StateBackend {
 			health += Constants.DEFAULT_HEALTH_GAIN;
 
 		if (sustain.isEnd) {
+			sustain.visible = false;
 			sustain.parentStrum.holdCover?.playAnim('end', true);
 			if (sustain.parent.isComputer) sustain.parentStrum.holdCover?.animation.finish();
 			sustain.parentStrum.holdCover = null;
