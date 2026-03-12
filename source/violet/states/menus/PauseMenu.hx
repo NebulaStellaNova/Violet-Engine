@@ -24,7 +24,11 @@ class PauseMenu extends EditorListBackend {
     }
 
     public dynamic function exitToMenu() {
-        subCamera.fade(0.25, ()->FlxG.switchState(new MainMenu()));
+        subCamera.fade(0.25, ()->{
+            FlxG.switchState(new MainMenu());
+            FreeplayMenu.skipTransition = true;
+            FlxG.state.openSubState(new FreeplayMenu());
+        });
     }
 
     override public function new() {
