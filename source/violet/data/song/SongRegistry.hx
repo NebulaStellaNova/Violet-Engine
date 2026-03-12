@@ -20,13 +20,15 @@ class SongRegistry {
             songList = songList.concat(level.getSongs());
         }
         for (songID in songList) {
-            final jsonPath = 'songs/$songID/meta';
-            if (!Paths.fileExists(Paths.json(jsonPath), true)) {
+            final parsed:Dynamic = ParseUtil.jsonOrYaml('songs/$songID/meta');
+            if (parsed == {}) {
                 trace('warning:Could not find meta file for song with ID "$songID". Skipping registration.');
                 continue;
+            } else {
+                songDatas.set(songID, parsed);
+                registerSong(new Song(songID));
+
             }
-            songDatas.set(songID, ParseUtil.json(jsonPath));
-            registerSong(new Song(songID));
         }
     }
 
