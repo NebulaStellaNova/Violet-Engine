@@ -118,7 +118,7 @@ class FunkinScript extends Script {
 		} catch (e) {
 			// trace('error:${e.message}');
 			var data:Array<String> = e.message.split(":");
-			violet.backend.CrashHandler.errorNotif('Novamod Script Exception!', 'Error executing "$fileName": ${data[2]},\nOn Line #${data[1]}');
+			// violet.backend.CrashHandler.errorNotif('Novamod Script Exception!', 'Error executing "$fileName": ${data[2]},\nOn Line #${data[1]}');
 		}
 		return null;
 	}

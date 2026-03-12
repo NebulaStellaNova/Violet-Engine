@@ -8,12 +8,8 @@ import sys.io.File;
 import lime.app.Application;
 import openfl.Lib;
 import openfl.events.UncaughtErrorEvent;
-import haxe.ui.notifications.NotificationManager;
-import haxe.ui.notifications.NotificationType;
 
 class CrashHandler {
-	private static var notificationCamera:FlxCamera = null;
-	// @:unreflective public static var notificationManager:NotificationManager;
 
 	static var SEPERATOR = '=====================';
 
@@ -35,11 +31,9 @@ class CrashHandler {
 		untyped __global__.__hxcpp_set_critical_error_handler(onCrash);
 		#end
 
-		// notificationManager = new haxe.ui.notifications.NotificationManager();
-
-		FlxG.signals.preStateCreate.add((_)->{
+		/* FlxG.signals.preStateCreate.add((_)->{
 			notifList = [];
-		});
+		}); */
 		/* FlxG.signals.postStateSwitch.add(()->{
 			new flixel.util.FlxTimer().start(1, (_)->{
 				triggerNotifs();
@@ -49,7 +43,6 @@ class CrashHandler {
 
 	static function onCrash(e:UncaughtErrorEvent):Void {
 		trace("warning:Uh Oh!");
-		errorNotif("test", "yo");
 		trace(e);
 		/* @:privateAccess FlxG.game._nextState = new violet.states.TitleState();
 		@:privateAccess FlxG.game.switchState(); */
@@ -111,25 +104,5 @@ class CrashHandler {
 		Application.current.window.alert(errMsg, 'Error!');
 
 		Sys.exit(1);
-	}
-
-	public static var notifList:Array<Dynamic> = [];
-	public static function triggerNotifs() {
-		var notificationManager = new haxe.ui.notifications.NotificationManager();
-		for (i in notifList) {
-			notificationManager.addNotification({
-				title: i.title,
-				body: i.description,
-				type: NotificationType.Error,
-				expiryMs: 5000,
-				actions: []
-			});
-		}
-	}
-
-	@:unreflective public static function errorNotif(title:String, description:String) {
-		var addIt = true;
-		for (i in notifList) if (i.title == title && i.description == description) addIt = false;
-		if (addIt) notifList.push({title: title, description: description});
 	}
 }

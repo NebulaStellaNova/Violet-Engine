@@ -43,8 +43,6 @@ class StateBackend extends flixel.FlxState {
 	override public function create() {
 		super.create();
 
-		NovaUtils.NOTIFICATION_MANAGER = null;
-
 		Conductor.init();
 
 		instance = this;
@@ -60,14 +58,8 @@ class StateBackend extends flixel.FlxState {
 		}
 		#end
 		callInScripts('create');
-
-		new flixel.util.FlxTimer().start(0.1, _ -> nextFrame = true);
 	}
 
-	var nextFrame = false;
-
-	public var notificationManager = new haxe.ui.notifications.NotificationManager();
-	var errIndex:Int = 0;
 	override public function update(elapsed:Float) {
 		super.update(elapsed);
 
@@ -76,20 +68,6 @@ class StateBackend extends flixel.FlxState {
 
 		Conductor.update();
 
-		if (nextFrame) {
-			if (errIndex > violet.backend.CrashHandler.notifList.length - 1) {
-				nextFrame = false;
-			} else {
-				notificationManager.addNotification({
-					title: violet.backend.CrashHandler?.notifList[errIndex]?.title,
-					body: violet.backend.CrashHandler?.notifList[errIndex]?.description,
-					type: haxe.ui.notifications.NotificationType.Error,
-					expiryMs: 5000,
-					actions: []
-				});
-			}
-			errIndex++;
-		}
 		callInScripts('update');
 	}
 

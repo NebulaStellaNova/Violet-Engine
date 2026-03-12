@@ -47,7 +47,7 @@ class Main extends openfl.display.Sprite {
 		super();
 		instance = this;
 
-		violet.boot.HaxeUIHelper.init();
+		// violet.boot.HaxeUIHelper.init();
 
 		/* FlxG.signals.postStateSwitch.add(()->{
 			@:privateAccess violet.backend.CrashHandler.notificationManager = null;//new haxe.ui.notifications.NotificationManager();

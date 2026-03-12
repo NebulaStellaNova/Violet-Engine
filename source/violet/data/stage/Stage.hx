@@ -25,7 +25,7 @@ class Stage extends flixel.group.FlxGroup {
         stageScripts.set('directory', this._data.directory);
 
         if (StageRegistry.stageDatas.get(id) == null) {
-            NovaUtils.addNotification('Stage not found!', 'Could not find stage with ID "$id" using default stage "mainStage."', haxe.ui.notifications.NotificationType.Error);
+            NovaUtils.addNotification('Stage not found!', 'Could not find stage with ID "$id" using default stage "mainStage."');
         }
 
         FlxG.camera.scroll.x = this._data.cameraPosition[0];

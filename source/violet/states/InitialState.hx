@@ -24,21 +24,6 @@ class InitialState extends StateBackend { // for now
 		// for later use
 		#end
 
-		var i:Int = 0;
-		function attemptNotif():Void {
-			try {
-				new haxe.ui.notifications.NotificationManager().addNotification({title: 'a', body: ''});
-			} catch(error:haxe.Exception) {
-				if (i == 20) {
-					trace('warning:Failed to initialize notification manager after 20 attempts, giving up.');
-					return;
-				}
-				i++;
-				attemptNotif();
-			}
-		}
-		attemptNotif();
-
 		FlxG.signals.preUpdate.add(() -> {
 			if (OptionsMenu.instance != null)
 				if (!OptionsMenu.instance.canSelectMenu) return;

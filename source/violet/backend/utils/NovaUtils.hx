@@ -1,16 +1,10 @@
 package violet.backend.utils;
 
-import haxe.ui.components.Label;
-import haxe.ui.notifications.NotificationType;
 import flixel.FlxCamera;
-import haxe.ui.notifications.Notification;
 import haxe.io.Path;
-import haxe.ui.core.Screen;
 import violet.data.Constants;
 import violet.backend.audio.Conductor;
 import flixel.graphics.frames.FlxAtlasFrames;
-
-import haxe.ui.notifications.NotificationManager;
 
 enum abstract MenuSFX(Int) {
 	var SCROLL;
@@ -22,24 +16,9 @@ class NovaUtils {
 
 	public static var CURRENT_MUSIC:String = "";
 
-	public static var NOTIFICATION_MANAGER:NotificationManager;
 	public static var NOTIFICATION_CAMERA:FlxCamera;
 
-	public static function addNotification(title:String, body:String, type:NotificationType = Default, expiryMs:Int = 10000) {
-		var notificationData:haxe.ui.notifications.NotificationData = {title: title, body: body, type: type, expiryMs: expiryMs};
-		if (NOTIFICATION_CAMERA == null) {
-			NOTIFICATION_CAMERA = new FlxCamera();
-			NOTIFICATION_CAMERA.bgColor = FlxColor.TRANSPARENT;
-			FlxG.cameras.add(NOTIFICATION_CAMERA, false);
-		}
-		if (NOTIFICATION_MANAGER == null) {
-			NOTIFICATION_MANAGER = new NotificationManager();
-		}
-		var notification = NOTIFICATION_MANAGER.addNotification(notificationData);
-		notification.closeButton.destroy();
-
-		notification.camera = NOTIFICATION_CAMERA;
-	}
+	public static function addNotification(title:String, body:String, expiryMs:Int = 10000) {}
 
 	public static function playMenuMusic():Void {
 		if (CURRENT_MUSIC != Constants.MENU_MUSIC) {
