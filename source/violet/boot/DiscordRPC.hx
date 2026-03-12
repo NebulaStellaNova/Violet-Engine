@@ -33,32 +33,26 @@ class DiscordRPC {
 		final discriminator:Int = Std.parseInt(request[0].discriminator);
 
 		if (discriminator != 0)
-			Sys.println('Discord: Connected to user ${username}#${discriminator} ($globalName)');
+			trace('sys:Discord: Connected to user ${username}#${discriminator} ($globalName)');
 		else
-			Sys.println('Discord: Connected to user @${username} ($globalName)');
+			trace('sys:Discord: Connected to user @${username} ($globalName)');
 
 		final discordPresence:DiscordRichPresence = new DiscordRichPresence();
 		discordPresence.type = DiscordActivityType_Playing;
 		discordPresence.details = "In the menus";
 		discordPresence.largeImageKey = "https://github.com/NebulaStellaNova/Violet-Engine/blob/main/art/iconOG.png?raw=true";
-		// discordPresence.smallImageKey = "ptb-small";
 
 		final button:DiscordButton = new DiscordButton();
 		button.label = "Violet Engine Discord";
 		button.url = "https://discord.gg/A3Hjgsp37r";
 		discordPresence.buttons[0] = button;
 
-		/* final button:DiscordButton = new DiscordButton();
-		button.label = "Test 2";
-		button.url = "https://discord.gg/fortnite";
-		discordPresence.buttons[1] = button; */
-
 		Discord.UpdatePresence(cpp.RawConstPointer.addressOf(discordPresence));
 	}
 
 	private static function onDisconnected(errorCode:Int, message:cpp.ConstCharStar)
-		Sys.println('Discord: Disconnected ($errorCode:$message)');
+		trace('sys:Discord: Disconnected ($errorCode:$message)');
 
 	private static function onError(errorCode:Int, message:cpp.ConstCharStar)
-		Sys.println('Discord: Error ($errorCode:$message)');
+		trace('sys:Discord: Error ($errorCode:$message)');
 }
