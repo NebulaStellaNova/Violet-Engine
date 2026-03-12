@@ -1,7 +1,6 @@
 package violet.backend.options;
 
 import flixel.util.FlxSave;
-import flixel.input.keyboard.FlxKey;
 
 @:structInit class OptionsData {
     public var fps:Int = 60;
@@ -11,6 +10,7 @@ import flixel.input.keyboard.FlxKey;
     public var developerMode:Bool = false;
     public var mouseControls:Bool = true;
     public var forceMouseScrolling:Bool = true;
+    public var debugDisplayOnStart:Bool = false;
     public var controls:Map<String, Array<String>> = [
         'note_left' => ['A', 'LEFT'],
         'note_down' => ['S', 'DOWN'],

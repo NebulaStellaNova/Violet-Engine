@@ -57,6 +57,9 @@ class DebugDisplay extends Sprite {
 		flixel.FlxG.signals.preStateSwitch.add(()->extraInfo = []);
 
 		addEventListener(Event.ENTER_FRAME, onEnterFrame);
+
+		if (violet.backend.options.Options.data.debugDisplayOnStart)
+			shown = true;
 	}
 
 	var framesPerSecond:Int = 0;

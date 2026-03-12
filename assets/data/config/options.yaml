@@ -101,3 +101,7 @@ menus:
     description: FORCES scroll wheel to function in menus if mouse controls is disabled.
     saveID: forceMouseScrolling
     type: bool
+  - name: Debug Display on Start
+    description: Shows the debug display when you start the game.
+    saveID: debugDisplayOnStart
+    type: bool
