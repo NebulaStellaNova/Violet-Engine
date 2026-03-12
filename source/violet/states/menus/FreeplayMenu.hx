@@ -303,6 +303,7 @@ class FreeplayMenu extends SubStateBackend {
 			FlxG.sound.music.fadeOut(0.5);
 			camHUD.fade(FlxColor.BLACK, 0.5, false, () -> {
 				FlxTimer.wait(0.5, () -> {
+					PlayState.doFadeOut = true;
 					PlayState.loadSong(id, difficulty);
 				});
 			});

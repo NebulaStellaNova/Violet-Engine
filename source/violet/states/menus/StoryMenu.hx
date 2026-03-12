@@ -261,6 +261,7 @@ class StoryMenu extends SubStateBackend {
         NovaUtils.playMenuSFX(CONFIRM);
         new FlxTimer().start(1.25, (_)->{
             storyCam.fade(0.25, ()->{
+                PlayState.doFadeOut = true;
                 PlayState.playlist = levelList[curSelected].getSongs();
                 PlayState.playlist.shift(); // Get rid of the song we boutta load
                 PlayState.loadSong(levelList[curSelected].getSongs()[0], curDifficultyString);

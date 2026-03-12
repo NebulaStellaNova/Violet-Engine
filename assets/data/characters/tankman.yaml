@@ -57,16 +57,16 @@ animations:
     name: singRIGHT
   - flipY: false
     offsets:
-      - 92
-      - -28
+      - 98
+      - 16
     frameRate: 24
     prefix: PRETTY GOOD tankman
     flipX: false
     name: good!
   - flipY: false
     offsets:
-      - 100
-      - 17
+      - -20
+      - -10
     frameRate: 24
     prefix: TANKMAN UGH
     flipX: false

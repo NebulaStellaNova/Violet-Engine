@@ -36,6 +36,7 @@ class PlayState extends violet.backend.StateBackend {
 	public static var difficulty:String;
 	public static var variation:Null<String>;
 	public static var playlist:Array<String> = [];
+	public static var doFadeOut:Bool = false;
 
 	#if SCRIPT_SUPPORT
 	public var songScripts:ScriptPack = new ScriptPack();
@@ -67,6 +68,7 @@ class PlayState extends violet.backend.StateBackend {
 	public var countdownSprites:Array<String> = [null, 'ready', 'set', 'go'];
 	public var countdownSounds:Array<String> = ['introTHREE', 'introTWO', 'introONE', 'introGO'];
 	public var countdownTimer:FlxTimer = new FlxTimer();
+
 
 	/**
 	 * The amount of beats the countdown lasts for.
@@ -161,6 +163,10 @@ class PlayState extends violet.backend.StateBackend {
 		add(strumLines);
 		Conductor.onComplete = endSong;
 
+		for (i in SONG._data.noteTypes) {
+			ModdingAPI.checkForScripts('data/notetypes', i, songScripts);
+		}
+
 		if (playAsOpponent) {
 			for (strumLine in strumLines) {
 				if (strumLine.controllerType == PLAYER) strumLine.controllerType = OPPONENT;
@@ -215,10 +221,13 @@ class PlayState extends violet.backend.StateBackend {
 
 		callSongScripts('postCreate');
 
-		camHUD.fade(0.001);
-		new FlxTimer().start(0.1, (_)->{
-			camHUD.fade(0.5, true);
-		});
+		if (doFadeOut) {
+			doFadeOut = false;
+			camHUD.fade(0.001);
+			new FlxTimer().start(0.1, (_)->{
+				camHUD.fade(0.5, true);
+			});
+		}
 	}
 
 	var healthLerp:Float = 0.5;
@@ -275,7 +284,7 @@ class PlayState extends violet.backend.StateBackend {
 
 	function onNoteHit(note:Note) {
 		if (!Conductor.instrumental.playing) return;
-		var event:NoteHitEvent = songScripts.event("noteHit", new NoteHitEvent(note, "", note.parentStrum, note.id, note.parent.isComputer));
+		var event:NoteHitEvent = songScripts.event("noteHit", new NoteHitEvent(note, note.noteType, note.parentStrum, note.id, note.parent.isComputer));
 		if (event.cancelled) return;
 
 		if (note.wasHit) return;
@@ -315,7 +324,7 @@ class PlayState extends violet.backend.StateBackend {
 
 	function onSustainHit(sustain:Sustain) {
 		if (!Conductor.instrumental.playing) return;
-		var event:SustainHitEvent = songScripts.event("sustainHit", new SustainHitEvent(sustain, "", sustain.parentStrum, sustain.id, sustain.parent.isComputer));
+		var event:SustainHitEvent = songScripts.event("sustainHit", new SustainHitEvent(sustain, sustain.noteType, sustain.parentStrum, sustain.id, sustain.parent.isComputer));
 		if (event.cancelled) return;
 
 		if (sustain.wasHit && !sustain.parentNote.wasHit) return;

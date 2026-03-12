@@ -78,6 +78,11 @@ class Sustain extends NovaSprite {
 	 */
 	public var wasMissed:Bool = false;
 
+	public var noteType(get, never):String;
+	function get_noteType():String {
+		return this.parentNote.noteType;
+	}
+
 	public function new(parent:Note, time:Float, isEnd:Bool) {
 		super(-10000, -10000);
 		parentNote = parent;

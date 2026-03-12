@@ -153,7 +153,11 @@ class StrumLine extends FlxGroup {
 	public function generateNotes(?time:Float):Void {
 		for (data in chartData.notes) {
 			if (data.time < time ?? Math.NEGATIVE_INFINITY) continue;
-			notes.add(new Note(this, data.id, data.time, data.sLen));
+			var note:Note = new Note(this, data.id, data.time, data.sLen);
+			if (PlayState.SONG._data.noteTypes[data.type-1] != null) {
+				note.noteType = PlayState.SONG._data.noteTypes[data.type-1];
+			}
+			notes.add(note);
 		}
 	}
 
