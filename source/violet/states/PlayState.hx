@@ -279,6 +279,7 @@ class PlayState extends violet.backend.StateBackend {
 			for (char in strumLine.characters)
 				char.playSingAnim(id, true);
 			health -= Constants.DEFAULT_HEALTH_LOSS;
+			score -= Math.round(Scoring.missScore);
 		}
 	}
 
