@@ -66,13 +66,16 @@ class Main extends openfl.display.Sprite {
 		hxwindowmode.WindowColorMode.redrawWindowHeader();
 		#end
 
+		#if (windows && cpp)
 		violet.external.windows.WinAPI.setDarkMode(violet.external.windows.WinAPI.isSystemDarkMode());
+		#end
 
 		#if ALLOW_VIDEOS
 		hxvlc.util.Handle.init();
 		#end
 		#if DISCORD_RICH_PRESENCE
-		// write this
+		// Maybe put the Discord code inside the Discord flag...
+		DiscordRPC.init();
 		#end
 
 		@:privateAccess {
@@ -85,7 +88,10 @@ class Main extends openfl.display.Sprite {
 
 		Options.init();
 
+		#if hxhardware
 		hxhardware.CPU.init();
+		#end
+
 		var startFPS:Int = Application.current.window.displayMode.refreshRate;
 		new flixel.FlxGame(1280, 720, violet.states.InitialState, startFPS, startFPS, true);
 		@:privateAccess FlxG.game._customSoundTray = violet.backend.display.VioletSoundTray;
@@ -98,8 +104,6 @@ class Main extends openfl.display.Sprite {
 		// literally just cause nebs pause bind is backslash
 		FlxG.debugger.toggleKeys.remove(BACKSLASH);
 		#end
-
-		DiscordRPC.init();
 	}
 
 	public static function switchState(targetClass:Dynamic) {

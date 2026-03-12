@@ -1,5 +1,6 @@
 package violet.boot;
 
+#if DISCORD_RICH_PRESENCE
 import hxdiscord_rpc.Discord;
 import hxdiscord_rpc.Types;
 import sys.thread.Thread;
@@ -56,3 +57,4 @@ class DiscordRPC {
 	private static function onError(errorCode:Int, message:cpp.ConstCharStar)
 		trace('sys:Discord: Error ($errorCode:$message)');
 }
+#end

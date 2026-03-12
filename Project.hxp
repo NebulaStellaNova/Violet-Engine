@@ -158,12 +158,13 @@ class Project extends HXProject {
 
 		usesAnimateAtlas.enable();
 
-		discordRPC.enable();
-
 		// script related
 		if (scriptSupport.exists()) {
 			canHaxeScript.enable();
-			canLuaScript.enable();
+
+			if (hasDefine('cpp')) {
+				canLuaScript.enable();
+			}
 
 			scriptedStates.enable();
 			if (canHaxeScript.exists())
@@ -172,10 +173,11 @@ class Project extends HXProject {
 			info('Scripting was enabled.');
 		}
 		if (hasDefine('cpp')) {
-			// if (isDesktop())
-			// 	discordRPC.enable();
-			// if (isDesktop() || isMobile())
-			// 	allowVideos.enable();
+			if (isDesktop())
+				discordRPC.enable();
+
+			// If a HL version of HXVLC gets made, move this.
+			allowVideos.enable();
 		}
 		if (discordRPC.exists())
 			setHaxedef('DISCORD_DISABLE_IO_THREAD');
@@ -232,7 +234,9 @@ class Project extends HXProject {
 		addHaxeMacro('violet.backend.Macro.init()');
 
 		/* Libraries */
-		addHaxelib('hxhardware', 'git');
+		if (hasDefine("cpp")) {
+			addHaxelib('hxhardware', 'git');
+		}
 		// required for flixel, don't put below flixel, causes weird issues
 		addHaxelib('lime', '8.3.1');
 		addHaxelib('openfl', '9.5.1');
@@ -260,12 +264,18 @@ class Project extends HXProject {
 		// chart converter
 		addHaxelib('moonchart');
 
-		addHaxelib('linc_luajit', 'git');
 		if (canHaxeScript.exists()) addHaxelib('rulescript', 'git');
-		if (canLuaScript.exists()) addHaxelib('lscript', 'git');
+		if (canLuaScript.exists()) {
+			addHaxelib('linc_luajit', 'git'); // WHY WAS THIS OUTSIDE THE LUA DEFINE :sob:
+			addHaxelib('lscript', 'git');
+		}
 
-		if (discordRPC.exists()) addHaxelib('hxdiscord_rpc');
-		if (allowVideos.exists()) addHaxelib('hxvlc');
+		if (discordRPC.exists())
+			addHaxelib('hxdiscord_rpc');
+
+		if (allowVideos.exists())
+			addHaxelib('hxvlc');
+
 		addHaxelib('thx.semver');
 
 		// if (editWindowBorderColor.exists())

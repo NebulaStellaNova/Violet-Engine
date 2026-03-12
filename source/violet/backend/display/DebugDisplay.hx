@@ -2,8 +2,10 @@ package violet.backend.display;
 
 import violet.states.menus.OptionsMenu;
 import flixel.math.FlxMath;
+#if hxhardware
 import hxhardware.CPU;
 import hxhardware.Memory;
+#end
 import openfl.display.Bitmap;
 import openfl.display.BitmapData;
 import openfl.display.Sprite;
@@ -65,7 +67,12 @@ class DebugDisplay extends Sprite {
 	var _updateClock:Float = 999999;
 
 	var memories:Array<Float> = [for (i in 0...100) 0];
+
+	#if hxhardware
 	var cpus:Array<Float> = [for (i in 0...100) 0];
+	#else
+	var maxMem:Float = 0;
+	#end
 
 	function onEnterFrame(e:Event) {
 		_framesPassed++;
@@ -74,16 +81,28 @@ class DebugDisplay extends Sprite {
 		_updateClock += deltaTime;
 
 		memories.shift();
+		memories.push(Std.parseFloat(#if hxhardware
+			Memory.getProcessPhysicalMemoryUsage().formatBytes()
+			#else
+			openfl.system.System.totalMemory.formatBytes()
+			#end));
+
+		maxMem = Math.max(maxMem, memories[memories.length - 0]);
+
+		#if hxhardware
 		cpus.shift();
-		memories.push(Std.parseFloat(Memory.getProcessPhysicalMemoryUsage().formatBytes()));
 		cpus.push(FlxMath.roundDecimal(CPU.getProcessCPUUsage(), 2));
+		#end
 
 		var memoryAvg:Float = 0;
-		var cpuAvg:Float = 0;
 		for (m in memories) memoryAvg += m;
-		for (c in cpus) cpuAvg += c;
 		memoryAvg /= memories.length;
+
+		#if hxhardware
+		var cpuAvg:Float = 0;
+		for (c in cpus) cpuAvg += c;
 		cpuAvg /= cpus.length;
+		#end
 
 		if (_updateClock >= 1000) {
 			framesPerSecond = (FlxG.drawFramerate > 0) ? FlxMath.minInt(_framesPassed, FlxG.drawFramerate) : _framesPassed;
@@ -92,12 +111,20 @@ class DebugDisplay extends Sprite {
 		}
 		var parts:Array<String> = [
 			'Framerate: $framesPerSecond',
-			'Memory: ${FlxMath.roundDecimal(memoryAvg, 2)} / ${Memory.getProcessPeakPhysicalMemoryUsage().formatBytes()}',
-			'CPU: ${FlxMath.roundDecimal(cpuAvg, 2)}% / ${FlxMath.roundDecimal(CPU.getProcessPeakCPUUsage(), 2)}%'
+			'Memory: ${FlxMath.roundDecimal(memoryAvg, 2)} / ${#if hxhardware Memory.getProcessPeakPhysicalMemoryUsage().formatBytes() #else maxMem.formatBytes() #end}'
+			#if hxhardware
+			, 'CPU: ${FlxMath.roundDecimal(cpuAvg, 2)}% / ${FlxMath.roundDecimal(CPU.getProcessPeakCPUUsage(), 2)}%'
+			#end
 		];
 		_previousTime = NovaUtils.getTimerPrecise();
 		if (extraInfo.length != 0)
-			parts = parts.concat(['']).concat([for (info in extraInfo) '${info.label}: ${Reflect.getProperty(FlxG.state, info.value) != null ? Reflect.getProperty(FlxG.state, info.value) : (Reflect.field(FlxG.state, info.value) != null ? Reflect.field(FlxG.state, info.value) : (Reflect.getProperty(Type.getClass(FlxG.state), info.value) != null ? Reflect.getProperty(Type.getClass(FlxG.state), info.value) : "???"))}']);
+			parts = parts.concat(['']).concat([for (info in extraInfo) '${info.label}: ${
+				Reflect.getProperty(FlxG.state, info.value) != null ? Reflect.getProperty(FlxG.state, info.value) :
+				(Reflect.field(FlxG.state, info.value) != null ? Reflect.field(FlxG.state, info.value) :
+				(Reflect.getProperty(Type.getClass(FlxG.state), info.value) != null ? Reflect.getProperty(Type.getClass(FlxG.state), info.value) :
+				"???"))
+			}']);
+
 		text.text = parts.join('\n');
 
 		background.width = text.width + 21;
@@ -111,7 +138,6 @@ class DebugDisplay extends Sprite {
 		background2.x = background.x - 5;
 		text.x = background.x + 10;
 		text.y = background.y + 10;
-
 
 		if (OptionsMenu.instance != null)
 			if (!OptionsMenu.instance.canSelectMenu) return;
