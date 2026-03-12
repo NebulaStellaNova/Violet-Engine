@@ -307,6 +307,7 @@ class PlayState extends violet.backend.StateBackend {
 	function onNoteMissed(note:Note) {
 		if (!Conductor.instrumental.playing) return;
 		if (note.wasMissed) return;
+
 		note.wasMissed = true; note.alpha *= 0.6;
 		generalVocals.pause(); note.parent.vocals.pause();
 		FlxG.sound.play(Cache.sound('miss/${FlxG.random.int(1, 3)}'), 0.7);
@@ -317,6 +318,7 @@ class PlayState extends violet.backend.StateBackend {
 		for (char in note.parent.characters)
 			char.playSingAnim(note.id, true);
 		health -= Constants.DEFAULT_HEALTH_LOSS;
+		note.parentStrum.isHolding = false;
 		note.parentStrum.holdCover?.playAnim('end', true);
 		if (note.parent.isComputer) note.parentStrum.holdCover?.animation.finish();
 		note.parentStrum.holdCover = null;
@@ -336,12 +338,12 @@ class PlayState extends violet.backend.StateBackend {
 		if (sustain.parent.isPlayer)
 			health += Constants.DEFAULT_HEALTH_GAIN;
 		if (sustain.isEnd) {
-			sustain.parentStrum.isHolding = true;
+			sustain.parentStrum.isHolding = false;
 			sustain.parentStrum.holdCover?.playAnim('end', true);
 			if (sustain.parent.isComputer) sustain.parentStrum.holdCover?.animation.finish();
 			sustain.parentStrum.holdCover = null;
 		} else {
-			sustain.parentStrum.isHolding = false;
+			sustain.parentStrum.isHolding = true;
 			sustain.parentStrum.playStrumAnim('confirm', false);
 		}
 	}
