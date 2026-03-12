@@ -78,7 +78,7 @@ class DebugDisplay extends Sprite {
 
 		memories.shift();
 		cpus.shift();
-		memories.push(Std.parseFloat(Memory.getProcessPhysicalMemoryUsage().formatBytes()));
+		memories.push(Memory.getProcessPhysicalMemoryUsage());
 		cpus.push(FlxMath.roundDecimal(CPU.getProcessCPUUsage(), 2));
 
 		var memoryAvg:Float = 0;
@@ -95,7 +95,7 @@ class DebugDisplay extends Sprite {
 		}
 		var parts:Array<String> = [
 			'Framerate: $framesPerSecond',
-			'Memory: ${FlxMath.roundDecimal(memoryAvg, 2)} / ${Memory.getProcessPeakPhysicalMemoryUsage().formatBytes()}',
+			'Memory: ${FlxMath.roundDecimal(memoryAvg, 2).formatBytes()} / ${Memory.getProcessPeakPhysicalMemoryUsage().formatBytes()}',
 			'CPU: ${FlxMath.roundDecimal(cpuAvg, 2)}% / ${FlxMath.roundDecimal(CPU.getProcessPeakCPUUsage(), 2)}%'
 		];
 		_previousTime = NovaUtils.getTimerPrecise();
