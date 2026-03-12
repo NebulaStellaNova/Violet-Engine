@@ -4,6 +4,7 @@ assetPath: characters/bfCar
 flipX: true
 singTime: 8
 healthIcon: bf
+offsets: [0, -100]
 animations:
   - name: idle
     prefix: BF idle dance

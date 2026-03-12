@@ -39,6 +39,14 @@ class NovaSprite extends #if ANIMATE_SUPPORT FlxAnimate #else FlxSprite #end {
 		super(x, y);
 		if (path != null)
 			this.loadSprite(path);
+
+		this.animation.onFinish.add((name)->{
+			for (i in ['hold', 'end']) {
+				if (animationList.contains('$name-$i')) {
+					playAnim('$name-$i', true);
+				}
+			}
+		});
 	}
 
 	override function initVars():Void {
@@ -185,10 +193,10 @@ class NovaSprite extends #if ANIMATE_SUPPORT FlxAnimate #else FlxSprite #end {
 		}
 		if (newFrames != null) {
 			#if ANIMATE_SUPPORT
-			this.frames = animate.FlxAnimateFrames.combineAtlas(cast this.frames, newFrames);
+			this.frames = animate.FlxAnimateFrames.combineAtlas(newFrames, cast this.frames);
 			#else
 			if (this.frames is FlxAtlasFrames)
-				cast(this.frames, FlxAtlasFrame).addAtlas(newFrames);
+				this.frames = newFrames.addAtlas(cast(this.frames, FlxAtlasFrame));
 			#end
 		}
 	}
