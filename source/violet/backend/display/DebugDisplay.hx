@@ -87,11 +87,11 @@ class DebugDisplay extends Sprite {
 			openfl.system.System.totalMemory.formatBytes()
 			#end));
 
-		maxMem = Math.max(maxMem, memories[memories.length - 0]);
-
 		#if hxhardware
 		cpus.shift();
 		cpus.push(FlxMath.roundDecimal(CPU.getProcessCPUUsage(), 2));
+		#else
+		maxMem = Math.max(maxMem, memories[memories.length - 0]);
 		#end
 
 		var memoryAvg:Float = 0;
