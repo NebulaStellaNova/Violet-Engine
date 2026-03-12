@@ -157,7 +157,7 @@ class StrumLine extends FlxGroup {
 		}
 	}
 
-	public dynamic function _onVoidTap(id:Int):Void {}
+	public dynamic function _onVoidTap(id:Int, strumLine:StrumLine):Void {}
 	public dynamic function _onNoteHit(note:Note):Void {}
 	public dynamic function _onSustainHit(sustain:Sustain):Void {}
 	public dynamic function _onNoteMissed(note:Note):Void {}
@@ -285,7 +285,7 @@ class StrumLine extends FlxGroup {
 					frontNote = backNote;
 			}
 			_onNoteHit(frontNote);
-		} else _onVoidTap(inputId);
+		} else _onVoidTap(inputId, this);
 	}
 	function _on_release(event:KeyboardEvent):Void {
 		if (FlxG.state.subState != null) return;

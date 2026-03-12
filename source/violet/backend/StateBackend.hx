@@ -52,10 +52,10 @@ class StateBackend extends flixel.FlxState {
 		#if SCRIPT_SUPPORT
 		stateScripts.parent = this;
 		for (path in #if MOD_SUPPORT ModdingAPI.STATE_PATHS #else ['data/scripts/states'] #end) {
-			checkForScripts([Paths.ASSETS_FOLDER, path].join("/") + '/${Main.stateClassName}');
+			ModdingAPI.checkForScript([Paths.ASSETS_FOLDER, path].join("/") + '/${Main.stateClassName}', stateScripts);
 			#if MOD_SUPPORT
 			for (mod in ModdingAPI.getActiveMods())
-				checkForScripts([ModdingAPI.MOD_FOLDER, mod.folder, path].join("/") + '/${Main.stateClassName}');
+				ModdingAPI.checkForScript([ModdingAPI.MOD_FOLDER, mod.folder, path].join("/") + '/${Main.stateClassName}', stateScripts);
 			#end
 		}
 		#end
@@ -63,39 +63,6 @@ class StateBackend extends flixel.FlxState {
 
 		new flixel.util.FlxTimer().start(0.1, _ -> nextFrame = true);
 	}
-
-	#if SCRIPT_SUPPORT
-	public function checkForScripts(string:String, ?pack:ScriptPack) {
-		pack ??= stateScripts;
-
-		#if CAN_LUA_SCRIPT
-		for (ext in ModdingAPI.EXT_ALIASES.get("lua")) {
-			if (Paths.fileExists('$string.$ext', true)) {
-				var script = new violet.backend.scripting.LuaScript('$string.$ext');
-				pack.addScript(script);
-			}
-		}
-		#end
-
-		#if CAN_HAXE_SCRIPT
-		for (ext in ModdingAPI.EXT_ALIASES.get("hx")) {
-			if (Paths.fileExists('$string.$ext', true)) {
-				var script = new violet.backend.scripting.FunkinScript('$string.$ext');
-				pack.addScript(script);
-			}
-		}
-		#end
-
-		#if CAN_HAXE_SCRIPT
-		for (ext in ModdingAPI.EXT_ALIASES.get("py")) {
-			if (Paths.fileExists('$string.$ext', true)) {
-				var script = new violet.backend.scripting.PythonScript('$string.$ext');
-				pack.addScript(script);
-			}
-		}
-		#end
-	}
-	#end
 
 	var nextFrame = false;
 

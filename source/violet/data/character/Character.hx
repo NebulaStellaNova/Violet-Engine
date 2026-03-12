@@ -1,10 +1,13 @@
 package violet.data.character;
 
+import violet.backend.scripting.ScriptPack;
 import openfl.display.IGraphicsData;
 import violet.backend.audio.Conductor;
 import violet.backend.utils.NovaUtils;
 
 class Character extends violet.backend.objects.Bopper {
+
+	public var scripts:ScriptPack;
 
 	public var id:String;
 	public var _data:CharacterData;

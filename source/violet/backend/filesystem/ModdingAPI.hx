@@ -1,8 +1,10 @@
-#if MOD_SUPPORT
 package violet.backend.filesystem;
+#if MOD_SUPPORT
 
+import violet.backend.utils.FileUtil;
 import thx.semver.Version;
 import violet.backend.utils.ParseUtil;
+import violet.backend.scripting.ScriptPack;
 
 typedef ModContributor = {
 	var name:String;
@@ -32,6 +34,10 @@ class ModdingAPI {
 		sys.FileSystem
 	];
 
+
+	public static var availableMods(default, null):Array<ModMeta> = [];
+	public static var activeModsIds(default, null):Array<String> = [];
+
 	public static var MOD_FOLDER:String = 'mods';
 	public static var API_VERSION:Version = "0.0.0";
 
@@ -47,11 +53,12 @@ class ModdingAPI {
 		trace("debug:<yellow>Initializing Modding System...");
 		FlxG.save.data.registeredModIds ??= [];
 		FlxG.save.data.enabledModIds ??= [];
-		(availableMods = [
+		@:bypassAccessor availableMods = [
 			for (path in Paths.readFolder('mods', true)) {
 				var meta:ModMeta = ParseUtil.json('$MOD_FOLDER/$path/novamod_meta', 'root');
 				if (meta == null) continue;
 
+				trace(path);
 				// null check all properties and set defaults
 				meta.folder = path;
 				meta.title ??= meta.folder;
@@ -59,7 +66,7 @@ class ModdingAPI {
 					contributor.color ??= FlxColor.WHITE;
 				meta;
 			}
-		]);
+		];
 
 		for (i in availableMods) {
 			if (!FlxG.save.data.registeredModIds.contains(i.id)) {
@@ -74,13 +81,12 @@ class ModdingAPI {
 		reloadRegistries();
 	}
 
-	public static var availableMods(default, null):Array<ModMeta> = [];
-	public static var activeModsIds(default, null):Array<String> = [];
-
 	public static function getMod(id:String):ModMeta {
-		for (meta in availableMods)
-			if (meta.id == id)
+		for (meta in availableMods) {
+			// trace(meta);
+			if ('${meta.id}' == id)
 				return meta;
+		}
 		return {id: "null", title: "Unknown Mod", description: "You don't have any mod metadata!", folder: null, mod_version: "0.0.0", api_version: API_VERSION, tags: [], contributors: []};
 	}
 
@@ -98,7 +104,7 @@ class ModdingAPI {
 		return activeModsIds.contains(id);
 
 	inline public static function getActiveMods():Array<ModMeta>
-		return [for (id in activeModsIds) getMod(id)];
+		return [for (id in activeModsIds) getMod(id)].filter((meta)->{return meta.id != "null";});
 
 
 	private static var registered:Bool = false;
@@ -113,6 +119,71 @@ class ModdingAPI {
 		violet.data.character.CharacterRegistry.registerCharacters();
 		violet.data.chart.ChartRegistry.registerCharts();
 	}
+
+	#if SCRIPT_SUPPORT
+
+	public static function checkForScripts(path:String, pack:ScriptPack, ?fileName:String) {
+		var scriptList = [for (file in Paths.readFolder('${Paths.ASSETS_FOLDER}/$path', true)) '${Paths.ASSETS_FOLDER}/$path/$file' ];
+		for (mod in getActiveMods()) {
+			scriptList = scriptList.concat([for (file in Paths.readFolder('$MOD_FOLDER/${mod.folder}/$path', true)) '$MOD_FOLDER/${mod.folder}/$path/$file' ]);
+		}
+		if (fileName != null) scriptList.filter((value)->{
+			return Paths.getFileName(value) == fileName;
+		});
+		for (file in scriptList) {
+
+			#if CAN_HAXE_SCRIPT
+			for (ext in ModdingAPI.EXT_ALIASES.get("hx")) {
+				if (file.endsWith('.$ext')) {
+					if (!FileUtil.getFileContent(file).contains("scriptDisabled = true")) {
+						pack.addScript(new violet.backend.scripting.FunkinScript(file));
+					}
+				}
+			}
+			#end
+
+			#if CAN_LUA_SCRIPT
+			for (ext in ModdingAPI.EXT_ALIASES.get("lua")) {
+				if (file.endsWith('.$ext')) {
+					if (!FileUtil.getFileContent(file).contains("scriptDisabled = true")) {
+						pack.addScript(new violet.backend.scripting.LuaScript(file));
+					}
+				}
+			}
+			#end
+		}
+	}
+
+	public static function checkForScript(string:String, pack:ScriptPack) {
+
+		#if CAN_LUA_SCRIPT
+		for (ext in ModdingAPI.EXT_ALIASES.get("lua")) {
+			if (Paths.fileExists('$string.$ext', true)) {
+				var script = new violet.backend.scripting.LuaScript('$string.$ext');
+				pack.addScript(script);
+			}
+		}
+		#end
+
+		#if CAN_HAXE_SCRIPT
+		for (ext in ModdingAPI.EXT_ALIASES.get("hx")) {
+			if (Paths.fileExists('$string.$ext', true)) {
+				var script = new violet.backend.scripting.FunkinScript('$string.$ext');
+				pack.addScript(script);
+			}
+		}
+		#end
+
+		#if CAN_HAXE_SCRIPT
+		for (ext in ModdingAPI.EXT_ALIASES.get("py")) {
+			if (Paths.fileExists('$string.$ext', true)) {
+				var script = new violet.backend.scripting.PythonScript('$string.$ext');
+				pack.addScript(script);
+			}
+		}
+		#end
+	}
+	#end
 }
 
 class ModIcon extends NovaSprite {

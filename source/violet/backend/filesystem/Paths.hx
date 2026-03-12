@@ -107,7 +107,7 @@ class Paths {
 
 	public static function readFolder(path:String, startFromRoot:Bool = false):Array<String> {
 		if (startFromRoot)
-			return FileSystem.readDirectory(Path.removeTrailingSlashes(root(path, true)));
+			return folderExists(path, startFromRoot) ? FileSystem.readDirectory(Path.removeTrailingSlashes(root(path, true))) : [];
 		var files:Array<String> = [];
 		for (folder in multiRoot(path))
 			for (file in FileSystem.readDirectory(Path.removeTrailingSlashes(folder)))

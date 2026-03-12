@@ -1,5 +1,8 @@
 package violet.states;
 
+import violet.backend.scripting.events.SongEvent;
+import violet.backend.scripting.events.SustainHitEvent;
+import violet.backend.scripting.events.NoteHitEvent;
 import violet.backend.options.Options;
 import flixel.FlxCamera;
 import flixel.group.FlxGroup;
@@ -59,6 +62,7 @@ class PlayState extends violet.backend.StateBackend {
 	public var scoreTxt:ScoreTxt;
 
 	public var playAsOpponent:Bool = false;
+	public var ghostTapping:Bool = Options.data.ghostTapping;
 
 	public var countdownSprites:Array<String> = [null, 'ready', 'set', 'go'];
 	public var countdownSounds:Array<String> = ['introTHREE', 'introTWO', 'introONE', 'introGO'];
@@ -93,7 +97,12 @@ class PlayState extends violet.backend.StateBackend {
 		camHUD.bgColor = FlxColor.TRANSPARENT;
 		FlxG.cameras.add(camHUD, false);
 
-		#if SCRIPT_SUPPORT
+		ModdingAPI.checkForScripts('songs', songScripts);
+		ModdingAPI.checkForScripts('data/scripts/songs', songScripts);
+		ModdingAPI.checkForScripts('songs/$song/scripts', songScripts);
+		ModdingAPI.checkForScripts('songs/$song/scripts/$difficulty', songScripts);
+
+		/* #if SCRIPT_SUPPORT
 		songScripts.parent = this;
 		final scriptPaths:Array<String> = ['$song/scripts', '$song/scripts/$difficulty'];
 		if (variation != null) scriptPaths.push('$song/scripts/$variation');
@@ -106,7 +115,7 @@ class PlayState extends violet.backend.StateBackend {
 				#end
 			}
 		}
-		#end
+		#end */
 
 		strumLines = new FlxTypedGroup<StrumLine>();
 
@@ -117,18 +126,6 @@ class PlayState extends violet.backend.StateBackend {
 		StrumLine.generalScrollSpeed = SONG.scrollSpeed ?? 1;
 		for (i => data in SONG.strumLines) {
 			if (data == null) continue;
-
-			/* var chars = [];
-			var charPosName:String = data.position == null ? (switch(data.type) {
-				case 0: "dad";
-				case 1: "boyfriend";
-				case 2: "girlfriend";
-			}) : data.position;
-			if (data.characters != null) for(k=>charName in data.characters) {
-				var char = new Character(0, 0, charName, stage.isCharFlipped(stage.characterPoses[charName] != null ? charName : charPosName, strumLine.type == 1));
-				stage.applyCharStuff(char, charPosName, k);
-				chars.push(char);
-			} */
 
 			var strumLine = new StrumLine(data);
 			strumLine.cameras = [camHUD];
@@ -153,84 +150,11 @@ class PlayState extends violet.backend.StateBackend {
 			}
 
 			// note interactions
-			final ghostTapping:Bool = Options.data.ghostTapping;
-			strumLine._onVoidTap = (id:Int) -> {
-				if (!Conductor.instrumental.playing) return;
-				strumLine.strums.members[id].playStrumAnim('press', ghostTapping);
-				if (!ghostTapping) {
-					FlxG.sound.play(Cache.sound('miss/${FlxG.random.int(1, 3)}'), 0.7);
-					for (char in strumLine.characters)
-						char.playSingAnim(id, true);
-					health -= Constants.DEFAULT_HEALTH_LOSS;
-				}
-			}
-			strumLine._onNoteHit = (note:Note) -> {
-				if (!Conductor.instrumental.playing) return;
-				if (note.wasHit) return;
-				note.wasHit = true; note.visible = false;
-				generalVocals.resume(); strumLine.vocals.resume();
-				note.parentStrum.playStrumAnim('confirm', true);
-				for (char in strumLine.characters)
-					char.playSingAnim(note.id);
-
-				if (strumLine.isPlayer) {
-					var judgement:Judgement = Scoring.judgeNoteHit(note.time - Conductor.framePosition);
-					if (judgement.splash) note.parentStrum.spawnSplash();
-					score += Math.round(judgement.score);
-					health += Constants.DEFAULT_HEALTH_GAIN;
-				}
-				if (note.length > 10)
-					note.parentStrum.spawnHoldCover();
-			}
-			strumLine._onSustainHit = (sustain:Sustain) -> {
-				if (!Conductor.instrumental.playing) return;
-				if (sustain.wasHit && !sustain.parentNote.wasHit) return;
-				sustain.wasHit = true; // sustain.visible = false;
-				generalVocals.resume(); strumLine.vocals.resume();
-				sustain.parentStrum.playStrumAnim('confirm', true);
-				for (char in strumLine.characters)
-					char.playSingAnim(sustain.id);
-				if (strumLine.isPlayer)
-					health += Constants.DEFAULT_HEALTH_GAIN;
-				if (sustain.isEnd) {
-					sustain.parentStrum.holdCover?.playAnim('end', true);
-					if (strumLine.isComputer) sustain.parentStrum.holdCover?.animation.finish();
-					sustain.parentStrum.holdCover = null;
-				}
-			}
-			strumLine._onNoteMissed = (note:Note) -> {
-				if (!Conductor.instrumental.playing) return;
-				if (note.wasMissed) return;
-				note.wasMissed = true; note.alpha *= 0.6;
-				generalVocals.pause(); strumLine.vocals.pause();
-				FlxG.sound.play(Cache.sound('miss/${FlxG.random.int(1, 3)}'), 0.7);
-				for (sustain in Note.filterTail(note.tail, true)) {
-					sustain.wasMissed = true;
-					sustain.alpha *= 0.6;
-				}
-				for (char in strumLine.characters)
-					char.playSingAnim(note.id, true);
-				health -= Constants.DEFAULT_HEALTH_LOSS;
-				note.parentStrum.holdCover?.playAnim('end', true);
-				if (strumLine.isComputer) note.parentStrum.holdCover?.animation.finish();
-				note.parentStrum.holdCover = null;
-			}
-			strumLine._onSustainMissed = (sustain:Sustain) -> {
-				if (!Conductor.instrumental.playing) return;
-				if (sustain.wasMissed) return;
-				sustain.wasMissed = true; sustain.alpha *= 0.6;
-				generalVocals.pause(); strumLine.vocals.pause();
-				FlxG.sound.play(Cache.sound('miss/${FlxG.random.int(1, 3)}'), 0.7);
-				for (sustain in Note.filterTail(sustain.parentNote.tail, true)) {
-					sustain.wasMissed = true;
-					sustain.alpha *= 0.6;
-				}
-				for (char in strumLine.characters)
-					char.playSingAnim(sustain.id, true);
-				sustain.parentStrum.holdCover?.playAnim('end', true);
-				if (strumLine.isComputer) sustain.parentStrum.holdCover?.animation.finish();
-				sustain.parentStrum.holdCover = null;
-			}
+			strumLine._onVoidTap = onVoidTap;
+			strumLine._onNoteHit = onNoteHit;
+			strumLine._onSustainHit = onSustainHit;
+			strumLine._onNoteMissed = onNoteMissed;
+			strumLine._onSustainMissed = onSustainMissed;
 		}
 		add(strumLines);
 		Conductor.onComplete = endSong;
@@ -300,6 +224,9 @@ class PlayState extends violet.backend.StateBackend {
 	override public function update(elapsed:Float):Void {
 		super.update(elapsed);
 
+		songScripts.call("update", [elapsed]);
+		songScripts.call("onUpdate", [elapsed]);
+
 		if (Controls.accept && !FlxG.mouse.justPressed) {
 			countdownTimer.active = false;
 			openSubState(new PauseMenu());
@@ -327,6 +254,97 @@ class PlayState extends violet.backend.StateBackend {
 				handleEvent(i);
 			}
 		}
+
+		songScripts.call("postUpdate", [elapsed]);
+		songScripts.call("onUpdatePost", [elapsed]);
+	}
+
+	function onVoidTap(id:Int, strumLine:StrumLine) {
+		if (!Conductor.instrumental.playing) return;
+		strumLine.strums.members[id].playStrumAnim('press', ghostTapping);
+		if (!ghostTapping) {
+			FlxG.sound.play(Cache.sound('miss/${FlxG.random.int(1, 3)}'), 0.7);
+			for (char in strumLine.characters)
+				char.playSingAnim(id, true);
+			health -= Constants.DEFAULT_HEALTH_LOSS;
+		}
+	}
+
+	function onNoteHit(note:Note) {
+		if (!Conductor.instrumental.playing) return;
+		var event:NoteHitEvent = songScripts.event("noteHit", new NoteHitEvent(note, "", note.parentStrum, note.id, note.parent.isComputer));
+		if (event.cancelled) return;
+
+		if (note.wasHit) return;
+		note.wasHit = true; note.visible = false;
+		generalVocals.resume(); note.parent.vocals.resume();
+		note.parentStrum.playStrumAnim('confirm', true);
+		for (char in note.parent.characters)
+			if (!event.animCancelled) char.playSingAnim(note.id, event.animationSuffix);
+
+		if (note.parent.isPlayer) {
+			var judgement:Judgement = Scoring.judgeNoteHit(note.time - Conductor.framePosition);
+			if (judgement.splash) note.parentStrum.spawnSplash();
+			score += Math.round(judgement.score);
+			health += Constants.DEFAULT_HEALTH_GAIN;
+		}
+		if (note.length > 10)
+			note.parentStrum.spawnHoldCover();
+	}
+
+	function onNoteMissed(note:Note) {
+		if (!Conductor.instrumental.playing) return;
+		if (note.wasMissed) return;
+		note.wasMissed = true; note.alpha *= 0.6;
+		generalVocals.pause(); note.parent.vocals.pause();
+		FlxG.sound.play(Cache.sound('miss/${FlxG.random.int(1, 3)}'), 0.7);
+		for (sustain in Note.filterTail(note.tail, true)) {
+			sustain.wasMissed = true;
+			sustain.alpha *= 0.6;
+		}
+		for (char in note.parent.characters)
+			char.playSingAnim(note.id, true);
+		health -= Constants.DEFAULT_HEALTH_LOSS;
+		note.parentStrum.holdCover?.playAnim('end', true);
+		if (note.parent.isComputer) note.parentStrum.holdCover?.animation.finish();
+		note.parentStrum.holdCover = null;
+	}
+
+	function onSustainHit(sustain:Sustain) {
+		if (!Conductor.instrumental.playing) return;
+		var event:SustainHitEvent = songScripts.event("sustainHit", new SustainHitEvent(sustain, "", sustain.parentStrum, sustain.id, sustain.parent.isComputer));
+		if (event.cancelled) return;
+
+		if (sustain.wasHit && !sustain.parentNote.wasHit) return;
+		sustain.wasHit = true; // sustain.visible = false;
+		generalVocals.resume(); sustain.parent.vocals.resume();
+		sustain.parentStrum.playStrumAnim('confirm', true);
+		for (char in sustain.parent.characters)
+			if (!event.animCancelled) char.playSingAnim(sustain.id, event.animationSuffix);
+		if (sustain.parent.isPlayer)
+			health += Constants.DEFAULT_HEALTH_GAIN;
+		if (sustain.isEnd) {
+			sustain.parentStrum.holdCover?.playAnim('end', true);
+			if (sustain.parent.isComputer) sustain.parentStrum.holdCover?.animation.finish();
+			sustain.parentStrum.holdCover = null;
+		}
+	}
+
+	function onSustainMissed(sustain:Sustain) {
+		if (!Conductor.instrumental.playing) return;
+		if (sustain.wasMissed) return;
+		sustain.wasMissed = true; sustain.alpha *= 0.6;
+		generalVocals.pause(); sustain.parent.vocals.pause();
+		FlxG.sound.play(Cache.sound('miss/${FlxG.random.int(1, 3)}'), 0.7);
+		for (sustain in Note.filterTail(sustain.parentNote.tail, true)) {
+			sustain.wasMissed = true;
+			sustain.alpha *= 0.6;
+		}
+		for (char in sustain.parent.characters)
+			char.playSingAnim(sustain.id, true);
+		sustain.parentStrum.holdCover?.playAnim('end', true);
+		if (sustain.parent.isComputer) sustain.parentStrum.holdCover?.animation.finish();
+		sustain.parentStrum.holdCover = null;
 	}
 
 	var countdownTick = 0;
@@ -369,31 +387,26 @@ class PlayState extends violet.backend.StateBackend {
 	function handleEvent(event:ChartEvent) {
 		if (event.ran) return;
 		event.ran = true;
+		var eventName = event.type != null ? [null, "Camera Movement"][event.type] : event.name;
+		var scriptEvent:SongEvent = songScripts.event("onEvent", new SongEvent(eventName, event.params));
+		if (scriptEvent.cancelled) return;
 
-		var cameraMovementEventHandler = (event:ChartEvent) -> {
-			var targetCharacter:Character = strumLines.members[event.params[0]].characters[0];
-			FlxTween.cancelTweensOf(camGame.scroll);
-			FlxTween.tween(camGame.scroll, {
-				x: targetCharacter.x + targetCharacter.cameraOffsets[0],
-				y: targetCharacter.y + targetCharacter.cameraOffsets[1]
-			}, (Conductor.stepLengthMs / 1000) * 16, { ease: FlxEase.expoOut });
-		}
-
-		switch (event.type) {
-			case 1:
-				cameraMovementEventHandler(event);
-		}
-
-		switch (event.name) {
+		switch (eventName) {
 			case "Camera Movement":
-				cameraMovementEventHandler(event);
+				var targetCharacter:Character = strumLines.members[scriptEvent.params[0]].characters[0];
+				FlxTween.cancelTweensOf(camGame.scroll);
+				FlxTween.tween(camGame.scroll, {
+					x: targetCharacter.x + targetCharacter.cameraOffsets[0],
+					y: targetCharacter.y + targetCharacter.cameraOffsets[1]
+				}, (Conductor.stepLengthMs / 1000) * 16, { ease: FlxEase.expoOut });
+
 			case "Play Animation":
-				var targetCharacter:Character = strumLines.members[event.params[0]].characters[0];
+				var targetCharacter:Character = strumLines.members[scriptEvent.params[0]].characters[0];
 				targetCharacter.canDance = false;
 				targetCharacter.isSinging = false;
-				targetCharacter.playAnim(event.params[1], true);
+				targetCharacter.playAnim(scriptEvent.params[1], true);
 				targetCharacter.animation.onFinish.addOnce(name -> {
-					if (name == event.params[1]) {
+					if (name == scriptEvent.params[1]) {
 						targetCharacter.canDance = true;
 						targetCharacter.dance(true);
 						targetCharacter.animation.finish();
@@ -439,8 +452,19 @@ class PlayState extends violet.backend.StateBackend {
 		#end
 	}
 
+	override function stepHit(curStep:Int) {
+		super.stepHit(curStep);
+		songScripts.set('curStep', curStep);
+		songScripts.set('curBeat', curBeat);
+
+		songScripts.call('stepHit', [curStep]);
+		songScripts.call('postStepHit', [curStep]);
+	}
+
 	override function beatHit(curBeat:Int) {
 		super.beatHit(curBeat);
+
+		songScripts.call('beatHit', [curBeat]);
 
 		if (curBeat % 4 == 0) {
 			FlxTween.cancelTweensOf(camGame);
@@ -449,6 +473,8 @@ class PlayState extends violet.backend.StateBackend {
 			FlxTween.tween(camGame, { zoom: defaultCamZoom }, 1, { ease: FlxEase.quartOut });
 			FlxTween.tween(camHUD, { zoom: 1 }, 1, { ease: FlxEase.quartOut });
 		}
+
+		songScripts.call('postBeatHit', [curBeat]);
 	}
 
 	override function closeSubState() {
