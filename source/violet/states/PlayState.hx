@@ -290,6 +290,7 @@ class PlayState extends violet.backend.StateBackend {
 		if (note.wasHit) return;
 		note.wasHit = true; note.visible = false;
 		generalVocals.resume(); note.parent.vocals.resume();
+		note.parentStrum.isHolding = false;
 		note.parentStrum.playStrumAnim('confirm', true);
 		for (char in note.parent.characters)
 			if (!event.animCancelled) char.playSingAnim(note.id, event.animationSuffix);
@@ -318,7 +319,6 @@ class PlayState extends violet.backend.StateBackend {
 		for (char in note.parent.characters)
 			char.playSingAnim(note.id, true);
 		health -= Constants.DEFAULT_HEALTH_LOSS;
-		note.parentStrum.isHolding = false;
 		note.parentStrum.holdCover?.playAnim('end', true);
 		if (note.parent.isComputer) note.parentStrum.holdCover?.animation.finish();
 		note.parentStrum.holdCover = null;
