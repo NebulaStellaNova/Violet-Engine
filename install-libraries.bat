@@ -19,7 +19,6 @@ haxelib git flxrhythmconductor https://github.com/PurSnake/FlxRhythmConductor --
 haxelib git hxcpp https://github.com/FunkinCrew/hxcpp
 haxelib git hxcpp-debug-server https://github.com/FunkinCrew/hxcpp-debugger
 haxelib git hxhardware https://github.com/Vortex2Oblivion/hxhardware
-haxelib git json2object https://github.com/FunkinCrew/json2object
 haxelib git linc_luajit https://github.com/superpowers04/linc_luajit
 haxelib git lscript https://github.com/SrtHero278/lscript
 haxelib git rulescript https://github.com/Kriptel/RuleScript dev

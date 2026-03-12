@@ -1,8 +1,7 @@
 package violet.data.chart;
 
-import violet.data.converters.ChartConverters;
-import violet.backend.utils.FileUtil;
 import violet.backend.utils.ParseUtil;
+import violet.data.converters.ChartConverters;
 import violet.data.song.SongRegistry;
 
 typedef ChartCache = {

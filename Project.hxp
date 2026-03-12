@@ -246,7 +246,6 @@ class Project extends HXProject {
 			addHaxelib('flixel-animate');
 
 		// json parsing
-		addHaxelib('json2object', 'git');
 		addHaxelib('flxrhythmconductor', 'git');
 		addHaxelib('yaml');
 

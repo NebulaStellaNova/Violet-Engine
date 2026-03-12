@@ -1,6 +1,5 @@
 package violet.data.song;
 
-import violet.backend.utils.FileUtil;
 import violet.backend.utils.ParseUtil;
 import violet.data.level.LevelRegistry;
 
@@ -21,15 +20,12 @@ class SongRegistry {
             songList = songList.concat(level.getSongs());
         }
         for (songID in songList) {
-            var folderName = songID.replace("-", " ");
-            final jsonPath = Paths.json('songs/$folderName/meta');
-            if (!Paths.fileExists(jsonPath, true)) {
-                trace('warning:Could not find meta file for song with ID "$folderName". Skipping registration.');
+            final jsonPath = 'songs/$songID/meta';
+            if (!Paths.fileExists(Paths.json(jsonPath), true)) {
+                trace('warning:Could not find meta file for song with ID "$songID". Skipping registration.');
                 continue;
             }
-            var songData:SongData = new json2object.JsonParser<SongData>().fromJson(ParseUtil.removeJsonComments(FileUtil.getFileContent(jsonPath)), jsonPath);
-            songData.difficulties ??= ["EASY", "NORMAL", "HARD"];
-            songDatas.set(songID, songData);
+            songDatas.set(songID, ParseUtil.json(jsonPath));
             registerSong(new Song(songID));
         }
     }

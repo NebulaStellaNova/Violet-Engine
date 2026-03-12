@@ -36,11 +36,9 @@ class CreditsMenu extends violet.backend.SubStateBackend {
 		add(creditObjects);
 
 		try {
-			final jsonPath = Paths.json('config/credits', 'data');
-			creditsJSON = new json2object.JsonParser<CreditsJSON>().fromJson(ParseUtil.removeJsonComments(FileUtil.getFileContent(jsonPath)), jsonPath);
-		} catch (e) {
+			creditsJSON = ParseUtil.json('config/credits', 'data');
+		} catch (e)
 			trace(e);
-		}
 
 		var contribI = 0;
 		for (credit in creditsJSON.credits) {
@@ -74,7 +72,7 @@ class CreditsMenu extends violet.backend.SubStateBackend {
 						contribIcon.loadSprite(contrib.https_icon);
 
 					contrib.icon_scale ??= [1, 1];
-					if (contrib.icon_scale.length < 2) contrib.icon_scale[1] = contrib.icon_scale[0];
+					if (contrib.icon_scale.length < 2) contrib.icon_scale.push(contrib.icon_scale[0]);
 					contribIcon.scale.set(contrib.icon_scale[0] ?? 1, contrib.icon_scale[1] ?? 1);
 
 					contribIcon.updateHitbox();
@@ -82,7 +80,6 @@ class CreditsMenu extends violet.backend.SubStateBackend {
 					creditObjects.add(contribIcon);
 
 					contribText.x += contribIcon.width * 1.1;
-                    // contribText.fieldWidth = ((FlxG.width / 2) - 16) - (contribIcon.width);
 					contribText.y += contribIcon.height / 2;
 					creditObjectMaxY += contribIcon.height;
 				}
