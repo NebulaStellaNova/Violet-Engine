@@ -52,11 +52,14 @@ class FreeplayMenu extends SubStateBackend {
 	var dj:GenzuSprite;
 	var selector1:GenzuSprite;
 	var selector2:GenzuSprite;
+	static var skipTransition:Bool = false;
 
 	var songs:Array<Song> = [];
 
 	override function create() {
 		super.create();
+
+		skipTransition =false;
 
 		camHUD = new FlxCamera();
 		camHUD.bgColor = FlxColor.TRANSPARENT;
