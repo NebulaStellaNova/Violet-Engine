@@ -147,8 +147,6 @@ class Project extends HXProject {
 			return;
 		}
 
-		setHaxedef('no-deprecation-warnings');
-
 		if (FileSystem.exists('./.haxelib'))
 			setenv('HAXEPATH', './.haxelib');
 
@@ -275,6 +273,7 @@ class Project extends HXProject {
 			// addHaxelib('hxWindowColorMode');
 		/* Libraries */
 
+		setHaxedef('no-deprecation-warnings');
 		// if (!isDebug())
 		setHaxedef('FLX_NO_DEBUG');
 
