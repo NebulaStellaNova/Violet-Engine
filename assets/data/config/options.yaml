@@ -1,9 +1,73 @@
 menus:
 - title: Controls
   options:
-  - name: Left Note
+  - name: NOTES
+    type: section
+  - name: Left
     type: control
-    saveID: left-note
+    saveID: note_left
+  - name: Down
+    type: control
+    saveID: note_down
+  - name: Up
+    type: control
+    saveID: note_up
+  - name: Right
+    type: control
+    saveID: note_right
+
+  - name: ''
+    type: section
+
+  # UI Keybinds
+  - name: UI
+    type: section
+  # Directions
+  - name: Left
+    type: control
+    saveID: ui_left
+  - name: Down
+    type: control
+    saveID: ui_down
+  - name: Up
+    type: control
+    saveID: ui_up
+  - name: Right
+    type: control
+    saveID: ui_right
+  # Others
+  - name: Confirm
+    type: control
+    saveID: accept
+  - name: Back
+    type: control
+    saveID: back
+  - name: Pause
+    type: control
+    saveID: pause
+  - name: Reset
+    type: control
+    saveID: reset
+
+  - name: ''
+    type: section
+
+  # UI Keybinds
+  - name: DEVELOPER
+    type: section
+  # ---------------
+  - name: Reload State
+    type: control
+    saveID: resetState
+  - name: Main Menu
+    type: control
+    saveID: shortcutState
+  - name: Debug Display
+    type: control
+    saveID: debugDisplay
+  - name: Reload Assets
+    type: control
+    saveID: reloadGame
 
 - title: Gameplay
   options:
@@ -28,4 +92,12 @@ menus:
   - name: Developer Mode
     description: Enables developer features like debug display, editors, etc.
     saveID: developerMode
+    type: bool
+  - name: Mouse Controls
+    description: Allows you to navigate menus via your mouse.
+    saveID: mouseControls
+    type: bool
+  - name: Force Scroll Navigation
+    description: FORCES scroll wheel to function in menus if mouse controls is disabled.
+    saveID: forceMouseScrolling
     type: bool

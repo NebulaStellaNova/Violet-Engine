@@ -1,5 +1,6 @@
 package violet.backend;
 
+import violet.backend.options.Options;
 import flixel.input.keyboard.FlxKey;
 
 /**
@@ -92,14 +93,16 @@ class Controls {
 	 * When you press down to move through ui elements
 	 */
 	public static var uiDown(get, never):Bool;
-	inline static function get_uiDown():Bool
-		return pressed('ui_down') || FlxG.mouse.wheel < 0;
+	inline static function get_uiDown():Bool {
+		return pressed('ui_down') || (FlxG.mouse.wheel < 0 && (Options.data.mouseControls || Options.data.forceMouseScrolling));
+	}
 	/**
 	 * When you press up to move through ui elements
 	 */
 	public static var uiUp(get, never):Bool;
-	inline static function get_uiUp():Bool
-		return pressed('ui_up') || FlxG.mouse.wheel > 0;
+	inline static function get_uiUp():Bool {
+		return pressed('ui_up') || (FlxG.mouse.wheel > 0 && (Options.data.mouseControls || Options.data.forceMouseScrolling));
+	}
 	/**
 	 * When you press right to move through ui elements
 	 */
@@ -161,14 +164,16 @@ class Controls {
 	 * When "accept" is pressed.
 	 */
 	public static var accept(get, never):Bool;
-	inline static function get_accept():Bool
-		return pressed('accept') || FlxG.mouse.justPressed;
+	inline static function get_accept():Bool {
+		return pressed('accept') || (FlxG.mouse.justPressed && Options.data.mouseControls);
+	}
 	/**
 	 * When "back" is pressed.
 	 */
 	public static var back(get, never):Bool;
-	inline static function get_back():Bool
-		return pressed('back') || FlxG.mouse.justPressedRight;
+	inline static function get_back():Bool {
+		return pressed('back') || (FlxG.mouse.justPressedRight && Options.data.mouseControls);
+	}
 	/**
 	 * When "paused" is pressed.
 	 */

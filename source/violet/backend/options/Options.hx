@@ -9,6 +9,8 @@ import flixel.input.keyboard.FlxKey;
     public var downscroll:Bool = false;
     public var coloredHealthBar:Bool = true;
     public var developerMode:Bool = false;
+    public var mouseControls:Bool = true;
+    public var forceMouseScrolling:Bool = true;
     public var controls:Map<String, Array<String>> = [
         'note_left' => ['A', 'LEFT'],
         'note_down' => ['S', 'DOWN'],
