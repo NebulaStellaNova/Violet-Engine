@@ -278,8 +278,8 @@ class PlayState extends violet.backend.StateBackend {
 			FlxG.sound.play(Cache.sound('miss/${FlxG.random.int(1, 3)}'), 0.7);
 			for (char in strumLine.characters)
 				char.playSingAnim(id, true);
+			score += Math.round(Scoring.missScore);
 			health -= Constants.DEFAULT_HEALTH_LOSS;
-			score -= Math.round(Scoring.missScore);
 		}
 	}
 
@@ -323,7 +323,8 @@ class PlayState extends violet.backend.StateBackend {
 		for (char in note.parent.characters)
 			char.playSingAnim(note.id, true);
 
-		score -= Math.round(Scoring.missScore);
+		// YOU ADD WHEN YOU TAKE AWAY A NEGATIVE NUMBER YOU DUMBASS (ADA talking to himself)
+		score += Math.round(Scoring.missScore);
 		health -= Constants.DEFAULT_HEALTH_LOSS;
 
 		note.parentStrum.holdCover?.playAnim('end', true);
