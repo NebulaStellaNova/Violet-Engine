@@ -130,15 +130,13 @@ class Project extends HXProject {
 		CompilerFlag.init(this);
 		setHaxedef("no-deprecation-warnings");
 
-		if (hasDefine('web') || hasDefine('html5')) {
-			error('None of that thank you! I don\'t want people using the engine for web ports. If you don\'t remember, there used to be so many that base game wasn\'t first in search results!');
-			return;
-		} else if (isDesktop() || isMobile()) {
+		if (isDesktop() || isMobile()) {
 			if (isMac()) { // fix for compiling on mac
 				setDefine('mac');
 				setDefine('macos');
 			}
 		} else {
+			// Dude just use this flag, you don't need 2!
 			error('Hey this engine only works on desktop and mobile devices!');
 			return;
 		}
