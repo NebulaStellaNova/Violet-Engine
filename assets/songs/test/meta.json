@@ -4,6 +4,7 @@
 	"difficulties": [
 		"normal"
 	],
+	"isDev": true,
 	"coopAllowed": true,
 	"color": "#9271FD",
 	"stepsPerBeat": 4,

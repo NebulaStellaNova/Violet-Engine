@@ -1,5 +1,6 @@
 package violet.states.menus;
 
+import violet.backend.options.Options;
 import flixel.FlxCamera;
 import flixel.math.FlxMath;
 import thx.semver.Version;
@@ -131,7 +132,13 @@ class FreeplayMenu extends SubStateBackend {
 		FlxTween.tween(freeplayText, {y: -78}, 0.8, {ease: FlxEase.expoOut, startDelay: 0.6});
 		FlxTween.tween(ostText, {y: -78}, 0.8, {ease: FlxEase.expoOut, startDelay: 0.7});
 
-		songs = SongRegistry.getAllSongs();
+		songs = SongRegistry.getAllSongs().filter(song -> {
+			if (Options.data.developerMode) {
+				return true;
+			} else {
+				return !song._data?.isDev ?? true;
+			}
+		});
 		for (i => song in songs) {
 			var yOffset = 10;
 			var startY = (FlxG.height / 2) + spacing * (i - curSelectedSong) - spacing + yOffset;

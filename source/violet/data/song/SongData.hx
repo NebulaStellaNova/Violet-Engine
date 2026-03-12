@@ -26,4 +26,6 @@ typedef SongData = {
 	public var ?instSuffix:String;
 	public var ?vocalsSuffix:String;
 	public var ?needsVoices:Bool;
+
+	public var ?isDev:Bool; // Hides the song in freeplay if developer is disabled.
 }
