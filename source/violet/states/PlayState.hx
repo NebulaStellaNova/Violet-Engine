@@ -244,7 +244,7 @@ class PlayState extends violet.backend.StateBackend {
 			openSubState(new PauseMenu());
 		}
 
-		scoreLerp = MathUtil.lerp(scoreLerp, score, 0.1);
+		scoreLerp = MathUtil.lerp(scoreLerp, score, 0.25);
 		scoreTxt.value = Math.round(scoreLerp);
 
 		health = FlxMath.bound(health, 0, 1);
