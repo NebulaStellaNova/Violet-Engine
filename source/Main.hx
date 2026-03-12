@@ -1,5 +1,6 @@
 package;
 
+import violet.boot.DiscordRPC;
 import violet.backend.options.Options;
 import flixel.FlxState;
 import flixel.util.FlxStringUtil;
@@ -94,6 +95,8 @@ class Main extends openfl.display.Sprite {
 		// literally just cause nebs pause bind is backslash
 		FlxG.debugger.toggleKeys.remove(BACKSLASH);
 		#end
+
+		DiscordRPC.init();
 	}
 
 	public static function switchState(targetClass:Dynamic) {

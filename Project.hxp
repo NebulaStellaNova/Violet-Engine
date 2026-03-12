@@ -158,6 +158,8 @@ class Project extends HXProject {
 
 		usesAnimateAtlas.enable();
 
+		discordRPC.enable();
+
 		// script related
 		if (scriptSupport.exists()) {
 			canHaxeScript.enable();
