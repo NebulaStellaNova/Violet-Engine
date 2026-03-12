@@ -154,6 +154,12 @@ class FreeplayMenu extends SubStateBackend {
 		diffSprite.x = -FlxG.width;
 	}
 
+	public function build() {
+		var mainMenu:MainMenu = new MainMenu();
+		mainMenu.openSubState(new FreeplayMenu());
+		return mainMenu;
+	}
+
 	override function update(elapsed) {
 		super.update(elapsed);
 
@@ -237,6 +243,9 @@ class FreeplayMenu extends SubStateBackend {
 		var albumMeta:AlbumData = ParseUtil.yaml('data/ui/freeplay/albums/${song._data.album}');
 		ostText.text = albumMeta?.ostText ?? "OFFICIAL OST";
 		ostText.updateHitbox();
+
+		// trace(song?._data?.ratings);
+
 	}
 
 	static var prevInst:String = "";
@@ -284,9 +293,7 @@ class FreeplayMenu extends SubStateBackend {
 	function playSong(?id:String, ?difficulty:String, ?variation:String) {
 		canSelect = false;
 
-		var iconGroup:FlxTypedSpriteGroup<Dynamic> = cast daCapsules[curSelectedSong].members[2];
-		var icon:GenzuSprite = cast iconGroup.members[0];
-		icon.playAnim("confirm", true);
+		daCapsules[curSelectedSong].playConfirm();
 
 		NovaUtils.playMenuSFX(CONFIRM);
 		FlxTimer.wait(1, () -> {

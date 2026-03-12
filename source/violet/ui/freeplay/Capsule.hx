@@ -8,6 +8,8 @@ import flixel.group.FlxSpriteGroup;
 class Capsule extends FlxSpriteGroup {
 	public var icon:GenzuSprite;
 	public var capsule:GenzuSprite;
+	public var bpmText:GenzuSprite;
+	public var difficultyText:GenzuSprite;
 
 	var textGroup:FlxTypedSpriteGroup<NovaText>;
 	var iconGroup:FlxTypedSpriteGroup<GenzuSprite>;
@@ -24,6 +26,16 @@ class Capsule extends FlxSpriteGroup {
 		capsule.addAnim("confirm", "mp3 capsule w backing0", [], null, 24, false); // adjust anim name as needed
 		capsule.playAnim("idle");
 		add(capsule);
+
+		bpmText = new GenzuSprite(116, 95, Paths.image("menus/freeplay/capsule/text/bpmtext"));
+		bpmText.updateHitbox();
+		bpmText.scale.set(1.2, 1.2);
+		add(bpmText);
+
+		difficultyText = new GenzuSprite(450, 95, Paths.image("menus/freeplay/capsule/text/difficultytext"));
+		difficultyText.updateHitbox();
+		difficultyText.scale.set(1.2, 1.2);
+		add(difficultyText);
 
 		textGroup = new FlxTypedSpriteGroup<NovaText>(0, 0);
 

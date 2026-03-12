@@ -6,6 +6,7 @@ typedef SongData = {
 	public var ?displayName:String;
 
 	public var ?album:String;
+	public var ?ratings:Dynamic;
 
 	public var ?bpm:Float;
 	public var ?beatsPerMeasure:Int;
