@@ -144,6 +144,7 @@ class FreeplayMenu extends SubStateBackend {
 			capsule.cameras = [camHUD];
 			add(capsule);
 			daCapsules.push(capsule);
+			capsule.updateBPM(Std.int(song._data.bpm));
 		}
 
 		add(black);
@@ -272,7 +273,8 @@ class FreeplayMenu extends SubStateBackend {
 
 		if (pureSelect) {
 			diffSprite.loadGraphic(Paths.image('menus/freeplay/difficulties/${song.difficulties[curSelectedDiff]}'));
-			daCapsules[curSelectedSong].updateRatingForDiff(song, song.difficulties[curSelectedDiff]);
+			for (i => capsule in daCapsules)
+				capsule.updateRatingForDiff(songs[i], songs[i].difficulties[FlxMath.wrap(curSelectedDiff, 0, songs[i].difficulties.length - 1)]);
 			diffSprite.y = selector1.y + (selector1.height / 2) - (diffSprite.height / 2);
 			return;
 		}
@@ -284,7 +286,8 @@ class FreeplayMenu extends SubStateBackend {
 				diffSprite.loadGraphic(Paths.image('menus/freeplay/difficulties/${song.difficulties[curSelectedDiff]}'));
 				diffSprite.x = distance * direction * 2;
 				diffSprite.y = selector1.y + (selector1.height / 2) - (diffSprite.height / 2);
-				daCapsules[curSelectedSong].updateRatingForDiff(song, song.difficulties[curSelectedDiff]);
+				for (i => capsule in daCapsules)
+					capsule.updateRatingForDiff(songs[i], songs[i].difficulties[FlxMath.wrap(curSelectedDiff, 0, songs[i].difficulties.length - 1)]);
 				FlxTween.tween(diffSprite, {x: -13.4285714285714, alpha: 1}, 0.1, {ease: FlxEase.expoOut});
 			}
 		});

@@ -32,12 +32,12 @@ class Capsule extends FlxSpriteGroup {
 
 		bpmText = new GenzuSprite(116, 95, Paths.image("menus/freeplay/capsule/text/bpmtext"));
 		bpmText.updateHitbox();
-		bpmText.scale.set(1.2, 1.2);
+		bpmText.scale.set(1.1, 1.1);
 		add(bpmText);
 
 		difficultyText = new GenzuSprite(450, 95, Paths.image("menus/freeplay/capsule/text/difficultytext"));
 		difficultyText.updateHitbox();
-		difficultyText.scale.set(1.2, 1.2);
+		difficultyText.scale.set(1.1, 1.1);
 		add(difficultyText);
 
 		for (i in 0...2) {
@@ -45,6 +45,13 @@ class Capsule extends FlxSpriteGroup {
 			add(num);
 
 			difficultyNumbers.push(num);
+		}
+
+		for (i in 0...3) {
+			var num:CapsuleNumber = new CapsuleNumber(165 + (i * 14), 92, false, 0);
+			add(num);
+
+			bpmNumbers.push(num);
 		}
 
 		textGroup = new FlxTypedSpriteGroup<NovaText>(0, 0);
@@ -117,6 +124,21 @@ class Capsule extends FlxSpriteGroup {
 			}
 		}
 	}
+
+	public function updateBPM(bpm:Int) {
+		for (i in 0...bpmNumbers.length) {
+			switch (i) {
+				case 0:
+					bpmNumbers[i].digit = bpm < 100 ? 0 : Math.floor(bpm / 100);
+				case 1:
+					bpmNumbers[i].digit = bpm < 10 ? 0 : Math.floor((bpm % 100) / 10);
+				case 2:
+					bpmNumbers[i].digit = bpm % 10;
+				default:
+					trace("Uhhh... how'd we get here again??");
+			}
+		}
+	}
 }
 
 class CapsuleNumber extends GenzuSprite {
@@ -157,7 +179,7 @@ class CapsuleNumber extends GenzuSprite {
 		}
 		this.digit = initDigit;
 		playAnim(numToString[initDigit], true);
-		scale.set(1.1, 1.1);
+		scale.set(1.2, 1.2);
 		updateHitbox();
 	}
 }
