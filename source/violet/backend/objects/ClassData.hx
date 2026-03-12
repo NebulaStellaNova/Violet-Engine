@@ -25,6 +25,9 @@ class ClassData {
 				case "FreeplayMenu":
 					this.target = new FreeplayMenu();
 					this.isSubState = true;
+				case "OptionsMenu":
+					this.target = new OptionsMenu();
+					this.isSubState = true;
 				/* case "CreditsState":
 					this.target = new CreditsState();
 				case "PlayState":

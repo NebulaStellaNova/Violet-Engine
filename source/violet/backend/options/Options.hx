@@ -4,6 +4,10 @@ import flixel.util.FlxSave;
 
 @:structInit class OptionsData {
     public var fps:Int = 60;
+    public var ghostTapping:Bool = true;
+    public var downscroll:Bool = false;
+    public var coloredHealthBar:Bool = true;
+    public var developerMode:Bool = false;
 }
 
 class Options {
@@ -15,6 +19,18 @@ class Options {
         save.bind('options', lime.app.Application.current.meta.get("file"));
 
         load();
+    }
+
+    public static function set(what:String, value:Dynamic) {
+        if (Reflect.fields(data).contains(what)) {
+            Reflect.setProperty(data, what, value);
+        } else {
+            trace('warning:Could not find option data for value $what');
+        }
+    }
+
+    public static function get(what:String):Dynamic {
+        return  Reflect.getProperty(data, what) ?? null;
     }
 
     /**

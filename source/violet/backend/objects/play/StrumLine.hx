@@ -1,5 +1,6 @@
 package violet.backend.objects.play;
 
+import violet.backend.options.Options;
 import flixel.group.FlxGroup;
 import flixel.input.keyboard.FlxKey;
 import flixel.math.FlxMath;
@@ -18,7 +19,7 @@ class StrumLine extends FlxGroup {
 
 	public final characters:Array<Character> = [];
 
-	public var downscroll:Bool = false;
+	public var downscroll:Bool = Options.data.downscroll;
 
 	/**
 	 * States whether the strumLine is meant to be managed by the player.
@@ -44,6 +45,13 @@ class StrumLine extends FlxGroup {
 	function get_splashes():Array<NovaSprite> {
 		var value:Array<NovaSprite> = [];
 		for (strum in strums) value = value.concat(strum.splashes);
+		return value;
+	}
+
+	public var holdCovers(get, never):Array<NovaSprite>;
+	function get_holdCovers():Array<NovaSprite> {
+		var value:Array<NovaSprite> = [];
+		for (strum in strums) value = value.concat(strum.holdCovers);
 		return value;
 	}
 
@@ -302,6 +310,23 @@ class StrumLine extends FlxGroup {
 			}
 		}
 		return -1;
+	}
+
+	var prevYs = [];
+	override public function draw():Void {
+		if (downscroll) {
+			prevYs = [];
+			for (i in holdCovers) {
+				prevYs.push(i.y);
+				i.globalOffset.y *= -1;
+				i.y = FlxG.height - i.y - (i.height/1.32);
+			}
+			super.draw();
+			for (i=>cover in holdCovers) {
+				cover.globalOffset.y *= -1;
+				cover.y = prevYs[i];
+			}
+		} else super.draw();
 	}
 
 	override public function destroy():Void {

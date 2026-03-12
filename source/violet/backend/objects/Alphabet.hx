@@ -73,12 +73,12 @@ class Alphabet extends flixel.group.FlxGroup {
     public var y(default, set):Float = 0;
     function set_x(value:Float) {
         x = value;
-        refresh();
+        updatePos();
         return value;
     }
     function set_y(value:Float) {
         y = value;
-        refresh();
+        updatePos();
         return value;
     }
 
@@ -134,9 +134,38 @@ class Alphabet extends flixel.group.FlxGroup {
         }
     }
 
+    override function update(e) {
+        super.update(e);
+        updatePos();
+    }
+
+    public function updatePos() {
+        var textSplit:Array<String> = this.text.split("");
+        var xPos:Float = 0;
+        var offset:Int = 0;
+        for (id => e in textSplit) {
+            var l = textSplit[id];
+            var isLowerCase = l != l.toUpperCase();
+            if (l == " ") {
+                xPos += 30 * scaleX;
+                offset++;
+                continue;
+            }
+            var i = letters[id - offset];
+            i.x = xPos + x;
+            i.y = y;
+            if (isLowerCase) {
+                i.y += (i.height / 0.9) - i.height;
+                i.updateHitbox();
+            }
+            xPos += i.width;
+        }
+    }
+
     public var width(get, never):Float;
     function get_width() {
         var out:Float = 0;
+        if (letters.length == 0) return 0;
         for (i in letters) {
             if (i.x + i.width > out ) out = i.x + i.width;
         }
@@ -147,6 +176,7 @@ class Alphabet extends flixel.group.FlxGroup {
     public var height(get, never):Float;
     function get_height() {
         var out:Float = 0;
+        if (letters.length == 0) return 0;
         for (i in letters) {
             if (i.y + i.height > out ) out = i.y + i.height;
         }
@@ -157,6 +187,6 @@ class Alphabet extends flixel.group.FlxGroup {
     public function screenCenter(axis:FlxAxes = XY) {
         if (axis == X || axis == XY) x = (this.camera.width/2) - (width/2);
         if (axis == Y || axis == XY) y = (this.camera.height/2) - (height/2);
-        refresh();
+        updatePos();
     }
 }

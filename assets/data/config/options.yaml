@@ -1,0 +1,25 @@
+menus:
+- title: Gameplay
+  options:
+  - name: Ghost Tapping
+    description: If disabled, trying to press a note that doesn't exist will cause a miss.
+    saveID: ghostTapping
+    type: bool
+  - name: Downscroll
+    description: If enabled, the notes will scroll from top to bottom instead of bottom to top.
+    saveID: downscroll
+    type: bool
+
+- title: Appearance
+  options:
+  - name: Colored Health Bar
+    description: If disabled, the health bar will have basic colors like in V-Slice.
+    saveID: coloredHealthBar
+    type: bool
+
+- title: Miscellaneous
+  options:
+  - name: Developer Mode
+    description: Enables developer features like debug display, editors, etc.
+    saveID: developerMode
+    type: bool

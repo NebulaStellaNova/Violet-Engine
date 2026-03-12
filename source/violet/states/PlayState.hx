@@ -1,5 +1,6 @@
 package violet.states;
 
+import violet.backend.options.Options;
 import flixel.FlxCamera;
 import flixel.group.FlxGroup;
 import flixel.math.FlxMath;
@@ -152,11 +153,16 @@ class PlayState extends violet.backend.StateBackend {
 			}
 
 			// note interactions
-			final ghostTapping:Bool = true;
+			final ghostTapping:Bool = Options.data.ghostTapping;
 			strumLine._onVoidTap = (id:Int) -> {
 				if (!Conductor.instrumental.playing) return;
-				if (!ghostTapping) FlxG.sound.play(Cache.sound('miss/${FlxG.random.int(1, 3)}'), 0.7);
 				strumLine.strums.members[id].playStrumAnim('press', ghostTapping);
+				if (!ghostTapping) {
+					FlxG.sound.play(Cache.sound('miss/${FlxG.random.int(1, 3)}'), 0.7);
+					for (char in strumLine.characters)
+						char.playSingAnim(id, true);
+					health -= Constants.DEFAULT_HEALTH_LOSS;
+				}
 			}
 			strumLine._onNoteHit = (note:Note) -> {
 				if (!Conductor.instrumental.playing) return;
@@ -242,15 +248,15 @@ class PlayState extends violet.backend.StateBackend {
 		camGame.zoom = defaultCamZoom;
 
 		healthBar = new HealthBar();
-		healthBar.y = /* isDownscroll ? FlxG.height * 0.1 :  */FlxG.height * 0.9;
+		healthBar.y = Options.data.downscroll ? FlxG.height * 0.1 : FlxG.height * 0.9;
 		healthBar.screenCenter(X);
 		healthBar.camera = camHUD;
-		if (iconOpponent._data.color != null) {
+		if (iconOpponent._data.color != null && Options.data.coloredHealthBar) {
 			healthBar.leftColor = iconOpponent._data.color;
 		} else {
 			healthBar.leftColor = FlxColor.RED;
 		}
-		if (iconPlayer._data.color != null) {
+		if (iconPlayer._data.color != null && Options.data.coloredHealthBar) {
 			healthBar.rightColor = iconPlayer._data.color;
 		} else {
 			healthBar.rightColor = FlxColor.LIME;

@@ -37,6 +37,7 @@ class Strum extends NovaSprite {
 	public var willReset:Bool = false;
 
 	public final splashes:Array<NovaSprite> = [];
+	public final holdCovers:Array<NovaSprite> = [];
 	public var holdCover:NovaSprite;
 
 	public function new(parent:StrumLine, id:Int) {
@@ -77,10 +78,10 @@ class Strum extends NovaSprite {
 		if (holdCover == null) return;
 		if (holdCover.exists && holdCover.animation.name != 'end') {
 			holdCover.x = this.x - (holdCover.width/2);
-			holdCover.y = this.y - (holdCover.height/2);
 			holdCover.x += skinMeta.getHoldCoverOffsets()[0];
-			holdCover.y += skinMeta.getHoldCoverOffsets()[1] * (parent.downscroll ? 0 : 1);
-			if (parent.downscroll) holdCover.y = FlxG.height - holdCover.y - holdCover.height;
+			holdCover.y = parent.y - (holdCover.height/2);
+			holdCover.y += skinMeta.getHoldCoverOffsets()[1];
+			holdCover.centerOrigin();
 		}
 	}
 
@@ -124,10 +125,14 @@ class Strum extends NovaSprite {
 			splash.destroy();
 		});
 		splash.x = this.x - (splash.width/2);
-		splash.y = this.y - (splash.height/2);
 		splash.x += skinMeta.getSplashOffsets()[0];
-		splash.y += skinMeta.getSplashOffsets()[1] * (parent.downscroll ? 0 : 1);
-		if (parent.downscroll) splash.y = FlxG.height - splash.y - splash.height;
+		if (parent.downscroll) {
+			splash.y = FlxG.height - (parent.y + (splash.height/2));
+			splash.y -= skinMeta.getSplashOffsets()[1];
+		} else {
+			splash.y = parent.y - (splash.height/2);
+			splash.y += skinMeta.getSplashOffsets()[1];
+		}
 		this.splashes.push(splash);
 		this.parent.add(splash);
 	}
@@ -153,12 +158,14 @@ class Strum extends NovaSprite {
 					holdCover.playAnim('hold', true);
 				case 'end':
 					this.parent.remove(holdCover);
+					this.holdCovers.remove(holdCover);
 					// holdCover.visible = false;
 					holdCover.destroy();
 			}
 		});
 		holdCover.centerOffsets();
 		holdCover.centerOrigin();
+		this.holdCovers.push(holdCover);
 		this.parent.add(holdCover);
 	}
 }
