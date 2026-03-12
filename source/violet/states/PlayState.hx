@@ -1,9 +1,5 @@
 package violet.states;
 
-import violet.backend.scripting.events.SongEvent;
-import violet.backend.scripting.events.SustainHitEvent;
-import violet.backend.scripting.events.NoteHitEvent;
-import violet.backend.options.Options;
 import flixel.FlxCamera;
 import flixel.group.FlxGroup;
 import flixel.math.FlxMath;
@@ -13,6 +9,10 @@ import violet.backend.objects.play.Note;
 import violet.backend.objects.play.ScoreTxt;
 import violet.backend.objects.play.StrumLine;
 import violet.backend.objects.play.Sustain;
+import violet.backend.options.Options;
+import violet.backend.scripting.events.NoteHitEvent;
+import violet.backend.scripting.events.SongEvent;
+import violet.backend.scripting.events.SustainHitEvent;
 import violet.backend.utils.MathUtil;
 import violet.data.Constants;
 import violet.data.Scoring;
@@ -68,7 +68,6 @@ class PlayState extends violet.backend.StateBackend {
 	public var countdownSprites:Array<String> = [null, 'ready', 'set', 'go'];
 	public var countdownSounds:Array<String> = ['introTHREE', 'introTWO', 'introONE', 'introGO'];
 	public var countdownTimer:FlxTimer = new FlxTimer();
-
 
 	/**
 	 * The amount of beats the countdown lasts for.
@@ -284,31 +283,34 @@ class PlayState extends violet.backend.StateBackend {
 	}
 
 	function onNoteHit(note:Note) {
-		if (!Conductor.instrumental.playing) return;
-		var event:NoteHitEvent = songScripts.event("noteHit", new NoteHitEvent(note, note.noteType, note.parentStrum, note.id, note.parent.isComputer));
+		if (!Conductor.instrumental.playing) return; if (note.wasHit) return;
+		final event:NoteHitEvent = songScripts.event("noteHit", new NoteHitEvent(note));
 		if (event.cancelled) return;
 
-		if (note.wasHit) return;
 		note.wasHit = true; note.visible = false;
 		generalVocals.resume(); note.parent.vocals.resume();
-		note.parentStrum.playStrumAnim('confirm', true);
-		for (char in note.parent.characters)
-			if (!event.animCancelled) char.playSingAnim(note.id, event.animationSuffix);
+		if (event.playStrumAnim) note.parentStrum.playStrumAnim('confirm', true);
+
+		if (!event.animCancelled)
+			for (char in note.parent.characters)
+				char.playSingAnim(note.id, event.animationSuffix);
 
 		if (note.parent.isPlayer) {
-			var judgement:Judgement = Scoring.judgeNoteHit(note.time - Conductor.framePosition);
-			if (judgement.splash) note.parentStrum.spawnSplash();
+			final judgement:Judgement = Scoring.judgeNoteHit(note.time - Conductor.framePosition);
+			if (judgement.splash && event.spawnSplash != false) note.parentStrum.spawnSplash();
 			score += Math.round(judgement.score);
 			health += Constants.DEFAULT_HEALTH_GAIN;
-		}
+		} else if (event.spawnSplash == true) // on purpose ***do not touch***
+			note.parentStrum.spawnSplash();
 
-		if (note.length > 10)
+		if (event.spawnHoldCover)
 			note.parentStrum.spawnHoldCover();
+
+		songScripts.event("noteHitPost", event);
 	}
 
 	function onNoteMissed(note:Note) {
-		if (!Conductor.instrumental.playing) return;
-		if (note.wasMissed) return;
+		if (!Conductor.instrumental.playing) return; if (note.wasMissed) return;
 
 		note.wasMissed = true; note.alpha *= 0.6;
 		generalVocals.pause(); note.parent.vocals.pause();
@@ -332,33 +334,31 @@ class PlayState extends violet.backend.StateBackend {
 	}
 
 	function onSustainHit(sustain:Sustain) {
-		if (!Conductor.instrumental.playing) return;
-		var event:SustainHitEvent = songScripts.event("sustainHit", new SustainHitEvent(sustain, sustain.noteType, sustain.parentStrum, sustain.id, sustain.parent.isComputer));
+		if (!Conductor.instrumental.playing) return; if (sustain.wasHit && !sustain.parentNote.wasHit) return;
+		final event:SustainHitEvent = songScripts.event("sustainHit", new SustainHitEvent(sustain));
 		if (event.cancelled) return;
 
-		if (sustain.wasHit && !sustain.parentNote.wasHit) return;
 		sustain.wasHit = true; // sustain.visible = false;
 		generalVocals.resume(); sustain.parent.vocals.resume();
+		if (event.playStrumAnim) sustain.parentStrum.playStrumAnim('confirm', true);
 
-		for (char in sustain.parent.characters)
-			if (!event.animCancelled) char.playSingAnim(sustain.id, event.animationSuffix);
+		if (!event.animCancelled)
+			for (char in sustain.parent.characters)
+				char.playSingAnim(sustain.id, event.animationSuffix);
+
 		if (sustain.parent.isPlayer)
 			health += Constants.DEFAULT_HEALTH_GAIN;
+
 		if (sustain.isEnd) {
 			sustain.parentStrum.holdCover?.playAnim('end', true);
-
 			if (sustain.parent.isComputer) sustain.parentStrum.holdCover?.animation.finish();
 			sustain.parentStrum.holdCover = null;
 		}
-
-		// THIS IS INTENTIONAL, DO NOT CHANGE IT!
-		// THE STRUMLINE HOLD NOTES MUST REACT LIKE PSYCH!
-		sustain.parentStrum.playStrumAnim('confirm', true);
 	}
 
 	function onSustainMissed(sustain:Sustain) {
-		if (!Conductor.instrumental.playing) return;
-		if (sustain.wasMissed) return;
+		if (!Conductor.instrumental.playing) return; if (sustain.wasMissed) return;
+
 		sustain.wasMissed = true; sustain.alpha *= 0.6;
 		generalVocals.pause(); sustain.parent.vocals.pause();
 		FlxG.sound.play(Cache.sound('miss/${FlxG.random.int(1, 3)}'), 0.7);
@@ -366,8 +366,10 @@ class PlayState extends violet.backend.StateBackend {
 			sustain.wasMissed = true;
 			sustain.alpha *= 0.6;
 		}
+
 		for (char in sustain.parent.characters)
 			char.playSingAnim(sustain.id, true);
+
 		sustain.parentStrum.holdCover?.playAnim('end', true);
 		if (sustain.parent.isComputer) sustain.parentStrum.holdCover?.animation.finish();
 		sustain.parentStrum.holdCover = null;

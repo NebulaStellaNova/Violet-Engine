@@ -29,7 +29,7 @@ class Strum extends NovaSprite {
 	 * The amount of time in steps the animation can be forced to last.
 	 * If set to 0 the animation that is played plays out normally.
 	 */
-	public var glowLength:Float = 1.5;
+	public var glowLength:Float = 1.2;
 
 	/**
 	 * If true after the "glowlength" is reached the animation will go back to "static".

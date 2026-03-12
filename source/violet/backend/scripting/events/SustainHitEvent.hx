@@ -4,23 +4,34 @@ import violet.backend.objects.play.Strum;
 import violet.backend.objects.play.Sustain;
 
 class SustainHitEvent extends EventBase {
-	public var sustain:Sustain;
-	public var strum:Strum;
-	public var direction:Int;
-	public var noteType:String;
-	public var isComputer:Bool;
+	public final sustain:Sustain;
+	public final strum:Strum;
+
+	public var direction(get, set):Int;
+	function get_direction():Int return sustain.id;
+	function set_direction(value:Int):Int return sustain.id = value;
+
+	public var noteType(get, set):String;
+	function get_noteType():String return sustain.noteType;
+	function set_noteType(value:String):String return sustain.noteType = value;
+
+	public var isComputer(get, never):Bool;
+	function get_isComputer():Bool return sustain.parent.isComputer;
+
+	public var playStrumAnim:Bool = true;
+
 	public var animCancelled:Bool = false;
 	public var animationSuffix:String = null; // null for none
 
-	public function new(sustain:Sustain, noteType:String, strum:Strum, direction:Int, isComputer:Bool) {
+	public function new(sustain:Sustain) {
 		this.sustain = sustain;
-		this.strum = strum;
-		this.direction = direction;
-		this.noteType = noteType;
-		this.isComputer = isComputer;
+		this.strum = sustain.parentStrum;
 	}
 
-	public function cancelAnim() {
+	public function cancelAnim():Void {
 		this.animCancelled = true;
+	}
+	public function stopStrumAnim():Void {
+		this.playStrumAnim = false;
 	}
 }
