@@ -1,5 +1,7 @@
 package violet.backend.filesystem;
 
+import violet.backend.utils.StringUtil;
+import violet.backend.utils.NovaUtils;
 import haxe.io.Path;
 import sys.FileSystem;
 import moonchart.backend.Util as MoonUtil;
@@ -12,6 +14,13 @@ typedef AssetType = #if (flixel >= "5.9.0") flixel.system.frontEnds.AssetFrontEn
 
 class Paths {
 	public static var ASSETS_FOLDER:String = "resources";
+
+	private static function notifyIfBlank(foundPath:String, targetPath:String, type:String) {
+		if (foundPath == "" && Path.withoutExtension(Path.withoutDirectory('$targetPath')) != 'null') {
+			NovaUtils.addNotification(StringUtil.capitalizeFirst(type) + " not found!", 'Could not find $type asset at "${ASSETS_FOLDER}/$targetPath"', ERROR);
+		}
+		return foundPath;
+	}
 
 	public static function init():Void {
 		MoonUtil.readFolder = (folder:String) -> Paths.readFolder(folder, true);
@@ -70,7 +79,7 @@ class Paths {
 	}
 
 	inline public static function image(path:String, directory:String = '', ?ext:String = 'png'):String
-		return file(path, directory == 'root' ? 'root' : [directory, 'images'].join('/'), ext);
+		return notifyIfBlank(file(path, directory == 'root' ? 'root' : [directory, 'images'].join('/'), ext), '$path.$ext', 'image');
 
 	inline public static function sound(path:String, directory:String = '', ?ext:String = 'ogg'):String
 		return file(path, directory == 'root' ? 'root' : [directory, 'sounds'].join('/'), ext);
