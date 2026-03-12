@@ -110,6 +110,11 @@ class Project extends HXProject {
 	static final customClasses:CompilerFlag = 'CUSTOM_CLASSES';
 
 	/**
+	 * States if assets get loaded from `export/release/[PLATFORM]/bin` or `assets`.
+	 */
+	static final redirectAssetsFolder:CompilerFlag = 'REDIRECT_ASSETS_FOLDER';
+
+	/**
 	 * States if the engine allows shaders at all.
 	 */
 	static final allowShaders:CompilerFlag = 'ALLOW_SHADERS';

@@ -6,7 +6,7 @@
     {
       "assetPath": "menus/storymenu/props/gf",
       "scale": 0.5,
-      "danceEvery": 2,
+      "danceEvery": 1,
       "offsets": [80, 80],
       "animations": [
         {

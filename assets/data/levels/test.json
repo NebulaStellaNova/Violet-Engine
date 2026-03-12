@@ -3,7 +3,7 @@
 	"titleAsset": "menus/storymenu/titles/week1",
 	"props": [
 		{
-			"danceEvery": 1,
+			"danceEvery": 2,
 			"offsets": [
 				100,
 				80
@@ -31,7 +31,7 @@
 		},
 		{
 			"isPixel": false,
-			"danceEvery": 1,
+			"danceEvery": 2,
 			"offsets": [
 				150,
 				80
