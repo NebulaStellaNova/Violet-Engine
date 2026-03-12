@@ -24,6 +24,7 @@ class SustainHitEvent extends EventBase {
 	public var animationSuffix:String = null; // null for none
 
 	public function new(sustain:Sustain) {
+        super();
 		this.sustain = sustain;
 		this.strum = sustain.parentStrum;
 	}

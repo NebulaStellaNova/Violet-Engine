@@ -47,6 +47,10 @@ class NovaUtils {
 		return sound;
 	}
 
+	public static function playSound(path:String, volume:Float = 1):FlxSound {
+		return FlxG.sound.play(Cache.sound(path), volume);
+	}
+
 	public static function playMusic(path:String, volume:Float = 1, folder:String = 'music'):FlxSound {
 		var musicPath:Array<String> = path.split('/');
 		CURRENT_MUSIC = path;

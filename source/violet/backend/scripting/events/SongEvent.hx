@@ -9,6 +9,7 @@ class SongEvent extends EventBase {
 	function set_params(value:Array<Dynamic>) return parameters = value;
 
 	public function new(name:String, ?parameters:Array<Dynamic>) {
+        super();
 		this.name = name;
 		this.parameters = parameters ?? [];
 	}

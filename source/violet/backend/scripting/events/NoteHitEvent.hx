@@ -27,6 +27,7 @@ class NoteHitEvent extends EventBase {
 	public var spawnHoldCover:Bool;
 
 	public function new(note:Note) {
+        super();
 		this.note = note;
 		this.strum = note.parentStrum;
 		this.spawnHoldCover = note.length > 10;

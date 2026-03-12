@@ -1,5 +1,10 @@
 package violet.states;
 
+import violet.backend.scripting.events.EventBase;
+import violet.backend.scripting.events.SongEvent;
+import violet.backend.scripting.events.SustainHitEvent;
+import violet.backend.scripting.events.NoteHitEvent;
+import violet.backend.options.Options;
 import flixel.FlxCamera;
 import flixel.group.FlxGroup;
 import flixel.math.FlxMath;
@@ -239,8 +244,11 @@ class PlayState extends violet.backend.StateBackend {
 		callSongScripts("onUpdate", [elapsed]);
 
 		if (Controls.accept && !FlxG.mouse.justPressed) {
-			countdownTimer.active = false;
-			openSubState(new PauseMenu());
+			var event:EventBase = songScripts.event("onPause", new EventBase());
+			if (!event.cancelled) {
+				countdownTimer.active = false;
+				openSubState(new PauseMenu());
+			}
 		}
 
 		scoreLerp = MathUtil.lerp(scoreLerp, score, 0.25);
@@ -378,10 +386,15 @@ class PlayState extends violet.backend.StateBackend {
 	var countdownTick = 0;
 
 	function startCountdown():Void {
+		countdownTick = 0;
+		var event:EventBase = songScripts.event("startCountdown", new EventBase());
+		event = songScripts.event("onStartCountdown", event);
+		if (event.cancelled) return;
 		tickCountdown();
 	}
 
 	function tickCountdown() {
+		countdownTimer.cancel();
 		if (countdownTick == countdownLength) {
 			countdownTimer = new FlxTimer().start(Conductor.beatLengthMs / 1000, _ -> startSong());
 			return;

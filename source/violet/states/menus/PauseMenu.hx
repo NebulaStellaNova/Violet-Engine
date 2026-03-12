@@ -1,5 +1,7 @@
 package violet.states.menus;
 
+import flixel.FlxCamera;
+import violet.backend.scripting.events.EventBase;
 import violet.backend.EditorListBackend;
 import violet.backend.audio.Conductor;
 
@@ -15,15 +17,21 @@ class PauseMenu extends EditorListBackend {
     ];
 
     public dynamic function resume() {
-        close();
+        var event:EventBase = PlayState.instance.songScripts.event('onResume', new EventBase());
+        event = subStateScripts.event('resume', event);
+        if (!event.cancelled) close();
     }
 
     public dynamic function restartSong() {
-        FlxG.resetState();
+        var event:EventBase = PlayState.instance.songScripts.event('onRestartSong', new EventBase());
+        event = subStateScripts.event('restartSong', event);
+        if (!event.cancelled) FlxG.resetState();
     }
 
     public dynamic function exitToMenu() {
-        subCamera.fade(0.25, () -> {
+        var event:EventBase = PlayState.instance.songScripts.event('onExitToMenu', new EventBase());
+        event = subStateScripts.event('exitToMenu', event);
+        if (!event.cancelled) subCamera.fade(0.25, () -> {
             FlxG.switchState(new FreeplayMenu().build());
 		});
     }
@@ -62,7 +70,7 @@ class PauseMenu extends EditorListBackend {
 
     override function close() {
         super.close();
-        Conductor.play();
+        if (PlayState.instance.songStarted) Conductor.play();
         FlxG.state.persistentUpdate = true;
     }
 

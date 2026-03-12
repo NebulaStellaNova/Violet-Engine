@@ -6,6 +6,7 @@ class SelectionEvent extends EventBase {
 	public var selection:Int = 0;
 
 	public function new(selection:Int) {
+        super();
 		this.selection = selection;
 	}
 
