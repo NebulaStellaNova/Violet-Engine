@@ -191,7 +191,7 @@
 		]
 	},
 	"holdcovers": {
-		"offsets": [70, 127],
+		"offsets": [70, 180],
 		"assetPath": "holdcovers",
 		"animations": [
 			{
@@ -285,7 +285,7 @@
 		]
 	},
 	"splashes": {
-		"offsets": [75, 75],
+		"offsets": [75, 140],
 		"assetPath": "splashes",
 		"animations": [
 			{
