@@ -73,14 +73,14 @@ class Note extends NovaSprite {
 	 */
 	public var canHit(get, never):Bool;
 	inline function get_canHit():Bool {
-		return time >= Conductor.songPosition - 230 && time <= Conductor.songPosition + 230;
+		return time >= Conductor.framePosition - 230 && time <= Conductor.framePosition + 230;
 	}
 	/**
 	 * If true it's too late to hit the note.
 	 */
 	public var tooLate(get, never):Bool;
 	inline function get_tooLate():Bool {
-		return time < Conductor.songPosition - (300 / Math.abs(__scrollSpeed)) && !wasHit;
+		return time < Conductor.framePosition - (300 / Math.abs(__scrollSpeed)) && !wasHit;
 	}
 	/**
 	 * If true this note has been hit.
