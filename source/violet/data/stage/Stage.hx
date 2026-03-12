@@ -22,6 +22,7 @@ class Stage extends flixel.group.FlxGroup {
         this._data.cameraPosition ??= [0, 0];
 
         ModdingAPI.checkForScripts('data/stages', id, stageScripts);
+        stageScripts.set('directory', this._data.directory);
 
         if (StageRegistry.stageDatas.get(id) == null) {
             NovaUtils.addNotification('Stage not found!', 'Could not find stage with ID "$id" using default stage "mainStage."', haxe.ui.notifications.NotificationType.Error);
@@ -67,6 +68,7 @@ class Stage extends flixel.group.FlxGroup {
                     prop.scale.set(i.scale[0] ?? 1, i.scale[1] ?? 1);
                     prop.flipX = i.flipX ?? false;
                     prop.flipY = i.flipY ?? false;
+                    prop.visible = i.visible;
                     prop.color = i.color;
                     prop.updateHitbox();
                     for (i in i?.animations ?? []) {
@@ -93,6 +95,7 @@ class Stage extends flixel.group.FlxGroup {
                     }
             }
         }
+        stageScripts.call('onLoaded');
     }
 
     public function reload(characters:Array<Character>) { load(characters); }
