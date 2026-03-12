@@ -347,16 +347,13 @@ class PlayState extends violet.backend.StateBackend {
 		if (sustain.isEnd) {
 			sustain.parentStrum.holdCover?.playAnim('end', true);
 
-			// I had to do this, or else the strum note would keep waiting for the glow timer when it shouldn't.
-			// Please find a less hacky solution for this, I don't know how to fix it.
-			sustain.parentStrum.playStrumAnim('confirm', true);
-			sustain.parentStrum.lastHit = sustain.time + sustain.parentNote.length;
-
 			if (sustain.parent.isComputer) sustain.parentStrum.holdCover?.animation.finish();
 			sustain.parentStrum.holdCover = null;
-		} else {
-			sustain.parentStrum.playStrumAnim('confirm', false);
 		}
+
+		// THIS IS INTENTIONAL, DO NOT CHANGE IT!
+		// THE STRUMLINE HOLD NOTES MUST REACT LIKE PSYCH!
+		sustain.parentStrum.playStrumAnim('confirm', true);
 	}
 
 	function onSustainMissed(sustain:Sustain) {
