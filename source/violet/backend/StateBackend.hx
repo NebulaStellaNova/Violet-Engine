@@ -5,6 +5,7 @@ import violet.backend.audio.Conductor;
 import violet.backend.objects.IsBopper;
 import violet.backend.scripting.events.EventBase;
 import violet.backend.utils.NovaUtils;
+import violet.backend.options.Options;
 
 #if SCRIPT_SUPPORT
 import violet.backend.scripting.ScriptPack;
