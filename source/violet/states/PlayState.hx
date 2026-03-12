@@ -284,7 +284,7 @@ class PlayState extends violet.backend.StateBackend {
 
 	function onNoteHit(note:Note) {
 		if (!Conductor.instrumental.playing) return; if (note.wasHit) return;
-		final event:NoteHitEvent = songScripts.event("noteHit", new NoteHitEvent(note));
+		final event:NoteHitEvent = runSongEvent("noteHit", new NoteHitEvent(note));
 		if (event.cancelled) return;
 
 		note.wasHit = true; note.visible = false;
@@ -306,7 +306,7 @@ class PlayState extends violet.backend.StateBackend {
 		if (event.spawnHoldCover)
 			note.parentStrum.spawnHoldCover();
 
-		songScripts.event("noteHitPost", event);
+		runSongEvent("noteHitPost", event);
 	}
 
 	function onNoteMissed(note:Note) {
@@ -335,7 +335,7 @@ class PlayState extends violet.backend.StateBackend {
 
 	function onSustainHit(sustain:Sustain) {
 		if (!Conductor.instrumental.playing) return; if (sustain.wasHit && !sustain.parentNote.wasHit) return;
-		final event:SustainHitEvent = songScripts.event("sustainHit", new SustainHitEvent(sustain));
+		final event:SustainHitEvent = runSongEvent("sustainHit", new SustainHitEvent(sustain));
 		if (event.cancelled) return;
 
 		sustain.wasHit = true; // sustain.visible = false;
@@ -416,7 +416,7 @@ class PlayState extends violet.backend.StateBackend {
 		if (event.ran) return;
 		event.ran = true;
 		var eventName = event.type != null ? [null, "Camera Movement"][event.type] : event.name;
-		var scriptEvent:SongEvent = songScripts.event("onEvent", new SongEvent(eventName, event.params));
+		var scriptEvent:SongEvent = runSongEvent("onEvent", new SongEvent(eventName, event.params));
 		if (scriptEvent.cancelled) return;
 
 		switch (eventName) {
@@ -467,17 +467,14 @@ class PlayState extends violet.backend.StateBackend {
 		}
 	}
 
-	/* public function callSongScripts<T>(funcName:String, ?args:Array<Dynamic>, ?def:T):T {
-		return #if SCRIPT_SUPPORT callSongScripts(funcName, args, def) ?? #end def;
-	} */
+	function callSongScripts(func:String, ?params:Array<Dynamic>):Void {
+		songScripts.call(func, params);
+		stage.stageScripts.call(func, params);
+	}
 
 	public function runSongEvent<T:violet.backend.scripting.events.EventBase>(func:String, event:T):T {
-		#if SCRIPT_SUPPORT
-		if (songScripts == null) return event;
-		return songScripts.event(func, event);
-		#else
-		return event;
-		#end
+		songScripts.event(func, event);
+		return stage.stageScripts.event(func, event);
 	}
 
 	override function stepHit(curStep:Int) {
@@ -508,11 +505,6 @@ class PlayState extends violet.backend.StateBackend {
 	override function closeSubState() {
 		super.closeSubState();
 		countdownTimer.active = true;
-	}
-
-	function callSongScripts(func:String, ?params:Array<Dynamic>) {
-		songScripts.call(func, params);
-		stage.stageScripts.call(func, params);
 	}
 
 	override public function destroy():Void {
