@@ -339,6 +339,7 @@ class PlayState extends violet.backend.StateBackend {
 			health += Constants.DEFAULT_HEALTH_GAIN;
 		if (sustain.isEnd) {
 			sustain.parentStrum.isHolding = false;
+			sustain.parentStrum.willReset = true; // True...
 			sustain.parentStrum.holdCover?.playAnim('end', true);
 			if (sustain.parent.isComputer) sustain.parentStrum.holdCover?.animation.finish();
 			sustain.parentStrum.holdCover = null;
