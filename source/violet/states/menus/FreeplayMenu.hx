@@ -1,19 +1,17 @@
 package violet.states.menus;
 
-import thx.semver.Version;
 import flixel.FlxCamera;
-import flixel.group.FlxSpriteGroup;
 import flixel.math.FlxMath;
-import openfl.filters.GlowFilter;
+import thx.semver.Version;
 import violet.backend.SubStateBackend;
 import violet.backend.objects.special_thanks.GenzuSprite;
 import violet.backend.shaders.AngleMask;
 import violet.backend.shaders.GaussianBlurShader;
 import violet.backend.utils.NovaUtils;
+import violet.backend.utils.ParseUtil;
 import violet.data.song.Song;
 import violet.data.song.SongRegistry;
 import violet.states.PlayState;
-import violet.backend.utils.ParseUtil;
 import violet.ui.freeplay.Capsule;
 
 typedef AlbumData = {
@@ -62,8 +60,6 @@ class FreeplayMenu extends SubStateBackend {
 		super.create();
 
 		prevInst = "";
-
-		skipTransition = false;
 
 		camHUD = new FlxCamera();
 		camHUD.bgColor = FlxColor.TRANSPARENT;
@@ -156,11 +152,14 @@ class FreeplayMenu extends SubStateBackend {
 
 		changeSelection(0);
 		diffSprite.x = -FlxG.width;
+
+		skipTransition = false;
 	}
 
 	public function build() {
 		var mainMenu:MainMenu = new MainMenu();
-		mainMenu.openSubState(new FreeplayMenu());
+		FreeplayMenu.skipTransition = true;
+		mainMenu.openSubState(this);
 		return mainMenu;
 	}
 

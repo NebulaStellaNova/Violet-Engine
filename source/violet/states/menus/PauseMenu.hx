@@ -1,6 +1,5 @@
 package violet.states.menus;
 
-import flixel.FlxCamera;
 import violet.backend.EditorListBackend;
 import violet.backend.audio.Conductor;
 

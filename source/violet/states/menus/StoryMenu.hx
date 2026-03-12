@@ -1,17 +1,16 @@
 package violet.states.menus;
 
+import flixel.FlxCamera;
 import flixel.group.FlxSpriteGroup;
 import flixel.math.FlxMath;
-import flixel.FlxCamera;
-
-import violet.backend.objects.BopperSpriteGroup;
+import violet.backend.SubStateBackend;
 import violet.backend.objects.Bopper;
-import violet.data.song.SongRegistry;
+import violet.backend.objects.BopperSpriteGroup;
 import violet.backend.utils.MathUtil;
 import violet.backend.utils.NovaUtils;
-import violet.backend.SubStateBackend;
-import violet.data.level.LevelRegistry;
 import violet.data.level.Level;
+import violet.data.level.LevelRegistry;
+import violet.data.song.SongRegistry;
 
 class StoryMenu extends SubStateBackend {
 
@@ -169,6 +168,13 @@ class StoryMenu extends SubStateBackend {
             canInteract = true;
         });
     }
+
+    public function build() {
+		var mainMenu:MainMenu = new MainMenu();
+		StoryMenu.skipTransition = true;
+		mainMenu.openSubState(this);
+		return mainMenu;
+	}
 
     var time:Float = 0;
 
