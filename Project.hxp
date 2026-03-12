@@ -128,7 +128,6 @@ class Project extends HXProject {
 		super();
 
 		CompilerFlag.init(this);
-		setHaxedef("no-deprecation-warnings");
 
 		if (isDesktop() || isMobile()) {
 			if (isMac()) { // fix for compiling on mac
@@ -145,6 +144,8 @@ class Project extends HXProject {
 			// We don't need a return statement, error() stops the app anyway.
 			error(message);
 		}
+
+		setHaxedef("no-deprecation-warnings");
 
 		if (FileSystem.exists('./.haxelib'))
 			setenv('HAXEPATH', './.haxelib');
@@ -229,9 +230,13 @@ class Project extends HXProject {
 			sources.push(path);
 
 		var excludeList:Array<String> = [''];
-		// addAssetLibrary('default', false, true); addAssetLibrary('mods');
-		addAssetPath('./assets', './resources', ['*'], excludeList);
-		if (modSupport.exists()) addAssetPath('./mods', './mods', ['*'], excludeList);
+		addAssetLibrary('default', false, true);
+		addAssetPath('assets', null, true, 'default', ['*'], excludeList);
+
+		if (modSupport.exists()) {
+			addAssetLibrary('mods', false, false);
+			addAssetPath('mods', null, true, 'mods', ['*'], excludeList);
+		}
 		/* Path Settings */
 
 		addHaxeMacro('violet.backend.Macro.init()');
