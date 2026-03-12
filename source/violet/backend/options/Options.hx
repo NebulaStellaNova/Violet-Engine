@@ -1,6 +1,7 @@
 package violet.backend.options;
 
 import flixel.util.FlxSave;
+import flixel.input.keyboard.FlxKey;
 
 @:structInit class OptionsData {
     public var fps:Int = 60;
@@ -8,6 +9,34 @@ import flixel.util.FlxSave;
     public var downscroll:Bool = false;
     public var coloredHealthBar:Bool = true;
     public var developerMode:Bool = false;
+    public var controls:Map<String, Array<String>> = [
+        'note_left' => ['A', 'LEFT'],
+        'note_down' => ['S', 'DOWN'],
+        'note_up' => ['W', 'UP'],
+        'note_right' => ['D', 'RIGHT'],
+
+        'ui_left' => ['A', 'LEFT'],
+		'ui_down' => ['S', 'DOWN'],
+		'ui_up' => ['W', 'UP'],
+		'ui_right' => ['D', 'RIGHT'],
+
+		'accept' => ['ENTER', 'SPACE'],
+		'back' => ['BACKSPACE', 'ESCAPE'],
+		'pause' => ['ENTER', 'ESCAPE'],
+		'reset' => ['R', 'DELETE'],
+
+		'volume_up' => ['PLUS', 'NUMPADPLUS'],
+		'volume_down' => ['MINUS', 'NUMPADMINUS'],
+		'volume_mute' => ['ZERO', 'NUMPADZERO'],
+
+		'fullscreen' => ['F11', 'F11'],
+
+		'botplay' => ['F2', 'F2'],
+		'reloadGame' => ['F5', 'F5'],
+		'resetState' => ['F3', 'F3'],
+		'shortcutState' => ['F4', 'F4'],
+		'debugDisplay' => ['F6', 'F6']
+    ];
 }
 
 class Options {
@@ -48,6 +77,7 @@ class Options {
 
             Reflect.setProperty(data, field, value);
         }
+        updateControls();
     }
 
     /**
@@ -61,5 +91,12 @@ class Options {
         }
 
         save.flush();
+        updateControls();
+    }
+
+    public static function updateControls() {
+        for (key in data.controls.keys()) {
+            Controls.bindMap.set(key, [ for (i in data.controls.get(key)) FlxKey.fromString(i) ]);
+        }
     }
 }

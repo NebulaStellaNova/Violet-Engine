@@ -86,8 +86,10 @@ class Alphabet extends flixel.group.FlxGroup {
 
     public var text(default, set):String;
     function set_text(value:String) {
+        var reload = false;
+        if (text != value) reload = true;
         text = value;
-        refresh();
+        if (reload) refresh();
         return value;
     }
     public var scaleX:Float = 1;

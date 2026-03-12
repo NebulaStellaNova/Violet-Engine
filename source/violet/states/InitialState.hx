@@ -1,5 +1,6 @@
 package violet.states;
 
+import violet.states.menus.OptionsMenu;
 import violet.backend.StateBackend;
 import violet.backend.audio.Conductor;
 
@@ -39,11 +40,15 @@ class InitialState extends StateBackend { // for now
 		attemptNotif();
 
 		FlxG.signals.preUpdate.add(() -> {
-			if (Controls.resetState) {
+			if (OptionsMenu.instance != null)
+				if (!OptionsMenu.instance.canSelectMenu) return;
+			if (Controls.reloadGame) {
 				Conductor.pause();
 				ModdingAPI.reloadRegistries();
 				FlxG.resetState();
 			}
+			if (Controls.resetState)
+				FlxG.resetState();
 			if (Controls.shortcutState)
 				FlxG.switchState(() -> new violet.states.menus.MainMenu());
 		});

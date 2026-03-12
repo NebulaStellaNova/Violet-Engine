@@ -1,5 +1,6 @@
 package violet.states.menus;
 
+import violet.backend.objects.options.ControlOption;
 import flixel.text.FlxText;
 import violet.backend.options.Options;
 import violet.backend.utils.MathUtil;
@@ -15,6 +16,8 @@ import violet.backend.SubStateBackend;
 
 enum abstract OptionsType(String) {
     var BOOL = "bool";
+    var CONTROL = "control";
+    var SECTION = "section";
 }
 
 typedef OptionsData = {
@@ -47,13 +50,19 @@ class OptionsMenu extends SubStateBackend {
     public var menuCurSelected:Int = 0;
     public var optionCurSelected:Int = 0;
 
-    var descriptionTxt:FlxText;
-    var descriptionBox:NovaSprite;
+    public var descriptionTxt:FlxText;
+    public var descriptionBox:NovaSprite;
 
     public var optionsListOffset:Float = FlxG.width + 100;
 
+    public var enableInput:Bool = true;
+
+    public static var instance:OptionsMenu;
+
     override function create() {
         super.create();
+
+        instance = this;
 
         camera = new FlxCamera();
         camera.bgColor = FlxColor.TRANSPARENT;
@@ -92,8 +101,8 @@ class OptionsMenu extends SubStateBackend {
             menu.alpha = menuCurSelected == i ? 1 : 0.5;
         }
 
-        if (Controls.uiUp) options.length != 0 ? optionsScroll(-1) : menuScroll(-1);
-        if (Controls.uiDown) options.length != 0 ? optionsScroll(1) : menuScroll(1);
+        if (Controls.uiUp && enableInput) options.length != 0 ? optionsScroll(-1) : menuScroll(-1);
+        if (Controls.uiDown && enableInput) options.length != 0 ? optionsScroll(1) : menuScroll(1);
 
         for (i=>option in options) {
             option.x -= optionsListOffset;
@@ -103,9 +112,9 @@ class OptionsMenu extends SubStateBackend {
             option.updatePosition();
         }
 
-        if (Controls.accept) selectMenu();
+        if (Controls.accept && enableInput) selectMenu();
 
-        if (Controls.back) {
+        if (Controls.back && enableInput) {
             if (options.length != 0) {
                 FlxTween.tween(this, { optionsListOffset: FlxG.width + 200 }, 0.5, { ease: FlxEase.expoIn, onComplete: (_)->closeOptions() });
                 updateDesc({});
@@ -130,18 +139,35 @@ class OptionsMenu extends SubStateBackend {
 
     function generateOptions() {
         for (i=>optionData in optionsData.menus[menuCurSelected].options) {
-            if (optionData.type == BOOL) {
-                var option:BoolOption = new BoolOption(optionData.name, optionData.description);
-                option.x = optionsListOffset;
-                option.y = (FlxG.height/2) + ((i-optionCurSelected) * 100) - (option.alphabet.height/2);
-                option.checkbox.value =  Options.get(optionData.saveID) ?? false;
-                option.checkbox.animation.finish();
-                option.onChange = function(value:Bool) {
-                    Options.set(optionData.saveID, value);
-                }
-                option.updatePosition();
-                insert(0, option);
-                options.push(option);
+            switch (optionData.type) {
+                case SECTION:
+                    var option:BaseOption = new BaseOption('         ' + optionData.name, optionData.description);
+                    option.x = optionsListOffset;
+                    option.y = (FlxG.height/2) + ((i-optionCurSelected) * 100) - (option.alphabet.height/2);
+                    option.updatePosition();
+                    insert(0, option);
+                    options.push(option);
+                case BOOL:
+                    var option:BoolOption = new BoolOption(optionData.name, optionData.description);
+                    option.x = optionsListOffset;
+                    option.y = (FlxG.height/2) + ((i-optionCurSelected) * 100) - (option.alphabet.height/2);
+                    option.checkbox.value =  Options.get(optionData.saveID) ?? false;
+                    option.checkbox.animation.finish();
+                    option.onChange = function(value:Bool) {
+                        Options.set(optionData.saveID, value);
+                    }
+                    option.updatePosition();
+                    insert(0, option);
+                    options.push(option);
+
+                case CONTROL:
+                    var option:ControlOption = new ControlOption(optionData.name + ':', optionData.description);
+                    option.x = optionsListOffset;
+                    option.y = (FlxG.height/2) + ((i-optionCurSelected) * 100) - (option.alphabet.height/2);
+                    option.updatePosition();
+                    option.controlArray = Options.data.controls.get(optionData.saveID);
+                    insert(0, option);
+                    options.push(option);
             }
         }
         optionsScroll(0);
@@ -162,7 +188,6 @@ class OptionsMenu extends SubStateBackend {
     }
 
     function exit() {
-        Options.flush();
         for (alphabet in menus) {
             FlxTween.tween(alphabet, { x: alphabet.x+FlxG.width }, 1, { ease: FlxEase.expoIn });
         }
@@ -178,9 +203,12 @@ class OptionsMenu extends SubStateBackend {
 
     function optionsScroll(amt) {
         optionCurSelected = FlxMath.wrap(optionCurSelected + amt, 0, options.length-1);
+        while (optionsData.menus[menuCurSelected].options[optionCurSelected].type == SECTION) {
+            optionCurSelected = FlxMath.wrap(optionCurSelected + (amt != 0 ? amt : 1), 0, options.length-1);
+        }
         if (amt != 0) NovaUtils.playMenuSFX(SCROLL);
         for (i=>option in options) {
-            option.selected = i == optionCurSelected;
+            option.selected = i == optionCurSelected || optionsData.menus[menuCurSelected].options[i].type == SECTION;
         }
         updateDesc(optionsData.menus[menuCurSelected].options[optionCurSelected]);
     }
@@ -197,5 +225,11 @@ class OptionsMenu extends SubStateBackend {
         descriptionBox.screenCenter();
         descriptionBox.alpha = 0.7;
         descriptionBox.y += FlxG.height * 0.35;
+    }
+
+    override function destroy() {
+        super.destroy();
+
+        Options.flush();
     }
 }

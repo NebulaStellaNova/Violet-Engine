@@ -1,5 +1,6 @@
 package violet.backend.display;
 
+import violet.states.menus.OptionsMenu;
 import flixel.math.FlxMath;
 import hxhardware.CPU;
 import hxhardware.Memory;
@@ -111,6 +112,9 @@ class DebugDisplay extends Sprite {
 		text.x = background.x + 10;
 		text.y = background.y + 10;
 
+
+		if (OptionsMenu.instance != null)
+			if (!OptionsMenu.instance.canSelectMenu) return;
 		if (Controls.debugDisplay)
 			shown = !shown;
 	}

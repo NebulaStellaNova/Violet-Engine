@@ -1,4 +1,10 @@
 menus:
+- title: Controls
+  options:
+  - name: Left Note
+    type: control
+    saveID: left-note
+
 - title: Gameplay
   options:
   - name: Ghost Tapping

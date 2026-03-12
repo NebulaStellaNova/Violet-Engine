@@ -224,34 +224,7 @@ class Controls {
 	/**
 	 * The binds that are contained within controls.
 	 */
-	public static var bindMap(default, null):Map<String, Array<FlxKey>> = [
-		'note_left' => [W, E, LEFT],
-		'note_down' => [F, DOWN],
-		'note_up' => [J, K, UP],
-		'note_right' => [O, RIGHT],
-
-		'ui_left' => [A, LEFT],
-		'ui_down' => [S, DOWN],
-		'ui_up' => [W, UP],
-		'ui_right' => [D, RIGHT],
-
-		'accept' => [ENTER, SPACE],
-		'back' => [BACKSPACE, ESCAPE],
-		'pause' => [ENTER, ESCAPE],
-		'reset' => [R, DELETE],
-
-		'volume_up' => [PLUS, NUMPADPLUS],
-		'volume_down' => [MINUS, NUMPADMINUS],
-		'volume_mute' => [ZERO, NUMPADZERO],
-
-		'fullscreen' => [F11],
-
-		'botplay' => [F3],
-		'resetState' => [F5],
-		'shortcutState' => [F4],
-		'debugDisplay' => [F6],
-		'reloadGame' => [F8]
-	];
+	public static var bindMap(default, null):Map<String, Array<FlxKey>> = []; // Setup in Options.hx
 	/**
 	 * Pressed input.
 	 * @param key The key name.
