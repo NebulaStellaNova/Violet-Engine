@@ -1,5 +1,6 @@
 package violet.states.menus;
 
+import thx.semver.Version;
 import flixel.FlxCamera;
 import flixel.group.FlxSpriteGroup;
 import flixel.math.FlxMath;
@@ -12,6 +13,18 @@ import violet.backend.utils.NovaUtils;
 import violet.data.song.Song;
 import violet.data.song.SongRegistry;
 import violet.states.PlayState;
+import violet.backend.utils.ParseUtil;
+import violet.ui.freeplay.Capsule;
+
+typedef AlbumData = {
+	var version:Version;
+	var name:String;
+	var ostText:String;
+	var artists:Array<String>;
+	var albumArtAsset:String;
+	var albumTitleAsset:String;
+	var albumTitleOffsets:Array<Float>;
+}
 
 class FreeplayMenu extends SubStateBackend {
 	static var curSelectedSong:Int = 0;
@@ -20,7 +33,7 @@ class FreeplayMenu extends SubStateBackend {
 	static var lastSong:Int = -1;
 
 	var canSelect:Bool = true;
-	var daCapsules:Array<FlxSpriteGroup> = [];
+	var daCapsules:Array<Capsule> = [];
 	var camHUD:FlxCamera;
 	var capsule:GenzuSprite;
 	var backingCard:GenzuSprite;
@@ -99,10 +112,11 @@ class FreeplayMenu extends SubStateBackend {
 		freeplayText.updateHitbox();
 		freeplayText.camera = camHUD;
 
-		ostText = new NovaText(0, -150, null, "OFFICIAL OST", 60);
+		ostText = new NovaText(0, -150, FlxG.width, "OFFICIAL OST", 60);
 		ostText.setFont(Paths.font("vcr.ttf"));
-		ostText.x = FlxG.width - ostText.width / 2 + 150;
+		ostText.alignment = RIGHT;
 		ostText.updateHitbox();
+		ostText.x = FlxG.width - ostText.width + 150;
 		ostText.camera = camHUD;
 
 		FlxTween.tween(backingCard, {x: -160}, 1, {ease: FlxEase.expoOut});
@@ -118,52 +132,12 @@ class FreeplayMenu extends SubStateBackend {
 		for (i => song in songs) {
 			var yOffset = 10;
 			var startY = (FlxG.height / 2) + spacing * (i - curSelectedSong) - spacing + yOffset;
-			var capsuleGroup = new FlxSpriteGroup(-1000, startY);
-
-			capsuleGroup.cameras = [camHUD];
-
-			capsule = new GenzuSprite(0, 0, Paths.image("menus/freeplay/capsule/freeplayCapsule"));
-			capsule.addAnim("idle", "mp3 capsule w backing NOT SELECTED", [], null, 24, true);
-			capsule.addAnim("selected", "mp3 capsule w backing0", [], null, 24, true);
+			var capsule = new Capsule(song);
+			capsule.setPosition(-1000, startY);
 			capsule.cameras = [camHUD];
-
-			capsuleGroup.add(capsule);
-
-			add(capsuleGroup);
-			daCapsules.push(capsuleGroup);
-
-			var textGroup = new FlxTypedSpriteGroup<NovaText>(0, 0);
-			var txt = new NovaText(0, 0, null, song.displayName, 40);
-			txt.setFont(Paths.font("5by7"));
-			txt.updateHitbox();
-			txt.x += 120;
-			txt.y += 42;
-			txt.color = glowColor;
-			txt.shader = blur;
-			textGroup.add(txt);
-
-			var txt2 = new NovaText(0, 0, null, song.displayName, 40);
-			txt2.setFont(Paths.font("5by7"));
-			txt2.updateHitbox();
-			txt2.x += 120;
-			txt2.y += 42;
-			textGroup.add(txt2);
-
-			var iconGroup = new FlxTypedSpriteGroup<GenzuSprite>(0, 0);
-			var icon = new GenzuSprite(30, 30, Paths.image('menus/freeplay/icons/${song.icon}'));
-			icon.scale.set(2.5, 2.5);
-			icon.pixelPerfectRender = true;
-			icon.antialiasing = false;
-			icon.addAnim("idle", "idle", [], null, 24, true);
-			icon.addAnim("confirm", "confirm", [], null, 12, false);
-			icon.playAnim('idle');
-			iconGroup.add(icon);
-
-			capsuleGroup.add(textGroup);
-			capsuleGroup.add(iconGroup);
+			add(capsule);
+			daCapsules.push(capsule);
 		}
-
-		// xPos = 315;
 
 		add(black);
 		add(diffSprite);
@@ -220,10 +194,7 @@ class FreeplayMenu extends SubStateBackend {
 		var prevSong:Song = songs[curSelectedSong];
 		curSelectedSong = FlxMath.wrap(curSelectedSong + amount, 0, songs.length - 1);
 		for (i => capsule in daCapsules) {
-			var capsuleSprite:GenzuSprite = cast capsule.members[0];
-			capsuleSprite.playAnim(curSelectedSong == i ? "selected" : "idle");
-			var text = capsule.members[1];
-			text.alpha = curSelectedSong == i ? 1 : 0.6;
+			capsule.setSelected(curSelectedSong == i);
 			FlxTween.cancelTweensOf(capsule);
 
 			var distance = Math.abs(i - curSelectedSong);
@@ -258,14 +229,20 @@ class FreeplayMenu extends SubStateBackend {
 				}
 		changeDiff(newIndex, true);
 		playInst();
+
+		var albumMeta:AlbumData = ParseUtil.yaml('data/ui/freeplay/albums/${song._data.album}');
+		ostText.text = albumMeta?.ostText ?? "OFFICIAL OST";
+		ostText.updateHitbox();
 	}
 
-	var prevInst:String = "";
+	static var prevInst:String = "";
+
 	function playInst() {
 		var inst = Paths.inst(songs[curSelectedSong].id);
 		instTimer.cancel();
 
-		if (inst == prevInst) return;
+		if (inst == prevInst)
+			return;
 
 		instTimer = new FlxTimer().start(0.8, (_) -> {
 			prevInst = inst;
@@ -291,7 +268,7 @@ class FreeplayMenu extends SubStateBackend {
 		FlxTween.cancelTweensOf(diffSprite);
 		FlxTween.tween(diffSprite, {x: diffSprite.x - (distance * amount), alpha: 0}, 0.15, {
 			ease: FlxEase.expoIn,
-			onComplete: (_)-> {
+			onComplete: (_) -> {
 				diffSprite.loadGraphic(Paths.image('menus/freeplay/difficulties/${song.difficulties[curSelectedDiff]}'));
 				diffSprite.x = distance * direction * 2;
 				diffSprite.y = selector1.y + (selector1.height / 2) - (diffSprite.height / 2);
@@ -302,8 +279,6 @@ class FreeplayMenu extends SubStateBackend {
 
 	function playSong(?id:String, ?difficulty:String, ?variation:String) {
 		canSelect = false;
-		var selectedCapsule:GenzuSprite = cast daCapsules[curSelectedSong].members[0];
-		selectedCapsule.playAnim("confirm", true);
 
 		var iconGroup:FlxTypedSpriteGroup<Dynamic> = cast daCapsules[curSelectedSong].members[2];
 		var icon:GenzuSprite = cast iconGroup.members[0];
@@ -311,6 +286,7 @@ class FreeplayMenu extends SubStateBackend {
 
 		NovaUtils.playMenuSFX(CONFIRM);
 		FlxTimer.wait(1, () -> {
+			FlxG.sound.music.fadeOut(0.5);
 			camHUD.fade(FlxColor.BLACK, 0.5, false, () -> {
 				FlxTimer.wait(0.5, () -> {
 					PlayState.loadSong(id, difficulty);

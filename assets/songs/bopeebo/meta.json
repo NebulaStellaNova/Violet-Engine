@@ -12,5 +12,6 @@
 	"displayName": "Bopeebo",
 	"beatsPerMeasure": 4,
 	"needsVoices": true,
+	"album": "volume1",
 	"bpm": 100
 }
