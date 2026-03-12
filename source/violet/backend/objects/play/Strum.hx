@@ -45,6 +45,10 @@ class Strum extends NovaSprite {
 		this.parent = parent;
 		ID = id;
 		skin = 'default';
+
+		if (parent.isPlayer) {
+			glowLength = 2.5;
+		}
 	}
 
 	public function reloadSkin(?skin:String):Void {

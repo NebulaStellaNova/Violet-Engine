@@ -330,15 +330,19 @@ class PlayState extends violet.backend.StateBackend {
 		if (sustain.wasHit && !sustain.parentNote.wasHit) return;
 		sustain.wasHit = true; // sustain.visible = false;
 		generalVocals.resume(); sustain.parent.vocals.resume();
-		sustain.parentStrum.playStrumAnim('confirm', true);
+
 		for (char in sustain.parent.characters)
 			if (!event.animCancelled) char.playSingAnim(sustain.id, event.animationSuffix);
 		if (sustain.parent.isPlayer)
 			health += Constants.DEFAULT_HEALTH_GAIN;
 		if (sustain.isEnd) {
+			sustain.parentStrum.willReset = true;
 			sustain.parentStrum.holdCover?.playAnim('end', true);
 			if (sustain.parent.isComputer) sustain.parentStrum.holdCover?.animation.finish();
 			sustain.parentStrum.holdCover = null;
+		} else {
+			sustain.parentStrum.willReset = false;
+			sustain.parentStrum.playStrumAnim('confirm', false);
 		}
 	}
 
