@@ -75,7 +75,7 @@ class DebugDisplay extends Sprite {
 
 		memories.shift();
 		cpus.shift();
-		memories.push(Memory.getProcessPhysicalMemoryUsage());
+		memories.push(Std.parseFloat(Memory.getProcessPhysicalMemoryUsage().formatBytes()));
 		cpus.push(FlxMath.roundDecimal(CPU.getProcessCPUUsage(), 2));
 
 		var memoryAvg:Float = 0;
