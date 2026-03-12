@@ -11,13 +11,15 @@ class Chart {
 	public final scrollSpeed:Float;
 	public var noteTypes:Array<String>;
 	function get_noteTypes():Array<String> {
-		return _data?.noteTypes ?? [];
+		if (_data.noteTypes == null) return [];
+		return _data.noteTypes.copy();
 	}
 
 	public final strumLines:Array<_ChartStrumLine> = [];
 	public var events(get, never):Array<ChartEvent>;
 	function get_events():Array<ChartEvent> {
-		return _data?.events ?? [];
+		if (_data.events == null) return [];
+		return _data.events.copy();
 	}
 
 	public var meta(get, never):Song;

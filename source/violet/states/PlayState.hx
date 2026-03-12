@@ -1,13 +1,10 @@
 package violet.states;
 
-import violet.states.debug.EditorPickerMenu;
-import violet.states.menus.PauseMenu;
 import flixel.FlxCamera;
 import flixel.group.FlxGroup;
 import flixel.math.FlxMath;
 import violet.backend.audio.Conductor;
 import violet.backend.objects.play.HealthBar;
-import violet.data.icon.HealthIcon;
 import violet.backend.objects.play.Note;
 import violet.backend.objects.play.ScoreTxt;
 import violet.backend.objects.play.StrumLine;
@@ -19,7 +16,9 @@ import violet.data.character.Character;
 import violet.data.chart.Chart;
 import violet.data.chart.ChartData.ChartEvent;
 import violet.data.chart.ChartRegistry;
+import violet.data.icon.HealthIcon;
 import violet.data.stage.Stage;
+import violet.states.menus.PauseMenu;
 
 #if SCRIPT_SUPPORT
 import violet.backend.scripting.ScriptPack;
@@ -53,7 +52,6 @@ class PlayState extends violet.backend.StateBackend {
 	public var healthBar:HealthBar;
 	public var health:Float;
 
-	public var sillyBop:Bool = false; // Silly Icon Bop
 	public var iconPlayer:HealthIcon;
 	public var iconOpponent:HealthIcon;
 
@@ -63,8 +61,7 @@ class PlayState extends violet.backend.StateBackend {
 
 	public var countdownSprites:Array<String> = [null, 'ready', 'set', 'go'];
 	public var countdownSounds:Array<String> = ['introTHREE', 'introTWO', 'introONE', 'introGO'];
-	public var fuckYouRodney:FlxTimer = new FlxTimer();
-
+	public var countdownTimer:FlxTimer = new FlxTimer();
 
 	/**
 	 * The amount of beats the countdown lasts for.
@@ -298,7 +295,7 @@ class PlayState extends violet.backend.StateBackend {
 		super.update(elapsed);
 
 		if (Controls.accept && !FlxG.mouse.justPressed) {
-			fuckYouRodney.active = false;
+			countdownTimer.active = false;
 			openSubState(new PauseMenu());
 		}
 
@@ -309,13 +306,6 @@ class PlayState extends violet.backend.StateBackend {
 
 		healthLerp = MathUtil.lerp(healthLerp, health, 0.1);
 		healthBar.position = healthLerp;
-
-		iconPlayer.angle = MathUtil.lerp(iconPlayer.angle, 0, 0.2);
-		iconOpponent.angle = MathUtil.lerp(iconOpponent.angle, 0, 0.2);
-		iconPlayer.scale.x = iconPlayer.scale.y = MathUtil.lerp(iconPlayer.scale.y, iconPlayer._data.scale, 0.2);
-		iconOpponent.scale.x = iconOpponent.scale.y = MathUtil.lerp(iconOpponent.scale.y, iconOpponent._data.scale, 0.2);
-		iconPlayer.updateHitbox();
-		iconOpponent.updateHitbox();
 
 		iconPlayer.x = healthBar.x + healthBar.defaultWidth * (1-healthLerp);
 		iconPlayer.y = healthBar.y + (healthBar.height/2) - (iconPlayer.height/2);
@@ -341,10 +331,10 @@ class PlayState extends violet.backend.StateBackend {
 
 	function tickCountdown() {
 		if (countdownTick == countdownLength) {
-			fuckYouRodney = new FlxTimer().start(Conductor.beatLengthMs / 1000, _ -> startSong());
+			countdownTimer = new FlxTimer().start(Conductor.beatLengthMs / 1000, _ -> startSong());
 			return;
 		}
-		fuckYouRodney = new FlxTimer().start(Conductor.beatLengthMs / 1000, _ -> {
+		countdownTimer = new FlxTimer().start(Conductor.beatLengthMs / 1000, _ -> {
 			if (countdownSounds[countdownTick] != null) FlxG.sound.play(Paths.sound('game/countdown/funkin/${countdownSounds[countdownTick]}'));
 			if (countdownSprites[countdownTick] != null) {
 				var countdownSprite:NovaSprite = new NovaSprite(Paths.image('game/countdown/funkin/${countdownSprites[countdownTick]}'));
@@ -386,7 +376,7 @@ class PlayState extends violet.backend.StateBackend {
 		switch (event.type) {
 			case 1:
 				cameraMovementEventHandler(event);
-			}
+		}
 
 		switch (event.name) {
 			case "Camera Movement":
@@ -396,12 +386,13 @@ class PlayState extends violet.backend.StateBackend {
 				targetCharacter.canDance = false;
 				targetCharacter.isSinging = false;
 				targetCharacter.playAnim(event.params[1], true);
-				targetCharacter.animation.onFinish.addOnce((_)->{
-					if (_ == event.params[1]) {
+				targetCharacter.animation.onFinish.addOnce(name -> {
+					if (name == event.params[1]) {
 						targetCharacter.canDance = true;
+						targetCharacter.dance(true);
+						targetCharacter.animation.finish();
 					}
 				});
-
 		}
 
 
@@ -442,19 +433,8 @@ class PlayState extends violet.backend.StateBackend {
 		#end
 	}
 
-	@:unreflective var alternator:Bool = false;
-
 	override function beatHit(curBeat:Int) {
 		super.beatHit(curBeat);
-		alternator = !alternator;
-
-		iconOpponent.scale.x = iconOpponent.scale.y = iconOpponent._data.scale * 1.2;
-		iconPlayer.scale.x = iconPlayer.scale.y = iconPlayer._data.scale * 1.2;
-
-		if (sillyBop) {
-			iconPlayer.angle = alternator ? 20 : -20;
-			iconOpponent.angle = alternator ? -20 : 20;
-		}
 
 		if (curBeat % 4 == 0) {
 			FlxTween.cancelTweensOf(camGame);
@@ -467,9 +447,8 @@ class PlayState extends violet.backend.StateBackend {
 
 	override function closeSubState() {
 		super.closeSubState();
-		fuckYouRodney.active = true;
+		countdownTimer.active = true;
 	}
-
 
 	override public function destroy():Void {
 		instance = null;
