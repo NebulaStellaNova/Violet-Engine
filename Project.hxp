@@ -167,10 +167,7 @@ class Project extends HXProject {
 		// script related
 		if (scriptSupport.exists()) {
 			canHaxeScript.enable();
-
-			if (hasDefine('cpp')) {
-				canLuaScript.enable();
-			}
+			canLuaScript.enable();
 
 			scriptedStates.enable();
 			if (canHaxeScript.exists())
@@ -178,13 +175,13 @@ class Project extends HXProject {
 
 			info('Scripting was enabled.');
 		}
-		if (hasDefine('cpp')) {
-			if (isDesktop())
-				discordRPC.enable();
 
-			// If a HL version of HXVLC gets made, move this.
-			allowVideos.enable();
-		}
+		if (isDesktop())
+			discordRPC.enable();
+
+		// If a HL version of HXVLC gets made, move this.
+		allowVideos.enable();
+
 		if (discordRPC.exists())
 			setHaxedef('DISCORD_DISABLE_IO_THREAD');
 		allowShaders.enable();
@@ -244,9 +241,7 @@ class Project extends HXProject {
 		addHaxeMacro('violet.backend.Macro.init()');
 
 		/* Libraries */
-		if (hasDefine("cpp")) {
-			addHaxelib('hxhardware', 'git');
-		}
+		addHaxelib('hxhardware', 'git');
 		// required for flixel, don't put below flixel, causes weird issues
 		addHaxelib('lime', '8.3.1');
 		addHaxelib('openfl', '9.5.1');
