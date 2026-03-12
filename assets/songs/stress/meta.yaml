@@ -1,0 +1,17 @@
+opponentModeAllowed: true
+icon: tankman
+difficulties:
+  - easy
+  - normal
+  - hard
+ratings:
+  easy: 3
+  normal: 4
+  hard: 5
+color: "#F6B604"
+coopAllowed: true
+stepsPerBeat: 4
+displayName: Stress
+beatsPerMeasure: 4
+needsVoices: true
+bpm: 178

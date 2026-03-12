@@ -1,0 +1,17 @@
+opponentModeAllowed: true
+icon: dad
+difficulties:
+  - easy
+  - normal
+  - hard
+ratings:
+  easy: 1
+  normal: 1
+  hard: 2
+color: "#9271FD"
+coopAllowed: true
+stepsPerBeat: 4
+displayName: Fresh
+beatsPerMeasure: 4
+needsVoices: true
+bpm: 120

@@ -1,0 +1,17 @@
+opponentModeAllowed: true
+icon: pico
+difficulties:
+  - easy
+  - normal
+  - hard
+ratings:
+  easy: 1
+  normal: 2
+  hard: 3
+color: "#941653"
+coopAllowed: true
+stepsPerBeat: 4
+displayName: Blammed
+beatsPerMeasure: 4
+needsVoices: true
+bpm: 165

@@ -11,6 +11,10 @@ class Capsule extends FlxSpriteGroup {
 	public var bpmText:GenzuSprite;
 	public var difficultyText:GenzuSprite;
 
+	public var bpmNumbers:Array<CapsuleNumber> = [];
+	public var weekNumbers:Array<CapsuleNumber> = [];
+	public var difficultyNumbers:Array<CapsuleNumber> = [];
+
 	var textGroup:FlxTypedSpriteGroup<NovaText>;
 	var iconGroup:FlxTypedSpriteGroup<GenzuSprite>;
 	var blur = new GaussianBlurShader(1);
@@ -21,9 +25,8 @@ class Capsule extends FlxSpriteGroup {
 		super();
 
 		capsule = new GenzuSprite(0, 0, Paths.image("menus/freeplay/capsule/freeplayCapsule"));
-		capsule.addAnim("idle", "mp3 capsule w backing NOT SELECTED", [], null, 24, true);
+		capsule.addAnim("idle", "mp3 capsule w backing NOT SELECTED", [], [5, 0], 24, true);
 		capsule.addAnim("selected", "mp3 capsule w backing0", [], null, 24, true);
-		capsule.addAnim("confirm", "mp3 capsule w backing0", [], null, 24, false); // adjust anim name as needed
 		capsule.playAnim("idle");
 		add(capsule);
 
@@ -36,6 +39,13 @@ class Capsule extends FlxSpriteGroup {
 		difficultyText.updateHitbox();
 		difficultyText.scale.set(1.2, 1.2);
 		add(difficultyText);
+
+		for (i in 0...2) {
+			var num:CapsuleNumber = new CapsuleNumber(505 + (i * 40), 26, true, 0);
+			add(num);
+
+			difficultyNumbers.push(num);
+		}
 
 		textGroup = new FlxTypedSpriteGroup<NovaText>(0, 0);
 
@@ -79,5 +89,75 @@ class Capsule extends FlxSpriteGroup {
 	public function playConfirm() {
 		capsule.playAnim("confirm", true);
 		icon.playAnim("confirm", true);
+	}
+
+	public function updateRatingForDiff(song:Song, diffName:String) {
+		var rating:Int = 0;
+		if (song._data?.ratings != null) {
+			var r = Reflect.field(song._data.ratings, diffName);
+			if (r != null)
+				rating = Std.int(r);
+		}
+		updateDiffRating(rating);
+	}
+
+	public function updateDiffRating(newRating) {
+		for (i in 0...difficultyNumbers.length) {
+			switch (i) {
+				case 0:
+					if (newRating < 10) {
+						difficultyNumbers[i].digit = 0;
+					} else {
+						difficultyNumbers[i].digit = Math.floor(newRating / 10);
+					}
+				case 1:
+					difficultyNumbers[i].digit = newRating % 10;
+				default:
+					trace("Uhhh... how'd we get here??");
+			}
+		}
+	}
+}
+
+class CapsuleNumber extends GenzuSprite {
+	public var digit(default, set):Int = 0;
+
+	function set_digit(val):Int {
+		playAnim(numToString[val], true);
+		centerOffsets(false);
+		switch (val) {
+			case 1:
+				offset.x -= 4;
+			case 3:
+				offset.x -= 1;
+			case 6:
+			case 4:
+			case 9:
+			default:
+				centerOffsets(false);
+		}
+		return val;
+	}
+
+	public var baseY:Float = 0;
+	public var baseX:Float = 0;
+
+	var numToString:Array<String> = ["ZERO", "ONE", "TWO", "THREE", "FOUR", "FIVE", "SIX", "SEVEN", "EIGHT", "NINE"];
+
+	public function new(x, y, big:Bool = false, ?initDigit:Int = 0) {
+		super(x, y);
+		if (big) {
+			loadSprite(Paths.image("menus/freeplay/capsule/numbers/bignumbers"));
+		} else {
+			loadSprite(Paths.image("menus/freeplay/capsule/numbers/smallnumbers"));
+		}
+		for (i in 0...10) {
+			var stringNum:String = numToString[i];
+			addAnim(stringNum, stringNum, [], null, 24, false);
+		}
+		this.digit = initDigit;
+		playAnim(numToString[initDigit], true);
+		scale.set(1.1, 1.1);
+		updateHitbox();
 	}
 }

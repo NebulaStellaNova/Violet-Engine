@@ -1,0 +1,18 @@
+opponentModeAllowed: true
+icon: dad
+difficulties:
+  - easy
+  - normal
+  - hard
+ratings:
+  easy: 1
+  normal: 1
+  hard: 2
+color: "#9271FD"
+coopAllowed: true
+stepsPerBeat: 4
+displayName: Bopeebo
+beatsPerMeasure: 4
+needsVoices: true
+album: volume1
+bpm: 100

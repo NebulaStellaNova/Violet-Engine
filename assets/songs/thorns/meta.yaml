@@ -1,0 +1,17 @@
+opponentModeAllowed: true
+icon: spirit
+difficulties:
+  - easy
+  - normal
+  - hard
+ratings:
+  easy: 2
+  normal: 3
+  hard: 4
+color: "#FF78BF"
+coopAllowed: true
+stepsPerBeat: 4
+displayName: Thorns
+beatsPerMeasure: 4
+needsVoices: true
+bpm: 190

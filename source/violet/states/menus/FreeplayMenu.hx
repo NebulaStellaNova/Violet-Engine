@@ -246,9 +246,6 @@ class FreeplayMenu extends SubStateBackend {
 		var albumMeta:AlbumData = ParseUtil.yaml('data/ui/freeplay/albums/${song._data.album}');
 		ostText.text = albumMeta?.ostText ?? "OFFICIAL OST";
 		ostText.updateHitbox();
-
-		// trace(song?._data?.ratings);
-
 	}
 
 	function playInst() {
@@ -275,6 +272,7 @@ class FreeplayMenu extends SubStateBackend {
 
 		if (pureSelect) {
 			diffSprite.loadGraphic(Paths.image('menus/freeplay/difficulties/${song.difficulties[curSelectedDiff]}'));
+			daCapsules[curSelectedSong].updateRatingForDiff(song, song.difficulties[curSelectedDiff]);
 			diffSprite.y = selector1.y + (selector1.height / 2) - (diffSprite.height / 2);
 			return;
 		}
@@ -286,6 +284,7 @@ class FreeplayMenu extends SubStateBackend {
 				diffSprite.loadGraphic(Paths.image('menus/freeplay/difficulties/${song.difficulties[curSelectedDiff]}'));
 				diffSprite.x = distance * direction * 2;
 				diffSprite.y = selector1.y + (selector1.height / 2) - (diffSprite.height / 2);
+				daCapsules[curSelectedSong].updateRatingForDiff(song, song.difficulties[curSelectedDiff]);
 				FlxTween.tween(diffSprite, {x: -13.4285714285714, alpha: 1}, 0.1, {ease: FlxEase.expoOut});
 			}
 		});

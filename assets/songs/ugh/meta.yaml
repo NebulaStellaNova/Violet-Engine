@@ -1,0 +1,17 @@
+opponentModeAllowed: true
+icon: tankman
+difficulties:
+  - easy
+  - normal
+  - hard
+ratings:
+  easy: 2
+  normal: 3
+  hard: 4
+color: "#F6B604"
+coopAllowed: true
+stepsPerBeat: 4
+displayName: Ugh
+beatsPerMeasure: 4
+needsVoices: true
+bpm: 160
