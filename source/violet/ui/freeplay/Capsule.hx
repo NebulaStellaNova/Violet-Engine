@@ -81,3 +81,5 @@ class Capsule extends FlxSpriteGroup {
 		icon.playAnim("confirm", true);
 	}
 }
+
+class CapsuleNumber extends FlxS

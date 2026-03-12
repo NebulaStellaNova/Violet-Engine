@@ -8,6 +8,11 @@
 		"normal",
 		"hard"
 	],
+	"ratings": {
+		"easy": 0,
+		"normal": 1,
+		"hard": 2
+	},
 	"coopAllowed": true,
 	"stepsPerBeat": 4,
 	"displayName": "Tutorial",

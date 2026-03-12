@@ -27,6 +27,7 @@ typedef AlbumData = {
 }
 
 class FreeplayMenu extends SubStateBackend {
+	static var prevInst:String = "";
 	public static var skipTransition:Bool = false;
 
 	static var curSelectedSong:Int = 0;
@@ -59,6 +60,8 @@ class FreeplayMenu extends SubStateBackend {
 
 	override function create() {
 		super.create();
+
+		prevInst = "";
 
 		skipTransition = false;
 
@@ -247,8 +250,6 @@ class FreeplayMenu extends SubStateBackend {
 		// trace(song?._data?.ratings);
 
 	}
-
-	static var prevInst:String = "";
 
 	function playInst() {
 		var inst = Paths.inst(songs[curSelectedSong].id);
