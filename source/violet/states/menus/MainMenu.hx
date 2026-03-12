@@ -70,6 +70,8 @@ class MainMenu extends StateBackend {
 	{
 		super.create();
 
+		NovaUtils.playMenuMusic();
+
 		var modMenu:violet.states.menus.ModMenu = new violet.states.menus.ModMenu();
 
 		// FlxG.camera.color = FlxColor.BLACK;

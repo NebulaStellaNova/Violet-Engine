@@ -1,4 +1,5 @@
 package violet.backend.filesystem;
+import violet.backend.utils.NovaUtils;
 #if MOD_SUPPORT
 
 import violet.backend.utils.FileUtil;
@@ -110,6 +111,7 @@ class ModdingAPI {
 	private static var registered:Bool = false;
 	public static function reloadRegistries():Void {
 		trace('debug:<magenta>${registered ? "Reloading" : "Initializing"} Registries...');
+		NovaUtils.CURRENT_MUSIC = null;
 		registered = true;
 		violet.data.noteskin.NoteSkinRegistry.registerNoteSkins();
 		violet.data.level.LevelRegistry.registerLevels();
