@@ -11,11 +11,12 @@ class Capsule extends FlxSpriteGroup {
 	public var bpmText:GenzuSprite;
 	public var difficultyText:GenzuSprite;
 
+	public var songNameText:CapsuleText;
+
 	public var bpmNumbers:Array<CapsuleNumber> = [];
 	public var weekNumbers:Array<CapsuleNumber> = [];
 	public var difficultyNumbers:Array<CapsuleNumber> = [];
 
-	var textGroup:FlxTypedSpriteGroup<NovaText>;
 	var iconGroup:FlxTypedSpriteGroup<GenzuSprite>;
 	var blur = new GaussianBlurShader(1);
 
@@ -41,38 +42,24 @@ class Capsule extends FlxSpriteGroup {
 		add(difficultyText);
 
 		for (i in 0...2) {
-			var num:CapsuleNumber = new CapsuleNumber(505 + (i * 40), 26, true, 0);
+			var num:CapsuleNumber = new CapsuleNumber(505 + (i * 40), 22, true, 0);
 			add(num);
 
 			difficultyNumbers.push(num);
 		}
 
 		for (i in 0...3) {
-			var num:CapsuleNumber = new CapsuleNumber(155 + (i * 14), 92, false, 0);
+			var num:CapsuleNumber = new CapsuleNumber(155 + (i * 14), 93, false, 0);
 			add(num);
 
 			bpmNumbers.push(num);
 		}
 
-		textGroup = new FlxTypedSpriteGroup<NovaText>(0, 0);
-
-		var glowText = new NovaText(0, 0, null, song.displayName, 40);
-		glowText.setFont(Paths.font("5by7"));
-		glowText.updateHitbox();
-		glowText.x += 120;
-		glowText.y += 42;
-		glowText.color = GLOW_COLOR;
-		glowText.shader = blur;
-		textGroup.add(glowText);
-
-		var mainText = new NovaText(0, 0, null, song.displayName, 40);
-		mainText.setFont(Paths.font("5by7"));
-		mainText.updateHitbox();
-		mainText.x += 120;
-		mainText.y += 42;
-		textGroup.add(mainText);
-
-		add(textGroup);
+		songNameText = new CapsuleText(0, 0, song.displayName, 40);
+		// songNameText.text = song.displayName;
+		songNameText.x += 120;
+		songNameText.y += 42;
+		add(songNameText);
 
 		iconGroup = new FlxTypedSpriteGroup<GenzuSprite>(0, 0);
 
@@ -90,11 +77,11 @@ class Capsule extends FlxSpriteGroup {
 
 	public function setSelected(selected:Bool) {
 		capsule.playAnim(selected ? "selected" : "idle");
-		textGroup.alpha = selected ? 1 : 0.6;
+		songNameText.blurredText.visible = selected;
+		songNameText.whiteText.alpha = selected ? 1 : 0.6;
 	}
 
 	public function playConfirm() {
-
 		icon.playAnim("confirm", true);
 	}
 
@@ -179,7 +166,7 @@ class CapsuleNumber extends GenzuSprite {
 		}
 		this.digit = initDigit;
 		playAnim(numToString[initDigit], true);
-		scale.set(1.2, 1.2);
+		scale.set(1.1, 1.1);
 		updateHitbox();
 	}
 }
