@@ -49,13 +49,22 @@ class Paths {
 	inline public static function getFileName(path:String, startFromRoot:Bool = false)
 		return Path.withoutExtension(Path.withoutDirectory(root(path, startFromRoot)));
 
+
+	public static function fixPath(path:String) {
+		while (path.contains("//")) {
+			path = path.replace("//", "/");
+		}
+		return path;
+	}
+
 	public static function root(path:String, startFromRoot:Bool = false):String {
 		if (startFromRoot)
 			return path;
 		var rootPaths:Array<String> = [ASSETS_FOLDER].concat(#if MOD_SUPPORT [for (meta in ModdingAPI.getActiveMods()) 'mods/${meta.folder}'] #else [] #end);
-		for (root in rootPaths)
-			if (folderExists('$root/$path', true) || fileExists('$root/$path', true))
+		for (root in rootPaths) {
+			if (folderExists(fixPath('$root/$path'), true) || fileExists(fixPath('$root/$path'), true))
 				return Path.normalize('$root/$path');
+		}
 		return '';
 	}
 
@@ -108,8 +117,9 @@ class Paths {
 	inline public static function inst(song:String, ?variant:String):String
 		return root('songs/$song/song/${variant != null ? '$variant/' : ''}Inst.ogg');
 
-	inline public static function fileExists(path:String, startFromRoot:Bool = false):Bool
+	inline public static function fileExists(path:String, startFromRoot:Bool = false):Bool {
 		return path != "" ? FileSystem.exists(root(path, startFromRoot)) : false;
+	}
 
 	inline public static function folderExists(path:String, startFromRoot:Bool = false):Bool
 		return FileSystem.isDirectory(Path.removeTrailingSlashes(root(path, startFromRoot)));
