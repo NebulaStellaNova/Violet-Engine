@@ -7,6 +7,8 @@ class BaseOption extends FlxGroup {
     public var selected:Bool = false;
     public var alphabet:Alphabet;
 
+    public var centerX:Bool = false;
+
     public var title(default, set):String;
     function set_title(value:String) {
         alphabet.text = value;

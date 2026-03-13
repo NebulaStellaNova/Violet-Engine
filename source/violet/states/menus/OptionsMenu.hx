@@ -111,7 +111,10 @@ class OptionsMenu extends SubStateBackend {
 
         for (i=>option in options) {
             option.x -= optionsListOffset;
-            option.x = MathUtil.lerp(option.x, 50 - (Math.pow(Math.abs(i-optionCurSelected), 1.6) * 10), 0.2);
+            if (option.centerX) {
+                option.x = (FlxG.width/2) - (option.alphabet.width/2);
+            } else option.x = MathUtil.lerp(option.x, 50 - (Math.pow(Math.abs(i-optionCurSelected), 1.6) * 10), 0.2);
+
             option.y = MathUtil.lerp(option.y, (FlxG.height/2) + ((i-optionCurSelected) * 100) - (option.alphabet.height/2), 0.2);
             option.x += optionsListOffset;
             option.updatePosition();
@@ -146,8 +149,9 @@ class OptionsMenu extends SubStateBackend {
         for (i=>optionData in optionsData.menus[menuCurSelected].options) {
             switch (optionData.type) {
                 case SECTION:
-                    var option:BaseOption = new BaseOption('         ${optionData.name}', optionData.description);
+                    var option:BaseOption = new BaseOption('${optionData.name}', optionData.description);
                     option.x = optionsListOffset;
+                    option.centerX = true;
                     option.y = (FlxG.height/2) + ((i-optionCurSelected) * 100) - (option.alphabet.height/2);
                     option.updatePosition();
                     insert(0, option);

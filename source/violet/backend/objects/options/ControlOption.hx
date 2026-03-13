@@ -42,9 +42,12 @@ class ControlOption extends BaseOption {
             i.visible = flickering ? (time % 0.1 > 0.03) : true;
         }
 
-        if (OptionsMenu.instance.enableInput && (Controls.uiLeft || Controls.uiRight)) {
-            selectedKeybind = !selectedKeybind;
-            NovaUtils.playMenuSFX(SCROLL);
+        if (OptionsMenu.instance.enableInput) {
+            if (Controls.uiLeft && !selectedKeybind) {
+                selectedKeybind = true;
+            } else if (Controls.uiRight && selectedKeybind) {
+                selectedKeybind = false;
+            }
         }
 
         leftControl.text = controlArray[0];
@@ -70,14 +73,17 @@ class ControlOption extends BaseOption {
             OptionsMenu.instance.enableInput = false;
             waitingForInput = true;
             flickering = true;
+            NovaUtils.playMenuSFX(CONFIRM);
         }
     }
 
     override function updatePosition() {
         super.updatePosition();
 
-        leftControl.x = alphabet.x + alphabet.width + 100;
-        rightControl.x = leftControl.x + leftControl.width + 100;
+        rightControl.x = (FlxG.width - this.x) - rightControl.width;
+        leftControl.x = rightControl.x - leftControl.width - 100;
+        // leftControl.x = alphabet.x + alphabet.width + 100;
+        // rightControl.x = leftControl.x + leftControl.width + 100;
         leftControl.y = rightControl.y = alphabet.y;
 
         if (selected) {
