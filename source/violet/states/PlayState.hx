@@ -339,9 +339,8 @@ class PlayState extends violet.backend.StateBackend {
 		for (char in note.parent.characters)
 			char.playSingAnim(note.id, true);
 
-		// YOU ADD WHEN YOU TAKE AWAY A NEGATIVE NUMBER YOU DUMBASS (ADA talking to himself)
-		score += Math.round(Scoring.missScore);
-		health -= Constants.DEFAULT_HEALTH_LOSS;
+		if (note.parent.isPlayer) score += Math.round(Scoring.missScore);
+		health -= Constants.DEFAULT_HEALTH_LOSS * (note.parent.isPlayer ? 1 : -1);
 
 		note.parentStrum.holdCover?.playAnim('end', true);
 		if (note.parent.isComputer) note.parentStrum.holdCover?.animation.finish();
@@ -385,6 +384,9 @@ class PlayState extends violet.backend.StateBackend {
 
 		for (char in sustain.parent.characters)
 			char.playSingAnim(sustain.id, true);
+
+		if (sustain.parent.isPlayer) score += Math.round(Scoring.missScore);
+		health -= Constants.DEFAULT_HEALTH_LOSS * (sustain.parent.isPlayer ? 1 : -1);
 
 		sustain.parentStrum.holdCover?.playAnim('end', true);
 		if (sustain.parent.isComputer) sustain.parentStrum.holdCover?.animation.finish();
