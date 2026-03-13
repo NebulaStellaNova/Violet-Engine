@@ -17,18 +17,21 @@ class PauseMenu extends EditorListBackend {
     ];
 
     public dynamic function resume() {
+        if (FlxG.mouse.justPressed) return;
         var event:EventBase = PlayState.instance.songScripts.event('onResume', new EventBase());
         event = subStateScripts.event('resume', event);
         if (!event.cancelled) close();
     }
 
     public dynamic function restartSong() {
+        if (FlxG.mouse.justPressed) return;
         var event:EventBase = PlayState.instance.songScripts.event('onRestartSong', new EventBase());
         event = subStateScripts.event('restartSong', event);
         if (!event.cancelled) FlxG.resetState();
     }
 
     public dynamic function exitToMenu() {
+        if (FlxG.mouse.justPressed) return;
         var event:EventBase = PlayState.instance.songScripts.event('onExitToMenu', new EventBase());
         event = subStateScripts.event('exitToMenu', event);
         if (!event.cancelled) subCamera.fade(0.25, () -> {
