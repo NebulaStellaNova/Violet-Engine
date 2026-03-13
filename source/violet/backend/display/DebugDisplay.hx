@@ -54,7 +54,10 @@ class DebugDisplay extends Sprite {
 		text.x = -FlxG.width;
 		text.y = -FlxG.width;
 
-		flixel.FlxG.signals.preStateSwitch.add(()->extraInfo = []);
+		flixel.FlxG.signals.preStateSwitch.add(() -> {
+			maxMemory = maxCpu = 0;
+			extraInfo = [];
+		});
 
 		addEventListener(Event.ENTER_FRAME, onEnterFrame);
 
@@ -67,8 +70,12 @@ class DebugDisplay extends Sprite {
 	var _previousTime:Float = 0;
 	var _updateClock:Float = 999999;
 
+	var maxMemory:Float = 0;
+	var maxCpu:Float = 0;
 	var memories:Array<Float> = [for (i in 0...100) 0];
 	var cpus:Array<Float> = [for (i in 0...100) 0];
+	var memoryAvg:Float = 0;
+	var cpuAvg:Float = 0;
 
 	function onEnterFrame(e:Event) {
 		_framesPassed++;
@@ -81,12 +88,11 @@ class DebugDisplay extends Sprite {
 		memories.push(Memory.getProcessPhysicalMemoryUsage());
 		cpus.push(FlxMath.roundDecimal(CPU.getProcessCPUUsage(), 2));
 
-		var memoryAvg:Float = 0;
-		var cpuAvg:Float = 0;
+		memoryAvg = cpuAvg = 0;
 		for (m in memories) memoryAvg += m;
 		for (c in cpus) cpuAvg += c;
-		memoryAvg /= memories.length;
-		cpuAvg /= cpus.length;
+		maxMemory = Math.max(maxMemory, memoryAvg /= memories.length);
+		maxCpu = Math.max(maxCpu, cpuAvg /= cpus.length);
 
 		if (_updateClock >= 1000) {
 			framesPerSecond = (FlxG.drawFramerate > 0) ? FlxMath.minInt(_framesPassed, FlxG.drawFramerate) : _framesPassed;
@@ -95,8 +101,8 @@ class DebugDisplay extends Sprite {
 		}
 		var parts:Array<String> = [
 			'Framerate: $framesPerSecond',
-			'Memory: ${FlxMath.roundDecimal(memoryAvg, 2).formatBytes()} / ${Memory.getProcessPeakPhysicalMemoryUsage().formatBytes()}',
-			'CPU: ${FlxMath.roundDecimal(cpuAvg, 2)}% / ${FlxMath.roundDecimal(CPU.getProcessPeakCPUUsage(), 2)}%'
+			'Memory: ${FlxMath.roundDecimal(memoryAvg, 2).formatBytes()} / ${FlxMath.roundDecimal(maxMemory, 2).formatBytes()}',
+			'CPU: ${FlxMath.roundDecimal(cpuAvg, 2)}% / ${FlxMath.roundDecimal(maxCpu, 2)}%'
 		];
 		_previousTime = NovaUtils.getTimerPrecise();
 		if (extraInfo.length != 0)
