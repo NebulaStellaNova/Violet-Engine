@@ -1,23 +1,24 @@
 package violet.states.menus;
 
-import violet.backend.objects.options.ControlOption;
+import flixel.FlxCamera;
+import flixel.math.FlxMath;
 import flixel.text.FlxText;
+import violet.backend.SubStateBackend;
+import violet.backend.objects.Alphabet;
+import violet.backend.objects.options.BaseOption;
+import violet.backend.objects.options.BoolOption;
+import violet.backend.objects.options.ControlOption;
+import violet.backend.objects.options.NumberOption;
 import violet.backend.options.Options;
 import violet.backend.utils.MathUtil;
-import flixel.group.FlxGroup;
 import violet.backend.utils.NovaUtils;
-import flixel.math.FlxMath;
-import violet.backend.objects.Alphabet;
 import violet.backend.utils.ParseUtil;
-import flixel.FlxCamera;
-import violet.backend.objects.options.BoolOption;
-import violet.backend.objects.options.BaseOption;
-import violet.backend.SubStateBackend;
 
 enum abstract OptionsType(String) {
-    var BOOL = "bool";
-    var CONTROL = "control";
     var SECTION = "section";
+    var BOOL = "bool";
+    var NUMBER = "number";
+    var CONTROL = "control";
 }
 
 typedef OptionsData = {
@@ -35,6 +36,10 @@ typedef OptionsMenuOption = {
     var ?description:String;
     var saveID:String;
     var type:OptionsType;
+    // for number option
+    var ?min:Float;
+    var ?max:Float;
+    var ?step:Float;
 }
 
 
@@ -141,27 +146,36 @@ class OptionsMenu extends SubStateBackend {
         for (i=>optionData in optionsData.menus[menuCurSelected].options) {
             switch (optionData.type) {
                 case SECTION:
-                    var option:BaseOption = new BaseOption('         ' + optionData.name, optionData.description);
+                    var option:BaseOption = new BaseOption('         ${optionData.name}', optionData.description);
                     option.x = optionsListOffset;
                     option.y = (FlxG.height/2) + ((i-optionCurSelected) * 100) - (option.alphabet.height/2);
                     option.updatePosition();
                     insert(0, option);
                     options.push(option);
+
                 case BOOL:
                     var option:BoolOption = new BoolOption(optionData.name, optionData.description);
                     option.x = optionsListOffset;
                     option.y = (FlxG.height/2) + ((i-optionCurSelected) * 100) - (option.alphabet.height/2);
-                    option.checkbox.value =  Options.get(optionData.saveID) ?? false;
-                    option.checkbox.animation.finish();
-                    option.onChange = function(value:Bool) {
-                        Options.set(optionData.saveID, value);
-                    }
+                    option.checkbox.value = Options.get(optionData.saveID) ?? false; option.checkbox.animation.finish();
+                    option.onChange = (value:Bool) -> Options.set(optionData.saveID, value);
+                    option.updatePosition();
+                    insert(0, option);
+                    options.push(option);
+
+                case NUMBER:
+                    var option:NumberOption = new NumberOption('${optionData.name}:', optionData.description, optionData.min, optionData.max, optionData.step);
+                    option.x = optionsListOffset;
+                    option.y = (FlxG.height/2) + ((i-optionCurSelected) * 100) - (option.alphabet.height/2);
+                    option.value = Options.get(optionData.saveID) ?? 0;
+                    option.numberText.text = '< ${option.value} >';
+                    option.onChange = (value:Float) -> Options.set(optionData.saveID, value);
                     option.updatePosition();
                     insert(0, option);
                     options.push(option);
 
                 case CONTROL:
-                    var option:ControlOption = new ControlOption(optionData.name + ':', optionData.description);
+                    var option:ControlOption = new ControlOption('${optionData.name}:', optionData.description);
                     option.x = optionsListOffset;
                     option.y = (FlxG.height/2) + ((i-optionCurSelected) * 100) - (option.alphabet.height/2);
                     option.updatePosition();

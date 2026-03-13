@@ -2,6 +2,7 @@ package violet.backend.objects.play;
 
 import flixel.util.FlxSort;
 import violet.backend.audio.Conductor;
+import violet.backend.options.Options;
 import violet.data.noteskin.NoteSkin;
 import violet.data.noteskin.NoteSkinRegistry;
 
@@ -52,8 +53,10 @@ class Note extends NovaSprite {
 	 * The resulting scroll speed information.
 	 */
 	public var __scrollSpeed(get, never):Float;
-	inline function get___scrollSpeed():Float
+	inline function get___scrollSpeed():Float {
+		if (Options.data.personalScrollSpeed != 0) return Options.data.personalScrollSpeed;
 		return scrollSpeed ?? parent.scrollSpeed ?? StrumLine.generalScrollSpeed;
+	}
 
 	/**
 	 * The sustains tied to this note.

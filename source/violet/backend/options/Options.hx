@@ -11,6 +11,7 @@ import flixel.util.FlxSave;
     public var mouseControls:Bool = true;
     public var forceMouseScrolling:Bool = true;
     public var debugDisplayOnStart:Bool = false;
+    public var personalScrollSpeed:Float = 0;
     public var controls:Map<String, Array<String>> = [
         'note_left' => ['A', 'LEFT'],
         'note_down' => ['S', 'DOWN'],
@@ -31,13 +32,13 @@ import flixel.util.FlxSave;
 		'volume_down' => ['MINUS', 'NUMPADMINUS'],
 		'volume_mute' => ['ZERO', 'NUMPADZERO'],
 
-		'fullscreen' => ['F11', 'F11'],
+		'fullscreen' => ['F11', 'NONE'],
 
-		'botplay' => ['F2', 'F2'],
-		'reloadGame' => ['F5', 'F5'],
-		'resetState' => ['F3', 'F3'],
-		'shortcutState' => ['F4', 'F4'],
-		'debugDisplay' => ['F6', 'F6']
+		'botplay' => ['F2', 'NONE'],
+		'reloadGame' => ['F5', 'NONE'],
+		'resetState' => ['F3', 'NONE'],
+		'shortcutState' => ['F4', 'NONE'],
+		'debugDisplay' => ['F6', 'NONE']
     ];
 }
 
