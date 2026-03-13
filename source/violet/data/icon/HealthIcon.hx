@@ -20,7 +20,6 @@ class HealthIcon extends Bopper {
 		this._data.offsets ??= [0, 0];
 		this._data.isPixel ??= false;
 		this._data.assetPath ??= 'icons/$id';
-		if (this._data.isPixel) this._data.scale *= 4.5;
 
 		super(Paths.image(this._data.assetPath) != "" ? Paths.image(this._data.assetPath) : Paths.image(defaultData.assetPath));
 
@@ -84,11 +83,5 @@ class HealthIcon extends Bopper {
 			this.angle = alt ? 20 : -20;
 		}
 		this.scale.x = this.scale.y = this._data.scale * 1.2;
-	}
-
-	override function destroy() {
-		super.destroy();
-		if (this._data.isPixel)
-			this._data.scale /= 4.5;
 	}
 }
