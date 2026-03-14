@@ -41,16 +41,16 @@ class StrumLine extends FlxGroup {
 	public final notes:FlxTypedGroup<Note>;
 	public final sustains:FlxTypedGroup<Sustain>;
 
-	public var splashes(get, never):Array<NovaSprite>;
-	function get_splashes():Array<NovaSprite> {
-		var value:Array<NovaSprite> = [];
+	public var splashes(get, never):Array<StrumElement>;
+	function get_splashes():Array<StrumElement> {
+		var value:Array<StrumElement> = [];
 		for (strum in strums) value = value.concat(strum.splashes);
 		return value;
 	}
 
-	public var holdCovers(get, never):Array<NovaSprite>;
-	function get_holdCovers():Array<NovaSprite> {
-		var value:Array<NovaSprite> = [];
+	public var holdCovers(get, never):Array<StrumElement>;
+	function get_holdCovers():Array<StrumElement> {
+		var value:Array<StrumElement> = [];
 		for (strum in strums) value = value.concat(strum.holdCovers);
 		return value;
 	}
@@ -326,23 +326,6 @@ class StrumLine extends FlxGroup {
 			}
 		}
 		return -1;
-	}
-
-	var prevYs = [];
-	override public function draw():Void {
-		if (downscroll) {
-			prevYs = [];
-			for (i in holdCovers) {
-				prevYs.push(i.y);
-				i.globalOffset.y *= -1;
-				i.y = FlxG.height - i.y - (i.height/1.32);
-			}
-			super.draw();
-			for (i=>cover in holdCovers) {
-				cover.globalOffset.y *= -1;
-				cover.y = prevYs[i];
-			}
-		} else super.draw();
 	}
 
 	override public function destroy():Void {

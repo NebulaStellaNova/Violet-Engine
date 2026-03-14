@@ -119,7 +119,7 @@ class Sustain extends NovaSprite {
 	override public function draw():Void {
 		if (parent.downscroll) {
 			final prevY:Float = y;
-			y = FlxG.height - y - height;
+			y = getDefaultCamera().height - y - height;
 			// flipping the x too so visuals aren't flipped
 			flipX = !flipX; flipY = !flipY;
 			globalOffset.y *= -1;
