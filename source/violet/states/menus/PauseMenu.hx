@@ -12,13 +12,11 @@ class PauseMenu extends EditorListBackend {
     override public function new() {
         pauseMenuOptions = [
             { title: "RESUME", disabled: false, onClick: ()->{
-                if (FlxG.mouse.justPressed) return;
                 var event:EventBase = PlayState.instance.songScripts.event('onResume', new EventBase());
                 // event = subStateScripts.event('resume', event);
                 if (!event.cancelled) close();
             }},
             { title: "RESTART SONG", disabled: false, onClick: ()->{
-                if (FlxG.mouse.justPressed) return;
                 var event:EventBase = PlayState.instance.songScripts.event('onRestartSong', new EventBase());
                 // event = subStateScripts.event('restartSong', event);
                 if (!event.cancelled) FlxG.resetState();
@@ -33,7 +31,6 @@ class PauseMenu extends EditorListBackend {
 
             }},
             { title: "EXIT TO MENU", disabled: false, onClick: ()->{
-                if (FlxG.mouse.justPressed) return;
                 var event:EventBase = PlayState.instance.songScripts.event('onExitToMenu', new EventBase());
                 // event = subStateScripts.event('exitToMenu', event);
                 if (!event.cancelled) subCamera.fade(0.25, () -> {
@@ -60,6 +57,10 @@ class PauseMenu extends EditorListBackend {
         FlxG.state.persistentDraw = true;
 
         Conductor.pause();
+    }
+
+    override function pickOption(option:{title:String, onClick:() -> Void}) {
+        if (!FlxG.mouse.justPressed) super.pickOption(option);
     }
 
     override function close() {
