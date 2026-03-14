@@ -36,6 +36,8 @@ class InitialState extends StateBackend { // for now
 				FlxG.resetState();
 			if (Controls.shortcutState)
 				FlxG.switchState(() -> new violet.states.menus.MainMenu());
+
+			if (!Std.isOfType(FlxG.state, PlayState)) PlayState.hasSeenCutscene = false;
 		});
 
 		FlxG.camera.visible = false;

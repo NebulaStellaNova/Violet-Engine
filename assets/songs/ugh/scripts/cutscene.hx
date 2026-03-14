@@ -1,8 +1,7 @@
+import violet.states.PlayState;
 import flixel.tweens.FlxTween;
 import violet.backend.audio.Conductor;
 import flixel.addons.sound.FlxRhythmConductor;
-
-public var hasSeenCutscene:Bool = false;
 
 public var currentAudio;
 public var cutsceneLoop;
@@ -17,7 +16,7 @@ function wait(duration, callback) {
 }
 
 function onStartCountdown(event) {
-    if (hasSeenCutscene) return;
+    if (PlayState.hasSeenCutscene) return;
     inCutscene = true;
     event.cancel();
 
@@ -81,7 +80,7 @@ function onStartCountdown(event) {
         FlxTween.tween(camHUD, { alpha: 1 }, 0.5);
         cutsceneLoop.fadeOut(1);
         cutsceneTankman2.visible = false;
-        hasSeenCutscene = true;
+        PlayState.hasSeenCutscene = true;
         strumLines.members[0].characters[0].visible = true;
         inCutscene = false;
         startCountdown();
@@ -90,7 +89,7 @@ function onStartCountdown(event) {
 }
 
 function pauseCutscene() {
-    if (hasSeenCutscene) return;
+    if (PlayState.hasSeenCutscene) return;
     for (i in timers) i.active = false;
     currentAudio.pause();
     cutsceneLoop.pause();
@@ -98,7 +97,7 @@ function pauseCutscene() {
 }
 
 function resumeCutscene() {
-    if (hasSeenCutscene) return;
+    if (PlayState.hasSeenCutscene) return;
     for (i in timers) i.active = true;
     currentAudio.resume();
     cutsceneLoop.resume();
@@ -106,7 +105,7 @@ function resumeCutscene() {
 
 function postUpdate(elapsed:Float) {
     // camGame.zoom = 0.2;
-    if (!hasSeenCutscene)
+    if (!PlayState.hasSeenCutscene)
         strumLines.members[0].characters[0].visible = false;
 }
 
