@@ -27,32 +27,9 @@ class NoteStyleRegistry {
     public static function getDefaultNoteStyleData():NoteStyleData {
         return {
             name: 'default',
-            offsets: [0, 0],
-            strums: {
-                offsets: [0, 0],
-                assetPath: 'strums',
-                animations: []
-            },
-            notes: {
-                offsets: [0, 0],
-                assetPath: 'notes',
-                animations: []
-            },
-            sustains: {
-                offsets: [0, 0],
-                assetPath: 'sustains',
-                animations: []
-            },
-            splashes: {
-                offsets: [0, 0],
-                assetPath: 'sustains',
-                animations: []
-            },
-            holdcovers: {
-                offsets: [0, 0],
-                assetPath: 'holdcovers',
-                animations: []
-            }
+            strums: {animations: []},
+            notes: {animations: []},
+            sustains: {animations: []}
         }
     }
 
