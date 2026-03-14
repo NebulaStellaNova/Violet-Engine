@@ -43,6 +43,8 @@ class PlayState extends violet.backend.StateBackend {
 	public static var playlist:Array<String> = [];
 	public static var doFadeOut:Bool = false;
 
+	public var inCutscene = false;
+
 	#if SCRIPT_SUPPORT
 	public var songScripts:ScriptPack = new ScriptPack();
 	#end
@@ -97,6 +99,7 @@ class PlayState extends violet.backend.StateBackend {
 	override public function create():Void {
 		super.create();
 		instance = this;
+		inCutscene = false;
 
 		FlxG.cameras.reset(camGame = new FlxCamera());
 		camHUD = new FlxCamera();
@@ -253,7 +256,9 @@ class PlayState extends violet.backend.StateBackend {
 			var event:EventBase = songScripts.event("onPause", new EventBase());
 			if (!event.cancelled) {
 				countdownTimer.active = false;
-				openSubState(new PauseMenu());
+
+				var pauseMenu:PauseMenu = new PauseMenu();
+				openSubState(pauseMenu);
 			}
 		}
 
@@ -489,7 +494,7 @@ class PlayState extends violet.backend.StateBackend {
 		}
 	}
 
-	function callSongScripts(func:String, ?params:Array<Dynamic>):Void {
+	public function callSongScripts(func:String, ?params:Array<Dynamic>):Void {
 		songScripts.call(func, params);
 		stage.stageScripts.call(func, params);
 	}

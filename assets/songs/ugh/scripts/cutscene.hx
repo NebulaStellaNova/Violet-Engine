@@ -2,7 +2,7 @@ import flixel.tweens.FlxTween;
 import violet.backend.audio.Conductor;
 import flixel.addons.sound.FlxRhythmConductor;
 
-var hasSeenCutscene:Bool = false;
+public var hasSeenCutscene:Bool = false;
 
 public var currentAudio;
 public var cutsceneLoop;
@@ -18,6 +18,7 @@ function wait(duration, callback) {
 
 function onStartCountdown(event) {
     if (hasSeenCutscene) return;
+    inCutscene = true;
     event.cancel();
 
     // cutsceneAudioP1.play();
@@ -82,6 +83,7 @@ function onStartCountdown(event) {
         cutsceneTankman2.visible = false;
         hasSeenCutscene = true;
         strumLines.members[0].characters[0].visible = true;
+        inCutscene = false;
         startCountdown();
     });
     // trace("Fuck.You.Rodney.F");
@@ -106,6 +108,16 @@ function postUpdate(elapsed:Float) {
     // camGame.zoom = 0.2;
     if (!hasSeenCutscene)
         strumLines.members[0].characters[0].visible = false;
+}
+
+function onSkipCutscene() {
+    for (i in timers) {
+        i.onComplete(i);
+        i.cancel();
+    }
+    subState.close();
+    currentAudio.stop();
+    cutsceneLoop.stop();
 }
 
 function onPause(event) pauseCutscene();

@@ -7,43 +7,49 @@ import violet.backend.audio.Conductor;
 
 class PauseMenu extends EditorListBackend {
 
-    public var pauseMenuOptions:Array<EditorListOption> = [
-        { title: "RESUME", disabled: false },
-        { title: "RESTART SONG", disabled: false },
-        { title: "CHANGE DIFFICULTY", disabled: true },
-        { title: "CHANGE OPTIONS", disabled: true },
-        { title: "ENABLE PRACTICE MODE", disabled: true },
-        { title: "EXIT TO MENU", disabled: false }
-    ];
-
-    public dynamic function resume() {
-        if (FlxG.mouse.justPressed) return;
-        var event:EventBase = PlayState.instance.songScripts.event('onResume', new EventBase());
-        event = subStateScripts.event('resume', event);
-        if (!event.cancelled) close();
-    }
-
-    public dynamic function restartSong() {
-        if (FlxG.mouse.justPressed) return;
-        var event:EventBase = PlayState.instance.songScripts.event('onRestartSong', new EventBase());
-        event = subStateScripts.event('restartSong', event);
-        if (!event.cancelled) FlxG.resetState();
-    }
-
-    public dynamic function exitToMenu() {
-        if (FlxG.mouse.justPressed) return;
-        var event:EventBase = PlayState.instance.songScripts.event('onExitToMenu', new EventBase());
-        event = subStateScripts.event('exitToMenu', event);
-        if (!event.cancelled) subCamera.fade(0.25, () -> {
-            FlxG.switchState(new FreeplayMenu().build());
-		});
-    }
+    public var pauseMenuOptions:Array<EditorListOption>;
 
     override public function new() {
+        pauseMenuOptions = [
+            { title: "RESUME", disabled: false, onClick: ()->{
+                if (FlxG.mouse.justPressed) return;
+                var event:EventBase = PlayState.instance.songScripts.event('onResume', new EventBase());
+                // event = subStateScripts.event('resume', event);
+                if (!event.cancelled) close();
+            }},
+            { title: "RESTART SONG", disabled: false, onClick: ()->{
+                if (FlxG.mouse.justPressed) return;
+                var event:EventBase = PlayState.instance.songScripts.event('onRestartSong', new EventBase());
+                // event = subStateScripts.event('restartSong', event);
+                if (!event.cancelled) FlxG.resetState();
+            }},
+            { title: "CHANGE DIFFICULTY", disabled: true, onClick: ()->{
+
+            }},
+            { title: "CHANGE OPTIONS", disabled: true, onClick: ()->{
+
+            }},
+            { title: "ENABLE PRACTICE MODE", disabled: true, onClick: ()->{
+
+            }},
+            { title: "EXIT TO MENU", disabled: false, onClick: ()->{
+                if (FlxG.mouse.justPressed) return;
+                var event:EventBase = PlayState.instance.songScripts.event('onExitToMenu', new EventBase());
+                // event = subStateScripts.event('exitToMenu', event);
+                if (!event.cancelled) subCamera.fade(0.25, () -> {
+                    FlxG.switchState(new FreeplayMenu().build());
+                });
+            }}
+        ];
+        if (PlayState.instance.inCutscene) {
+            pauseMenuOptions[1].title = pauseMenuOptions[1].title.replace("SONG", "CUTSCENE");
+            pauseMenuOptions.insert(1, { title: "SKIP CUTSCENE", disabled: false, onClick: ()->PlayState.instance.callSongScripts("onSkipCutscene")});
+        }
         super(pauseMenuOptions);
     }
 
     override function create() {
+        options = pauseMenuOptions;
         showLocks = false;
         super.create();
 
@@ -54,21 +60,6 @@ class PauseMenu extends EditorListBackend {
         FlxG.state.persistentDraw = true;
 
         Conductor.pause();
-    }
-
-    override function update(elapsed:Float) {
-        super.update(elapsed);
-
-
-        options[0].onClick ??= resume;
-        options[1].onClick ??= restartSong;
-        options[5].onClick ??= exitToMenu;
-
-        // subCamera.bgColor = FlxColor.interpolate(FlxColor.TRANSPARENT, FlxColor.BLACK);
-
-        /* if (Controls.accept) {
-            close();
-        } */
     }
 
     override function close() {
