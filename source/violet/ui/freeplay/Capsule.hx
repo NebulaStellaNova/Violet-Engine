@@ -1,5 +1,6 @@
 package violet.ui.freeplay;
 
+import flixel.math.FlxRect;
 import violet.data.song.Song;
 import violet.backend.shaders.GaussianBlurShader;
 import violet.backend.objects.special_thanks.GenzuSprite;
@@ -75,10 +76,18 @@ class Capsule extends FlxSpriteGroup {
 		add(iconGroup);
 	}
 
+	var clipTween:FlxTween;
+
 	public function setSelected(selected:Bool) {
 		capsule.playAnim(selected ? "selected" : "idle");
 		songNameText.blurredText.visible = selected;
 		songNameText.whiteText.alpha = selected ? 1 : 0.6;
+		/* if (selected) tweenLeft();
+		else {
+			clipTween?.cancel();
+			songNameText.clipRect = new FlxRect(-30, 0, 760, 100);
+			songNameText.offset.x = songNameText.offset.y = 0;
+		} */
 	}
 
 	public function playConfirm() {
@@ -93,6 +102,18 @@ class Capsule extends FlxSpriteGroup {
 				rating = Std.int(r);
 		}
 		updateDiffRating(rating);
+	}
+
+	public function tweenLeft() {
+		clipTween = FlxTween.num(-30, 400, 3, {ease: FlxEase.expoInOut },(n)->{
+			// if (!songNameText.extra.exists('defaultX'))
+			// songNameText.offset.x = n;
+			songNameText.x = -(n/2);
+			songNameText.x -= songNameText.width/2;
+			songNameText.x += 422;
+			songNameText.clipRect = new FlxRect(n, 0, 760, 100);
+			songNameText.updateHitbox();
+		});
 	}
 
 	public function updateDiffRating(newRating) {
