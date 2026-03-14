@@ -147,7 +147,7 @@ class Note extends NovaSprite {
 	override public function draw():Void {
 		if (parent.downscroll) {
 			final prevY:Float = y;
-			y = getDefaultCamera().height - y - height + (getDefaultCamera().height / 2 + height);
+			y = getDefaultCamera().height - y - height + (getDefaultCamera().height / 2 + height) + 10;
 			globalOffset.y *= -1;
 			super.draw();
 			globalOffset.y *= -1;
