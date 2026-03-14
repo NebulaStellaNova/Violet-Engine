@@ -284,7 +284,17 @@ class MainMenu extends StateBackend {
 			return;
 		}
 		for (i in menuItems) {
-			FlxTween.tween(i, { x: i.x + FlxG.width }, 0.5, { ease: FlxEase.smootherStepOut, onComplete: (_)-> canSelect = true });
+			var prev = i.x;
+			switch (menuAlignment) {
+				case "center":
+					i.screenCenter(X);
+				case "left":
+					i.x = 20;
+				case "right":
+					i.x = FlxG.width - i.width - 20;
+			}
+			FlxTween.tween(i, { x: i.x }, 0.5, { ease: FlxEase.smootherStepOut, onComplete: (_)-> canSelect = true });
+			i.x = prev;
 		}
 		FlxTween.tween(leftWatermark, { y: FlxG.height - leftWatermark.getHeight() - 5 }, 0.5, { ease: FlxEase.backOut });
 	}
