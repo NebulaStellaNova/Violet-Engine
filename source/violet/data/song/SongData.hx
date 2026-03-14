@@ -5,6 +5,9 @@ typedef SongData = {
 	public var ?variant:String;
 	public var ?displayName:String;
 
+	public var ?composer:String;
+	public var ?charter:String;
+
 	public var ?album:String;
 	public var ?ratings:Dynamic;
 

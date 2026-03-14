@@ -1,5 +1,6 @@
 package violet.backend;
 
+import lemonui.utils.MathUtil;
 import flixel.text.FlxText;
 import violet.backend.utils.NovaUtils;
 import flixel.math.FlxMath;
@@ -105,6 +106,7 @@ class EditorListBackend extends violet.backend.SubStateBackend {
     var frame = 0;
 
     override function update(elapsed:Float) {
+        super.update(elapsed);
         if (Controls.uiUp) scroll(-1);
         if (Controls.uiDown) scroll(1);
 
@@ -115,6 +117,9 @@ class EditorListBackend extends violet.backend.SubStateBackend {
         if (Controls.accept && frame > 3) {
             pickOption(options[debugCurSelected]);
         }
+
+        var targetItem:Alphabet = items[debugCurSelected];
+        if (subCamera.scroll != null) subCamera.scroll.y = MathUtil.lerp(subCamera.scroll.y, targetItem.y - (FlxG.height/2) + (targetItem.height/2), 0.2);
 
         frame++;
     }
@@ -131,8 +136,7 @@ class EditorListBackend extends violet.backend.SubStateBackend {
 
         for (i=>item in items) item.alpha = i == debugCurSelected ? 1 : 0.5;
         var targetItem:Alphabet = items[debugCurSelected];
-        FlxTween.cancelTweensOf(subCamera.scroll);
-        FlxTween.tween(subCamera.scroll, { y: targetItem.y - (FlxG.height/2) + (targetItem.height/2) }, 0.5, { ease: FlxEase.quartOut });
+        if (amt == 0) subCamera.scroll.y = targetItem.y - (FlxG.height/2) + (targetItem.height/2);
 
         descriptionTxt.text = options[debugCurSelected].description ?? "";
         descriptionTxt.updateHitbox();

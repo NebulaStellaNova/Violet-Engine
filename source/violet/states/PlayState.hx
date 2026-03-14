@@ -258,6 +258,10 @@ class PlayState extends violet.backend.StateBackend {
 			if (!event.cancelled) {
 				countdownTimer.active = false;
 
+				FlxTween.globalManager.forEach((tween:FlxTween)->{
+					tween.active = false;
+				});
+
 				var pauseMenu:PauseMenu = new PauseMenu();
 				openSubState(pauseMenu);
 			}
