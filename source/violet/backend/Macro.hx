@@ -15,7 +15,8 @@ class Macro {
 		Compiler.include('violet', true);
 		Compiler.include('haxe', true, ['haxe.atomic.*', 'haxe.macro.*']);
 		Compiler.include('flixel', true, ['flixel.addons.editors.spine.*', 'flixel.addons.nape.*', 'flixel.system.macros.*', 'flixel.addons.tile.FlxRayCastTilemap', 'flixel.addons.weapon.*']);
-		#end */
+		#end
+		Compiler.include('moonchart', true, ['moonchart.backend.*']); // force include, no matter what */
 	}
 
 	public static macro function buildFlxBasic():Array<Field> {
@@ -29,37 +30,6 @@ class Macro {
 			 * The layering index of the object.
 			 */
 			public var zIndex:Int = 0;
-			/**
-			 * When true the object has been destroyed, this cannot be reversed.
-			 */
-			public var destroyed(default, null):Bool = false;
-		}
-
-		var destroyFunc = classFields.filter(field -> return field.name == 'destroy')[0];
-		switch (destroyFunc.kind) {
-			case FFun(f):
-				var initExpr:Expr = f.expr;
-				f.expr = macro {
-					$initExpr;
-					destroyed = true;
-				}
-				destroyFunc.kind = FFun(f);
-			default:
-		}
-		var toStringFunc = classFields.filter(field -> return field.name == 'toString')[0];
-		switch (toStringFunc.kind) {
-			case FFun(f):
-				f.expr = macro {
-					return FlxStringUtil.getDebugString([
-						LabelValuePair.weak('active', active),
-						LabelValuePair.weak('visible', visible),
-						LabelValuePair.weak('alive', alive),
-						LabelValuePair.weak('exists', exists),
-						LabelValuePair.weak('destroyed', destroyed)
-					]);
-				}
-				toStringFunc.kind = FFun(f);
-			default:
 		}
 
 		return classFields.concat(tempClass.fields);
