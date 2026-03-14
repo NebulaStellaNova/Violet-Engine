@@ -42,6 +42,7 @@ class Stage extends flixel.group.FlxGroup {
             i.alpha ??= 1;
             i.visible ??= true;
             i.color ??= FlxColor.WHITE;
+            i.zIndex ??= 0;
             // trace(i);
 
             var positionalArrays = [
@@ -58,12 +59,15 @@ class Stage extends flixel.group.FlxGroup {
                     prop.scale.set(i.width ?? 0, i.height ?? 0);
                     prop.scrollFactor.set(i.scroll[0] ?? 1, i.scroll[1] ?? 1);
                     prop.updateHitbox();
+                    prop.z = i.zIndex;
                     add(prop);
                     stageScripts.set(i?.id ?? i.name, prop);
+                    applyProperties(prop, i.properties ?? {});
 
                 case "StageProp":
                     var prop:StageProp = new StageProp(i.position[0], i.position[1], Paths.image([this._data.directory, i.assetPath].join("/")));
                     prop.name = i.name;
+                    prop.z = i.zIndex;
                     prop.scrollFactor.set(i.scroll[0] ?? 1, i.scroll[1] ?? 1);
                     prop.scale.set(i.scale[0] ?? 1, i.scale[1] ?? 1);
                     prop.flipX = i.flipX ?? false;
@@ -77,6 +81,7 @@ class Stage extends flixel.group.FlxGroup {
                     prop.playAnim(i.startingAnimation ??= prop.animationList[0], true);
                     add(prop);
                     stageScripts.set(i?.id ?? i.name, prop);
+                    applyProperties(prop, i.properties ?? {});
 
                 case "Character":
                     i.cameraOffsets ??= [0, 0];
@@ -85,17 +90,26 @@ class Stage extends flixel.group.FlxGroup {
                             if (i.id == "player") char.flipX = !char.flipX;
                             char.x = i.position[0] - (char.width/2);
                             char.y = i.position[1] - (char.height);
+                            char.z = i.zIndex;
                             char.scrollFactor.set(i.scroll[0] ?? 1, i.scroll[1] ?? 1);
                             char.alpha = i.alpha;
                             char.visible = i.visible;
                             char.cameraOffsets[0] += i.cameraOffsets[0];
                             char.cameraOffsets[1] += i.cameraOffsets[1];
+                            applyProperties(char, i.properties ?? {});
                             add(char);
                         }
                     }
             }
         }
         stageScripts.call('onLoaded');
+    }
+
+    public function applyProperties(object:FlxBasic, array:Dynamic) {
+        trace(Reflect.fields(array));
+        for (i in Reflect.fields(array)) {
+            Reflect.setProperty(object, i, Reflect.field(array, i));
+        }
     }
 
     public function reload(characters:Array<Character>) { load(characters); }

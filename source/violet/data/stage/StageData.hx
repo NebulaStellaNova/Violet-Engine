@@ -30,6 +30,8 @@ typedef StagePropData = {
     @:default("StageProp")
     var ?type:String;
 
+    var ?zIndex:Int;
+
     var ?assetPath:String;
 
     var id:String;
