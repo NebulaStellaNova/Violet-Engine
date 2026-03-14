@@ -14,7 +14,7 @@ props:
 - name: Back Limo
   type: StageProp
   position: [-200, 480]
-  id: limoSunset
+  id: bgLimo
   scale: [1, 1]
   scroll: [0.4, 0.4]
   assetPath: bgLimo
