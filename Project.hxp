@@ -165,7 +165,7 @@ class Project extends HXProject {
 		// script related
 		if (scriptSupport.exists()) {
 			canHaxeScript.enable();
-			canLuaScript.enable();
+			if (!isMobile()) canLuaScript.enable();
 
 			scriptedStates.enable();
 			if (canHaxeScript.exists())
