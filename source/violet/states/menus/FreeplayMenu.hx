@@ -124,14 +124,15 @@ class FreeplayMenu extends SubStateBackend {
 		ostText.x = FlxG.width - ostText.width + 150;
 		ostText.camera = camHUD;
 
-		FlxTween.tween(backingCard, {x: -160}, 1, {ease: FlxEase.expoOut});
-		FlxTween.tween(backingImage, {x: 315}, 1, {ease: FlxEase.expoOut, startDelay: 0.1});
-		FlxTween.tween(black, {y: -175}, 0.6, {ease: FlxEase.expoOut, startDelay: 0.2});
-		FlxTween.tween(selector2, {x: 260}, 0.6, {ease: FlxEase.expoOut, startDelay: 0.3});
-		FlxTween.tween(selector1, {x: -130}, 0.6, {ease: FlxEase.expoOut, startDelay: 0.4});
-		FlxTween.tween(diffSprite, {x: -13.4285714285714}, 0.7, {ease: FlxEase.expoOut, startDelay: 0.5});
-		FlxTween.tween(freeplayText, {y: -78}, 0.8, {ease: FlxEase.expoOut, startDelay: 0.6});
-		FlxTween.tween(ostText, {y: -78}, 0.8, {ease: FlxEase.expoOut, startDelay: 0.7});
+		// Rodney don't flame gen for this I did it.
+		FlxTween.tween(backingCard, 	{ x: -160 }, 				1.0, 	{ ease: FlxEase.expoOut, startDelay: 0.0 });
+		FlxTween.tween(backingImage, 	{ x: 315 }, 				1.0, 	{ ease: FlxEase.expoOut, startDelay: 0.1 });
+		FlxTween.tween(black, 			{ y: -175 }, 				0.6, 	{ ease: FlxEase.expoOut, startDelay: 0.2 });
+		FlxTween.tween(selector2, 		{ x: 260 }, 				0.6, 	{ ease: FlxEase.expoOut, startDelay: 0.3 });
+		FlxTween.tween(selector1, 		{ x: -130 }, 				0.6, 	{ ease: FlxEase.expoOut, startDelay: 0.4 });
+		FlxTween.tween(diffSprite, 		{ x: -13.4285714285714 }, 	0.7, 	{ ease: FlxEase.expoOut, startDelay: 0.5 });
+		FlxTween.tween(freeplayText, 	{ y: -78 }, 				0.8, 	{ ease: FlxEase.expoOut, startDelay: 0.6 });
+		FlxTween.tween(ostText, 		{ y: -78 }, 				0.8, 	{ ease: FlxEase.expoOut, startDelay: 0.7 });
 
 		songs = SongRegistry.getAllSongs().filter(song -> {
 			if (Options.data.developerMode) {
@@ -160,6 +161,11 @@ class FreeplayMenu extends SubStateBackend {
 
 		changeSelection(0);
 		diffSprite.x = -FlxG.width;
+
+		if (skipTransition) {
+			FlxTween.globalManager.completeAll();
+			camHUD.fade(0.5, true);
+		}
 
 		skipTransition = false;
 	}
