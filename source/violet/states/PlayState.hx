@@ -291,6 +291,10 @@ class PlayState extends violet.backend.StateBackend {
 			}
 		}
 
+		if (health == 0) {
+			FlxG.switchState(new GameOverState(strumLines.members[1].characters[0]));
+		}
+
 		callSongScripts("postUpdate", [elapsed]);
 		callSongScripts("onUpdatePost", [elapsed]);
 	}

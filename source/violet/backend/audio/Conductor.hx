@@ -181,4 +181,11 @@ class Conductor {
 		instrumental.looped = false;
 	}
 
+	public static function stop() {
+		instrumental.stop();
+		for (i in additionalTracks) {
+			i.stop();
+		}
+	}
+
 }

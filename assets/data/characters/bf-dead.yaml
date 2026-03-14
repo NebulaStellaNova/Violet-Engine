@@ -1,0 +1,16 @@
+name: Boyfriend (Dead)
+version: 1.0.0
+assetPath: characters/bf-dead
+flipX: true
+singTime: 8.0
+healthIcon: bf
+animations:
+- name: firstDeath
+  prefix: BF dies
+  offset: [22, 15]
+- name: deathLoop
+  prefix: BF Dead Loop
+  offset: [22, 15]
+- name: deathConfirm
+  prefix: BF Dead confirm
+  offset: [22, 15]

@@ -38,9 +38,9 @@ typedef CharacterData = {
     var ?healthIcon:String;
 
     /**
-     * Optional data about the death animation for the character.
+     * The character to use when death, duh!
      */
-    var ?death:DeathData;
+    var ?deathCharacter:String;
 
     /**
      * The global offset to the character's position, in pixels.
@@ -115,25 +115,3 @@ typedef CharacterData = {
      */
     // var ?atlasSettings:funkin.data.stage.StageData.TextureAtlasData;
 };
-
-typedef DeathData = {
-    /**
-     * The amount to offset the camera by while focusing on this character as they die.
-     * Default value focuses on the character's graphic midpoint.
-     * @default [0, 0]
-     */
-    var ?cameraOffsets:Array<Float>;
-
-    /**
-     * The amount to zoom the camera by while focusing on this character as they die.
-     * Value is a multiplier of the default camera zoom for the stage.
-     * @default 1.0
-     */
-    var ?cameraZoom:Float;
-
-    /**
-     * Impose a delay between when the character reaches `0` health and when the death animation plays.
-     * @default 0.0
-     */
-    var ?preTransitionDelay:Float;
-}
