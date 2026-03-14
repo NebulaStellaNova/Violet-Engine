@@ -181,7 +181,7 @@
 		]
 	},
 	"holdcovers": {
-		"offsets": [210.3, 100],
+		"offsets": [211, 50],
 		"animations": [
 			{
 				"id": 0,
@@ -266,7 +266,7 @@
 		]
 	},
 	"splashes": {
-		"offsets": [50, 100],
+		"offsets": [50, 50],
 		"properties": {"scale": 4, "blendMode": "screen"},
 		"animations": [
 			{

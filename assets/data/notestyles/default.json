@@ -161,7 +161,7 @@
 		]
 	},
 	"holdcovers": {
-		"offsets": [70, 180],
+		"offsets": [70, 130],
 		"animations": [
 			{
 				"id": 0,
@@ -242,7 +242,7 @@
 		]
 	},
 	"splashes": {
-		"offsets": [75, 140],
+		"offsets": [75, 75],
 		"properties": {"alpha": 0.8},
 		"animations": [
 			{
