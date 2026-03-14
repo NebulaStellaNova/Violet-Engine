@@ -98,53 +98,33 @@ class NoteStyle {
 	}
 
 	public function getStrumAssetPath():String {
-		var path:String;
-		function recursion(data:NoteStyleData):Bool {
-			path = Paths.image('game/notes/$id/${data.strums?.assetPath ?? data?.assetPath ?? 'strums'}');
-			return Paths.fileExists(path, true);
-		}
-		if (!recursion(_data) && fallback != null)
-			recursion(fallback._data);
+		var path:String = Paths.image('game/notes/$id/${_data.strums?.assetPath ?? _data?.assetPath ?? 'strums'}');
+		if (!Paths.fileExists(path, true) && fallback != null)
+			return fallback.getStrumAssetPath();
 		return path;
 	}
 	public function getNoteAssetPath():String {
-		var path:String;
-		function recursion(data:NoteStyleData):Bool {
-			path = Paths.image('game/notes/$id/${data.notes?.assetPath ?? data?.assetPath ?? 'notes'}');
-			return Paths.fileExists(path, true);
-		}
-		if (!recursion(_data) && fallback != null)
-			recursion(fallback._data);
+		var path:String = Paths.image('game/notes/$id/${_data.notes?.assetPath ?? _data?.assetPath ?? 'notes'}');
+		if (!Paths.fileExists(path, true) && fallback != null)
+			return fallback.getNoteAssetPath();
 		return path;
 	}
 	public function getSustainAssetPath():String {
-		var path:String;
-		function recursion(data:NoteStyleData):Bool {
-			path = Paths.image('game/notes/$id/${data.sustains?.assetPath ?? data?.assetPath ?? 'sustains'}');
-			return Paths.fileExists(path, true);
-		}
-		if (!recursion(_data) && fallback != null)
-			recursion(fallback._data);
+		var path:String = Paths.image('game/notes/$id/${_data.sustains?.assetPath ?? _data?.assetPath ?? 'sustains'}');
+		if (!Paths.fileExists(path, true) && fallback != null)
+			return fallback.getSustainAssetPath();
 		return path;
 	}
 	public function getSplashAssetPath():String {
-		var path:String;
-		function recursion(data:NoteStyleData):Bool {
-			path = Paths.image('game/notes/$id/${data?.splashes?.assetPath ?? data?.assetPath ?? 'splashes'}');
-			return Paths.fileExists(path, true);
-		}
-		if (!recursion(_data) && fallback != null)
-			recursion(fallback._data);
+		var path:String = Paths.image('game/notes/$id/${_data?.splashes?.assetPath ?? _data?.assetPath ?? 'splashes'}');
+		if (!Paths.fileExists(path, true) && fallback != null)
+			return fallback.getSplashAssetPath();
 		return path;
 	}
 	public function getHoldCoverAssetPath():String {
-		var path:String;
-		function recursion(data:NoteStyleData):Bool {
-			path = Paths.image('game/notes/$id/${data?.holdcovers?.assetPath ?? data?.assetPath ?? 'holdcovers'}');
-			return Paths.fileExists(path, true);
-		}
-		if (!recursion(_data) && fallback != null)
-			recursion(fallback._data);
+		var path:String = Paths.image('game/notes/$id/${_data?.holdcovers?.assetPath ?? _data?.assetPath ?? 'holdcovers'}');
+		if (!Paths.fileExists(path, true) && fallback != null)
+			return fallback.getHoldCoverAssetPath();
 		return path;
 	}
 
