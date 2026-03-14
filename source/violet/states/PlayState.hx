@@ -139,7 +139,6 @@ class PlayState extends violet.backend.StateBackend {
 			strumLine.cameras = [camHUD];
 			strumLine.visible = data.visible;
 			strumLine.ID = i;
-			// strumLine.y -= 50;
 			strumLines.add(strumLine);
 
 			for(i=>charName in data.characters) {
@@ -286,8 +285,8 @@ class PlayState extends violet.backend.StateBackend {
 	}
 
 	function onVoidTap(id:Int, strumLine:StrumLine) {
-		if (!Conductor.instrumental.playing) return;
 		strumLine.strums.members[id].playStrumAnim('press', ghostTapping);
+		if (!Conductor.instrumental.playing) return;
 		if (!ghostTapping) {
 			FlxG.sound.play(Cache.sound('miss/${FlxG.random.int(1, 3)}'), 0.7);
 			for (char in strumLine.characters)

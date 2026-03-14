@@ -1,6 +1,5 @@
 package violet.backend.objects.play;
 
-import violet.backend.options.Options;
 import flixel.group.FlxGroup;
 import flixel.input.keyboard.FlxKey;
 import flixel.math.FlxMath;
@@ -8,6 +7,7 @@ import flixel.math.FlxPoint;
 import flixel.math.FlxRect;
 import openfl.events.KeyboardEvent;
 import violet.backend.audio.Conductor;
+import violet.backend.options.Options;
 import violet.data.character.Character;
 import violet.data.chart.Chart;
 import violet.data.chart.ChartData;
@@ -78,6 +78,14 @@ class StrumLine extends FlxGroup {
 	public var strumScale:Float;
 	public var strumSpacing:Float;
 
+	public var skin(default, set):String;
+	function set_skin(value:String):String {
+		skin = value;
+		for (strum in strums) strum.skin = value;
+		for (note in notes) note.skin = value;
+		return value;
+	}
+
 	public final vocals:FlxSound;
 
 	public function new(chartData:_ChartStrumLine) {
@@ -86,19 +94,21 @@ class StrumLine extends FlxGroup {
 		scrollSpeed = chartData.scrollSpeed;
 		super();
 
-		scale = new FlxCallbackPoint((point) -> {
+		scale = new FlxCallbackPoint((point) -> @:privateAccess {
 			for (strum in strums) {
-				strum.scale.set(0.7, 0.7);
+				final daScale:Float = strum.skinMeta.strumProperties.scale;
+				strum.scale.set(daScale, daScale);
 				strum.scale.scale(strumScale);
 				strum.updateHitbox();
 			}
 			for (note in notes) {
-				note.scale.set(0.7, 0.7);
+				final daScale:Float = note.skinMeta.noteProperties.scale;
+				note.scale.set(daScale, daScale);
 				note.scale.scale(strumScale);
 				note.updateHitbox();
 			}
 			for (sustain in sustains) {
-				final daScale:Float = 0.7 * strumScale;
+				final daScale:Float = sustain.skinMeta.sustainProperties.scale * strumScale;
 				sustain.scale.set(daScale, sustain.isEnd ? daScale : sustain.scale.y);
 				sustain.updateHitbox();
 			}
@@ -126,6 +136,8 @@ class StrumLine extends FlxGroup {
 			vocals = Conductor.addAdditionalTrack(FlxG.sound.load(Cache.sound(Paths.vocal(PlayState.song, characters[0].id, PlayState.variation), 'root', null, true), FlxG.sound.defaultMusicGroup));
 		else */ if (chartData.vocalsSuffix == null) vocals = Conductor.addAdditionalTrack(new FlxSound());
 		else vocals = Conductor.addAdditionalTrack(FlxG.sound.load(Cache.sound(Paths.vocal(PlayState.song, chartData.vocalsSuffix, PlayState.variation), 'root', null, true), FlxG.sound.defaultMusicGroup));
+
+		skin = 'default'; // chartData.skin;
 	}
 
 	public function setPosition(x:Float = 0, y:Float = 0, purePos:Bool = true):Void {

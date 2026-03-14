@@ -92,7 +92,7 @@ class Sustain extends NovaSprite {
 		this.isEnd = isEnd;
 		this.parent.sustains.add(this);
 
-		final daScale:Float = 0.7 * this.parent.strumScale;
+		final daScale:Float = Note.swagWidth * this.parent.strumScale;
 		scale.set(daScale, isEnd ? daScale : 0);
 		updateHitbox();
 	}
@@ -100,15 +100,20 @@ class Sustain extends NovaSprite {
 	public function reloadSkin(?skin:String):Void {
 		this.anims.clear();
 		animation.destroyAnimations();
-		final skin:String = skin ?? this.skin ?? 'default';
+		final skin:String = skin ?? this.skin ?? parentNote.skin ?? parentStrum.skin ?? parent.skin ?? 'default';
 		this.skinMeta = NoteSkinRegistry.getNoteSkinByID(skin);
 		loadSprite(skinMeta.getSustainAssetPath());
 		for (data in skinMeta.getSustainAnimations(id, parent.keyCount))
 			addAnimFromData(data);
 		var lol:Array<Float> = skinMeta.getSustainOffsets();
 		globalOffset.set(lol[0], lol[1]);
+		this.antialiasing = skinMeta.isSustainPixel();
 
-		playAnim(isEnd ? 'end' : 'tail', true); updateHitbox();
+		playAnim(isEnd ? 'end' : 'tail', true);
+		final daScale:Float = skinMeta.sustainProperties.scale * parent.strumScale;
+		scale.set(daScale, isEnd ? daScale : scale.y);
+		updateHitbox(); alpha = skinMeta.sustainProperties.alpha;
+		blend = skinMeta.sustainProperties.blendMode;
 	}
 
 	override public function draw():Void {

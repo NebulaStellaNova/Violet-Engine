@@ -13,10 +13,10 @@ class Note extends NovaSprite {
 	 * The parent strumline.
 	 */
 	public final parent:StrumLine;
-	public var parentStrum(get, never):Strum;
 	/**
 	 * The parent strum.
 	 */
+	public var parentStrum(get, never):Strum;
 	inline function get_parentStrum():Strum
 		return parent.strums.members[id];
 
@@ -104,7 +104,7 @@ class Note extends NovaSprite {
 		this.parent = parent;
 		this.id = id;
 		this.time = time;
-		skin = 'default';
+		skin = parentStrum.skin ?? parent.skin;
 		preventAutoSkinSet = false;
 
 		final stepLengthMs:Float = flixel.addons.sound.FlxRhythmConductorUtil.getStepLengthMs(flixel.addons.sound.FlxRhythmConductor.instance.getCurrentTimeChangeBPMAccurate(time));
@@ -116,7 +116,7 @@ class Note extends NovaSprite {
 		}
 		reloadSkin(true);
 
-		scale.set(0.7, 0.7);
+		setGraphicSize(swagWidth);
 		scale.scale(parent.strumScale);
 		updateHitbox();
 	}
@@ -124,16 +124,22 @@ class Note extends NovaSprite {
 	public function reloadSkin(?skin:String, effectTail:Bool = false):Void {
 		this.anims.clear();
 		animation.destroyAnimations();
-		final skin:String = skin ?? this.skin ?? 'default';
+		final skin:String = skin ?? this.skin ?? parentStrum.skin ?? parent.skin ?? 'default';
 		this.skinMeta = NoteSkinRegistry.getNoteSkinByID(skin);
 		loadSprite(skinMeta.getNoteAssetPath());
 		for (data in skinMeta.getNoteAnimations(id, parent.keyCount))
 			addAnimFromData(data);
 		var lol:Array<Float> = skinMeta.getNoteOffsets();
 		globalOffset.set(lol[0], lol[1]);
+		this.antialiasing = skinMeta.isNotePixel();
 		if (effectTail) for (sustain in tail) sustain.reloadSkin(skin);
 
-		playAnim('note', true); updateHitbox();
+		playAnim('note', true);
+		final daScale:Float = skinMeta.noteProperties.scale;
+		scale.set(daScale, daScale);
+		scale.scale(parent.strumScale);
+		updateHitbox(); alpha = skinMeta.noteProperties.alpha;
+		blend = skinMeta.noteProperties.blendMode;
 	}
 
 	override public function draw():Void {

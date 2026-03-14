@@ -1,81 +1,97 @@
 {
-	"name": "Funkin'",
-	"offsets": [28, -25],
+	"name": "Pixel (Week 6)",
+	"fallback": "default",
+	"offsets": [57.5, 6],
+	"isPixel": true,
+	"properties": {"scale": 6},
 	"strums": {
+		"assetPath": "notes",
 		"animations": [
 			{
 				"id": 0,
 				"mania": 4,
 				"name": "static",
-				"prefix": "staticLeft"
+				"prefix": "staticLeft",
+				"frameRate": 12
 			},
 			{
 				"id": 1,
 				"mania": 4,
 				"name": "static",
-				"prefix": "staticDown"
+				"prefix": "staticDown",
+				"frameRate": 12
 			},
 			{
 				"id": 2,
 				"mania": 4,
 				"name": "static",
-				"prefix": "staticUp"
+				"prefix": "staticUp",
+				"frameRate": 12
 			},
 			{
 				"id": 3,
 				"mania": 4,
 				"name": "static",
-				"prefix": "staticRight"
+				"prefix": "staticRight",
+				"frameRate": 12
 			},
 
 			{
 				"id": 0,
 				"mania": 4,
 				"name": "press",
-				"prefix": "left press"
+				"prefix": "pressedLeft",
+				"frameRate": 12
 			},
 			{
 				"id": 1,
 				"mania": 4,
 				"name": "press",
-				"prefix": "down press"
+				"prefix": "pressedDown",
+				"frameRate": 12
 			},
 			{
 				"id": 2,
 				"mania": 4,
 				"name": "press",
-				"prefix": "up press"
+				"prefix": "pressedUp",
+				"frameRate": 12
 			},
 			{
 				"id": 3,
 				"mania": 4,
 				"name": "press",
-				"prefix": "right press"
+				"prefix": "pressedRight",
+				"frameRate": 12
 			},
 
 			{
 				"id": 0,
 				"mania": 4,
 				"name": "confirm",
-				"prefix": "left confirm"
+				"prefix": "confirmLeft",
+				"frameRate": 12
 			},
 			{
 				"id": 1,
 				"mania": 4,
 				"name": "confirm",
-				"prefix": "down confirm"
+				"prefix": "confirmDown",
+				"frameRate": 12
 			},
 			{
 				"id": 2,
 				"mania": 4,
 				"name": "confirm",
-				"prefix": "up confirm"
+				"prefix": "confirmUp",
+				"frameRate": 12
 			},
 			{
 				"id": 3,
 				"mania": 4,
 				"name": "confirm",
-				"prefix": "right confirm"
+				"prefix": "confirmRight",
+				"frameRate": 12
 			}
 		]
 	},
@@ -85,25 +101,29 @@
 				"id": 0,
 				"mania": 4,
 				"name": "note",
-				"prefix": "noteLeft"
+				"prefix": "noteLeft",
+				"frameRate": 12
 			},
 			{
 				"id": 1,
 				"mania": 4,
 				"name": "note",
-				"prefix": "noteDown"
+				"prefix": "noteDown",
+				"frameRate": 12
 			},
 			{
 				"id": 2,
 				"mania": 4,
 				"name": "note",
-				"prefix": "noteUp"
+				"prefix": "noteUp",
+				"frameRate": 12
 			},
 			{
 				"id": 3,
 				"mania": 4,
 				"name": "note",
-				"prefix": "noteRight"
+				"prefix": "noteRight",
+				"frameRate": 12
 			}
 		]
 	},
@@ -161,137 +181,177 @@
 		]
 	},
 	"holdcovers": {
-		"offsets": [70, 180],
+		"offsets": [210.3, 100],
 		"animations": [
 			{
 				"id": 0,
 				"mania": 4,
 				"name": "start",
-				"prefix": "holdCoverStartPurple"
+				"prefix": "loop",
+				"frameIndices": [0]
 			},
 			{
 				"id": 0,
 				"mania": 4,
 				"name": "hold",
-				"prefix": "holdCoverPurple",
+				"prefix": "loop",
 				"looped": true
 			},
 			{
 				"id": 0,
 				"mania": 4,
 				"name": "end",
-				"prefix": "holdCoverEndPurple"
+				"prefix": "explode"
 			},
 			{
 				"id": 1,
 				"mania": 4,
 				"name": "start",
-				"prefix": "holdCoverStartBlue"
+				"prefix": "loop",
+				"frameIndices": [0]
 			},
 			{
 				"id": 1,
 				"mania": 4,
 				"name": "hold",
-				"prefix": "holdCoverBlue",
+				"prefix": "loop",
 				"looped": true
 			},
 			{
 				"id": 1,
 				"mania": 4,
 				"name": "end",
-				"prefix": "holdCoverEndBlue"
+				"prefix": "explode"
 			},
 			{
 				"id": 2,
 				"mania": 4,
 				"name": "start",
-				"prefix": "holdCoverStartGreen"
+				"prefix": "loop",
+				"frameIndices": [0]
 			},
 			{
 				"id": 2,
 				"mania": 4,
 				"name": "hold",
-				"prefix": "holdCoverGreen",
+				"prefix": "loop",
 				"looped": true
 			},
 			{
 				"id": 2,
 				"mania": 4,
 				"name": "end",
-				"prefix": "holdCoverEndGreen"
+				"prefix": "explode"
 			},
 			{
 				"id": 3,
 				"mania": 4,
 				"name": "start",
-				"prefix": "holdCoverStartRed"
+				"prefix": "loop",
+				"frameIndices": [0]
 			},
 			{
 				"id": 3,
 				"mania": 4,
 				"name": "hold",
-				"prefix": "holdCoverRed",
+				"prefix": "loop",
 				"looped": true
 			},
 			{
 				"id": 3,
 				"mania": 4,
 				"name": "end",
-				"prefix": "holdCoverEndRed"
+				"prefix": "explode"
 			}
 		]
 	},
 	"splashes": {
-		"offsets": [75, 140],
-		"properties": {"alpha": 0.8},
+		"offsets": [50, 100],
+		"properties": {"scale": 4, "blendMode": "screen"},
 		"animations": [
 			{
 				"id": 0,
 				"mania": 4,
 				"name": "1",
-				"prefix": "note impact 1 purple"
+				"prefix": "purple1",
+				"offsets": [0, 0]
 			},
 			{
 				"id": 0,
 				"mania": 4,
 				"name": "2",
-				"prefix": "note impact 2 purple"
+				"prefix": "purple2",
+				"offsets": [0, 0]
+			},
+			{
+				"id": 0,
+				"mania": 4,
+				"name": "3",
+				"prefix": "purple3",
+				"offsets": [0, 0]
 			},
 			{
 				"id": 1,
 				"mania": 4,
 				"name": "1",
-				"prefix": "note impact 1 blue"
+				"prefix": "blue1",
+				"offsets": [0, 0]
 			},
 			{
 				"id": 1,
 				"mania": 4,
 				"name": "2",
-				"prefix": "note impact 2 blue"
+				"prefix": "blue2",
+				"offsets": [0, 0]
+			},
+			{
+				"id": 1,
+				"mania": 4,
+				"name": "3",
+				"prefix": "blue3",
+				"offsets": [0, 0]
 			},
 			{
 				"id": 2,
 				"mania": 4,
 				"name": "1",
-				"prefix": "note impact 1 green"
+				"prefix": "green1",
+				"offsets": [0, 0]
 			},
 			{
 				"id": 2,
 				"mania": 4,
 				"name": "2",
-				"prefix": "note impact 2 green"
+				"prefix": "green2",
+				"offsets": [0, 0]
+			},
+			{
+				"id": 2,
+				"mania": 4,
+				"name": "3",
+				"prefix": "green3",
+				"offsets": [0, 0]
 			},
 			{
 				"id": 3,
 				"mania": 4,
 				"name": "1",
-				"prefix": "note impact 1 red"
+				"prefix": "orange1",
+				"offsets": [0, 0]
 			},
 			{
 				"id": 3,
 				"mania": 4,
 				"name": "2",
-				"prefix": "note impact 2 red"
+				"prefix": "orange2",
+				"offsets": [0, 0]
+			},
+			{
+				"id": 3,
+				"mania": 4,
+				"name": "3",
+				"prefix": "orange3",
+				"offsets": [0, 0]
 			}
 		]
 	}

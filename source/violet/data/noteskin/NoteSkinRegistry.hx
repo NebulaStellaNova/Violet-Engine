@@ -14,12 +14,12 @@ class NoteSkinRegistry {
 
         for (file in Paths.readFolder("data/noteskins")) {
             final fileName = file.replace(".json", "");
-            final jsonPath = 'data/noteskins/$fileName';
-            if (!Paths.fileExists(Paths.json(jsonPath), true)) {
+            final metaPath = 'data/noteskins/$fileName';
+            if (!(Paths.fileExists(Paths.json(metaPath), true) || Paths.fileExists(Paths.yaml(metaPath), true))) {
                 trace('warning:Could not find meta file for note skin with ID $file. Skipping registration.');
                 continue;
             }
-            noteSkinDatas.set(fileName, ParseUtil.json(jsonPath));
+            noteSkinDatas.set(fileName, ParseUtil.jsonOrYaml(metaPath));
             registerNoteSkin(new NoteSkin(fileName));
         }
     }

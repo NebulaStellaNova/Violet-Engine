@@ -44,7 +44,13 @@ class Strum extends NovaSprite {
 		super();
 		this.parent = parent;
 		ID = id;
-		skin = 'default';
+		skin = parent.skin;
+		this.skinMeta = NoteSkinRegistry.getNoteSkinByID(parent.skin ?? 'default');
+
+		final daScale:Float = skinMeta.strumProperties.scale;
+		scale.set(daScale, daScale);
+		scale.scale(parent.strumScale);
+		updateHitbox();
 	}
 
 	public function reloadSkin(?skin:String):Void {
@@ -54,16 +60,22 @@ class Strum extends NovaSprite {
 
 		this.anims.clear();
 		animation.destroyAnimations();
-		final skin:String = skin ?? this.skin ?? 'default';
+		final skin:String = skin ?? this.skin ?? parent.skin ?? 'default';
 		this.skinMeta = NoteSkinRegistry.getNoteSkinByID(skin);
 		loadSprite(skinMeta.getStrumAssetPath());
 		for (data in skinMeta.getStrumAnimations(ID, parent.keyCount))
 			addAnimFromData(data);
-		var lol:Array<Float> = skinMeta.getStrumOffsets();
-		globalOffset.set(lol[0], lol[1]);
+		final partOffsets:Array<Float> = skinMeta.getStrumOffsets();
+		globalOffset.set(partOffsets[0], partOffsets[1]);
+		this.antialiasing = skinMeta.isStrumPixel();
 
-		playAnim(lastAnim, true, wasReversed); updateHitbox();
+		playAnim(lastAnim, true, wasReversed);
 		// animation.curAnim.curFrame = Math.round(flixel.math.FlxMath.remapToRange(lastFrame[0], 0, lastFrame[1], 0, animation.curAnim.numFrames));
+		final daScale:Float = skinMeta.strumProperties.scale;
+		scale.set(daScale, daScale);
+		scale.scale(parent.strumScale);
+		updateHitbox(); alpha = skinMeta.strumProperties.alpha;
+		blend = skinMeta.strumProperties.blendMode;
 	}
 
 	override public function update(elapsed:Float):Void {
@@ -77,10 +89,9 @@ class Strum extends NovaSprite {
 
 		if (holdCover == null) return;
 		if (holdCover.exists && holdCover.animation.name != 'end') {
-			holdCover.x = this.x - (holdCover.width/2);
-			holdCover.x += skinMeta.getHoldCoverOffsets()[0];
-			holdCover.y = parent.y - (holdCover.height/2);
-			holdCover.y += skinMeta.getHoldCoverOffsets()[1];
+			holdCover.setPosition(this.x - (holdCover.width/2), parent.y - (holdCover.height/2));
+			final partOffsets:Array<Float> = skinMeta.getHoldCoverOffsets();
+			holdCover.x += partOffsets[0]; holdCover.y += partOffsets[1];
 			holdCover.centerOrigin();
 		}
 	}
@@ -108,31 +119,34 @@ class Strum extends NovaSprite {
 	}
 
 	public function spawnSplash():Void {
-		final splash:NovaSprite = new NovaSprite(skinMeta.getSplashAssetPath()); // cast parent.recycle(NovaSprite, () -> return new NovaSprite(skinMeta.getSplashAssetPath()));
-		// if (splash.filePath != skinMeta.getSplashAssetPath())
-		// 	splash.loadSprite(skinMeta.getSplashAssetPath()); // jic
-
+		final splash:NovaSprite = new NovaSprite(skinMeta.getSplashAssetPath());
 		for (data in skinMeta.getSplashAnimations(ID, parent.keyCount))
 			splash.addAnimFromData(data);
-		// splash.visible = true;
 
 		splash.playAnim(FlxG.random.getObject(splash.animationList), true);
+		final daScale:Float = skinMeta.splashProperties.scale;
+		splash.scale.set(daScale, daScale);
+		splash.scale.scale(parent.strumScale);
+		splash.updateHitbox();
 		splash.centerOffsets();
 		splash.centerOrigin();
 		splash.animation.onFinish.add(name -> {
 			this.splashes.remove(splash);
-			// splash.visible = false;
 			splash.destroy();
 		});
 		splash.x = this.x - (splash.width/2);
-		splash.x += skinMeta.getSplashOffsets()[0];
+		final partOffsets:Array<Float> = skinMeta.getSplashOffsets();
+		splash.x += partOffsets[0];
 		if (parent.downscroll) {
 			splash.y = FlxG.height - (parent.y + (splash.height/2));
-			splash.y -= skinMeta.getSplashOffsets()[1];
+			splash.y -= partOffsets[1];
 		} else {
 			splash.y = parent.y - (splash.height/2);
-			splash.y += skinMeta.getSplashOffsets()[1];
+			splash.y += partOffsets[1];
 		}
+		splash.antialiasing = skinMeta.isSplashPixel();
+		splash.alpha = skinMeta.splashProperties.alpha;
+		splash.blend = skinMeta.splashProperties.blendMode;
 		this.splashes.push(splash);
 		this.parent.add(splash);
 	}
@@ -143,15 +157,17 @@ class Strum extends NovaSprite {
 			holdCover.playAnim('end', true);
 			holdCover.animation.finish();
 		}
-		final holdCover:NovaSprite = holdCover = new NovaSprite(skinMeta.getHoldCoverAssetPath()); // cast parent.recycle(NovaSprite, () -> return new NovaSprite(skinMeta.getHoldCoverAssetPath()));
-		// if (holdCover.filePath != skinMeta.getHoldCoverAssetPath())
-		// 	holdCover.loadSprite(skinMeta.getHoldCoverAssetPath()); // jic
-
+		final holdCover:NovaSprite = holdCover = new NovaSprite(skinMeta.getHoldCoverAssetPath());
 		for (data in skinMeta.getHoldCoverAnimations(ID, parent.keyCount))
 			holdCover.addAnimFromData(data);
-		// holdCover.visible = true;
 
 		holdCover.playAnim('start', true);
+		final daScale:Float = skinMeta.holdCoverProperties.scale;
+		holdCover.scale.set(daScale, daScale);
+		holdCover.scale.scale(parent.strumScale);
+		holdCover.updateHitbox();
+		holdCover.centerOffsets();
+		holdCover.centerOrigin();
 		holdCover.animation.onFinish.add(name -> {
 			switch (name) {
 				case 'start':
@@ -159,12 +175,12 @@ class Strum extends NovaSprite {
 				case 'end':
 					this.parent.remove(holdCover);
 					this.holdCovers.remove(holdCover);
-					// holdCover.visible = false;
 					holdCover.destroy();
 			}
 		});
-		holdCover.centerOffsets();
-		holdCover.centerOrigin();
+		holdCover.antialiasing = skinMeta.isHoldCoverPixel();
+		holdCover.alpha = skinMeta.holdCoverProperties.alpha;
+		holdCover.blend = skinMeta.holdCoverProperties.blendMode;
 		this.holdCovers.push(holdCover);
 		this.parent.add(holdCover);
 	}
