@@ -1052,6 +1052,7 @@ strumLines:
       - "bf-pixel"
     type: 0
     visible: true
+    noteStyle: pixel
   - keyCount: 4
     notes:
       - type: 0

@@ -14,6 +14,7 @@ class Chart {
 		if (_data.noteTypes == null) return [];
 		return _data.noteTypes.copy();
 	}
+	public final noteStyle:String;
 
 	public final strumLines:Array<_ChartStrumLine> = [];
 	public var events(get, never):Array<ChartEvent>;
@@ -40,9 +41,12 @@ class Chart {
 		scrollSpeed = _data.scrollSpeed;
 		chartDifficulty = diff;
 		chartVariant = variant;
+		noteStyle = _data.noteStyle ?? 'default';
 
-		for (data in _data.strumLines)
+		for (data in _data.strumLines) {
+			data.noteStyle ??= noteStyle;
 			strumLines.push(new _ChartStrumLine(data));
+		}
 	}
 }
 
@@ -96,6 +100,8 @@ class _ChartStrumLine {
 	public final strumScale:Float;
 	public final strumSpacing:Float;
 
+	public final noteStyle:String;
+
 	public final scrollSpeed:Null<Float>;
 	public final vocalsSuffix:Null<String>;
 
@@ -107,6 +113,7 @@ class _ChartStrumLine {
 		keyCount = _data.keyCount ?? 4;
 		strumScale = _data.strumScale ?? 1;
 		strumSpacing = _data.strumSpacing ?? 1;
+		noteStyle = _data.noteStyle ?? 'default';
 		scrollSpeed = _data.scrollSpeed;
 		vocalsSuffix = _data.vocalsSuffix;
 		inline get_strumPosition(); // running here so it sets "strumPosIsPure"

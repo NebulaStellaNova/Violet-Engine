@@ -1,4 +1,5 @@
 events: []
+noteStyle: pixel
 strumLines:
   - visible: true
     keyCount: 4

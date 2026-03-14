@@ -1,4 +1,5 @@
 events: []
+noteStyle: pixel
 strumLines:
   - keyCount: 4
     position: dad

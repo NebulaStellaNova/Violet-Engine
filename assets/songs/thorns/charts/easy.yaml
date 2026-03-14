@@ -1,4 +1,5 @@
 events: []
+noteStyle: pixel
 stage: school-evil
 strumLines:
   - keyCount: 4
