@@ -7,16 +7,48 @@ import haxe.macro.Expr;
 
 class Macro {
 	public static function init():Void {
-		/* Compiler.addMetadata('@:build(violet.backend.Macro.buildFlxBasic())', 'flixel.FlxBasic');
+		Compiler.addMetadata('@:build(violet.backend.Macro.buildFlxBasic())', 'flixel.FlxBasic');
 		Compiler.addMetadata('@:build(violet.backend.Macro.buildFlxObject())', 'flixel.FlxObject');
 		Compiler.addMetadata('@:build(violet.backend.Macro.buildFlxSprite())', 'flixel.FlxSprite');
-		Compiler.addMetadata('@:build(violet.backend.Macro.buildFlxSpriteGroup())', 'flixel.FlxTypedSpriteGroup');
+		Compiler.addMetadata('@:build(violet.backend.Macro.buildFlxSpriteGroup())', 'flixel.group.FlxTypedSpriteGroup');
+		Compiler.addMetadata('@:build(violet.backend.Macro.buildFlxTypedGroup())', 'flixel.group.FlxTypedGroup');
 		#if SCRIPT_SUPPORT
 		Compiler.include('violet', true);
 		Compiler.include('haxe', true, ['haxe.atomic.*', 'haxe.macro.*']);
 		Compiler.include('flixel', true, ['flixel.addons.editors.spine.*', 'flixel.addons.nape.*', 'flixel.system.macros.*', 'flixel.addons.tile.FlxRayCastTilemap', 'flixel.addons.weapon.*']);
 		#end
-		Compiler.include('moonchart', true, ['moonchart.backend.*']); // force include, no matter what */
+		Compiler.include('moonchart', true, ['moonchart.backend.*']); // force include, no matter what
+	}
+
+	public static macro function buildFlxTypedGroup():Array<Field> {
+		var classFields:Array<Field> = Context.getBuildFields();
+
+		var tempClass = macro class TempClass {
+			/**
+			 * The property sort the objects by.
+			 */
+			public var sortBy:String = "zIndex";
+		}
+
+		var drawFuncy = classFields.filter(field -> return field.name == 'draw')[0];
+
+		switch (drawFuncy.kind) {
+			case FFun(f):
+				var initExpr:Expr = f.expr;
+				f.expr = macro {
+					members.sort((a, b)->{
+						if (a == null || b == null) return 0;
+						if (!(Reflect.hasField(a, sortBy) || Reflect.hasField(b, sortBy))) return 0;
+						if (Math.isNaN(Reflect.getProperty(a, sortBy)) || Math.isNaN(Reflect.getProperty(b, sortBy))) return 0;
+						return flixel.util.FlxSort.byValues(-1, Reflect.getProperty(a, sortBy), Reflect.getProperty(b, sortBy));
+					});
+					$initExpr;
+				}
+				drawFuncy.kind = FFun(f);
+			default:
+		}
+
+		return classFields.concat(tempClass.fields);
 	}
 
 	public static macro function buildFlxBasic():Array<Field> {
@@ -25,11 +57,15 @@ class Macro {
 			/**
 			 * Extra data the object can hold.
 			 */
-			public final extra:Map<String, Dynamic> = new Map<String, Dynamic>();
+			public var extra:Map<String, Dynamic> = new Map<String, Dynamic>();
 			/**
 			 * The layering index of the object.
 			 */
 			public var zIndex:Int = 0;
+
+			public var z(get, set):Int;
+			function get_z() return zIndex;
+			function set_z(v:Int) return zIndex = v;
 		}
 
 		return classFields.concat(tempClass.fields);
@@ -62,6 +98,7 @@ class Macro {
 		}
 
 		var onScreenFunc = classFields.filter(field -> return field.name == 'isOnScreen')[0];
+
 		switch (onScreenFunc.kind) {
 			case FFun(f):
 				var initExpr:Expr = f.expr;

@@ -138,6 +138,9 @@ class StrumLine extends FlxGroup {
 		else vocals = Conductor.addAdditionalTrack(FlxG.sound.load(Cache.sound(Paths.vocal(PlayState.song, chartData.vocalsSuffix, PlayState.variation), 'root', null, true), FlxG.sound.defaultMusicGroup));
 
 		noteStyle = chartData.noteStyle;
+
+		notes.sortBy = "time";
+		sustains.sortBy = "time";
 	}
 
 	public function setPosition(x:Float = 0, y:Float = 0, purePos:Bool = true):Void {
