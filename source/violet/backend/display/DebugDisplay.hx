@@ -72,8 +72,8 @@ class DebugDisplay extends Sprite {
 
 	var maxMemory:Float = 0;
 	var maxCpu:Float = 0;
-	var memories:Array<Float> = [for (i in 0...100) 0];
-	var cpus:Array<Float> = [for (i in 0...100) 0];
+	var memories:Array<Float> = [];
+	var cpus:Array<Float> = [];
 	var memoryAvg:Float = 0;
 	var cpuAvg:Float = 0;
 
@@ -83,10 +83,10 @@ class DebugDisplay extends Sprite {
 		final deltaTime:Float = Math.max(NovaUtils.getTimerPrecise() - _previousTime, 0);
 		_updateClock += deltaTime;
 
-		memories.shift();
-		cpus.shift();
-		memories.push(Memory.getProcessPhysicalMemoryUsage());
+		memories.push(FlxMath.roundDecimal(Memory.getProcessPhysicalMemoryUsage(), 2));
 		cpus.push(FlxMath.roundDecimal(CPU.getProcessCPUUsage(), 2));
+		if (memories.length > 100) memories.shift();
+		if (cpus.length > 100) cpus.shift();
 
 		memoryAvg = cpuAvg = 0;
 		for (m in memories) memoryAvg += m;
