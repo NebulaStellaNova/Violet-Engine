@@ -61,7 +61,11 @@ class Note extends NovaSprite {
 	/**
 	 * The sustains tied to this note.
 	 */
-	public final tail:Array<Sustain> = [];
+	@:isVar public var tail(get, never):Array<Sustain> = [];
+	function get_tail():Array<Sustain> {
+		tail.sort(sortTail);
+		return tail;
+	}
 	/**
 	 * The tail length in time.
 	 */
@@ -115,8 +119,6 @@ class Note extends NovaSprite {
 			tail.sort(sortTail);
 		}
 
-		setGraphicSize(swagWidth);
-		scale.scale(parent.strumScale);
 		reloadStyle(true);
 		updateHitbox();
 	}
@@ -145,7 +147,7 @@ class Note extends NovaSprite {
 	override public function draw():Void {
 		if (parent.downscroll) {
 			final prevY:Float = y;
-			y = getDefaultCamera().height - y - height;
+			y = getDefaultCamera().height - y - height + (getDefaultCamera().height / 2 + height);
 			globalOffset.y *= -1;
 			super.draw();
 			globalOffset.y *= -1;

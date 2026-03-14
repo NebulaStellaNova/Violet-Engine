@@ -47,15 +47,12 @@ class StrumLine extends FlxGroup {
 		for (strum in strums) value = value.concat(strum.splashes);
 		return value;
 	}
-
 	public var holdCovers(get, never):Array<StrumElement>;
 	function get_holdCovers():Array<StrumElement> {
 		var value:Array<StrumElement> = [];
 		for (strum in strums) value = value.concat(strum.holdCovers);
 		return value;
 	}
-
-	// public var holdCovers(get, never):Array<NovaSprite> = [];
 
 	public static var generalScrollSpeed:Float = 1;
 	public var scrollSpeed:Null<Float>;
@@ -116,11 +113,8 @@ class StrumLine extends FlxGroup {
 
 		add(strums = new FlxTypedGroup<Strum>());
 		add(sustains = new FlxTypedGroup<Sustain>());
-		sustains.memberAdded.add((_:Sustain) -> sustains.members.sort(Note.sortTail));
-		sustains.memberRemoved.add((_:Sustain) -> sustains.members.sort(Note.sortTail));
 		add(notes = new FlxTypedGroup<Note>());
-		notes.memberAdded.add((_:Note) -> notes.members.sort(Note.sortNotes));
-		notes.memberRemoved.add((_:Note) -> notes.members.sort(Note.sortNotes));
+		notes.sortBy = sustains.sortBy = 'time';
 
 		generateStrums(chartData.keyCount);
 
@@ -139,11 +133,10 @@ class StrumLine extends FlxGroup {
 
 		noteStyle = chartData.noteStyle;
 
-		notes.sortBy = "time";
-		sustains.sortBy = "time";
 	}
 
 	public function setPosition(x:Float = 0, y:Float = 0, purePos:Bool = true):Void {
+		if (downscroll) y = getDefaultCamera().height - y - Note.swagWidth;
 		for (i => strum in strums) {
 			var _x:Float = x;
 			if (!purePos) _x = (getDefaultCamera().width * x) - ((Note.swagWidth * strumScale * (keyCount / 2) - 0.5 * strumSpacing) + Note.swagWidth * 0.5 * strumScale);

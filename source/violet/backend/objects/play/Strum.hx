@@ -94,17 +94,6 @@ class Strum extends NovaSprite {
 		}
 	}
 
-	override public function draw():Void {
-		if (parent.downscroll) {
-			final prevY:Float = y;
-			y = getDefaultCamera().height - y - height;
-			globalOffset.y *= -1;
-			super.draw();
-			globalOffset.y *= -1;
-			y = prevY;
-		} else super.draw();
-	}
-
 	public function playStrumAnim(name:String, reset:Bool = false, forced:Bool = true, reversed:Bool = false, frame:Int = 0):Void {
 		if (this.animation.exists(name)) {
 			playAnim(name, forced, reversed, frame);

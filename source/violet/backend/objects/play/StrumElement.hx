@@ -22,15 +22,4 @@ class StrumElement extends NovaSprite {
 			centerOrigin();
 		}
 	}
-
-	override public function draw():Void {
-		if (parent.parent.downscroll) {
-			final prevY:Float = y;
-			y = getDefaultCamera().height - y - height;
-			globalOffset.y *= -1;
-			super.draw();
-			globalOffset.y *= -1;
-			y = prevY;
-		} else super.draw();
-	}
 }
