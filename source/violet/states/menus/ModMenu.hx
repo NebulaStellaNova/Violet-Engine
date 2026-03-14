@@ -33,16 +33,16 @@ class ModMenu extends SubStateBackend {
 
 		modInfoBox = new NovaSprite(Paths.image("menus/modmenu/modInfoPanel"));
 		modInfoBox.updateHitbox();
-		modInfoBox.screenCenter();
 		modInfoBox.scrollFactor.set();
+		modInfoBox.screenCenter();
 		// modInfoBox.x = FlxG.width - modInfoBox.width - 20;
 		modInfoBox.x = FlxG.width + 200;
 		add(modInfoBox);
 
 		infoSeperator = new NovaSprite(Paths.image("menus/modmenu/modInfoSeperator"));
 		infoSeperator.updateHitbox();
-		infoSeperator.screenCenter();
 		infoSeperator.scrollFactor.set();
+		infoSeperator.screenCenter();
 		add(infoSeperator);
 
 		for (i=>mod in ModdingAPI.availableMods) {
