@@ -3,8 +3,8 @@ package violet.backend.objects.play;
 import flixel.util.FlxSort;
 import violet.backend.audio.Conductor;
 import violet.backend.options.Options;
-import violet.data.noteskin.NoteSkin;
-import violet.data.noteskin.NoteSkinRegistry;
+import violet.data.notestyles.NoteStyle;
+import violet.data.notestyles.NoteStyleRegistry;
 
 class Note extends NovaSprite {
 	public static var swagWidth:Float = 160 * 0.7;
@@ -20,14 +20,14 @@ class Note extends NovaSprite {
 	inline function get_parentStrum():Strum
 		return parent.strums.members[id];
 
-	var preventAutoSkinSet:Bool = true;
+	var preventAutoStyleSet:Bool = true;
 	/**
 	 * The direction id of the note.
 	 */
 	public var id(default, set):Int;
 	inline function set_id(value:Int):Int {
-		if (id != value && !preventAutoSkinSet)
-			reloadSkin(true);
+		if (id != value && !preventAutoStyleSet)
+			reloadStyle(true);
 		return id = value;
 	}
 	/**
@@ -35,15 +35,15 @@ class Note extends NovaSprite {
 	 */
 	public var time:Float;
 	/**
-	 * The skin the note will use.
+	 * The style the note will use.
 	 */
-	public var skin(default, set):String;
-	inline function set_skin(value:String):String {
-		if (skin != value && !preventAutoSkinSet)
-			reloadSkin(value, true);
-		return skin = value;
+	public var style(default, set):String;
+	inline function set_style(value:String):String {
+		if (style != value && !preventAutoStyleSet)
+			reloadStyle(value, true);
+		return style = value;
 	}
-	var skinMeta:NoteSkin;
+	var styleMeta:NoteStyle;
 
 	/**
 	 * The scroll speed of this note.
@@ -104,8 +104,8 @@ class Note extends NovaSprite {
 		this.parent = parent;
 		this.id = id;
 		this.time = time;
-		skin = parentStrum.skin ?? parent.skin;
-		preventAutoSkinSet = false;
+		style = null;
+		preventAutoStyleSet = false;
 
 		final stepLengthMs:Float = flixel.addons.sound.FlxRhythmConductorUtil.getStepLengthMs(flixel.addons.sound.FlxRhythmConductor.instance.getCurrentTimeChangeBPMAccurate(time));
 		final roundedLength:Int = Math.round(tailLength / stepLengthMs);
@@ -114,32 +114,32 @@ class Note extends NovaSprite {
 				tail.push(new Sustain(this, (stepLengthMs * susNote), susNote == (roundedLength - 1)));
 			tail.sort(sortTail);
 		}
-		reloadSkin(true);
+		reloadStyle(true);
 
 		setGraphicSize(swagWidth);
 		scale.scale(parent.strumScale);
 		updateHitbox();
 	}
 
-	public function reloadSkin(?skin:String, effectTail:Bool = false):Void {
+	public function reloadStyle(?style:String, effectTail:Bool = false):Void {
 		this.anims.clear();
 		animation.destroyAnimations();
-		final skin:String = skin ?? this.skin ?? parentStrum.skin ?? parent.skin ?? 'default';
-		this.skinMeta = NoteSkinRegistry.getNoteSkinByID(skin);
-		loadSprite(skinMeta.getNoteAssetPath());
-		for (data in skinMeta.getNoteAnimations(id, parent.keyCount))
+		final style:String = style ?? this.style ?? parentStrum.style ?? parent.noteStyle ?? 'default';
+		this.styleMeta = NoteStyleRegistry.getNoteStyleByID(style);
+		loadSprite(styleMeta.getNoteAssetPath());
+		for (data in styleMeta.getNoteAnimations(id, parent.keyCount))
 			addAnimFromData(data);
-		var lol:Array<Float> = skinMeta.getNoteOffsets();
+		var lol:Array<Float> = styleMeta.getNoteOffsets();
 		globalOffset.set(lol[0], lol[1]);
-		this.antialiasing = skinMeta.isNotePixel();
-		if (effectTail) for (sustain in tail) sustain.reloadSkin(skin);
+		this.antialiasing = styleMeta.isNotePixel();
+		if (effectTail) for (sustain in tail) sustain.reloadStyle(style);
 
 		playAnim('note', true);
-		final daScale:Float = skinMeta.noteProperties.scale;
+		final daScale:Float = styleMeta.noteProperties.scale;
 		scale.set(daScale, daScale);
 		scale.scale(parent.strumScale);
-		updateHitbox(); alpha = skinMeta.noteProperties.alpha;
-		blend = skinMeta.noteProperties.blendMode;
+		updateHitbox(); alpha = styleMeta.noteProperties.alpha;
+		blend = styleMeta.noteProperties.blendMode;
 	}
 
 	override public function draw():Void {

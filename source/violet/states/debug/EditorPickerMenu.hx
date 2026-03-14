@@ -1,7 +1,7 @@
 package violet.states.debug;
 
-import violet.states.editors.StageEditorState;
 import violet.backend.EditorListBackend.EditorListOption;
+import violet.states.editors.StageEditorState;
 
 class EditorPickerMenu extends violet.backend.EditorListBackend {
 
@@ -17,7 +17,7 @@ class EditorPickerMenu extends violet.backend.EditorListBackend {
         { title: "Chart Editor", disabled: true },
         { title: "Stage Editor", disabled: false },
         { title: "Level Editor", disabled: true },
-        { title: "Note Skin Editor", disabled: true },
+        { title: "Note Style Editor", disabled: true },
         { title: "Character Editor", disabled: true }
     ];
 

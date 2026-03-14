@@ -2,8 +2,8 @@ package violet.backend.objects.play;
 
 import flixel.math.FlxRect;
 import violet.backend.audio.Conductor;
-import violet.data.noteskin.NoteSkin;
-import violet.data.noteskin.NoteSkinRegistry;
+import violet.data.notestyles.NoteStyle;
+import violet.data.notestyles.NoteStyleRegistry;
 
 class Sustain extends NovaSprite {
 	/**
@@ -24,7 +24,7 @@ class Sustain extends NovaSprite {
 		return parentNote.parentStrum;
 
 	@:allow(violet.backend.objects.play.Note)
-	var preventAutoSkinSet:Bool = true;
+	var preventAutoStyleSet:Bool = true;
 	/**
 	 * The direction id of the sustain.
 	 */
@@ -36,12 +36,12 @@ class Sustain extends NovaSprite {
 	 */
 	public var time:Float;
 	/**
-	 * The skin the sustain will use.
+	 * The style the sustain will use.
 	 */
-	public var skin(get, set):String;
-	inline function get_skin():String return parentNote.skin;
-	inline function set_skin(value:String):String return parentNote.skin = value;
-	var skinMeta:NoteSkin;
+	public var style(get, set):String;
+	inline function get_style():String return parentNote.style;
+	inline function set_style(value:String):String return parentNote.style = value;
+	var styleMeta:NoteStyle;
 
 	/**
 	 * States if this is the end piece of a sustain tail.
@@ -97,23 +97,23 @@ class Sustain extends NovaSprite {
 		updateHitbox();
 	}
 
-	public function reloadSkin(?skin:String):Void {
+	public function reloadStyle(?style:String):Void {
 		this.anims.clear();
 		animation.destroyAnimations();
-		final skin:String = skin ?? this.skin ?? parentNote.skin ?? parentStrum.skin ?? parent.skin ?? 'default';
-		this.skinMeta = NoteSkinRegistry.getNoteSkinByID(skin);
-		loadSprite(skinMeta.getSustainAssetPath());
-		for (data in skinMeta.getSustainAnimations(id, parent.keyCount))
+		final style:String = style ?? this.style ?? parentNote.style ?? parentStrum.style ?? parent.noteStyle ?? 'default';
+		this.styleMeta = NoteStyleRegistry.getNoteStyleByID(style);
+		loadSprite(styleMeta.getSustainAssetPath());
+		for (data in styleMeta.getSustainAnimations(id, parent.keyCount))
 			addAnimFromData(data);
-		var lol:Array<Float> = skinMeta.getSustainOffsets();
+		var lol:Array<Float> = styleMeta.getSustainOffsets();
 		globalOffset.set(lol[0], lol[1]);
-		this.antialiasing = skinMeta.isSustainPixel();
+		this.antialiasing = styleMeta.isSustainPixel();
 
 		playAnim(isEnd ? 'end' : 'tail', true);
-		final daScale:Float = skinMeta.sustainProperties.scale * parent.strumScale;
+		final daScale:Float = styleMeta.sustainProperties.scale * parent.strumScale;
 		scale.set(daScale, isEnd ? daScale : scale.y);
-		updateHitbox(); alpha = skinMeta.sustainProperties.alpha;
-		blend = skinMeta.sustainProperties.blendMode;
+		updateHitbox(); alpha = styleMeta.sustainProperties.alpha;
+		blend = styleMeta.sustainProperties.blendMode;
 	}
 
 	override public function draw():Void {

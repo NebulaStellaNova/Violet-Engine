@@ -78,11 +78,11 @@ class StrumLine extends FlxGroup {
 	public var strumScale:Float;
 	public var strumSpacing:Float;
 
-	public var skin(default, set):String;
-	function set_skin(value:String):String {
-		skin = value;
-		for (strum in strums) strum.skin = value;
-		for (note in notes) note.skin = value;
+	public var noteStyle(default, set):String;
+	function set_noteStyle(value:String):String {
+		noteStyle = value;
+		for (strum in strums) if (strum.style == null) strum.reloadStyle(value);
+		for (note in notes) if (note.style == null) note.reloadStyle(value, true);
 		return value;
 	}
 
@@ -96,19 +96,19 @@ class StrumLine extends FlxGroup {
 
 		scale = new FlxCallbackPoint((point) -> @:privateAccess {
 			for (strum in strums) {
-				final daScale:Float = strum.skinMeta.strumProperties.scale;
+				final daScale:Float = strum.styleMeta.strumProperties.scale;
 				strum.scale.set(daScale, daScale);
 				strum.scale.scale(strumScale);
 				strum.updateHitbox();
 			}
 			for (note in notes) {
-				final daScale:Float = note.skinMeta.noteProperties.scale;
+				final daScale:Float = note.styleMeta.noteProperties.scale;
 				note.scale.set(daScale, daScale);
 				note.scale.scale(strumScale);
 				note.updateHitbox();
 			}
 			for (sustain in sustains) {
-				final daScale:Float = sustain.skinMeta.sustainProperties.scale * strumScale;
+				final daScale:Float = sustain.styleMeta.sustainProperties.scale * strumScale;
 				sustain.scale.set(daScale, sustain.isEnd ? daScale : sustain.scale.y);
 				sustain.updateHitbox();
 			}
@@ -137,7 +137,7 @@ class StrumLine extends FlxGroup {
 		else */ if (chartData.vocalsSuffix == null) vocals = Conductor.addAdditionalTrack(new FlxSound());
 		else vocals = Conductor.addAdditionalTrack(FlxG.sound.load(Cache.sound(Paths.vocal(PlayState.song, chartData.vocalsSuffix, PlayState.variation), 'root', null, true), FlxG.sound.defaultMusicGroup));
 
-		skin = 'default'; // chartData.skin;
+		noteStyle = 'default'; // chartData.noteStyle;
 	}
 
 	public function setPosition(x:Float = 0, y:Float = 0, purePos:Bool = true):Void {

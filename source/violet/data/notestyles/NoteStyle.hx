@@ -1,53 +1,44 @@
-package violet.data.noteskin;
+package violet.data.notestyles;
 
 import openfl.display.BlendMode;
 import violet.data.animation.NoteAnimationData;
-import violet.data.noteskin.NoteSkinData.NoteSkinProperties;
+import violet.data.notestyles.NoteStyleData.NoteStyleProperties;
 
-class _NoteSkinProperties {
-	final part:NoteSkinProperties;
-	final base:NoteSkinProperties;
-	final defaults:NoteSkinProperties;
+class _NoteStyleProperties {
 
-	public var scale(get, never):Float;
-	function get_scale():Float
-		return part?.scale ?? base?.scale ?? defaults?.scale ?? 1;
+	public final scale:Float;
+	public final alpha:Float;
+	public final blendMode:BlendMode;
 
-	public var alpha(get, never):Float;
-	function get_alpha():Float
-		return part?.alpha ?? base?.alpha ?? defaults?.alpha ?? 1;
-
-	public var blendMode(get, never):BlendMode;
-	function get_blendMode():BlendMode
-		return part?.blendMode ?? base?.blendMode ?? defaults?.blendMode ?? 'normal';
-
-	public function new(part:NoteSkinProperties, base:NoteSkinProperties, ?defaults:NoteSkinProperties) {
-		this.part = part;
-		this.base = base;
-		this.defaults = defaults;
+	public function new(part:NoteStyleProperties, base:NoteStyleProperties, ?defaults:NoteStyleProperties) {
+		scale = part?.scale ?? base?.scale ?? defaults?.scale ?? 1;
+		alpha = part?.alpha ?? base?.alpha ?? defaults?.alpha ?? 1;
+		final toBeSafe:BlendMode = part?.blendMode ?? base?.blendMode ?? defaults?.blendMode ?? 'normal';
+		blendMode = toBeSafe ?? NORMAL; // jic its null
 	}
+
 }
 
-class NoteSkin {
+class NoteStyle {
 
 	public var id:String;
-	public var _data:NoteSkinData;
+	public var _data:NoteStyleData;
 
-	public var fallback(get, never):NoteSkin;
-	function get_fallback():NoteSkin {
+	public var fallback(get, never):NoteStyle;
+	function get_fallback():NoteStyle {
 		if (_data == null || getFallbackID() == null) return null;
-		return NoteSkinRegistry.getNoteSkinByID(getFallbackID());
+		return NoteStyleRegistry.getNoteStyleByID(getFallbackID());
 	}
 
 	public function new(id:String) {
 		this.id = id;
-		this._data = NoteSkinRegistry.noteSkinDatas.get(id) ?? NoteSkinRegistry.getDefaultNoteSkinData();
+		this._data = NoteStyleRegistry.noteStyleDatas.get(id) ?? NoteStyleRegistry.getDefaultNoteStyleData();
 
-		strumProperties = new _NoteSkinProperties(_data.strums?.properties, _data?.properties, {scale: 0.7});
-		noteProperties = new _NoteSkinProperties(_data.notes?.properties, _data?.properties, {scale: 0.7});
-		sustainProperties = new _NoteSkinProperties(_data.sustains?.properties, _data?.properties, {scale: 0.7});
-		splashProperties = new _NoteSkinProperties(_data?.splashes?.properties, _data?.properties);
-		holdCoverProperties = new _NoteSkinProperties(_data?.holdcovers?.properties, _data?.properties);
+		strumProperties = new _NoteStyleProperties(_data.strums?.properties, _data?.properties, {scale: 0.7});
+		noteProperties = new _NoteStyleProperties(_data.notes?.properties, _data?.properties, {scale: 0.7});
+		sustainProperties = new _NoteStyleProperties(_data.sustains?.properties, _data?.properties, {scale: 0.7});
+		splashProperties = new _NoteStyleProperties(_data?.splashes?.properties, _data?.properties);
+		holdCoverProperties = new _NoteStyleProperties(_data?.holdcovers?.properties, _data?.properties);
 	}
 
 	public function getName():String {
@@ -58,11 +49,11 @@ class NoteSkin {
 		return _data.fallback;
 	}
 
-	public final strumProperties:_NoteSkinProperties;
-	public final noteProperties:_NoteSkinProperties;
-	public final sustainProperties:_NoteSkinProperties;
-	public final splashProperties:_NoteSkinProperties;
-	public final holdCoverProperties:_NoteSkinProperties;
+	public final strumProperties:_NoteStyleProperties;
+	public final noteProperties:_NoteStyleProperties;
+	public final sustainProperties:_NoteStyleProperties;
+	public final splashProperties:_NoteStyleProperties;
+	public final holdCoverProperties:_NoteStyleProperties;
 
 	public function isStrumPixel():Bool {
 		return !(_data.strums?.isPixel ?? _data?.isPixel ?? false);
@@ -108,7 +99,7 @@ class NoteSkin {
 
 	public function getStrumAssetPath():String {
 		var path:String;
-		function recursion(data:NoteSkinData):Bool {
+		function recursion(data:NoteStyleData):Bool {
 			path = Paths.image('game/notes/$id/${data.strums?.assetPath ?? data?.assetPath ?? 'strums'}');
 			return Paths.fileExists(path, true);
 		}
@@ -118,7 +109,7 @@ class NoteSkin {
 	}
 	public function getNoteAssetPath():String {
 		var path:String;
-		function recursion(data:NoteSkinData):Bool {
+		function recursion(data:NoteStyleData):Bool {
 			path = Paths.image('game/notes/$id/${data.notes?.assetPath ?? data?.assetPath ?? 'notes'}');
 			return Paths.fileExists(path, true);
 		}
@@ -128,7 +119,7 @@ class NoteSkin {
 	}
 	public function getSustainAssetPath():String {
 		var path:String;
-		function recursion(data:NoteSkinData):Bool {
+		function recursion(data:NoteStyleData):Bool {
 			path = Paths.image('game/notes/$id/${data.sustains?.assetPath ?? data?.assetPath ?? 'sustains'}');
 			return Paths.fileExists(path, true);
 		}
@@ -138,7 +129,7 @@ class NoteSkin {
 	}
 	public function getSplashAssetPath():String {
 		var path:String;
-		function recursion(data:NoteSkinData):Bool {
+		function recursion(data:NoteStyleData):Bool {
 			path = Paths.image('game/notes/$id/${data?.splashes?.assetPath ?? data?.assetPath ?? 'splashes'}');
 			return Paths.fileExists(path, true);
 		}
@@ -148,7 +139,7 @@ class NoteSkin {
 	}
 	public function getHoldCoverAssetPath():String {
 		var path:String;
-		function recursion(data:NoteSkinData):Bool {
+		function recursion(data:NoteStyleData):Bool {
 			path = Paths.image('game/notes/$id/${data?.holdcovers?.assetPath ?? data?.assetPath ?? 'holdcovers'}');
 			return Paths.fileExists(path, true);
 		}

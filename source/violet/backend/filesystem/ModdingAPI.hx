@@ -2,10 +2,10 @@ package violet.backend.filesystem;
 import violet.backend.utils.NovaUtils;
 #if MOD_SUPPORT
 
-import violet.backend.utils.FileUtil;
 import thx.semver.Version;
-import violet.backend.utils.ParseUtil;
 import violet.backend.scripting.ScriptPack;
+import violet.backend.utils.FileUtil;
+import violet.backend.utils.ParseUtil;
 
 typedef ModContributor = {
 	var name:String;
@@ -113,7 +113,7 @@ class ModdingAPI {
 		trace('debug:<magenta>${registered ? "Reloading" : "Initializing"} Registries...');
 		NovaUtils.CURRENT_MUSIC = null;
 		registered = true;
-		violet.data.noteskin.NoteSkinRegistry.registerNoteSkins();
+		violet.data.notestyles.NoteStyleRegistry.registerNoteStyles();
 		violet.data.level.LevelRegistry.registerLevels();
 		violet.data.song.SongRegistry.registerSongs();
 		violet.data.stage.StageRegistry.registerStages();
