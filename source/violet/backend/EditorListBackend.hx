@@ -24,6 +24,10 @@ class EditorListBackend extends violet.backend.SubStateBackend {
 
     public var debugCurSelected:Int = 0;
 
+    var bold:Bool = true;
+
+    var loadBG:Bool = false;
+
     var exitScrollY:Float = 0;
 
     var subCamera:FlxCamera;
@@ -33,10 +37,12 @@ class EditorListBackend extends violet.backend.SubStateBackend {
     var descriptionTxt:FlxText;
     var descriptionBox:NovaSprite;
 
-    override public function new(?options:Array<EditorListOption>) {
+    override public function new(?options:Array<EditorListOption>, loadBG:Bool = false, bold:Bool = true) {
         super();
         options ??= [];
         this.options = options;
+        this.loadBG = loadBG;
+        this.bold = bold;
     }
 
     override function create() {
@@ -56,17 +62,19 @@ class EditorListBackend extends violet.backend.SubStateBackend {
         FlxG.state.persistentUpdate = false;
 
         var offset = (options.length-1) * 100;
-		bg = new NovaSprite(Paths.image("menus/mainmenu/menuBGdesat"));
-		bg.setGraphicSize(FlxG.width + offset, FlxG.height + offset);
-        bg.updateHitbox();
-        bg.screenCenter();
-        bg.camera = subCamera;
-        bg.scrollFactor.set(0, 1/(options.length-1));
-        bg.color = FlxColor.interpolate(FlxColor.CYAN, FlxColor.BLUE);
-        add(bg);
+        if (loadBG) {
+            bg = new NovaSprite(Paths.image("menus/mainmenu/menuBGdesat"));
+            bg.setGraphicSize(FlxG.width + offset, FlxG.height + offset);
+            bg.updateHitbox();
+            bg.screenCenter();
+            bg.camera = subCamera;
+            bg.scrollFactor.set(0, 1/(options.length-1));
+            bg.color = FlxColor.interpolate(FlxColor.CYAN, FlxColor.BLUE);
+            add(bg);
+        }
 
         for (i=>data in options) {
-            var option:Alphabet = new Alphabet(data.title);
+            var option:Alphabet = new Alphabet(data.title, bold);
             option.camera = subCamera;
             option.screenCenter();
             option.y += i * 100;

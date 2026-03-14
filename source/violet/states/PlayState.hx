@@ -43,6 +43,7 @@ class PlayState extends violet.backend.StateBackend {
 	public static var playlist:Array<String> = [];
 	public static var doFadeOut:Bool = false;
 	public static var hasSeenCutscene:Bool = false;
+	public static var isStoryMode:Bool = false;
 
 	public var inCutscene = false;
 

@@ -8,6 +8,7 @@ public var cutsceneLoop;
 var timers = [];
 
 function postCreate() {
+    if (PlayState.hasSeenCutscene || !PlayState.isStoryMode) return;
     camHUD.alpha = 0;
 }
 
@@ -16,7 +17,7 @@ function wait(duration, callback) {
 }
 
 function onStartCountdown(event) {
-    if (PlayState.hasSeenCutscene) return;
+    if (PlayState.hasSeenCutscene || !PlayState.isStoryMode) return;
     inCutscene = true;
     event.cancel();
 
@@ -89,7 +90,7 @@ function onStartCountdown(event) {
 }
 
 function pauseCutscene() {
-    if (PlayState.hasSeenCutscene) return;
+    if (PlayState.hasSeenCutscene || !PlayState.isStoryMode) return;
     for (i in timers) i.active = false;
     currentAudio.pause();
     cutsceneLoop.pause();
@@ -97,16 +98,16 @@ function pauseCutscene() {
 }
 
 function resumeCutscene() {
-    if (PlayState.hasSeenCutscene) return;
+    if (PlayState.hasSeenCutscene || !PlayState.isStoryMode) return;
     for (i in timers) i.active = true;
     currentAudio.resume();
     cutsceneLoop.resume();
 }
 
 function postUpdate(elapsed:Float) {
+    if (PlayState.hasSeenCutscene || !PlayState.isStoryMode) return;
     // camGame.zoom = 0.2;
-    if (!PlayState.hasSeenCutscene)
-        strumLines.members[0].characters[0].visible = false;
+    strumLines.members[0].characters[0].visible = false;
 }
 
 function onSkipCutscene() {

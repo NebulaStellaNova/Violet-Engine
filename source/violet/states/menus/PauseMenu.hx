@@ -62,15 +62,12 @@ class PauseMenu extends EditorListBackend {
         showLocks = false;
         super.create();
 
-        bg.alpha = 0;
-
         FlxTween.num(0, 0.6, 0.5, { ease: FlxEase.sineOut }, (v)->{ subCamera.bgColor.alphaFloat = v; });
 
         FlxG.state.persistentUpdate = false;
         FlxG.state.persistentDraw = true;
 
         Conductor.pause();
-
 
         for (i=>item in items) {
             item.y = (160 * i) + 30;

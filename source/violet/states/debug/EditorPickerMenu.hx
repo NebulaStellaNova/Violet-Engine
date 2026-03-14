@@ -23,6 +23,6 @@ class EditorPickerMenu extends violet.backend.EditorListBackend {
 
     override public function new() {
         editorOptions[1].onClick ??= openStageEditor;
-        super(editorOptions);
+        super(editorOptions, true);
     }
 }
