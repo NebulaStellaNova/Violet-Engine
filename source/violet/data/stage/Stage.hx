@@ -106,7 +106,6 @@ class Stage extends flixel.group.FlxGroup {
     }
 
     public function applyProperties(object:FlxBasic, array:Dynamic) {
-        trace(Reflect.fields(array));
         for (i in Reflect.fields(array)) {
             Reflect.setProperty(object, i, Reflect.field(array, i));
         }

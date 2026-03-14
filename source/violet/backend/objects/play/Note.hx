@@ -114,10 +114,10 @@ class Note extends NovaSprite {
 				tail.push(new Sustain(this, (stepLengthMs * susNote), susNote == (roundedLength - 1)));
 			tail.sort(sortTail);
 		}
-		reloadStyle(true);
 
 		setGraphicSize(swagWidth);
 		scale.scale(parent.strumScale);
+		reloadStyle(true);
 		updateHitbox();
 	}
 
