@@ -4,6 +4,12 @@ import flixel.util.FlxAxes;
 import flixel.math.FlxPoint;
 
 class Alphabet extends flixel.group.FlxGroup {
+
+    public static var characterOffsets:Map<String, Array<Float>> = [
+        "." => [0, 38]
+    ];
+    public static var boldCharacterOffsets:Map<String, Array<Float>> = [];
+
     public static var xmlNames:Map<String, String> = [
         // -- Letters -- \\
         "a" => "a", "b" => "b", "c" => "c",
@@ -120,7 +126,7 @@ class Alphabet extends flixel.group.FlxGroup {
             var letter = new NovaSprite(xPos + x, y, Paths.image('alphabet/english-${bold ? 'bold' : 'regular'}'));
             letter.antialiasing = true;
             var animationName:String = 'character-' + ((useAlt && xmlNamesAlt.exists(i)) ? xmlNamesAlt.get(i) : xmlNames.get(i)) + (xmlNamesAlt.exists(i) ? "0" : "");
-            letter.addAnim("idle", animationName, 24, true); // Rodney please look into this just not looping, unless it's like, not getting frames right or sum.
+            letter.addAnim("idle", animationName, null, (bold ? boldCharacterOffsets.get(i) : characterOffsets.get(i)) ?? [0, 0], 24, true); // Rodney please look into this just not looping, unless it's like, not getting frames right or sum.
             letter.playAnim("idle", true);
             letter.scale.set(scaleX, scaleY);
             letter.updateHitbox();
