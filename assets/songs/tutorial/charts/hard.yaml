@@ -1,5 +1,6 @@
 events: []
 codenameChart: true
+stage: mainStage
 strumLines:
   - keyCount: 4
     position: girlfriend

@@ -496,6 +496,6 @@ strumLines:
     visible: false
 scrollSpeed: 1
 chartVersion: 1.6.0
-stage: stage
+stage: mainStage
 noteTypes:
   - No Anim Note

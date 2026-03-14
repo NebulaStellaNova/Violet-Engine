@@ -1,4 +1,5 @@
 events: []
+stage: mainStage
 strumLines:
   - visible: true
     keyCount: 4

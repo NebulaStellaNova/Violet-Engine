@@ -1,5 +1,6 @@
 events: []
 codenameChart: true
+stage: mainStage
 scrollSpeed: 1
 strumLines:
   - keyCount: 4

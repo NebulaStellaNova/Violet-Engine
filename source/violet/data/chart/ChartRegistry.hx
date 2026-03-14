@@ -46,6 +46,7 @@ class ChartRegistry {
 		if (chartDatas.exists(id)) return chartDatas.get(id);
 
 		var data = ChartConverters.convertChart(chartCache.get(id));
+		data.stage ??= "mainStage"; // Prevent bug where if no stage is assigned it will load all stage's scripts.
 		chartDatas.set(id, data);
 		return data;
 	}

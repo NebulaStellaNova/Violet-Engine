@@ -1,4 +1,5 @@
 events: []
+stage: mainStage
 strumLines:
   - keyCount: 4
     position: dad

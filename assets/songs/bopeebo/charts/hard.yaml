@@ -520,6 +520,6 @@ strumLines:
 codenameChart: true
 scrollSpeed: 1.3
 chartVersion: 1.6.0
-stage: stage
+stage: mainStage
 noteTypes:
   - No Anim Note
