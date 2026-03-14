@@ -65,13 +65,13 @@ class StrumLine extends FlxGroup {
 
 	public var x(default, set):Float;
 	function set_x(value:Float):Float {
-		setPosition(x = value, y);
-		return x;
+		setPosition(value, y);
+		return value;
 	}
 	public var y(default, set):Float;
 	function set_y(value:Float):Float {
-		setPosition(x, y = value);
-		return y;
+		setPosition(x, value);
+		return value;
 	}
 	public final scale:FlxCallbackPoint;
 
@@ -141,6 +141,7 @@ class StrumLine extends FlxGroup {
 	}
 
 	public function setPosition(x:Float = 0, y:Float = 0, purePos:Bool = true):Void {
+		@:bypassAccessor { this.x = purePos ? x : getDefaultCamera().width * x; this.y = y; }
 		for (i => strum in strums) {
 			var _x:Float = x;
 			if (!purePos) _x = (getDefaultCamera().width * x) - ((Note.swagWidth * strumScale * (keyCount / 2) - 0.5 * strumSpacing) + Note.swagWidth * 0.5 * strumScale);
