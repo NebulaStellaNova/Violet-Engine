@@ -51,9 +51,10 @@ class NovaUtils {
 		return FlxG.sound.play(Cache.sound(path), volume);
 	}
 
-	public static function playMusic(path:String, volume:Float = 1, folder:String = 'music'):FlxSound {
-		var musicPath:Array<String> = path.split('/');
+	public static function playMusic(path:String, volume:Float = 1, folder:String = 'music', force:Bool = true):FlxSound {
+		if (path == CURRENT_MUSIC && !force) return FlxG.sound.music;
 		CURRENT_MUSIC = path;
+		var musicPath:Array<String> = path.split('/');
 		if (folder == 'music')
 			musicPath.insert(musicPath.length - 2, Path.withoutExtension(musicPath[musicPath.length - 1]));
 		var metaData = null;

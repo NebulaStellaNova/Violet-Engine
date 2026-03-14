@@ -1,5 +1,6 @@
 package violet.states.menus;
 
+import violet.backend.audio.Conductor;
 import violet.backend.options.Options;
 import flixel.FlxCamera;
 import flixel.math.FlxMath;
@@ -256,7 +257,7 @@ class FreeplayMenu extends SubStateBackend {
 	}
 
 	function playInst() {
-		var inst = Paths.inst(songs[curSelectedSong].id);
+		var inst = '${songs[curSelectedSong].id}/song/Inst';
 		instTimer.cancel();
 
 		if (inst == prevInst)
@@ -264,7 +265,9 @@ class FreeplayMenu extends SubStateBackend {
 
 		instTimer = new FlxTimer().start(0.8, (_) -> {
 			prevInst = inst;
-			FlxG.sound.playMusic(inst, 0.8);
+			Conductor.playSong(songs[curSelectedSong].id);
+			Conductor.instrumental.volume = 0.8;
+			Conductor.instrumental.looped = true;
 		});
 	}
 
