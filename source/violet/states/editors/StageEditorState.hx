@@ -1,13 +1,8 @@
 package violet.states.editors;
 
 import violet.backend.utils.ParseUtil;
-import lemonui.utils.ComponentUtil;
-import lemonui.elements.MenuBar;
-import lemonui.elements.MenuItem;
+// import lemonui.utils.ComponentUtil;
 import violet.backend.StateBackend;
-
-import lemonui.elements.Button;
-import lemonui.elements.Menu;
 
 class StageEditorState extends StateBackend {
     public function new() {
@@ -17,8 +12,8 @@ class StageEditorState extends StateBackend {
 		bg.setGraphicSize(FlxG.width, FlxG.height);
         add(bg);
 
-        var menuBar = ComponentUtil.buildFromObject(ParseUtil.jsonOrYaml("data/ui/stage-editor/menubar"));
-        add(menuBar);
+        /* var menuBar = ComponentUtil.buildFromObject(ParseUtil.jsonOrYaml("data/ui/stage-editor/menubar"));
+        add(menuBar); */
         /* var menuBar = new MenuBar();
         add(menuBar);
 
