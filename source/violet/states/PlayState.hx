@@ -291,7 +291,7 @@ class PlayState extends violet.backend.StateBackend {
 			}
 		}
 
-		if (health == 0) {
+		if (health == 0 || Controls.reset) {
 			FlxG.switchState(new GameOverState(strumLines.members[1].characters[0]));
 		}
 

@@ -1,19 +1,19 @@
 package violet.states.editors;
 
 import violet.backend.utils.ParseUtil;
-// import lemonui.utils.ComponentUtil;
+import lemonui.utils.ComponentUtil;
 import violet.backend.StateBackend;
 
 class StageEditorState extends StateBackend {
     public function new() {
         super();
 
-        // var bg = new NovaSprite(Paths.image("menus/mainmenu/menuBGdesat"));
-		// bg.setGraphicSize(FlxG.width, FlxG.height);
-        // add(bg);
+        var bg = new NovaSprite(Paths.image("menus/mainmenu/menuBGdesat"));
+		bg.setGraphicSize(FlxG.width, FlxG.height);
+        add(bg);
 
-        // var menuBar = ComponentUtil.buildFromObject(ParseUtil.jsonOrYaml("data/ui/stage-editor/menubar"));
-        // add(menuBar);
+        var menuBar = ComponentUtil.buildFromObject(ParseUtil.jsonOrYaml("data/ui/stage-editor/menubar"));
+        add(menuBar);
         /* var menuBar = new MenuBar();
         add(menuBar);
 
