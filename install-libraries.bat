@@ -1,4 +1,5 @@
 mkdir .haxelib
+haxelib --global update haxelib
 haxelib fixrepo
 @REM INSTALL HAXELIB LIBS
 haxelib install flixel
