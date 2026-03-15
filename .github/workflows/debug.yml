@@ -88,10 +88,9 @@ jobs:
             export/debug/windows/obj/
           restore-keys: windows-debug-cache
 
-  # mac:
   # android:
   #   permissions: write-all
-  #   runs-on: windows-latest
+  #   runs-on: android-latest
 
   #   steps:
   #     - name: Checking Latest Commit
@@ -108,12 +107,12 @@ jobs:
   #       uses: actions/cache@v4.3.0
   #       with:
   #         # not caching the bin folder to prevent asset duplication and stuff like that
-  #         key: windows-debug-cache
+  #         key: android-debug-cache
   #         path: |
   #           .haxelib/
-  #           export/debug/windows/haxe/
-  #           export/debug/windows/obj/
-  #         restore-keys: windows-debug-cache
+  #           export/debug/android/haxe/
+  #           export/debug/android/obj/
+  #         restore-keys: android-debug-cache
 
   #     - name: Install Libraries
   #       run: .\"install-libraries.bat"
@@ -145,7 +144,7 @@ jobs:
   #             repo: context.repo.repo,
   #           })
   #           for (const cache of caches.data.actions_caches) {
-  #             if (cache.key == 'windows-debug-cache') {
+  #             if (cache.key == 'android-debug-cache') {
   #               console.log('Clearing ' + cache.key + '...')
   #               await github.rest.actions.deleteActionsCacheById({
   #                 owner: context.repo.owner,
@@ -160,12 +159,12 @@ jobs:
   #       uses: actions/cache@v4.3.0
   #       with:
   #         # not caching the bin folder to prevent asset duplication and stuff like that
-  #         key: windows-debug-cache
+  #         key: android-debug-cache
   #         path: |
   #           .haxelib/
-  #           export/debug/windows/haxe/
-  #           export/debug/windows/obj/
-  #         restore-keys: windows-debug-cache
+  #           export/debug/android/haxe/
+  #           export/debug/android/obj/
+  #         restore-keys: android-debug-cache
 
   # mac:
   #   permissions: write-all
