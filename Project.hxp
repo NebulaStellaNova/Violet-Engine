@@ -4,6 +4,7 @@ import sys.io.Process;
 import hxp.*;
 import lime.tools.*;
 
+import haxe.xml.Printer;
 using StringTools;
 
 class EngineAsset {
@@ -146,6 +147,8 @@ class Project extends HXProject {
 			error('Hey this engine only works on desktop and mobile devices!');
 			return;
 		}
+
+		if (isAndroid()) setupAndroid();
 
 		if (FileSystem.exists('./.haxelib'))
 			setenv('HAXEPATH', './.haxelib');
@@ -295,6 +298,19 @@ class Project extends HXProject {
 			asset.library = setAsset.library ?? 'default';
 			assets.push(asset);
 		}
+	}
+
+	inline public function setupAndroid() {
+		var androidConfig = config.get("android");
+		var perms:Array<String> = androidConfig.exists("permission") ?
+			androidConfig.get("permission") : [];
+
+		perms.push("android.permission.READ_EXTERNAL_STORAGE");
+		perms.push("android.permission.WRITE_EXTERNAL_STORAGE");
+
+		androidConfig.set("permission", perms);
+
+		androidConfig.set("requestLegacyExternalStorage", "true");
 	}
 
 	/**

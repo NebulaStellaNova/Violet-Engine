@@ -148,9 +148,9 @@ class Conductor {
 	}
 
 	public static function pause():Void {
-		instrumental.pause();
+		instrumental?.pause();
 		for (track in additionalTracks)
-			track.pause();
+			track?.pause();
 	}
 	public static function play(forceRestart:Bool = false, startTime:Float = 0.0):Void {
 		instrumental.play(forceRestart, startTime);

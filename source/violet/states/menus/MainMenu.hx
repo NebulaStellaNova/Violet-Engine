@@ -78,6 +78,12 @@ class MainMenu extends StateBackend {
 
 		menuData = ParseUtil.json("data/config/menuData");
 
+		#if mobile
+		for (i in menuData.items) {
+			if (id == mods) menuData.items.remove(id);
+		}
+		#end
+
 		var mult:Float = 1/(menuData.items.length);
 		bg = new NovaSprite(Paths.image(menuData.directory + "/" + menuData.background));
 		bg.setGraphicSize(FlxG.width, FlxG.height);

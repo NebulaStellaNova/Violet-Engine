@@ -51,7 +51,7 @@ class ModdingAPI {
 	public static var STATE_PATHS = ['data/scripts/states'];
 
 	public static function init():Void {
-		trace("debug:<yellow>Initializing Modding System...");
+		trace('debug:<yellow>Initializing Modding System...');
 		FlxG.save.data.registeredModIds ??= [];
 		FlxG.save.data.enabledModIds ??= [];
 		@:bypassAccessor availableMods = [
