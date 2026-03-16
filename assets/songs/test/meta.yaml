@@ -6,8 +6,8 @@ isDev: true
 coopAllowed: true
 color: "#9271FD"
 stepsPerBeat: 4
-displayName: test
+displayName: Test
 beatsPerMeasure: 4
 needsVoices: true
-album: expansion2
+album: volume1
 bpm: 150
