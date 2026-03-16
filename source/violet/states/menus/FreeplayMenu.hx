@@ -89,6 +89,7 @@ class FreeplayMenu extends SubStateBackend {
 		diffSprite = new GenzuSprite(0, 0, Paths.image("menus/freeplay/difficulties/easy"));
 		diffSprite.scale.set(1.3, 1.3);
 		diffSprite.camera = camHUD;
+		diffSprite.updateHitbox();
 
 		selector1 = new GenzuSprite(-250, 10, Paths.image("menus/freeplay/difficulties/selector"));
 		selector1.scale.set(1.28, 1.28);
@@ -116,7 +117,10 @@ class FreeplayMenu extends SubStateBackend {
 		ostText.camera = camHUD;
 
 		album = new Album('placeholder');
+		album.x = FlxG.width;
 		album.camera = camHUD;
+
+		diffSprite.y = selector2.y;
 
 		// Rodney don't flame gen for this I did it.
 		FlxTween.tween(backingCard, 	{ x: -160 }, 				1.0, 	{ ease: FlxEase.expoOut, startDelay: 0.0 });
@@ -124,9 +128,10 @@ class FreeplayMenu extends SubStateBackend {
 		FlxTween.tween(black, 			{ y: -175 }, 				0.6, 	{ ease: FlxEase.expoOut, startDelay: 0.2 });
 		FlxTween.tween(selector2, 		{ x: 260 }, 				0.6, 	{ ease: FlxEase.expoOut, startDelay: 0.3 });
 		FlxTween.tween(selector1, 		{ x: -130 }, 				0.6, 	{ ease: FlxEase.expoOut, startDelay: 0.4 });
-		FlxTween.tween(diffSprite, 		{ x: -13.4285714285714 }, 	0.7, 	{ ease: FlxEase.expoOut, startDelay: 0.5 });
+		FlxTween.tween(diffSprite, { x: ((-130 + 260) / 2) - (diffSprite.width / 2) + 27}, 0.7, { ease: FlxEase.expoOut, startDelay: 0.5 }); // idk mane
 		FlxTween.tween(freeplayText, 	{ y: -78 }, 				0.8, 	{ ease: FlxEase.expoOut, startDelay: 0.6 });
 		FlxTween.tween(ostText, 		{ y: -78 }, 				0.8, 	{ ease: FlxEase.expoOut, startDelay: 0.7 });
+		FlxTween.tween(album, 		    { x: 0 },            		0.8, 	{ ease: FlxEase.expoOut, startDelay: 0.7 });
 
 		songs = SongRegistry.getAllSongs().filter(song -> {
 			if (Options.data.developerMode) {
@@ -161,7 +166,6 @@ class FreeplayMenu extends SubStateBackend {
 			FlxTween.globalManager.completeAll();
 			camHUD.fade(0.5, true);
 		}
-
 
 		skipTransition = false;
 	}
@@ -287,7 +291,6 @@ class FreeplayMenu extends SubStateBackend {
 			}
 			for (i => capsule in daCapsules)
 				capsule.updateRatingForDiff(songs[i], songs[i].difficulties[FlxMath.wrap(curSelectedDiff, 0, songs[i].difficulties.length - 1)]);
-			diffSprite.y = selector1.y + (selector1.height / 2) - (diffSprite.height / 2);
 			return;
 		}
 
@@ -300,11 +303,11 @@ class FreeplayMenu extends SubStateBackend {
 					diffSprite.addAnim('idle', 'idle', 24, true);
 					diffSprite.playAnim('idle', true);
 				}
+				diffSprite.updateHitbox();
 				diffSprite.x = distance * direction * 2;
-				diffSprite.y = selector1.y + (selector1.height / 2) - (diffSprite.height / 2);
 				for (i => capsule in daCapsules)
 					capsule.updateRatingForDiff(songs[i], songs[i].difficulties[FlxMath.wrap(curSelectedDiff, 0, songs[i].difficulties.length - 1)]);
-				FlxTween.tween(diffSprite, {x: -13.4285714285714, alpha: 1}, 0.1, {ease: FlxEase.expoOut});
+				FlxTween.tween(diffSprite, {x: ((selector1.x + selector2.x) / 2) - (diffSprite.width / 2) + 27, alpha: 1}, 0.1, {ease: FlxEase.expoOut});
 			}
 		});
 
@@ -349,6 +352,7 @@ class FreeplayMenu extends SubStateBackend {
 		FlxTween.cancelTweensOf(black);
 		FlxTween.cancelTweensOf(backingImage);
 		FlxTween.cancelTweensOf(backingCard);
+		FlxTween.cancelTweensOf(album);
 
 		FlxTween.tween(ostText, {y: -150}, 0.3, {ease: FlxEase.expoIn});
 		FlxTween.tween(freeplayText, {y: -150}, 0.3, {ease: FlxEase.expoIn, startDelay: 0.1});
@@ -358,8 +362,9 @@ class FreeplayMenu extends SubStateBackend {
 		FlxTween.tween(black, {y: -300}, 0.3, {ease: FlxEase.expoIn, startDelay: 0.4});
 		FlxTween.tween(backingImage, {x: -backingImage.width - 160}, 0.3, {ease: FlxEase.expoIn, startDelay: 0.5});
 		FlxTween.tween(backingCard, {x: -backingCard.width - 160}, 0.3, {ease: FlxEase.expoIn, startDelay: 0.6});
+		FlxTween.tween(album, {x: FlxG.width}, 0.3, {ease: FlxEase.expoIn, startDelay: 0.5});
 
-		FlxTween.tween(cast(_parentState, MainMenu).bg, {x: 0}, 0.3 * 2, {ease: FlxEase.quadInOut, startDelay: 0.6});
+		FlxTween.tween(cast(_parentState, MainMenu).bg, {x: 0}, 0.3 * 2, {ease: FlxEase.quadInOut, startDelay: 0.7});
 
 		var origin = curSelectedSong - 1;
 
@@ -371,7 +376,7 @@ class FreeplayMenu extends SubStateBackend {
 				startDelay: 0.2 + (distance * 0.05)
 			});
 		}
-		new FlxTimer().start(1.1, (_) -> {
+		new FlxTimer().start(1.2, (_) -> {
 			close();
 		});
 	}
