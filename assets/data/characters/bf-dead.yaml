@@ -4,7 +4,7 @@ assetPath: characters/bf-dead
 flipX: true
 singTime: 8.0
 healthIcon: bf
-offsets: [50, 50]
+offsets: [37, 37]
 animations:
 - name: firstDeath
   prefix: BF dies
