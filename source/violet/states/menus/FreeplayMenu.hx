@@ -115,8 +115,7 @@ class FreeplayMenu extends SubStateBackend {
 		ostText.x = FlxG.width - ostText.width + 150;
 		ostText.camera = camHUD;
 
-		album = new Album('volume1');
-		album.scale.set(1.22, 1.22);
+		album = new Album('placeholder');
 		album.camera = camHUD;
 
 		// Rodney don't flame gen for this I did it.
@@ -128,7 +127,6 @@ class FreeplayMenu extends SubStateBackend {
 		FlxTween.tween(diffSprite, 		{ x: -13.4285714285714 }, 	0.7, 	{ ease: FlxEase.expoOut, startDelay: 0.5 });
 		FlxTween.tween(freeplayText, 	{ y: -78 }, 				0.8, 	{ ease: FlxEase.expoOut, startDelay: 0.6 });
 		FlxTween.tween(ostText, 		{ y: -78 }, 				0.8, 	{ ease: FlxEase.expoOut, startDelay: 0.7 });
-		// FlxTween.tween(album, 			{ x: 880 }, 				0.8, 	{ ease: FlxEase.expoOut, startDelay: 0.8 });
 
 		songs = SongRegistry.getAllSongs().filter(song -> {
 			if (Options.data.developerMode) {
@@ -303,11 +301,10 @@ class FreeplayMenu extends SubStateBackend {
 		});
 
 		updateAlbum();
-
 	}
 
 	function updateAlbum() {
-		album.setAlbum(songs[curSelectedSong]?._data?.album ?? 'volume1');
+		album.setAlbum(songs[curSelectedSong]?._data?.album ?? 'placeholder');
 		ostText.text = album?.ostText;
 		ostText.updateHitbox();
 	}
