@@ -1,5 +1,6 @@
 package violet.backend.utils;
 
+import flixel.graphics.atlas.FlxAtlas;
 import flixel.FlxCamera;
 import haxe.io.Path;
 import violet.data.Constants;
@@ -93,6 +94,6 @@ class NovaUtils {
 	}
 
 	public static function getAtlasFrames(path:String):FlxAtlasFrames {
-		return animate.FlxAnimateFrames.fromAnimate(haxe.io.Path.withoutExtension(path));
+		return animate.FlxAnimateFrames.fromAnimate(haxe.io.Path.withoutExtension(path), null, null, null, null, {}); // rodney, please look into atlases vanashing on state reload
 	}
 }

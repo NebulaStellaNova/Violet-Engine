@@ -35,7 +35,7 @@ class Character extends violet.backend.objects.Bopper {
 	public function new(x:Float = 0, y:Float = 0, id:String = 'bf', faceLeft:Bool = false) {
 		this.id = id;
 		this._data = CharacterRegistry.characterDatas.get(id) ?? CharacterRegistry.characterDatas.get('bf');
-		super(x, y, Paths.image(this._data.assetPath));
+		super(x, y, 'resources/images/${this._data.assetPath}.png'); // did this for atlases
 
 		this._data.healthIcon ??= this.id;
 
