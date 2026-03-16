@@ -98,3 +98,8 @@ animations:
     assetPath: characters/tankmanPico
     flipX: true
     name: augh
+
+  - name: ugh-cutscene
+    prefix: TANK TALK 1 P1
+    assetPath: characters/tankmanPico
+    offsets: [0, 0]

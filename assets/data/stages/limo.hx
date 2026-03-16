@@ -11,3 +11,7 @@ function onLoaded() {
     }
     trace(fastCar);
 }
+
+function update(elapsed:Float) {
+    // limoSunset.x += elapsed * 10;
+}
