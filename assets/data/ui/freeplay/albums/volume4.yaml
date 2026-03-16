@@ -1,0 +1,20 @@
+version: 1.0.0
+name: Volume 4
+artists:
+  - Kawai Sprite
+  - Saruky
+  - Lotus Juice
+  - nuphory
+  - Metaroom
+  - six impala
+  - TeraVex
+  - tsuyunoshi
+  - still crisp
+  - Saster
+  - That Andy Guy
+  - Xploshi
+albumArtAsset: menus/freeplay/albums/volume4
+albumTitleAsset: menus/freeplay/albums/volume4-text
+albumTitleOffsets:
+  - 8
+  - -7

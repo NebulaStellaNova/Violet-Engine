@@ -1,0 +1,13 @@
+opponentModeAllowed: true
+icon: bf
+difficulties:
+  - normal
+isDev: true
+coopAllowed: true
+color: "#9271FD"
+stepsPerBeat: 4
+displayName: test
+beatsPerMeasure: 4
+needsVoices: true
+album: expansion2
+bpm: 150

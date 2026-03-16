@@ -27,7 +27,6 @@ class SongRegistry {
             } else {
                 songDatas.set(songID, parsed);
                 registerSong(new Song(songID));
-
             }
         }
     }

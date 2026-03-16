@@ -13,7 +13,7 @@ class ComboGroup extends FlxSpriteGroup {
     override public function new(style:String = "funkin") {
         super();
         this.style = style;
-        for (i in Paths.readFolder('images/game/popup/$style')) new FlxSprite().loadGraphic(Paths.image('game/popup/$style/$i')); // Cache (cash NOT cashaye) sprites
+        for (i in Paths.readFolder('images/game/popup/$style')) new FlxSprite().loadGraphic(Paths.image('game/popup/$style/$i')); // Cache (cash NOT cashaye) sprites // don't listen to them rodney, you do you!!
     }
 
     public function popupRating(rating:String, combo:Int) {
