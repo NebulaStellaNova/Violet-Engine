@@ -165,11 +165,8 @@ class Conductor {
 				track.pause();
 			// setting the volume variable was NOT working so we doing pause and resume
 			else if (track.playing && instrumental.time < track.length) {
-				if (Math.abs(songPosition - track.time) > 25) {
-					track.pause();
+				if (Math.abs(songPosition - track.time) > 5)
 					track.time = songPosition;
-					track.play();
-				}
 			} else if (track.playing)
 				track.pause();
 	}
