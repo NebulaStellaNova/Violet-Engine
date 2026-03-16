@@ -56,10 +56,11 @@ class Album extends FlxSpriteGroup {
         if (textImage != null) remove(textImage);
 
         image = new GenzuSprite(Paths.image(albumArtAsset));
-        image.y -= image.height / 2;
         image.antialiasing = true;
         image.angle = 10;
         image.updateHitbox();
+        image.x -= image.width / 2;
+        image.y -= image.height / 2;
 
         textImage = new GenzuSprite(Paths.image(albumTitleAsset));
         textImage.addAnim("static", "idle", 24);
@@ -69,6 +70,7 @@ class Album extends FlxSpriteGroup {
         textImage.y += 115 + albumTitleOffsets[1];
         textImage.antialiasing = true;
         textImage.updateHitbox();
+        textImage.x -= textImage.width / 2;
 
         add(image);
         add(textImage);
