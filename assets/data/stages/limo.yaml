@@ -1,0 +1,59 @@
+name: Limo Ride
+zoom: 0.9
+version: 1.0.0
+directory: stages/week4
+props:
+- name: Sunset
+  type: StageProp
+  position: [-120, -50]
+  id: limoSunset
+  scale: [1, 1]
+  scroll: [0.1, 0.1]
+  assetPath: limoSunset
+
+- name: Back Limo
+  type: StageProp
+  position: [-200, 480]
+  id: bgLimo
+  scale: [1, 1]
+  scroll: [0.4, 0.4]
+  assetPath: bgLimo
+  animations:
+  - name: driving
+    frameRate: 24
+    prefix: background limo pink
+    looped: true
+  startingAnimation: driving
+
+- name: Car
+  type: StageProp
+  id: fastCar
+  assetPath: fastCarLol
+  position: [-12600, 160]
+
+- id: spectator
+  type: Character
+  scroll: [0.8, 0.8]
+  position: [700, 820]
+  cameraOffsets: [-270, -125]
+
+- name: Limo
+  type: StageProp
+  id: limoDrive
+  assetPath: limoDrive
+  position: [-120, 528]
+  animations:
+  - name: drive
+    prefix: Limo stage
+    looped: true
+  startingAnimation: drive
+
+- id: opponent
+  type: Character
+  position: [230.5, 925]
+  cameraOffsets: [-220, -250]
+
+- id: player
+  type: Character
+  position: [1250, 685]
+  cameraOffsets: [-600, -250]

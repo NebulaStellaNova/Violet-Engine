@@ -23,6 +23,15 @@ class ParseUtil {
 			return null;
 	}
 
+	public static function jsonOrYaml(path:String, ?directory:String):Dynamic {
+		if (Paths.yaml(path, directory) != "") {
+			return yaml(path, directory);
+		} else if (Paths.json(path, directory) != "") {
+			return json(path, directory);
+		}
+		return {};
+	}
+
 	public static function removeJsonComments(str:String) {
 		var split = str.split('');
 		var string = "";

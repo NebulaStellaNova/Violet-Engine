@@ -1,9 +1,13 @@
 package violet.data.character;
 
+import violet.backend.scripting.ScriptPack;
+import openfl.display.IGraphicsData;
 import violet.backend.audio.Conductor;
 import violet.backend.utils.NovaUtils;
 
 class Character extends violet.backend.objects.Bopper {
+
+	public var scripts:ScriptPack;
 
 	public var id:String;
 	public var _data:CharacterData;
@@ -26,21 +30,20 @@ class Character extends violet.backend.objects.Bopper {
 	public var isSinging:Bool = false;
 
 	/**
-     * # Daming - Give me privileges
-     *
-     * # GENZU - no blackie
-     *
-     * # Daming - BRO
+     * ![no blackie](https://raw.githubusercontent.com/NebulaStellaNova/Hamsters/refs/heads/main/extras/no-blackie.png)
     */
 	public function new(x:Float = 0, y:Float = 0, id:String = 'bf', faceLeft:Bool = false) {
+		this.id = id;
 		this._data = CharacterRegistry.characterDatas.get(id) ?? CharacterRegistry.characterDatas.get('bf');
 		super(x, y, Paths.image(this._data.assetPath));
 
+		this._data.healthIcon ??= this.id;
+
 		if (CharacterRegistry.characterDatas.get(id) == null) {
-            NovaUtils.addNotification('Character not found!', 'Could not find character with ID "$id" using default character "bf."', haxe.ui.notifications.NotificationType.Error);
+            NovaUtils.addNotification('Character not found!', 'Could not find character with ID "$id" using default character "bf."', ERROR);
         }
 
-		this.cameraOffsets = this._data.cameraOffsets ?? [0, 0];
+		this.cameraOffsets = this._data.cameraOffsets?.copy() ?? [0, 0];
 
 		if (faceLeft) flipX = !flipX;
 		if (this._data.flipX ?? false) flipX = !flipX;
@@ -99,4 +102,8 @@ class Character extends violet.backend.objects.Bopper {
 		}
 	}
 
+	override function beatHit(beat:Int) {
+		if (beat % danceEvery == 0 && !isSinging && canDance)
+			dance(true);
+	}
 }

@@ -148,9 +148,9 @@ class Conductor {
 	}
 
 	public static function pause():Void {
-		instrumental.pause();
+		instrumental?.pause();
 		for (track in additionalTracks)
-			track.pause();
+			track?.pause();
 	}
 	public static function play(forceRestart:Bool = false, startTime:Float = 0.0):Void {
 		instrumental.play(forceRestart, startTime);
@@ -179,6 +179,13 @@ class Conductor {
 		final songMetaData = violet.data.song.SongRegistry.getSongByID(id);
 		Conductor.setInitialBPM(songMetaData.bpm, songMetaData.stepsPerBeat, songMetaData.beatsPerMeasure);
 		instrumental.looped = false;
+	}
+
+	public static function stop() {
+		instrumental.stop();
+		for (i in additionalTracks) {
+			i.stop();
+		}
 	}
 
 }

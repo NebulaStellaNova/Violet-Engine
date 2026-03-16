@@ -11,6 +11,7 @@ import openfl.text.TextField;
 import openfl.text.TextFormat;
 import violet.backend.utils.MathUtil;
 import violet.backend.utils.NovaUtils;
+import violet.states.menus.OptionsMenu;
 
 using flixel.util.FlxStringUtil;
 
@@ -53,9 +54,15 @@ class DebugDisplay extends Sprite {
 		text.x = -FlxG.width;
 		text.y = -FlxG.width;
 
-		flixel.FlxG.signals.preStateSwitch.add(()->extraInfo = []);
+		flixel.FlxG.signals.preStateSwitch.add(() -> {
+			maxMemory = maxCpu = 0;
+			extraInfo = [];
+		});
 
 		addEventListener(Event.ENTER_FRAME, onEnterFrame);
+
+		if (violet.backend.options.Options.data.debugDisplayOnStart)
+			shown = true;
 	}
 
 	var framesPerSecond:Int = 0;
@@ -63,8 +70,12 @@ class DebugDisplay extends Sprite {
 	var _previousTime:Float = 0;
 	var _updateClock:Float = 999999;
 
-	var memories:Array<Float> = [for (i in 0...100) 0];
-	var cpus:Array<Float> = [for (i in 0...100) 0];
+	var maxMemory:Float = 0;
+	var maxCpu:Float = 0;
+	var memories:Array<Float> = [];
+	var cpus:Array<Float> = [];
+	var memoryAvg:Float = 0;
+	var cpuAvg:Float = 0;
 
 	function onEnterFrame(e:Event) {
 		_framesPassed++;
@@ -72,17 +83,16 @@ class DebugDisplay extends Sprite {
 		final deltaTime:Float = Math.max(NovaUtils.getTimerPrecise() - _previousTime, 0);
 		_updateClock += deltaTime;
 
-		memories.shift();
-		cpus.shift();
-		memories.push(Std.parseFloat(Memory.getProcessPhysicalMemoryUsage().formatBytes()));
+		memories.push(FlxMath.roundDecimal(Memory.getProcessPhysicalMemoryUsage(), 2));
 		cpus.push(FlxMath.roundDecimal(CPU.getProcessCPUUsage(), 2));
+		if (memories.length > 100) memories.shift();
+		if (cpus.length > 100) cpus.shift();
 
-		var memoryAvg:Float = 0;
-		var cpuAvg:Float = 0;
+		memoryAvg = cpuAvg = 0;
 		for (m in memories) memoryAvg += m;
 		for (c in cpus) cpuAvg += c;
-		memoryAvg /= memories.length;
-		cpuAvg /= cpus.length;
+		maxMemory = Math.max(maxMemory, memoryAvg /= memories.length);
+		maxCpu = Math.max(maxCpu, cpuAvg /= cpus.length);
 
 		if (_updateClock >= 1000) {
 			framesPerSecond = (FlxG.drawFramerate > 0) ? FlxMath.minInt(_framesPassed, FlxG.drawFramerate) : _framesPassed;
@@ -91,8 +101,8 @@ class DebugDisplay extends Sprite {
 		}
 		var parts:Array<String> = [
 			'Framerate: $framesPerSecond',
-			'Memory: ${FlxMath.roundDecimal(memoryAvg, 2)} / ${Memory.getProcessPeakPhysicalMemoryUsage().formatBytes()}',
-			'CPU: ${FlxMath.roundDecimal(cpuAvg, 2)}% / ${FlxMath.roundDecimal(CPU.getProcessPeakCPUUsage(), 2)}%'
+			'Memory: ${FlxMath.roundDecimal(memoryAvg, 2).formatBytes()} / ${FlxMath.roundDecimal(maxMemory, 2).formatBytes()}',
+			'CPU: ${FlxMath.roundDecimal(cpuAvg, 2)}% / ${FlxMath.roundDecimal(maxCpu, 2)}%'
 		];
 		_previousTime = NovaUtils.getTimerPrecise();
 		if (extraInfo.length != 0)
@@ -111,6 +121,9 @@ class DebugDisplay extends Sprite {
 		text.x = background.x + 10;
 		text.y = background.y + 10;
 
+
+		if (OptionsMenu.instance != null)
+			if (!OptionsMenu.instance.canSelectMenu) return;
 		if (Controls.debugDisplay)
 			shown = !shown;
 	}

@@ -7,6 +7,7 @@
       "assetPath": "menus/storymenu/props/parents-xmas",
       "scale": 0.5,
       "offsets": [10, 60],
+      "danceEvery": 2,
       "animations": [
         {
           "name": "idle",
@@ -19,6 +20,7 @@
       "assetPath": "menus/storymenu/props/bf",
       "scale": 0.8,
       "offsets": [150, 85],
+      "danceEvery": 2,
       "animations": [
         {
           "name": "idle",
@@ -36,6 +38,7 @@
       "assetPath": "menus/storymenu/props/gf",
       "scale": 0.5,
       "offsets": [225, 80],
+      "danceEvery": 1,
       "animations": [
         {
           "name": "danceLeft",
@@ -53,5 +56,5 @@
     }
   ],
   "background": "#F9CF51",
-  "songs": ["cocoa", "eggnog", "winter-horrorland"]
+  "songs": ["cocoa", "eggnog", "winter horrorland"]
 }

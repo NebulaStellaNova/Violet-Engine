@@ -1,6 +1,5 @@
-#if CAN_LUA_SCRIPT
-
 package violet.backend.scripting;
+#if CAN_LUA_SCRIPT
 
 import flixel.math.FlxAngle;
 import haxe.PosInfos;
@@ -21,10 +20,13 @@ import violet.backend.filesystem.Paths;
 import violet.backend.utils.FileUtil;
 import violet.backend.objects.NovaSprite;
 
+#end
 using StringTools;
 using violet.backend.utils.ArrayUtil;
 
 class LuaScript extends Script {
+
+	#if CAN_LUA_SCRIPT
 	var internalScript:LScript;
 
 	override function set_parent(value:Dynamic):Dynamic
@@ -136,6 +138,6 @@ class LuaScript extends Script {
 		internalScript.setVar(variable, value);
 	override public function get<T>(variable:String, ?def:T):T
 		return internalScript.getVar(variable) ?? def;
-}
 
-#end
+	#end
+}

@@ -1,8 +1,8 @@
 package violet.backend.objects.play;
 
 import violet.backend.audio.Conductor;
-import violet.data.noteskin.NoteSkin;
-import violet.data.noteskin.NoteSkinRegistry;
+import violet.data.notestyles.NoteStyle;
+import violet.data.notestyles.NoteStyleRegistry;
 
 class Strum extends NovaSprite {
 	/**
@@ -11,15 +11,15 @@ class Strum extends NovaSprite {
 	public final parent:StrumLine;
 
 	/**
-	 * The skin the strum will use.
+	 * The style the strum will use.
 	 */
-	public var skin(default, set):String;
-	inline function set_skin(value:String):String {
-		if (skin != value)
-			reloadSkin(value);
-		return skin = value;
+	public var style(default, set):String;
+	inline function set_style(value:String):String {
+		if (style != value)
+			reloadStyle(value);
+		return style = value;
 	}
-	var skinMeta:NoteSkin;
+	var styleMeta:NoteStyle;
 
 	/**
 	 * Used to help "glowLength".
@@ -29,55 +29,68 @@ class Strum extends NovaSprite {
 	 * The amount of time in steps the animation can be forced to last.
 	 * If set to 0 the animation that is played plays out normally.
 	 */
-	public var glowLength:Float = 4;
+	public var glowLength:Float = 1.2;
 
 	/**
 	 * If true after the "glowlength" is reached the animation will go back to "static".
 	 */
 	public var willReset:Bool = false;
 
-	public final splashes:Array<NovaSprite> = [];
-	public var holdCover:NovaSprite;
+	public final splashes:Array<StrumElement> = [];
+	public final holdCovers:Array<StrumElement> = [];
+	public var holdCover:StrumElement;
 
 	public function new(parent:StrumLine, id:Int) {
 		super();
 		this.parent = parent;
 		ID = id;
-		skin = 'default';
+		style = null;
+		this.styleMeta = NoteStyleRegistry.getNoteStyleByID(parent.noteStyle ?? 'default');
+
+		final daScale:Float = styleMeta.strumProperties.scale;
+		scale.set(daScale, daScale);
+		scale.scale(parent.strumScale);
+		updateHitbox();
 	}
 
-	public function reloadSkin(?skin:String):Void {
+	public function reloadStyle(?style:String):Void {
 		final lastAnim:String = animation?.name ?? 'static';
 		final wasReversed:Bool = animation?.curAnim?.reversed ?? false;
 		// final lastFrame:Array<Int> = [animation?.curAnim?.curFrame ?? 0, animation?.curAnim?.numFrames ?? 1];
 
 		this.anims.clear();
 		animation.destroyAnimations();
-		final skin:String = skin ?? this.skin ?? 'default';
-		this.skinMeta = NoteSkinRegistry.getNoteSkinByID(skin);
-		loadSprite(skinMeta.getStrumAssetPath());
-		for (data in skinMeta.getStrumAnimations(ID, parent.keyCount))
+		final style:String = style ?? this.style ?? parent.noteStyle ?? 'default';
+		this.styleMeta = NoteStyleRegistry.getNoteStyleByID(style);
+		loadSprite(styleMeta.getStrumAssetPath());
+		for (data in styleMeta.getStrumAnimations(ID, parent.keyCount))
 			addAnimFromData(data);
-		var lol:Array<Float> = skinMeta.getStrumOffsets();
-		globalOffset.set(lol[0], lol[1]);
+		final partOffsets:Array<Float> = styleMeta.getStrumOffsets();
+		globalOffset.set(partOffsets[0], partOffsets[1]);
+		this.antialiasing = styleMeta.isStrumPixel();
 
-		playAnim(lastAnim, true, wasReversed); updateHitbox();
+		playAnim(lastAnim, true, wasReversed);
 		// animation.curAnim.curFrame = Math.round(flixel.math.FlxMath.remapToRange(lastFrame[0], 0, lastFrame[1], 0, animation.curAnim.numFrames));
+		final daScale:Float = styleMeta.strumProperties.scale;
+		scale.set(daScale, daScale);
+		scale.scale(parent.strumScale);
+		updateHitbox(); alpha = styleMeta.strumProperties.alpha;
+		blend = styleMeta.strumProperties.blendMode;
 	}
 
 	override public function update(elapsed:Float):Void {
 		super.update(elapsed);
 
 		if (willReset && animation?.name != 'static')
-			if (glowLength > 0 ? (lastHit + (Conductor.stepLengthMs * glowLength) < Conductor.songPosition) : (animation.name == null || animation.finished))
-				playStrumAnim(parent.isComputer ? 'static' : 'press');
+			if (glowLength > 0 ? (lastHit + (Conductor.stepLengthMs * glowLength) < Conductor.songPosition) : (animation.name == null || animation.finished)) {
+				var targetAnim = parent.isComputer ? 'static' : 'press';
+				if (animation.name != targetAnim) playStrumAnim(targetAnim, true);
+			}
 
 		if (holdCover == null) return;
 		if (holdCover.exists && holdCover.animation.name != 'end') {
-			holdCover.x = this.x - (holdCover.width/2);
-			holdCover.y = this.y - (holdCover.height/2);
-			holdCover.x += skinMeta.getHoldCoverOffsets()[0];
-			holdCover.y += skinMeta.getHoldCoverOffsets()[1];
+			final partOffsets:Array<Float> = styleMeta.getHoldCoverOffsets();
+			holdCover.setPosition(this.x - (holdCover.width/2) + partOffsets[0], this.y - (holdCover.height/2) + partOffsets[1]);
 		}
 	}
 
@@ -93,26 +106,21 @@ class Strum extends NovaSprite {
 	}
 
 	public function spawnSplash():Void {
-		final splash:NovaSprite = new NovaSprite(skinMeta.getSplashAssetPath()); // cast parent.recycle(NovaSprite, () -> return new NovaSprite(skinMeta.getSplashAssetPath()));
-		// if (splash.filePath != skinMeta.getSplashAssetPath())
-		// 	splash.loadSprite(skinMeta.getSplashAssetPath()); // jic
-
-		for (data in skinMeta.getSplashAnimations(ID, parent.keyCount))
+		final splash:StrumElement = new StrumElement(this, styleMeta.getSplashAssetPath());
+		for (data in styleMeta.getSplashAnimations(ID, parent.keyCount))
 			splash.addAnimFromData(data);
-		// splash.visible = true;
 
 		splash.playAnim(FlxG.random.getObject(splash.animationList), true);
-		splash.centerOffsets();
-		splash.centerOrigin();
+		splash.setScale(styleMeta.splashProperties.scale);
 		splash.animation.onFinish.add(name -> {
 			this.splashes.remove(splash);
-			// splash.visible = false;
 			splash.destroy();
 		});
-		splash.x = this.x - (splash.width/2);
-		splash.y = this.y - (splash.height/2);
-		splash.x += skinMeta.getSplashOffsets()[0];
-		splash.y += skinMeta.getSplashOffsets()[1];
+		final partOffsets:Array<Float> = styleMeta.getSplashOffsets();
+		splash.setPosition(this.x - (splash.width/2) + partOffsets[0], this.y - (splash.height/2) + partOffsets[1]);
+		splash.antialiasing = styleMeta.isSplashPixel();
+		splash.alpha = styleMeta.splashProperties.alpha;
+		splash.blend = styleMeta.splashProperties.blendMode;
 		this.splashes.push(splash);
 		this.parent.add(splash);
 	}
@@ -123,27 +131,28 @@ class Strum extends NovaSprite {
 			holdCover.playAnim('end', true);
 			holdCover.animation.finish();
 		}
-		final holdCover:NovaSprite = holdCover = new NovaSprite(skinMeta.getHoldCoverAssetPath()); // cast parent.recycle(NovaSprite, () -> return new NovaSprite(skinMeta.getHoldCoverAssetPath()));
-		// if (holdCover.filePath != skinMeta.getHoldCoverAssetPath())
-		// 	holdCover.loadSprite(skinMeta.getHoldCoverAssetPath()); // jic
-
-		for (data in skinMeta.getHoldCoverAnimations(ID, parent.keyCount))
+		final holdCover:StrumElement = holdCover = new StrumElement(this, styleMeta.getHoldCoverAssetPath());
+		for (data in styleMeta.getHoldCoverAnimations(ID, parent.keyCount))
 			holdCover.addAnimFromData(data);
-		// holdCover.visible = true;
 
 		holdCover.playAnim('start', true);
+		holdCover.setScale(styleMeta.holdCoverProperties.scale);
 		holdCover.animation.onFinish.add(name -> {
 			switch (name) {
 				case 'start':
 					holdCover.playAnim('hold', true);
 				case 'end':
 					this.parent.remove(holdCover);
-					// holdCover.visible = false;
+					this.holdCovers.remove(holdCover);
 					holdCover.destroy();
 			}
 		});
-		holdCover.centerOffsets();
-		holdCover.centerOrigin();
+		final partOffsets:Array<Float> = styleMeta.getHoldCoverOffsets();
+		holdCover.setPosition(this.x - (holdCover.width/2) + partOffsets[0], this.y - (holdCover.height/2) + partOffsets[1]);
+		holdCover.antialiasing = styleMeta.isHoldCoverPixel();
+		holdCover.alpha = styleMeta.holdCoverProperties.alpha;
+		holdCover.blend = styleMeta.holdCoverProperties.blendMode;
+		this.holdCovers.push(holdCover);
 		this.parent.add(holdCover);
 	}
 }

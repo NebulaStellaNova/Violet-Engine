@@ -61,6 +61,8 @@ class MainMenu extends StateBackend {
 
 	public var canSelect:Bool = true;
 
+	public var substateTrans:Bool = true;
+
 	public var menuAlignment:String = "left";
 	public var watermarkAlignment:String = "right";
 
@@ -68,11 +70,19 @@ class MainMenu extends StateBackend {
 	{
 		super.create();
 
+		NovaUtils.playMenuMusic();
+
 		var modMenu:violet.states.menus.ModMenu = new violet.states.menus.ModMenu();
 
 		// FlxG.camera.color = FlxColor.BLACK;
 
 		menuData = ParseUtil.json("data/config/menuData");
+
+		#if mobile
+		for (i in menuData.items) {
+			if (id == mods) menuData.items.remove(id);
+		}
+		#end
 
 		var mult:Float = 1/(menuData.items.length);
 		bg = new NovaSprite(Paths.image(menuData.directory + "/" + menuData.background));
@@ -192,6 +202,11 @@ class MainMenu extends StateBackend {
 		if (canSelect) {
 			leftWatermark.y = FlxG.height - leftWatermark.getHeight() - 5;
 		}
+
+		if (FlxG.keys.justPressed.SEVEN) {
+			substateTrans = false;
+			openSubState(new violet.states.debug.EditorPickerMenu());
+		}
 	}
 
 	public function changeSelection(amt:Int) {
@@ -205,7 +220,7 @@ class MainMenu extends StateBackend {
 			if (event.cancelled) return;
 		}
 		if (amt != 0 && !event.soundCancelled) {
-		    NovaUtils.playMenuSFX(NovaUtils.SCROLL);
+		    NovaUtils.playMenuSFX(SCROLL);
 		}
 		curSelected = event.selection;
 		for (i => item in menuItems) {
@@ -237,7 +252,7 @@ class MainMenu extends StateBackend {
 	public function pickSelection() {
 		if (!canSelect) return;
 		var event:SelectionEvent = runEvent("pickSelection", new SelectionEvent(curSelected));
-		if (!event.soundCancelled) NovaUtils.playMenuSFX(NovaUtils.CONFIRM);
+		if (!event.soundCancelled) NovaUtils.playMenuSFX(CONFIRM);
 		if (event.cancelled) return;
 
 		canSelect = false;
@@ -270,8 +285,22 @@ class MainMenu extends StateBackend {
 
 	override function closeSubState() {
 		super.closeSubState();
+		if (!substateTrans) {
+			substateTrans = true;
+			return;
+		}
 		for (i in menuItems) {
-			FlxTween.tween(i, { x: i.x + FlxG.width }, 0.5, { ease: FlxEase.smootherStepOut, onComplete: (_)-> canSelect = true });
+			var prev = i.x;
+			switch (menuAlignment) {
+				case "center":
+					i.screenCenter(X);
+				case "left":
+					i.x = 20;
+				case "right":
+					i.x = FlxG.width - i.width - 20;
+			}
+			FlxTween.tween(i, { x: i.x }, 0.5, { ease: FlxEase.smootherStepOut, onComplete: (_)-> canSelect = true });
+			i.x = prev;
 		}
 		FlxTween.tween(leftWatermark, { y: FlxG.height - leftWatermark.getHeight() - 5 }, 0.5, { ease: FlxEase.backOut });
 	}

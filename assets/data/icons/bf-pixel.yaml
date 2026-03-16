@@ -1,5 +1,6 @@
-scale: 1.0
+scale: 4.7
 flipX: false
 isPixel: true
 offsets: [10, -3]
 color: '#7BD6F6'
+assetPath: "icons/bf-pixel"

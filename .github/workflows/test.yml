@@ -37,9 +37,7 @@ jobs:
           restore-keys: windows-build-cache
 
       - name: Install Libraries
-        run: |
-          haxelib install hmm
-          haxelib run hmm install
+        run: .\"install-libraries.bat"
 
       - name: Building HXCPP
         run: |
@@ -117,9 +115,7 @@ jobs:
   #         restore-keys: mac-build-cache
 
   #     - name: Install Libraries
-  #       run: |
-  #         haxelib install hmm
-  #         haxelib run hmm install
+  #       run: .\"install-libraries.bat"
 
   #     - name: Building HXCPP
   #       run: |
@@ -200,9 +196,7 @@ jobs:
   #       run: sudo apt-get update && sudo apt-get upgrade && sudo apt-get install libvlc-dev libvlccore-dev vlc-bin vlc libxrandr-dev
 
   #     - name: Install Libraries
-  #       run: |
-  #         haxelib install hmm
-  #         haxelib run hmm install
+  #       run: .\"install-libraries.sh"
 
   #     - name: Building HXCPP
   #       run: |

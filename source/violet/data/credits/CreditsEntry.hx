@@ -16,7 +16,7 @@ typedef CreditsContributor = {
 	var ?icon:String;
 	var ?https_icon:String;
 
-	@:default([1, 1]) var ?icon_scale:Array<Float>;
+	var ?icon_scale:Array<Float>;
 
 	var ?url:String;
 }

@@ -1,11 +1,15 @@
 {
-	"displayName": "Test",
-	"bpm": 150.0,
-	"icon": "bf",
-	"coopAllowed": true,
 	"opponentModeAllowed": true,
+	"icon": "bf",
 	"difficulties": [
-		"NORMAL"
+		"normal"
 	],
-	"needsVoices": true
+	"isDev": true,
+	"coopAllowed": true,
+	"color": "#9271FD",
+	"stepsPerBeat": 4,
+	"displayName": "test",
+	"beatsPerMeasure": 4,
+	"needsVoices": true,
+	"bpm": 150
 }

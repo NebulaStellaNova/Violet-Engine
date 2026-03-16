@@ -1,32 +1,49 @@
 package violet.data.stage;
 
+import violet.backend.scripting.ScriptPack;
+import flixel.FlxBasic;
+import violet.data.character.Character;
 import violet.backend.utils.NovaUtils;
 import violet.backend.StateBackend;
 import violet.states.PlayState;
 import violet.backend.objects.play.StageProp;
 
-class Stage {
+class Stage extends flixel.group.FlxGroup {
+
+    public var stageScripts:ScriptPack = new ScriptPack();
 
     public var id:String;
     public var _data:StageData;
 
     public function new(id:String) {
-        this.id = id;
+        super();
+        this.id = StageRegistry.stageDatas.get(id) != null ? id : 'mainStage';
 		this._data = StageRegistry.stageDatas.get(id) ?? StageRegistry.stageDatas.get('mainStage');
         this._data.cameraPosition ??= [0, 0];
 
+        ModdingAPI.checkForScripts('data/stages', id, stageScripts);
+        stageScripts.set('directory', this._data.directory);
+
         if (StageRegistry.stageDatas.get(id) == null) {
-            NovaUtils.addNotification('Stage not found!', 'Could not find stage with ID "$id" using default stage "mainStage."', haxe.ui.notifications.NotificationType.Error);
+            NovaUtils.addNotification('Stage not found!', 'Could not find stage with ID "$id" using default stage "mainStage."', ERROR);
         }
 
         FlxG.camera.scroll.x = this._data.cameraPosition[0];
         FlxG.camera.scroll.y = this._data.cameraPosition[1];
+    }
 
+    public function load(characters:Array<Character>) {
+        for (i in members) {
+            remove(i);
+        }
         for (i in this._data.props) {
             i.scroll ??= [1, 1];
             i.scale ??= [1, 1];
             i.alpha ??= 1;
             i.visible ??= true;
+            i.color ??= FlxColor.WHITE;
+            i.zIndex ??= 0;
+            // trace(i);
 
             var positionalArrays = [
                 "player" => ["boyfriend", i.id],
@@ -35,32 +52,77 @@ class Stage {
             ];
 
             switch (i.type) {
+                case "Solid":
+                    var prop:StageProp = new StageProp(i.position[0], i.position[1]);
+                    prop.name = i.name;
+                    prop.makeGraphic(1, 1, i.color);
+                    prop.scale.set(i.width ?? 0, i.height ?? 0);
+                    prop.scrollFactor.set(i.scroll[0] ?? 1, i.scroll[1] ?? 1);
+                    prop.updateHitbox();
+                    prop.z = i.zIndex;
+                    add(prop);
+                    stageScripts.set(i?.id ?? i.name, prop);
+                    applyProperties(prop, i.properties ?? {});
+
                 case "StageProp":
                     var prop:StageProp = new StageProp(i.position[0], i.position[1], Paths.image([this._data.directory, i.assetPath].join("/")));
                     prop.name = i.name;
+                    prop.z = i.zIndex;
                     prop.scrollFactor.set(i.scroll[0] ?? 1, i.scroll[1] ?? 1);
                     prop.scale.set(i.scale[0] ?? 1, i.scale[1] ?? 1);
                     prop.flipX = i.flipX ?? false;
                     prop.flipY = i.flipY ?? false;
-                    FlxG.state.add(prop);
+                    prop.visible = i.visible;
+                    prop.color = i.color;
+                    prop.updateHitbox();
+                    for (i in i?.animations ?? []) {
+                        prop.addAnimFromData(i);
+                    }
+                    prop.playAnim(i.startingAnimation ??= prop.animationList[0], true);
+                    add(prop);
+                    stageScripts.set(i?.id ?? i.name, prop);
+                    applyProperties(prop, i.properties ?? {});
+
                 case "Character":
                     i.cameraOffsets ??= [0, 0];
-                    for (char in PlayState.instance.characters) {
+                    for (char in characters) {
                         if (positionalArrays.get(i.id).contains(char.stagePosition.toLowerCase())) {
                             if (i.id == "player") char.flipX = !char.flipX;
                             char.x = i.position[0] - (char.width/2);
                             char.y = i.position[1] - (char.height);
+                            char.z = i.zIndex;
                             char.scrollFactor.set(i.scroll[0] ?? 1, i.scroll[1] ?? 1);
                             char.alpha = i.alpha;
                             char.visible = i.visible;
                             char.cameraOffsets[0] += i.cameraOffsets[0];
                             char.cameraOffsets[1] += i.cameraOffsets[1];
-                            FlxG.state.add(char);
+                            applyProperties(char, i.properties ?? {});
+                            add(char);
                         }
                     }
             }
         }
+        stageScripts.call('onLoaded');
+    }
 
-        // StateBackend.instance :D
+    public function applyProperties(object:FlxBasic, array:Dynamic) {
+        for (i in Reflect.fields(array)) {
+            Reflect.setProperty(object, i, Reflect.field(array, i));
+        }
+    }
+
+    public function reload(characters:Array<Character>) { load(characters); }
+
+    override function add(basic:FlxBasic):FlxBasic {
+        FlxG.state.add(basic);
+        return super.add(basic);
+    }
+    override function insert(position:Int, object:FlxBasic):FlxBasic {
+        FlxG.state.insert(position, object);
+        return super.insert(position, object);
+    }
+    override function remove(basic:FlxBasic, splice:Bool = false):FlxBasic {
+        FlxG.state.remove(basic, splice);
+        return super.remove(basic, splice);
     }
 }

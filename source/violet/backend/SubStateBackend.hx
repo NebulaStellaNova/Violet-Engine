@@ -55,8 +55,6 @@ class SubStateBackend extends flixel.FlxSubState {
 		}
 		#end
 		callInScripts('create');
-
-		new flixel.util.FlxTimer().start(0.1, _ -> nextFrame = true);
 	}
 
 	#if SCRIPT_SUPPORT
@@ -92,27 +90,9 @@ class SubStateBackend extends flixel.FlxSubState {
 	}
 	#end
 
-	var nextFrame = false;
-
-	var notificationManager = new haxe.ui.notifications.NotificationManager();
-	var errIndex:Int = 0;
 	override public function update(elapsed:Float) {
 		super.update(elapsed);
 
-		if (nextFrame) {
-			if (errIndex > violet.backend.CrashHandler.notifList.length - 1) {
-				nextFrame = false;
-			} else {
-				notificationManager.addNotification({
-					title: violet.backend.CrashHandler?.notifList[errIndex]?.title,
-					body: violet.backend.CrashHandler?.notifList[errIndex]?.description,
-					type: haxe.ui.notifications.NotificationType.Error,
-					expiryMs: 5000,
-					actions: []
-				});
-			}
-			errIndex++;
-		}
 		callInScripts('update');
 	}
 

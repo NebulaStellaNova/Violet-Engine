@@ -1,0 +1,17 @@
+opponentModeAllowed: true
+icon: parents-christmas
+difficulties:
+  - easy
+  - normal
+  - hard
+ratings:
+  easy: 1
+  normal: 2
+  hard: 2
+color: "#A0D1FF"
+coopAllowed: true
+stepsPerBeat: 4
+displayName: Cocoa
+beatsPerMeasure: 4
+needsVoices: true
+bpm: 100

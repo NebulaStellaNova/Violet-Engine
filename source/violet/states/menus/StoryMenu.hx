@@ -1,17 +1,16 @@
 package violet.states.menus;
 
+import flixel.FlxCamera;
 import flixel.group.FlxSpriteGroup;
 import flixel.math.FlxMath;
-import flixel.FlxCamera;
-
-import violet.backend.objects.BopperSpriteGroup;
+import violet.backend.SubStateBackend;
 import violet.backend.objects.Bopper;
-import violet.data.song.SongRegistry;
+import violet.backend.objects.BopperSpriteGroup;
 import violet.backend.utils.MathUtil;
 import violet.backend.utils.NovaUtils;
-import violet.backend.SubStateBackend;
-import violet.data.level.LevelRegistry;
 import violet.data.level.Level;
+import violet.data.level.LevelRegistry;
+import violet.data.song.SongRegistry;
 
 class StoryMenu extends SubStateBackend {
 
@@ -29,6 +28,7 @@ class StoryMenu extends SubStateBackend {
 
     var curSelected:Int = 0;
     static var curDifficulty:Int = 1;
+    var curDifficultyString:String;
     var levelList:Array<Level> = [];
 
     var storyCam:FlxCamera;
@@ -39,7 +39,11 @@ class StoryMenu extends SubStateBackend {
     var weekBG:FlxSprite;
     var bottomBox:FlxSprite;
 
+    var weekBGColorTween:FlxTween;
+
     var canInteract:Bool = false;
+
+    var isFlashing:Bool = false;
 
     override public function create() {
         super.create();
@@ -52,7 +56,7 @@ class StoryMenu extends SubStateBackend {
         topBar.camera = storyCam;
         topBar.scrollFactor.set();
 
-        weekBG = new NovaSprite(0, -500).makeGraphic(FlxG.width, 500, 0xFFF9CF51);
+        weekBG = new NovaSprite(0, -500).makeGraphic(FlxG.width, 500, 0xFFFFFFFF);
         weekBG.camera = storyCam;
         weekBG.scrollFactor.set();
 
@@ -148,6 +152,7 @@ class StoryMenu extends SubStateBackend {
         add(trackText);
 
         updateTrackList();
+        weekBG.color = levelList[curSelected]._data.background.toFlxColor();
 
         trackText.x = -trackText.getWidth();
 
@@ -157,15 +162,29 @@ class StoryMenu extends SubStateBackend {
         FlxTween.tween(bottomBox, { y: 0 }, 0.5, { ease: FlxEase.backOut, startDelay: 0.4 });
         FlxTween.tween(scoreText, { y: 11 }, 0.5, { ease: FlxEase.backOut, startDelay: 0.6 });
         FlxTween.tween(levelText, { y: 11 }, 0.5, { ease: FlxEase.backOut, startDelay: 0.6 });
-        FlxTween.tween(trackText, { x: (FlxG.width/2) - (trackText.getWidth()/2) - 450 }, 0.5, { ease: FlxEase.backOut, startDelay: 0.6 });
-        FlxTween.tween(difficultySprites, { x: 920 }, 0.5, { ease: FlxEase.backOut, startDelay: 0.6 });
+        FlxTween.tween(trackText, { x: (FlxG.width/2) - (trackText.getWidth()/2) - 450 }, 0.5, { ease: FlxEase.expoOut, startDelay: 0.6 });
+        FlxTween.tween(difficultySprites, { x: 920 }, 0.5, { ease: FlxEase.expoOut, startDelay: 0.6 });
         FlxTimer.wait(1.2, ()->{
             canInteract = true;
         });
     }
 
+    public function build() {
+		var mainMenu:MainMenu = new MainMenu();
+		// StoryMenu.skipTransition = true;
+		mainMenu.openSubState(this);
+		return mainMenu;
+	}
+
+    var time:Float = 0;
+
     override public function update(elapsed:Float) {
         super.update(elapsed);
+		time += elapsed;
+
+        if (isFlashing)
+			titleGraphics[curSelected].color = (time % 0.1 > 0.05) ? FlxColor.WHITE : 0xFF33ffff;
+
         if (Controls.back) {
 			exit();
             canInteract = false;
@@ -176,6 +195,10 @@ class StoryMenu extends SubStateBackend {
 
         leftArrow.scale.x = leftArrow.scale.y = Controls.uiLeftPress ? 0.9 : 1.0;
         rightArrow.scale.x = rightArrow.scale.y = Controls.uiRightPress ? 0.9 : 1.0;
+
+        if (Controls.accept) {
+            selectLevel();
+        }
 
         if (Controls.uiDown) {
             scroll(1);
@@ -227,16 +250,37 @@ class StoryMenu extends SubStateBackend {
     function scroll(direction:Int, playSound:Bool = true) {
         if (!canInteract) return;
         curSelected = FlxMath.wrap(curSelected + direction, 0, levelList.length - 1);
+
+        weekBGColorTween?.cancel();
+        weekBGColorTween = FlxTween.color(weekBG, 0.35, weekBG.color, levelList[curSelected]._data.background.toFlxColor(), {ease: FlxEase.expoOut});
+
         updateTrackList();
         if (playSound)
-		    NovaUtils.playMenuSFX(NovaUtils.SCROLL);
+		    NovaUtils.playMenuSFX(SCROLL);
     }
 
     function changeDifficulty(direction:Int) {
         if (!canInteract) return;
         var difficulties = levelList[curSelected].getDifficulties();
         curDifficulty = FlxMath.wrap(curDifficulty + direction, 0, difficulties.length - 1);
+        curDifficultyString = difficulties[curDifficulty];
         // FlxG.sound.play(Cache.sound('menu/scroll'));
+    }
+
+    function selectLevel() {
+        if (!canInteract) return;
+        canInteract = false;
+        isFlashing = true;
+        NovaUtils.playMenuSFX(CONFIRM);
+        new FlxTimer().start(1.25, (_)->{
+            storyCam.fade(0.25, ()->{
+                PlayState.doFadeOut = true;
+                PlayState.playlist = levelList[curSelected].getSongs();
+                PlayState.playlist.shift(); // Get rid of the song we boutta load
+                PlayState.isStoryMode = true;
+                PlayState.loadSong(levelList[curSelected].getSongs()[0], curDifficultyString);
+            });
+        });
     }
 
     function updateTrackList() {
@@ -254,7 +298,7 @@ class StoryMenu extends SubStateBackend {
 
     function exit() {
         if (!canInteract) return;
-		NovaUtils.playMenuSFX(NovaUtils.CANCEL);
+		NovaUtils.playMenuSFX(CANCEL);
 
         updateAlpha = false;
 		FlxTween.tween(cast(_parentState, MainMenu).bg, {x: 0 }, 0.5*2, { ease: FlxEase.quadInOut, startDelay: 0.4 });

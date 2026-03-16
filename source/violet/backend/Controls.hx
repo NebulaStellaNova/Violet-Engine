@@ -1,5 +1,6 @@
 package violet.backend;
 
+import violet.backend.options.Options;
 import flixel.input.keyboard.FlxKey;
 
 /**
@@ -92,14 +93,16 @@ class Controls {
 	 * When you press down to move through ui elements
 	 */
 	public static var uiDown(get, never):Bool;
-	inline static function get_uiDown():Bool
-		return pressed('ui_down') || FlxG.mouse.wheel < 0;
+	inline static function get_uiDown():Bool {
+		return pressed('ui_down') || (FlxG.mouse.wheel < 0 && (Options.data.mouseControls || Options.data.forceMouseScrolling));
+	}
 	/**
 	 * When you press up to move through ui elements
 	 */
 	public static var uiUp(get, never):Bool;
-	inline static function get_uiUp():Bool
-		return pressed('ui_up') || FlxG.mouse.wheel > 0;
+	inline static function get_uiUp():Bool {
+		return pressed('ui_up') || (FlxG.mouse.wheel > 0 && (Options.data.mouseControls || Options.data.forceMouseScrolling));
+	}
 	/**
 	 * When you press right to move through ui elements
 	 */
@@ -161,14 +164,16 @@ class Controls {
 	 * When "accept" is pressed.
 	 */
 	public static var accept(get, never):Bool;
-	inline static function get_accept():Bool
-		return pressed('accept') || FlxG.mouse.justPressed;
+	inline static function get_accept():Bool {
+		return pressed('accept') || (FlxG.mouse.justPressed && Options.data.mouseControls);
+	}
 	/**
 	 * When "back" is pressed.
 	 */
 	public static var back(get, never):Bool;
-	inline static function get_back():Bool
-		return pressed('back') || FlxG.mouse.justPressedRight;
+	inline static function get_back():Bool {
+		return pressed('back') || (FlxG.mouse.justPressedRight && Options.data.mouseControls);
+	}
 	/**
 	 * When "paused" is pressed.
 	 */
@@ -224,34 +229,7 @@ class Controls {
 	/**
 	 * The binds that are contained within controls.
 	 */
-	public static var bindMap(default, null):Map<String, Array<FlxKey>> = [
-		'note_left' => [W, E, LEFT],
-		'note_down' => [F, DOWN],
-		'note_up' => [J, K, UP],
-		'note_right' => [O, RIGHT],
-
-		'ui_left' => [A, LEFT],
-		'ui_down' => [S, DOWN],
-		'ui_up' => [W, UP],
-		'ui_right' => [D, RIGHT],
-
-		'accept' => [ENTER, SPACE],
-		'back' => [BACKSPACE, ESCAPE],
-		'pause' => [ENTER, ESCAPE],
-		'reset' => [R, DELETE],
-
-		'volume_up' => [PLUS, NUMPADPLUS],
-		'volume_down' => [MINUS, NUMPADMINUS],
-		'volume_mute' => [ZERO, NUMPADZERO],
-
-		'fullscreen' => [F11],
-
-		'botplay' => [F3],
-		'resetState' => [F5],
-		'shortcutState' => [F4],
-		'debugDisplay' => [F6],
-		'reloadGame' => [F8]
-	];
+	public static var bindMap(default, null):Map<String, Array<FlxKey>> = []; // Setup in Options.hx
 	/**
 	 * Pressed input.
 	 * @param key The key name.

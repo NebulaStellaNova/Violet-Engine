@@ -1,5 +1,6 @@
 package violet.states;
 
+import violet.states.menus.OptionsMenu;
 import violet.backend.StateBackend;
 import violet.backend.audio.Conductor;
 
@@ -23,16 +24,26 @@ class InitialState extends StateBackend { // for now
 		// for later use
 		#end
 
-		new haxe.ui.notifications.NotificationManager().addNotification({title: 'a', body: ''});
-
 		FlxG.signals.preUpdate.add(() -> {
-			if (Controls.resetState) {
+			if (OptionsMenu.instance != null)
+				if (!OptionsMenu.instance.canSelectMenu) return;
+
+			#if !mobile
+			if (Controls.reloadGame) {
 				Conductor.pause();
 				ModdingAPI.reloadRegistries();
 				FlxG.resetState();
 			}
+			if (Controls.resetState)
+				FlxG.resetState();
 			if (Controls.shortcutState)
 				FlxG.switchState(() -> new violet.states.menus.MainMenu());
+			#end
+
+			if (!Std.isOfType(FlxG.state, PlayState)) {
+				PlayState.hasSeenCutscene = false;
+				PlayState.isStoryMode = false;
+			}
 		});
 
 		FlxG.camera.visible = false;

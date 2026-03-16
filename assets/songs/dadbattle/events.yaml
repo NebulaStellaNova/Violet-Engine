@@ -1,0 +1,81 @@
+events:
+  - params:
+      - 1
+      - true
+      - 4
+      - CLASSIC
+      - In
+    time: 0
+    name: Camera Movement
+  - params:
+      - 0
+    time: 10666.6666666667
+    name: Camera Movement
+  - params:
+      - 1
+    time: 13333.3333333333
+    name: Camera Movement
+  - params:
+      - 0
+    time: 16000
+    name: Camera Movement
+  - params:
+      - 1
+    time: 18666.6666666667
+    name: Camera Movement
+  - params:
+      - 0
+    time: 21333.3333333333
+    name: Camera Movement
+  - params:
+      - 1
+    time: 26666.6666666667
+    name: Camera Movement
+  - params:
+      - 0
+    time: 32000
+    name: Camera Movement
+  - params:
+      - 1
+    time: 42666.6666666667
+    name: Camera Movement
+  - params:
+      - 0
+    time: 53333.3333333333
+    name: Camera Movement
+  - params:
+      - 1
+    time: 56000
+    name: Camera Movement
+  - params:
+      - 0
+    time: 58666.6666666667
+    name: Camera Movement
+  - params:
+      - 1
+    time: 61333.3333333333
+    name: Camera Movement
+  - params:
+      - 0
+    time: 64000
+    name: Camera Movement
+  - params:
+      - 1
+    time: 69333.3333333333
+    name: Camera Movement
+  - params:
+      - 0
+    time: 74666.6666666667
+    name: Camera Movement
+  - params:
+      - 1
+    time: 77333.3333333333
+    name: Camera Movement
+  - params:
+      - 0
+    time: 80000
+    name: Camera Movement
+  - params:
+      - 1
+    time: 82666.6666666667
+    name: Camera Movement

@@ -1,41 +1,33 @@
 package violet.backend.utils;
 
-import openfl.desktop.NotificationType;
-import haxe.ui.notifications.NotificationType;
 import flixel.FlxCamera;
-import haxe.ui.notifications.Notification;
 import haxe.io.Path;
-import haxe.ui.core.Screen;
 import violet.data.Constants;
 import violet.backend.audio.Conductor;
 import flixel.graphics.frames.FlxAtlasFrames;
 
-import haxe.ui.notifications.NotificationManager;
+enum abstract MenuSFX(Int) {
+	var SCROLL;
+	var CANCEL;
+	var CONFIRM;
+}
+
+enum NotificationType {
+	ERROR;
+	DEFAULT;
+}
 
 class NovaUtils {
 
-	public static var SCROLL:Int = 0;
-	public static var CANCEL:Int = 1;
-	public static var CONFIRM:Int = 2;
-
 	public static var CURRENT_MUSIC:String = "";
 
-	public static var NOTIFICATION_MANAGER:NotificationManager;
 	public static var NOTIFICATION_CAMERA:FlxCamera;
 
-	public static function addNotification(title:String, body:String, type:NotificationType = NotificationType.Default, expiryMs:Int = 10000) {
-		var notificationData:haxe.ui.notifications.NotificationData = {title: title, body: body, type: type, expiryMs: expiryMs};
-		if (NOTIFICATION_CAMERA == null) {
-			NOTIFICATION_CAMERA = new FlxCamera();
-			NOTIFICATION_CAMERA.bgColor = FlxColor.TRANSPARENT;
-			FlxG.cameras.add(NOTIFICATION_CAMERA, false);
+	public static function addNotification(title:String, body:String, expiryMs:Int = 10000, type:NotificationType = DEFAULT) {
+		var notification = lemonui.controllers.NotificationController.instance.addNotification(title, body, expiryMs/1000);
+		if (type == ERROR) {
+			notification.componentColor = 0xFF591818;
 		}
-		if (NOTIFICATION_MANAGER == null) {
-			NOTIFICATION_MANAGER = new NotificationManager();
-		}
-		var notification = NOTIFICATION_MANAGER.addNotification(notificationData);
-
-		notification.camera = NOTIFICATION_CAMERA;
 	}
 
 	public static function playMenuMusic():Void {
@@ -44,13 +36,25 @@ class NovaUtils {
 		}
 	}
 
-	public static function playMenuSFX(which:Int):Void {
-		FlxG.sound.play(Cache.sound('menu/${['scroll', 'cancel', 'confirm'][which]}'));
+	public static function playMenuSFX(which:MenuSFX, volume:Float = 1):FlxSound {
+		final bruh = switch (which) {
+			case SCROLL: 'scroll';
+			case CANCEL: 'cancel';
+			case CONFIRM: 'confirm';
+		}
+		final sound = FlxG.sound.play(Cache.sound('menu/$bruh'), volume);
+		sound.persist = true;
+		return sound;
 	}
 
-	public static function playMusic(path:String, volume:Float = 1, folder:String = 'music'):FlxSound {
-		var musicPath:Array<String> = path.split('/');
+	public static function playSound(path:String, volume:Float = 1):FlxSound {
+		return FlxG.sound.play(Cache.sound(path), volume);
+	}
+
+	public static function playMusic(path:String, volume:Float = 1, folder:String = 'music', force:Bool = true):FlxSound {
+		if (path == CURRENT_MUSIC && !force) return FlxG.sound.music;
 		CURRENT_MUSIC = path;
+		var musicPath:Array<String> = path.split('/');
 		if (folder == 'music')
 			musicPath.insert(musicPath.length - 2, Path.withoutExtension(musicPath[musicPath.length - 1]));
 		var metaData = null;

@@ -67,7 +67,7 @@
 				"idle": "basic",
 				"selected": "white"
 			},
-			"disabled": true,
+			"disabled": false,
 			"state": "source:OptionsMenu",
 			"color": "#FFFFFF"
 		}

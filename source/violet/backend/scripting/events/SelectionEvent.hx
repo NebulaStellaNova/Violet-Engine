@@ -5,11 +5,12 @@ class SelectionEvent extends EventBase {
 
 	public var selection:Int = 0;
 
-	public function new(selection) {
+	public function new(selection:Int) {
+        super();
 		this.selection = selection;
 	}
 
-	public function cancelSound() {
+	public function cancelSound():Void {
 		soundCancelled = true;
 	}
 }

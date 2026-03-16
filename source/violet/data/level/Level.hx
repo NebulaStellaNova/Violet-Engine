@@ -75,7 +75,7 @@ class Level {
             for (i in NullChecker.checkAnimations(propData.animations))
                 propSprite.addAnimFromData(i);
             propSprite.updateHitbox();
-            propSprite.playAnim('idle', true);
+            propSprite.dance(true);
 
             propData.offsets ??= [0, 0];
             propSprite.x = propData.offsets[0] ?? 0;

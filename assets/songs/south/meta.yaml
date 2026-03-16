@@ -1,0 +1,17 @@
+opponentModeAllowed: true
+icon: spooky
+difficulties:
+  - easy
+  - normal
+  - hard
+ratings:
+  easy: 1
+  normal: 2
+  hard: 2
+color: "#223344"
+coopAllowed: true
+stepsPerBeat: 4
+displayName: South
+beatsPerMeasure: 4
+needsVoices: true
+bpm: 165

@@ -14,27 +14,32 @@ function create() {
     trace("hello");
 }
 
-function update() {
+function postCreate() {
+    trace("hello");
+}
 
+function update(elapsed:Float) {
+    trace("hello");
 }
 
 // ========== EVENTS ========== \\
 
 // all events can be cancelled with event.cancel();
 
-function onEvent(event) {
-    event.name;
-    event.parameters;
-    event.type; // For legacy CNE Charts
+function onEvent(event:SongEvent) {
+    event.name:String;
+    event.parameters:Array<Dynamic>;
 }
 
 // ------ Note Hit Events ----- \\
-function noteHit(event) {
-    event.note;
-    event.strum;
-    event.direction;
-    event.noteType;
-    event.userType; // player, spectator, opponent
+function noteHit(event:NoteHitEvent) {
+    event.note:Note;
+    event.strum:Strum;
+    event.direction:Int;
+    event.noteType:String;
+    event.isComputer:Bool;
+    event.animCancelled:Bool;
+    event.animationSuffix:String;
 }
 
 // ---- Note Hit Sub Events --- \\

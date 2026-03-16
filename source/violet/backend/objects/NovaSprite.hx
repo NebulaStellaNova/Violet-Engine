@@ -39,6 +39,14 @@ class NovaSprite extends #if ANIMATE_SUPPORT FlxAnimate #else FlxSprite #end {
 		super(x, y);
 		if (path != null)
 			this.loadSprite(path);
+
+		this.animation.onFinish.add((name)->{
+			for (i in ['hold', 'end']) {
+				if (animationList.contains('$name-$i')) {
+					playAnim('$name-$i', true);
+				}
+			}
+		});
 	}
 
 	override function initVars():Void {
@@ -66,6 +74,12 @@ class NovaSprite extends #if ANIMATE_SUPPORT FlxAnimate #else FlxSprite #end {
 				this.fileName = Paths.getFileName(path, true);
 				this.animated = true;
 				this.frames = NovaUtils.getSparrowFrames(path);
+				this.onLoaded();
+			} else if (Paths.fileExists(path.replace(".png", ".txt"), true)) {
+				this.filePath = path;
+				this.fileName = Paths.getFileName(path, true);
+				this.animated = true;
+				this.frames = FlxAtlasFrames.fromSpriteSheetPacker(path, path.replace(".png", ".txt"));
 				this.onLoaded();
 			} else {
 				this.loadGraphic(path);
@@ -113,6 +127,17 @@ class NovaSprite extends #if ANIMATE_SUPPORT FlxAnimate #else FlxSprite #end {
 		}
 		this.animated = animated;
 		return cast super.loadGraphic(graphic, animated, frameWidth, frameHeight, unique, key);
+	}
+
+	override function makeGraphic(width:Float, height:Float, color:FlxColor = FlxColor.WHITE, unique:Bool = false, ?key:String):NovaSprite {
+		final finalWidth = Math.round(width);
+		final finalHeight = Math.round(height);
+		return cast super.makeGraphic(finalWidth, finalHeight, color, unique, key);
+	}
+
+	override function setGraphicSize(width:Float = 0.0, height:Float = 0.0) {
+		super.setGraphicSize(width, height);
+		updateHitbox();
 	}
 
 	public function playAnim(name:String, forced:Bool = false, reversed:Bool = false, frame:Int = 0):Void {
@@ -168,10 +193,10 @@ class NovaSprite extends #if ANIMATE_SUPPORT FlxAnimate #else FlxSprite #end {
 		}
 		if (newFrames != null) {
 			#if ANIMATE_SUPPORT
-			this.frames = animate.FlxAnimateFrames.combineAtlas(cast this.frames, newFrames);
+			this.frames = animate.FlxAnimateFrames.combineAtlas(newFrames, cast this.frames);
 			#else
 			if (this.frames is FlxAtlasFrames)
-				cast(this.frames, FlxAtlasFrame).addAtlas(newFrames);
+				this.frames = newFrames.addAtlas(cast(this.frames, FlxAtlasFrame));
 			#end
 		}
 	}

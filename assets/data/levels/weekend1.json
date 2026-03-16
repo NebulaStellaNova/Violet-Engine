@@ -7,6 +7,7 @@
       "assetPath": "menus/storymenu/props/darnell",
       "scale": 1.0,
       "offsets": [120, 120],
+      "danceEvery": 2,
       "animations": [
         {
           "name": "idle",
@@ -19,6 +20,7 @@
       "assetPath": "menus/storymenu/props/pico-player",
       "scale": 1.0,
       "offsets": [150, 80],
+      "danceEvery": 2,
       "animations": [
         {
           "name": "idle",
@@ -37,6 +39,7 @@
       "assetPath": "menus/storymenu/props/nene",
       "scale": 1.0,
       "offsets": [200, 80],
+      "danceEvery": 1,
       "animations": [
         {
           "name": "danceLeft",
@@ -54,5 +57,5 @@
     }
   ],
   "background": "#413CAE",
-  "songs": ["darnell", "lit-up", "2hot", "blazin"]
+  "songs": ["darnell", "lit up", "2hot", "blazin"]
 }

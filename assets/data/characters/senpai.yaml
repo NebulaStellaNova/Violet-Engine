@@ -1,0 +1,35 @@
+version: 1.0.0
+name: Senpai
+assetPath: characters/senpai
+singTime: 8
+isPixel: true
+scale: 6
+offsets: [100, 0]
+cameraOffsets: [100, 300]
+healthIcon: senpai
+animations:
+  - name: idle
+    prefix: Senpai Idle0
+    offsets:
+      - 0
+      - 0
+  - name: singLEFT
+    prefix: SENPAI LEFT NOTE0
+    offsets:
+      - 6.6
+      - 0
+  - name: singDOWN
+    prefix: SENPAI DOWN NOTE0
+    offsets:
+      - 2.33
+      - 0
+  - name: singUP
+    prefix: SENPAI UP NOTE0
+    offsets:
+      - 0.83
+      - 6.16
+  - name: singRIGHT
+    prefix: SENPAI RIGHT NOTE0
+    offsets:
+      - 0
+      - 0

@@ -1,10 +1,12 @@
 package violet.backend;
 
+import lemonui.utils.MathUtil;
 import flixel.FlxBasic;
 import violet.backend.audio.Conductor;
 import violet.backend.objects.IsBopper;
 import violet.backend.scripting.events.EventBase;
 import violet.backend.utils.NovaUtils;
+import violet.backend.options.Options;
 
 #if SCRIPT_SUPPORT
 import violet.backend.scripting.ScriptPack;
@@ -15,6 +17,11 @@ class StateBackend extends flixel.FlxState {
 	#if SCRIPT_SUPPORT
 	public var stateScripts:ScriptPack = new ScriptPack();
 	#end
+
+	/**
+	 * Alias for `MathUtil.lerp`
+	 */
+	public function lerp(a:Float, b:Float, ratio:Float, fpsSensitive:Bool = true) return MathUtil.lerp(a, b, ratio, fpsSensitive);
 
 	public var curBeat(get, never):Int;
 	function get_curBeat() return Conductor.curBeat;
@@ -43,8 +50,6 @@ class StateBackend extends flixel.FlxState {
 	override public function create() {
 		super.create();
 
-		NovaUtils.NOTIFICATION_MANAGER = null;
-
 		Conductor.init();
 
 		instance = this;
@@ -52,77 +57,24 @@ class StateBackend extends flixel.FlxState {
 		#if SCRIPT_SUPPORT
 		stateScripts.parent = this;
 		for (path in #if MOD_SUPPORT ModdingAPI.STATE_PATHS #else ['data/scripts/states'] #end) {
-			checkForScripts([Paths.ASSETS_FOLDER, path].join("/") + '/${Main.stateClassName}');
+			ModdingAPI.checkForScript([Paths.ASSETS_FOLDER, path].join("/") + '/${Main.stateClassName}', stateScripts);
 			#if MOD_SUPPORT
 			for (mod in ModdingAPI.getActiveMods())
-				checkForScripts([ModdingAPI.MOD_FOLDER, mod.folder, path].join("/") + '/${Main.stateClassName}');
+				ModdingAPI.checkForScript([ModdingAPI.MOD_FOLDER, mod.folder, path].join("/") + '/${Main.stateClassName}', stateScripts);
 			#end
 		}
 		#end
 		callInScripts('create');
-
-		new flixel.util.FlxTimer().start(0.1, _ -> nextFrame = true);
 	}
 
-	#if SCRIPT_SUPPORT
-	public function checkForScripts(string:String, ?pack:ScriptPack) {
-		pack ??= stateScripts;
-
-		#if CAN_LUA_SCRIPT
-		for (ext in ModdingAPI.EXT_ALIASES.get("lua")) {
-			if (Paths.fileExists('$string.$ext', true)) {
-				var script = new violet.backend.scripting.LuaScript('$string.$ext');
-				pack.addScript(script);
-			}
-		}
-		#end
-
-		#if CAN_HAXE_SCRIPT
-		for (ext in ModdingAPI.EXT_ALIASES.get("hx")) {
-			if (Paths.fileExists('$string.$ext', true)) {
-				var script = new violet.backend.scripting.FunkinScript('$string.$ext');
-				pack.addScript(script);
-			}
-		}
-		#end
-
-		#if CAN_HAXE_SCRIPT
-		for (ext in ModdingAPI.EXT_ALIASES.get("py")) {
-			if (Paths.fileExists('$string.$ext', true)) {
-				var script = new violet.backend.scripting.PythonScript('$string.$ext');
-				pack.addScript(script);
-			}
-		}
-		#end
-	}
-	#end
-
-	var nextFrame = false;
-
-	public var notificationManager = new haxe.ui.notifications.NotificationManager();
-	var errIndex:Int = 0;
 	override public function update(elapsed:Float) {
 		super.update(elapsed);
 
-		if (FlxG.keys.justPressed.TAB)
+		if (FlxG.keys.justPressed.TAB && Options.data.developerMode)
 			violet.states.PlayState.loadSong('test');
 
 		Conductor.update();
 
-		if (nextFrame) {
-			if (errIndex > violet.backend.CrashHandler.notifList.length - 1) {
-				nextFrame = false;
-			} else {
-				notificationManager.addNotification({
-					title: violet.backend.CrashHandler?.notifList[errIndex]?.title,
-					body: violet.backend.CrashHandler?.notifList[errIndex]?.description,
-					type: haxe.ui.notifications.NotificationType.Error,
-					expiryMs: 5000,
-					actions: []
-				});
-			}
-			errIndex++;
-		}
 		callInScripts('update');
 	}
 

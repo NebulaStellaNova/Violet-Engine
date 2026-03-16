@@ -2,7 +2,7 @@
 	"id": "example",
 	"title": "Example Mod", // My engine supports .json and .jsonc, when it checks for json it also checks for jsonc
 	"description": "Example Mod Folder",
-	"tag": "example", // qol, weeks, songs, example, characters, enhancements
+	"tags": ["example"], // qol, weeks, songs, example, characters, enhancements
 	"contributors": [
 		{
 			"name": "Nebula S. Nova",
@@ -11,7 +11,12 @@
 		{
 			"name": "Rodney Furball <3",
         	"role": "Coder"
+		},
+		{
+			"name": "ADA_Funni",
+        	"role": "Thinks he's part of the team"
 		}
 	],
-	"mod_version": "0.1.0" // Unlike V-Slice, this can be whatever you want
+	"mod_version": "0.1.0", // Unlike V-Slice, this can be whatever you want
+	"api_version": "0.0.0" // We need this property for backwards compatibility reasons.
 }

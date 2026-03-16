@@ -4,6 +4,7 @@ import sys.io.Process;
 import hxp.*;
 import lime.tools.*;
 
+import haxe.xml.Printer;
 using StringTools;
 
 class EngineAsset {
@@ -51,10 +52,6 @@ class Project extends HXProject {
 	 * The directory path**s** to the source code.
 	 */
 	static final sourceCodeDirectories:Array<String> = ['./source'];
-	/**
-	 * Just put the fucking libs that refuse to load here.
-	 */
-	static final extraLibraries:Array<String> = ['thx.semver'/* , 'rulescript' */];
 	/**
 	 * The class path to the preloader class.
 	 */
@@ -114,6 +111,11 @@ class Project extends HXProject {
 	static final customClasses:CompilerFlag = 'CUSTOM_CLASSES';
 
 	/**
+	 * States if assets get loaded from `export/release/[PLATFORM]/bin` or `assets`.
+	 */
+	static final redirectAssetsFolder:CompilerFlag = 'REDIRECT_ASSETS_FOLDER';
+
+	/**
 	 * States if the engine allows shaders at all.
 	 */
 	static final allowShaders:CompilerFlag = 'ALLOW_SHADERS';
@@ -146,8 +148,7 @@ class Project extends HXProject {
 			return;
 		}
 
-		for (i in extraLibraries)
-			haxelibs.push(new Haxelib(i));
+		if (isAndroid()) setupAndroid();
 
 		if (FileSystem.exists('./.haxelib'))
 			setenv('HAXEPATH', './.haxelib');
@@ -167,7 +168,7 @@ class Project extends HXProject {
 		// script related
 		if (scriptSupport.exists()) {
 			canHaxeScript.enable();
-			canLuaScript.enable();
+			if (!isMobile()) canLuaScript.enable();
 
 			scriptedStates.enable();
 			if (canHaxeScript.exists())
@@ -175,16 +176,15 @@ class Project extends HXProject {
 
 			info('Scripting was enabled.');
 		}
-		if (hasDefine('cpp')) {
-			// if (isDesktop())
-			// 	discordRPC.enable();
-			// if (isDesktop() || isMobile())
-			// 	allowVideos.enable();
-		}
+		if (isDesktop())
+			discordRPC.enable();
+		// if (isDesktop() || isMobile())
+		// 	allowVideos.enable();
+
 		if (discordRPC.exists())
 			setHaxedef('DISCORD_DISABLE_IO_THREAD');
 		allowShaders.enable();
-		// /* if (isWindows())  */editWindowBorderColor.enable();
+		// if (isWindows()) editWindowBorderColor.enable();
 		/* Define Setup */
 
 		/* App Setup */
@@ -228,55 +228,55 @@ class Project extends HXProject {
 			sources.push(path);
 
 		var excludeList:Array<String> = [''];
-		// addAssetLibrary('default', false, true); addAssetLibrary('mods');
 		addAssetPath('./assets', './resources', ['*'], excludeList);
 		if (modSupport.exists()) addAssetPath('./mods', './mods', ['*'], excludeList);
+
 		/* Path Settings */
 
 		addHaxeMacro('violet.backend.Macro.init()');
 
 		/* Libraries */
-		addHaxelib('hxhardware');
+		addHaxelib('hxhardware', 'git');
 		// required for flixel, don't put below flixel, causes weird issues
-		addHaxelib('openfl');
-		addHaxelib('lime');
+		addHaxelib('lime', '8.3.1');
+		addHaxelib('openfl', '9.5.1');
 
 		// the game engine
 		addHaxelib('flixel');
 		addHaxelib('flixel-addons');
 
-		addHaxelib('haxeui-core');
-		addHaxelib('haxeui-flixel');
+		addHaxelib('lemon-ui', 'git');
 
 		if (usesAnimateAtlas.exists())
 			addHaxelib('flixel-animate');
 
 		// json parsing
-		addHaxelib('json2object', 'git');
-
 		addHaxelib('flxrhythmconductor', 'git');
-
 		addHaxelib('yaml');
 
 		// debugging
 		// if (isDesktop() && isDebug())
-		// 	addHaxelib('hxcpp-debug-server');
+		// 	addHaxelib('hxcpp-debug-server', 'git');
 
 		// chart converter
 		addHaxelib('moonchart');
 
-		addHaxelib('linc_luajit', 'git');
-		if (canHaxeScript.exists()) addHaxelib('rulescript', 'git');
-		if (canLuaScript.exists()) addHaxelib('lscript', 'git');
+		if (canHaxeScript.exists())
+			addHaxelib('rulescript', 'git');
+		if (canLuaScript.exists()) {
+			addHaxelib('lscript', 'git');
+			addHaxelib('linc_luajit', 'git');
+		}
 
-		if (discordRPC.exists()) addHaxelib('discord-rpc');
+		if (discordRPC.exists()) addHaxelib('hxdiscord_rpc');
 		if (allowVideos.exists()) addHaxelib('hxvlc');
-		// addHaxelib('thx.semver');
+		addHaxelib('thx.semver');
 
 		// if (editWindowBorderColor.exists())
 			// addHaxelib('hxWindowColorMode');
 		/* Libraries */
 
+		setHaxedef('no-deprecation-warnings');
 		// if (!isDebug())
 		setHaxedef('FLX_NO_DEBUG');
 
@@ -298,6 +298,19 @@ class Project extends HXProject {
 			asset.library = setAsset.library ?? 'default';
 			assets.push(asset);
 		}
+	}
+
+	inline public function setupAndroid() {
+		var androidConfig = config.get("android");
+		var perms:Array<String> = androidConfig.exists("permission") ?
+			androidConfig.get("permission") : [];
+
+		perms.push("android.permission.READ_EXTERNAL_STORAGE");
+		perms.push("android.permission.WRITE_EXTERNAL_STORAGE");
+
+		androidConfig.set("permission", perms);
+
+		androidConfig.set("requestLegacyExternalStorage", "true");
 	}
 
 	/**
@@ -439,10 +452,8 @@ class Project extends HXProject {
 	inline public function addHaxelib(name:String, ?version:LibraryVersion):Void {
 		var addLib:Bool = !FileSystem.exists('./.haxelib');
 		if (!addLib)
-			if (name != null && version != null)
-				addLib = FileSystem.exists('./.haxelib/$name/$version');
-			else if (name != null && version == null)
-				addLib = FileSystem.exists('./.haxelib/$name');
+			if (version != null) addLib = FileSystem.exists('./.haxelib/${name.replace('.', ',')}/$version');
+			else addLib = FileSystem.exists('./.haxelib/${name.replace('.', ',')}');
 		if (addLib) {
 			info('Added library "$name"${version == null ? '' : ' version "$version"'}.');
 			haxelibs.push(new Haxelib(name, version));
@@ -573,7 +584,7 @@ class Project extends HXProject {
 	 */
 	inline public function info(message:String):Void
 		if (command != 'display')
-			Log.info('[INFO] $message');
+			Log.info("\x1b[94m" + '[    SYS    ] -> [  Project.hxp  ]: ' + "\033[0m" + '$message');
 }
 
 abstract LibraryVersion(String) from String to String {

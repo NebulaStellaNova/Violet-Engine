@@ -7,15 +7,17 @@ import haxe.macro.Expr;
 
 class Macro {
 	public static function init():Void {
-		/* Compiler.addMetadata('@:build(violet.backend.Macro.buildFlxBasic())', 'flixel.FlxBasic');
+		Compiler.addMetadata('@:build(violet.backend.Macro.buildFlxBasic())', 'flixel.FlxBasic');
 		Compiler.addMetadata('@:build(violet.backend.Macro.buildFlxObject())', 'flixel.FlxObject');
 		Compiler.addMetadata('@:build(violet.backend.Macro.buildFlxSprite())', 'flixel.FlxSprite');
-		Compiler.addMetadata('@:build(violet.backend.Macro.buildFlxSpriteGroup())', 'flixel.FlxTypedSpriteGroup');
+		Compiler.addMetadata('@:build(violet.backend.Macro.buildFlxTypedGroup())', 'flixel.group.FlxTypedGroup');
+		Compiler.addMetadata('@:build(violet.backend.Macro.buildFlxSpriteGroup())', 'flixel.group.FlxTypedSpriteGroup');
 		#if SCRIPT_SUPPORT
 		Compiler.include('violet', true);
 		Compiler.include('haxe', true, ['haxe.atomic.*', 'haxe.macro.*']);
 		Compiler.include('flixel', true, ['flixel.addons.editors.spine.*', 'flixel.addons.nape.*', 'flixel.system.macros.*', 'flixel.addons.tile.FlxRayCastTilemap', 'flixel.addons.weapon.*']);
-		#end */
+		#end
+		Compiler.include('moonchart', true, ['moonchart.backend.*']); // force include, no matter what
 	}
 
 	public static macro function buildFlxBasic():Array<Field> {
@@ -24,42 +26,15 @@ class Macro {
 			/**
 			 * Extra data the object can hold.
 			 */
-			public final extra:Map<String, Dynamic> = new Map<String, Dynamic>();
+			public var extra:Map<String, Dynamic> = new Map<String, Dynamic>();
 			/**
 			 * The layering index of the object.
 			 */
 			public var zIndex:Int = 0;
-			/**
-			 * When true the object has been destroyed, this cannot be reversed.
-			 */
-			public var destroyed(default, null):Bool = false;
-		}
 
-		var destroyFunc = classFields.filter(field -> return field.name == 'destroy')[0];
-		switch (destroyFunc.kind) {
-			case FFun(f):
-				var initExpr:Expr = f.expr;
-				f.expr = macro {
-					$initExpr;
-					destroyed = true;
-				}
-				destroyFunc.kind = FFun(f);
-			default:
-		}
-		var toStringFunc = classFields.filter(field -> return field.name == 'toString')[0];
-		switch (toStringFunc.kind) {
-			case FFun(f):
-				f.expr = macro {
-					return FlxStringUtil.getDebugString([
-						LabelValuePair.weak('active', active),
-						LabelValuePair.weak('visible', visible),
-						LabelValuePair.weak('alive', alive),
-						LabelValuePair.weak('exists', exists),
-						LabelValuePair.weak('destroyed', destroyed)
-					]);
-				}
-				toStringFunc.kind = FFun(f);
-			default:
+			public var z(get, set):Int;
+			function get_z() return zIndex;
+			function set_z(v:Int) return zIndex = v;
 		}
 
 		return classFields.concat(tempClass.fields);
@@ -137,6 +112,37 @@ class Macro {
 		}
 
 		return classFields;
+	}
+
+	public static macro function buildFlxTypedGroup():Array<Field> {
+		var classFields:Array<Field> = Context.getBuildFields();
+		var tempClass = macro class TempClass {
+			/**
+			 * The property sort the objects by.
+			 */
+			public var sortBy:String = "zIndex";
+		}
+
+		var drawFuncy = classFields.filter(field -> return field.name == 'draw')[0];
+		switch (drawFuncy.kind) {
+			case FFun(f):
+				var initExpr:Expr = f.expr;
+				f.expr = macro {
+					members.sort((a, b)->{
+						if (a == null || b == null) return 0;
+						if (!(Reflect.hasField(a, sortBy) || Reflect.hasField(b, sortBy))) return 0;
+						final aOutput = Reflect.getProperty(a, sortBy);
+						final bOutput = Reflect.getProperty(b, sortBy);
+						if (Math.isNaN(aOutput) || Math.isNaN(bOutput)) return 0;
+						return flixel.util.FlxSort.byValues(-1, aOutput, bOutput);
+					});
+					$initExpr;
+				}
+				drawFuncy.kind = FFun(f);
+			default:
+		}
+
+		return classFields.concat(tempClass.fields);
 	}
 
 	/**

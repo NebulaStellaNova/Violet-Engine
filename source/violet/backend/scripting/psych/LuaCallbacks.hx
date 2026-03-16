@@ -1,7 +1,7 @@
-#if CAN_LUA_SCRIPT
+
 
 package violet.backend.scripting.psych;
-
+#if CAN_LUA_SCRIPT
 // import states.PlayState;
 import flixel.FlxG;
 import violet.backend.filesystem.Paths;

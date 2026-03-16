@@ -29,65 +29,74 @@ enum ChartFormat {
 }
 
 class ChartConverters {
+
+    public static var blankChart(get, never):ChartData;
+    static function get_blankChart() {
+        return {
+            strumLines: [],
+            events: [],
+            meta: { name: "Unknown Song" },
+            scrollSpeed: 1,
+            noteTypes: [],
+            stage: "mainStage",
+            codenameChart: true
+        };
+    }
+
     public static function convertChart(chartCache:ChartCache):ChartData {
-        var type:FileType = NONE;
-        var parsedCache:Dynamic = null;
-        switch (chartCache.fileExt) {
-            case "yaml":
-			    final options = new ParserOptions(); options.maps = false;
-                parsedCache = Yaml.parse(FileUtil.getFileContent(chartCache.filePath), options);
-                type = OBJECT;
-            case "json":
-                parsedCache = Json.parse(FileUtil.getFileContent(chartCache.filePath));
+        var parsedCache:Dynamic = parseFromCache(chartCache);
 
-                type = OBJECT;
-        }
-        // trace('debug:Chart is a $type file.');
-        if (chartCache.fileExt != "yaml") {
-            sys.FileSystem.deleteFile(chartCache.filePath);
-            Yaml.write(chartCache.filePath.replace('.${chartCache.fileExt}', ".yaml"), convertChartData(parsedCache,  detectJsonChartFormat(parsedCache)));
-        }
-
+        var detectedFormat:ChartFormatChecker.ChartFileFormat = ChartFormatChecker.checkFormat(parsedCache);
         var convertedChart:ChartData;
-        switch (type) {
-            case OBJECT:
-                var chartFormat:ChartFormat = detectJsonChartFormat(parsedCache);
-                convertedChart = convertChartData(parsedCache, chartFormat);
+        switch (detectedFormat) {
+            case CODENAME:
+                convertedChart = parsedCache;
+            case VSLICE:
+                convertedChart = fromVSlice(parsedCache);
+            case PSYCH:
+                convertedChart = fromPsych(parsedCache);
             default:
-                convertedChart = convertChartData("{}", CODENAME);
-                // uhm... guys!
+                convertedChart = blankChart;
         }
 
         if (chartCache.eventsPath != "") {
             final options = new ParserOptions(); options.maps = false;
             final parsedEvents = Yaml.parse(FileUtil.getFileContent(chartCache.eventsPath), options);
-            convertedChart.events = convertedChart.events.concat(parsedEvents.events);
+            convertedChart.events ??= [];
+            for (i in parsedEvents.events ?? []) {
+                convertedChart.events.push(i);
+            }
         }
+
         return convertedChart;
-
     }
 
-    public static function detectJsonChartFormat(parsedChart:Dynamic):ChartFormat {
-        if (Reflect.getProperty(parsedChart, "codenameChart")) return CODENAME;
-        return CODENAME;
-    }
-
-    public static function convertChartData(chart:Dynamic, from:ChartFormat):ChartData {
-        switch (from) {
-            case CODENAME:
-                return chart;
-            default:
-                return new json2object.JsonParser<ChartData>().fromJson("{}");
+    public static function parseFromCache(chartCache:ChartCache):Dynamic {
+        var parsedCache:Dynamic = {};
+        switch (chartCache.fileExt) {
+            case "yaml":
+			    final options = new ParserOptions(); options.maps = false;
+                parsedCache = Yaml.parse(FileUtil.getFileContent(chartCache.filePath), options);
+            case "json":
+                parsedCache = Json.parse(FileUtil.getFileContent(chartCache.filePath));
         }
+        return parsedCache;
     }
 
-    public static function stringifyChart(chart:ChartData) {
-        var out = {
-            codenameChart: chart?.codenameChart ?? false,
-            stage: chart?.stage ?? "mainStage",
-            scrollSpeed: chart.scrollSpeed,
-            noteTypes: [for (i in chart?.noteTypes ?? []) '$i']
-        }
-        return out;
+    public static function fromVSlice(chartData):ChartData {
+        return blankChart;
     }
+
+    public static function fromPsych(chartData):ChartData {
+        return blankChart;
+    }
+
+    /**
+    ```haxe
+    // Code for converting the chart to yaml.
+    if (chartCache.fileExt != "yaml") {
+        sys.FileSystem.deleteFile(chartCache.filePath);
+        Yaml.write(chartCache.filePath.replace('.${chartCache.fileExt}', ".yaml"), convertChartData(parsedCache,  detectJsonChartFormat(parsedCache)));
+    }
+    ```*/
 }

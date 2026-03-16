@@ -1,12 +1,14 @@
 package;
 
-import violet.data.Constants;
 import flixel.FlxState;
 import flixel.util.FlxStringUtil;
 import lime.app.Application;
 import thx.semver.Version;
 import violet.backend.display.DebugDisplay;
+import violet.backend.options.Options;
 import violet.backend.utils.ParseUtil;
+import violet.boot.DiscordRPC;
+import violet.data.Constants;
 
 class Main extends openfl.display.Sprite {
 	/**
@@ -45,11 +47,10 @@ class Main extends openfl.display.Sprite {
 		super();
 		instance = this;
 
-		haxe.ui.Toolkit.init();
-		haxe.ui.Toolkit.theme = 'dark'; // don't be cringe
-		haxe.ui.Toolkit.styleSheet.parse(".body, .label, .link, .textfield, .textarea { font-name: \"Inconsolata\"; font-size: 14px; font-bold: true; }");
-		// Toolkit.theme = 'light'; // embrace cringe
-		haxe.ui.Toolkit.autoScale = false;
+		lemonui.Constants.FONT_REGULAR = Paths.font('Inconsolata-Medium.ttf');
+		lemonui.Constants.FONT_BOLD = Paths.font('Inconsolata-Bold.ttf');
+
+		// violet.boot.HaxeUIHelper.init();
 
 		/* FlxG.signals.postStateSwitch.add(()->{
 			@:privateAccess violet.backend.CrashHandler.notificationManager = null;//new haxe.ui.notifications.NotificationManager();
@@ -65,23 +66,29 @@ class Main extends openfl.display.Sprite {
 		hxwindowmode.WindowColorMode.redrawWindowHeader();
 		#end
 
+		#if windows
 		violet.external.windows.WinAPI.setDarkMode(violet.external.windows.WinAPI.isSystemDarkMode());
+		#end
 
 		#if ALLOW_VIDEOS
 		hxvlc.util.Handle.init();
 		#end
 		#if DISCORD_RICH_PRESENCE
-		// write this
+		DiscordRPC.init();
 		#end
 
-		@:privateAccess Constants.ENGINE_VERSION = lime.app.Application.current.meta.get('version');
+		@:privateAccess {
+			Constants.ENGINE_VERSION = lime.app.Application.current.meta.get('version');
+			#if CHECK_FOR_UPDATES
+			Constants.LATEST_ENGINE_VERSION = lime.app.Application.current.meta.get('version');
+			Constants.UPDATE_AVAILABLE = false;
+			#end
+		}
 
-		#if CHECK_FOR_UPDATES
-		@:privateAccess Constants.LATEST_ENGINE_VERSION = lime.app.Application.current.meta.get('version');
-		@:privateAccess Constants.UPDATE_AVAILABLE = false;
-		#end
+		Options.init();
 
 		hxhardware.CPU.init();
+
 		var startFPS:Int = Application.current.window.displayMode.refreshRate;
 		new flixel.FlxGame(1280, 720, violet.states.InitialState, startFPS, startFPS, true);
 		@:privateAccess FlxG.game._customSoundTray = violet.backend.display.VioletSoundTray;
@@ -89,6 +96,11 @@ class Main extends openfl.display.Sprite {
 		addChild(new DebugDisplay());
 		FlxG.game.focusLostFramerate = 30;
 		FlxG.mouse.useSystemCursor = true;
+
+		#if FLX_DEBUG
+		// literally just cause nebs pause bind is backslash
+		FlxG.debugger.toggleKeys.remove(BACKSLASH);
+		#end
 	}
 
 	public static function switchState(targetClass:Dynamic) {

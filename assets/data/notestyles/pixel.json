@@ -1,0 +1,358 @@
+{
+	"name": "Pixel (Week 6)",
+	"fallback": "default",
+	"offsets": [57.5, 6],
+	"isPixel": true,
+	"properties": {"scale": 6},
+	"strums": {
+		"assetPath": "notes",
+		"animations": [
+			{
+				"id": 0,
+				"mania": 4,
+				"name": "static",
+				"prefix": "staticLeft",
+				"frameRate": 12
+			},
+			{
+				"id": 1,
+				"mania": 4,
+				"name": "static",
+				"prefix": "staticDown",
+				"frameRate": 12
+			},
+			{
+				"id": 2,
+				"mania": 4,
+				"name": "static",
+				"prefix": "staticUp",
+				"frameRate": 12
+			},
+			{
+				"id": 3,
+				"mania": 4,
+				"name": "static",
+				"prefix": "staticRight",
+				"frameRate": 12
+			},
+
+			{
+				"id": 0,
+				"mania": 4,
+				"name": "press",
+				"prefix": "pressedLeft",
+				"frameRate": 12
+			},
+			{
+				"id": 1,
+				"mania": 4,
+				"name": "press",
+				"prefix": "pressedDown",
+				"frameRate": 12
+			},
+			{
+				"id": 2,
+				"mania": 4,
+				"name": "press",
+				"prefix": "pressedUp",
+				"frameRate": 12
+			},
+			{
+				"id": 3,
+				"mania": 4,
+				"name": "press",
+				"prefix": "pressedRight",
+				"frameRate": 12
+			},
+
+			{
+				"id": 0,
+				"mania": 4,
+				"name": "confirm",
+				"prefix": "confirmLeft",
+				"frameRate": 12
+			},
+			{
+				"id": 1,
+				"mania": 4,
+				"name": "confirm",
+				"prefix": "confirmDown",
+				"frameRate": 12
+			},
+			{
+				"id": 2,
+				"mania": 4,
+				"name": "confirm",
+				"prefix": "confirmUp",
+				"frameRate": 12
+			},
+			{
+				"id": 3,
+				"mania": 4,
+				"name": "confirm",
+				"prefix": "confirmRight",
+				"frameRate": 12
+			}
+		]
+	},
+	"notes": {
+		"animations": [
+			{
+				"id": 0,
+				"mania": 4,
+				"name": "note",
+				"prefix": "noteLeft",
+				"frameRate": 12
+			},
+			{
+				"id": 1,
+				"mania": 4,
+				"name": "note",
+				"prefix": "noteDown",
+				"frameRate": 12
+			},
+			{
+				"id": 2,
+				"mania": 4,
+				"name": "note",
+				"prefix": "noteUp",
+				"frameRate": 12
+			},
+			{
+				"id": 3,
+				"mania": 4,
+				"name": "note",
+				"prefix": "noteRight",
+				"frameRate": 12
+			}
+		]
+	},
+	"sustains": {
+		"animations": [
+			{
+				"id": 0,
+				"mania": 4,
+				"name": "tail",
+				"prefix": "purple hold piece"
+			},
+			{
+				"id": 1,
+				"mania": 4,
+				"name": "tail",
+				"prefix": "blue hold piece"
+			},
+			{
+				"id": 2,
+				"mania": 4,
+				"name": "tail",
+				"prefix": "green hold piece"
+			},
+			{
+				"id": 3,
+				"mania": 4,
+				"name": "tail",
+				"prefix": "red hold piece"
+			},
+
+			{
+				"id": 0,
+				"mania": 4,
+				"name": "end",
+				"prefix": "purple hold end"
+			},
+			{
+				"id": 1,
+				"mania": 4,
+				"name": "end",
+				"prefix": "blue hold end"
+			},
+			{
+				"id": 2,
+				"mania": 4,
+				"name": "end",
+				"prefix": "green hold end"
+			},
+			{
+				"id": 3,
+				"mania": 4,
+				"name": "end",
+				"prefix": "red hold end"
+			}
+		]
+	},
+	"holdcovers": {
+		"offsets": [211, 50],
+		"animations": [
+			{
+				"id": 0,
+				"mania": 4,
+				"name": "start",
+				"prefix": "loop",
+				"frameIndices": [0]
+			},
+			{
+				"id": 0,
+				"mania": 4,
+				"name": "hold",
+				"prefix": "loop",
+				"looped": true
+			},
+			{
+				"id": 0,
+				"mania": 4,
+				"name": "end",
+				"prefix": "explode"
+			},
+			{
+				"id": 1,
+				"mania": 4,
+				"name": "start",
+				"prefix": "loop",
+				"frameIndices": [0]
+			},
+			{
+				"id": 1,
+				"mania": 4,
+				"name": "hold",
+				"prefix": "loop",
+				"looped": true
+			},
+			{
+				"id": 1,
+				"mania": 4,
+				"name": "end",
+				"prefix": "explode"
+			},
+			{
+				"id": 2,
+				"mania": 4,
+				"name": "start",
+				"prefix": "loop",
+				"frameIndices": [0]
+			},
+			{
+				"id": 2,
+				"mania": 4,
+				"name": "hold",
+				"prefix": "loop",
+				"looped": true
+			},
+			{
+				"id": 2,
+				"mania": 4,
+				"name": "end",
+				"prefix": "explode"
+			},
+			{
+				"id": 3,
+				"mania": 4,
+				"name": "start",
+				"prefix": "loop",
+				"frameIndices": [0]
+			},
+			{
+				"id": 3,
+				"mania": 4,
+				"name": "hold",
+				"prefix": "loop",
+				"looped": true
+			},
+			{
+				"id": 3,
+				"mania": 4,
+				"name": "end",
+				"prefix": "explode"
+			}
+		]
+	},
+	"splashes": {
+		"offsets": [50, 50],
+		"properties": {"scale": 4, "blendMode": "screen"},
+		"animations": [
+			{
+				"id": 0,
+				"mania": 4,
+				"name": "1",
+				"prefix": "purple1",
+				"offsets": [0, 0]
+			},
+			{
+				"id": 0,
+				"mania": 4,
+				"name": "2",
+				"prefix": "purple2",
+				"offsets": [0, 0]
+			},
+			{
+				"id": 0,
+				"mania": 4,
+				"name": "3",
+				"prefix": "purple3",
+				"offsets": [0, 0]
+			},
+			{
+				"id": 1,
+				"mania": 4,
+				"name": "1",
+				"prefix": "blue1",
+				"offsets": [0, 0]
+			},
+			{
+				"id": 1,
+				"mania": 4,
+				"name": "2",
+				"prefix": "blue2",
+				"offsets": [0, 0]
+			},
+			{
+				"id": 1,
+				"mania": 4,
+				"name": "3",
+				"prefix": "blue3",
+				"offsets": [0, 0]
+			},
+			{
+				"id": 2,
+				"mania": 4,
+				"name": "1",
+				"prefix": "green1",
+				"offsets": [0, 0]
+			},
+			{
+				"id": 2,
+				"mania": 4,
+				"name": "2",
+				"prefix": "green2",
+				"offsets": [0, 0]
+			},
+			{
+				"id": 2,
+				"mania": 4,
+				"name": "3",
+				"prefix": "green3",
+				"offsets": [0, 0]
+			},
+			{
+				"id": 3,
+				"mania": 4,
+				"name": "1",
+				"prefix": "orange1",
+				"offsets": [0, 0]
+			},
+			{
+				"id": 3,
+				"mania": 4,
+				"name": "2",
+				"prefix": "orange2",
+				"offsets": [0, 0]
+			},
+			{
+				"id": 3,
+				"mania": 4,
+				"name": "3",
+				"prefix": "orange3",
+				"offsets": [0, 0]
+			}
+		]
+	}
+}

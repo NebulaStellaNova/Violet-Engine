@@ -1,15 +1,20 @@
 package violet.states;
 
+import violet.backend.objects.play.ComboGroup;
 import flixel.FlxCamera;
 import flixel.group.FlxGroup;
 import flixel.math.FlxMath;
 import violet.backend.audio.Conductor;
 import violet.backend.objects.play.HealthBar;
-import violet.backend.objects.play.HealthIcon;
 import violet.backend.objects.play.Note;
 import violet.backend.objects.play.ScoreTxt;
 import violet.backend.objects.play.StrumLine;
 import violet.backend.objects.play.Sustain;
+import violet.backend.options.Options;
+import violet.backend.scripting.events.EventBase;
+import violet.backend.scripting.events.NoteHitEvent;
+import violet.backend.scripting.events.SongEvent;
+import violet.backend.scripting.events.SustainHitEvent;
 import violet.backend.utils.MathUtil;
 import violet.data.Constants;
 import violet.data.Scoring;
@@ -17,22 +22,17 @@ import violet.data.character.Character;
 import violet.data.chart.Chart;
 import violet.data.chart.ChartData.ChartEvent;
 import violet.data.chart.ChartRegistry;
+import violet.data.icon.HealthIcon;
 import violet.data.stage.Stage;
+import violet.states.menus.PauseMenu;
 
 #if SCRIPT_SUPPORT
 import violet.backend.scripting.ScriptPack;
 #end
 
-typedef CountdownAssets = {
-	/**
-	 * Countdown images.
-	 */
-	var images:Array<String>;
-	/**
-	 * Countdown sounds.
-	 */
-	var sounds:Array<String>;
-}
+#if debug
+import violet.backend.display.DebugDisplay;
+#end
 
 class PlayState extends violet.backend.StateBackend {
 
@@ -41,6 +41,12 @@ class PlayState extends violet.backend.StateBackend {
 	public static var song:String;
 	public static var difficulty:String;
 	public static var variation:Null<String>;
+	public static var playlist:Array<String> = [];
+	public static var doFadeOut:Bool = false;
+	public static var hasSeenCutscene:Bool = false;
+	public static var isStoryMode:Bool = false;
+
+	public var inCutscene = false;
 
 	#if SCRIPT_SUPPORT
 	public var songScripts:ScriptPack = new ScriptPack();
@@ -61,13 +67,19 @@ class PlayState extends violet.backend.StateBackend {
 	public var healthBar:HealthBar;
 	public var health:Float;
 
-	public var sillyBop:Bool = false; // Silly Icon Bop
 	public var iconPlayer:HealthIcon;
 	public var iconOpponent:HealthIcon;
 
 	public var scoreTxt:ScoreTxt;
 
 	public var playAsOpponent:Bool = false;
+	public var ghostTapping:Bool = Options.data.ghostTapping;
+
+	public var countdownSprites:Array<String> = [null, 'ready', 'set', 'go'];
+	public var countdownSounds:Array<String> = ['introTHREE', 'introTWO', 'introONE', 'introGO'];
+	public var countdownTimer:FlxTimer = new FlxTimer();
+
+	public var comboGroup:ComboGroup;
 
 	/**
 	 * The amount of beats the countdown lasts for.
@@ -75,32 +87,6 @@ class PlayState extends violet.backend.StateBackend {
 	public var countdownLength(default, set):Int = 4;
 	inline function set_countdownLength(value:Int):Int
 		return countdownLength = Std.int(Math.max(value, 1));
-	/**
-	 * This timer that tracks the countdown steps.
-	 */
-	public final countdownTimer:FlxTimer = new FlxTimer();
-	/**
-	 * The assets what will be used in the countdown.
-	 */
-	public var countdownAssets:CountdownAssets;
-	/**
-	 * Sets up the listings for the countdownAssets variable.
-	 * @param root The path to the assets.
-	 * @param parts List of assets to get from root var path.
-	 * @param suffix Adds a suffix to each item of the parts array.
-	 * @return Array<String> ~ The mod paths of the items.
-	 */
-	inline public static function getCountdownAssetList(root:String = 'countdown/funkin', parts:Array<String>, ?suffix:String):Array<String> {
-		return [
-			for (part in parts) {
-				final asset:String = part == null ? null : '${haxe.io.Path.addTrailingSlash(root)}$part${flixel.util.FlxStringUtil.isNullOrEmpty(suffix) ? '' : '-$suffix'}';
-				// attempts to cache the asset, I don't feel like adding a bool to specify this shit
-				if (Paths.fileExists(Paths.image(asset), true)) Cache.image(asset);
-				if (Paths.fileExists(Paths.sound(asset), true)) Cache.sound(asset);
-				asset;
-			}
-		];
-	}
 
 	/**
 	 * States if the countdown has started.
@@ -118,13 +104,21 @@ class PlayState extends violet.backend.StateBackend {
 	override public function create():Void {
 		super.create();
 		instance = this;
+		inCutscene = false;
 
 		FlxG.cameras.reset(camGame = new FlxCamera());
 		camHUD = new FlxCamera();
 		camHUD.bgColor = FlxColor.TRANSPARENT;
 		FlxG.cameras.add(camHUD, false);
 
-		#if SCRIPT_SUPPORT
+		ModdingAPI.checkForScripts('songs', songScripts);
+		ModdingAPI.checkForScripts('data/scripts/songs', songScripts);
+		ModdingAPI.checkForScripts('songs/$song/scripts', songScripts);
+		ModdingAPI.checkForScripts('songs/$song/scripts/$difficulty', songScripts);
+
+		songScripts.parent = this;
+
+		/* #if SCRIPT_SUPPORT
 		songScripts.parent = this;
 		final scriptPaths:Array<String> = ['$song/scripts', '$song/scripts/$difficulty'];
 		if (variation != null) scriptPaths.push('$song/scripts/$variation');
@@ -137,7 +131,7 @@ class PlayState extends violet.backend.StateBackend {
 				#end
 			}
 		}
-		#end
+		#end */
 
 		strumLines = new FlxTypedGroup<StrumLine>();
 
@@ -149,23 +143,10 @@ class PlayState extends violet.backend.StateBackend {
 		for (i => data in SONG.strumLines) {
 			if (data == null) continue;
 
-			/* var chars = [];
-			var charPosName:String = data.position == null ? (switch(data.type) {
-				case 0: "dad";
-				case 1: "boyfriend";
-				case 2: "girlfriend";
-			}) : data.position;
-			if (data.characters != null) for(k=>charName in data.characters) {
-				var char = new Character(0, 0, charName, stage.isCharFlipped(stage.characterPoses[charName] != null ? charName : charPosName, strumLine.type == 1));
-				stage.applyCharStuff(char, charPosName, k);
-				chars.push(char);
-			} */
-
 			var strumLine = new StrumLine(data);
 			strumLine.cameras = [camHUD];
 			strumLine.visible = data.visible;
 			strumLine.ID = i;
-			// strumLine.y -= 50;
 			strumLines.add(strumLine);
 
 			for(i=>charName in data.characters) {
@@ -173,10 +154,10 @@ class PlayState extends violet.backend.StateBackend {
 				char.alpha = 0.5;
 				char.stagePosition = data.charStagePosition;
 				if (data.charStagePosition == "boyfriend" && iconPlayer == null) {
-					iconPlayer = new HealthIcon({ id: "face" }/* char._data.healthIcon */);
+					iconPlayer = new HealthIcon(char._data.healthIcon);
 					iconPlayer.flipX = !iconPlayer.flipX;
-				} else if (data.charStagePosition == "dad" && iconOpponent == null) {
-					iconOpponent = new HealthIcon({ id: "face" }/* char._data.healthIcon */);
+				} else if (iconOpponent == null) {
+					iconOpponent = new HealthIcon(char._data.healthIcon);
 				}
 				strumLine.characters.push(char);
 				characters.push(char);
@@ -184,77 +165,18 @@ class PlayState extends violet.backend.StateBackend {
 			}
 
 			// note interactions
-			final ghostTapping:Bool = true;
-			strumLine._onVoidTap = (id:Int) -> {
-				if (!ghostTapping) FlxG.sound.play(Cache.sound('miss/${FlxG.random.int(1, 3)}'), 0.7);
-				strumLine.strums.members[id].playStrumAnim('press', ghostTapping);
-			}
-			strumLine._onNoteHit = (note:Note) -> {
-				if (note.wasHit) return;
-				note.wasHit = true; note.visible = false;
-				generalVocals.resume(); strumLine.vocals.resume();
-				note.parentStrum.playStrumAnim('confirm', true);
-				for (char in strumLine.characters)
-					char.playSingAnim(note.id);
-
-				if (strumLine.isPlayer) {
-					var judgement:Judgement = Scoring.judgeNoteHit(note.time - Conductor.framePosition);
-					if (judgement.splash) note.parentStrum.spawnSplash();
-					score += Math.round(judgement.score);
-					health += Constants.DEFAULT_HEALTH_GAIN;
-				}
-				if (note.length > 10)
-					note.parentStrum.spawnHoldCover();
-			}
-			strumLine._onSustainHit = (sustain:Sustain) -> {
-				if (sustain.wasHit && !sustain.parentNote.wasHit) return;
-				sustain.wasHit = true; // sustain.visible = false;
-				generalVocals.resume(); strumLine.vocals.resume();
-				sustain.parentStrum.playStrumAnim('confirm', true);
-				for (char in strumLine.characters)
-					char.playSingAnim(sustain.id);
-				if (strumLine.isPlayer)
-					health += Constants.DEFAULT_HEALTH_GAIN;
-				if (sustain.isEnd) {
-					sustain.parentStrum.holdCover?.playAnim('end', true);
-					if (strumLine.isComputer) sustain.parentStrum.holdCover?.animation.finish();
-					sustain.parentStrum.holdCover = null;
-				}
-			}
-			strumLine._onNoteMissed = (note:Note) -> {
-				if (note.wasMissed) return;
-				note.wasMissed = true; note.alpha *= 0.6;
-				generalVocals.pause(); strumLine.vocals.pause();
-				FlxG.sound.play(Cache.sound('miss/${FlxG.random.int(1, 3)}'), 0.7);
-				for (sustain in Note.filterTail(note.tail, true)) {
-					sustain.wasMissed = true;
-					sustain.alpha *= 0.6;
-				}
-				for (char in strumLine.characters)
-					char.playSingAnim(note.id, true);
-				health -= Constants.DEFAULT_HEALTH_LOSS;
-				note.parentStrum.holdCover?.playAnim('end', true);
-				if (strumLine.isComputer) note.parentStrum.holdCover?.animation.finish();
-				note.parentStrum.holdCover = null;
-			}
-			strumLine._onSustainMissed = (sustain:Sustain) -> {
-				if (sustain.wasMissed) return;
-				sustain.wasMissed = true; sustain.alpha *= 0.6;
-				generalVocals.pause(); strumLine.vocals.pause();
-				FlxG.sound.play(Cache.sound('miss/${FlxG.random.int(1, 3)}'), 0.7);
-				for (sustain in Note.filterTail(sustain.parentNote.tail, true)) {
-					sustain.wasMissed = true;
-					sustain.alpha *= 0.6;
-				}
-				for (char in strumLine.characters)
-					char.playSingAnim(sustain.id, true);
-				sustain.parentStrum.holdCover?.playAnim('end', true);
-				if (strumLine.isComputer) sustain.parentStrum.holdCover?.animation.finish();
-				sustain.parentStrum.holdCover = null;
-			}
+			strumLine._onVoidTap = onVoidTap;
+			strumLine._onNoteHit = onNoteHit;
+			strumLine._onSustainHit = onSustainHit;
+			strumLine._onNoteMissed = onNoteMissed;
+			strumLine._onSustainMissed = onSustainMissed;
 		}
 		add(strumLines);
 		Conductor.onComplete = endSong;
+
+		for (i in SONG._data.noteTypes) {
+			ModdingAPI.checkForScripts('data/notetypes', i, songScripts);
+		}
 
 		if (playAsOpponent) {
 			for (strumLine in strumLines) {
@@ -264,23 +186,25 @@ class PlayState extends violet.backend.StateBackend {
 		}
 
 		stage = new Stage(SONG.stage);
+		stage.stageScripts.parent = this;
+		stage.load(characters);
 		defaultCamZoom = stage._data.zoom;
 		camGame.zoom = defaultCamZoom;
 
 		healthBar = new HealthBar();
-		healthBar.y = /* isDownscroll ? FlxG.height * 0.1 :  */FlxG.height * 0.9;
+		healthBar.y = Options.data.downscroll ? FlxG.height * 0.1 : FlxG.height * 0.9;
 		healthBar.screenCenter(X);
 		healthBar.camera = camHUD;
-		/* if (strumLines.members[0].characters[0]._data.healthIcon.color != null) {
-			healthBar.leftColor = strumLines.members[0].characters[0]._data.healthIcon.color;
-		} else { */
+		if (iconOpponent._data.color != null && Options.data.coloredHealthBar) {
+			healthBar.leftColor = iconOpponent._data.color;
+		} else {
 			healthBar.leftColor = FlxColor.RED;
-		// }
-		/* if (strumLines.members[1].characters[0]._data.healthIcon.color != null) {
-			healthBar.rightColor = strumLines.members[1].characters[0]._data.healthIcon.color;
-		} else { */
+		}
+		if (iconPlayer._data.color != null && Options.data.coloredHealthBar) {
+			healthBar.rightColor = iconPlayer._data.color;
+		} else {
 			healthBar.rightColor = FlxColor.LIME;
-		// }
+		}
 		add(healthBar);
 
 		scoreTxt = new ScoreTxt();
@@ -293,24 +217,44 @@ class PlayState extends violet.backend.StateBackend {
 		add(iconPlayer);
 
 		iconOpponent.camera = camHUD;
+		iconOpponent.isOpponent = true;
 		add(iconOpponent);
 
 		health = 0.5; // Deal with this being weird before songs starts once countdown works.
 
-		countdownAssets = {
-			images: getCountdownAssetList([null, 'ready', 'set', 'go']),
-			sounds: getCountdownAssetList(['introTHREE', 'introTWO', 'introONE', 'introGO'])
-		}
+		var spectator = strumLines.members[2].characters[0];
+
+		comboGroup = new ComboGroup();
+		comboGroup.camera =  camGame;
+		comboGroup.x = 1100;
+		comboGroup.y = 300;
+		comboGroup.z = 100;
+		add(comboGroup);
 
 		callSongScripts('create');
 
-		// startCountdown();
-		startSong();
+		startCountdown();
+		// startSong();
 
 		for (strumLine in strumLines)
 			strumLine.generateNotes(Conductor.songPosition);
 
 		callSongScripts('postCreate');
+
+		if (doFadeOut) {
+			doFadeOut = false;
+			camHUD.fade(0.001);
+			new FlxTimer().start(0.1, (_)->{
+				camHUD.fade(0.5, true);
+			});
+		}
+
+		#if debug
+		DebugDisplay.registerVariable("Current Song", "song");
+		DebugDisplay.registerVariable("Current Difficulty", "difficulty");
+		DebugDisplay.registerVariable("Current Variantion", "variation");
+		if (playlist.length != 0) DebugDisplay.registerVariable("Playlist Items", "playlist");
+		#end
 	}
 
 	var healthLerp:Float = 0.5;
@@ -319,7 +263,24 @@ class PlayState extends violet.backend.StateBackend {
 	override public function update(elapsed:Float):Void {
 		super.update(elapsed);
 
-		scoreLerp = MathUtil.lerp(scoreLerp, score, 0.1);
+		callSongScripts("update", [elapsed]);
+		callSongScripts("onUpdate", [elapsed]);
+
+		if (Controls.accept && !FlxG.mouse.justPressed) {
+			var event:EventBase = songScripts.event("onPause", new EventBase());
+			if (!event.cancelled) {
+				countdownTimer.active = false;
+
+				FlxTween.globalManager.forEach((tween:FlxTween)->{
+					tween.active = false;
+				});
+
+				var pauseMenu:PauseMenu = new PauseMenu();
+				openSubState(pauseMenu);
+			}
+		}
+
+		scoreLerp = MathUtil.lerp(scoreLerp, score, 0.25);
 		scoreTxt.value = Math.round(scoreLerp);
 
 		health = FlxMath.bound(health, 0, 1);
@@ -327,99 +288,215 @@ class PlayState extends violet.backend.StateBackend {
 		healthLerp = MathUtil.lerp(healthLerp, health, 0.1);
 		healthBar.position = healthLerp;
 
-		iconPlayer.angle = MathUtil.lerp(iconPlayer.angle, 0, 0.2);
-		iconOpponent.angle = MathUtil.lerp(iconOpponent.angle, 0, 0.2);
-		iconPlayer.scale.x = iconPlayer.scale.y = MathUtil.lerp(iconPlayer.scale.y, iconPlayer._data.scale, 0.2);
-		iconOpponent.scale.x = iconOpponent.scale.y = MathUtil.lerp(iconOpponent.scale.y, iconOpponent._data.scale, 0.2);
-		iconPlayer.updateHitbox();
-		iconOpponent.updateHitbox();
-
 		iconPlayer.x = healthBar.x + healthBar.defaultWidth * (1-healthLerp);
 		iconPlayer.y = healthBar.y + (healthBar.height/2) - (iconPlayer.height/2);
 
 		iconOpponent.x = healthBar.x + healthBar.defaultWidth * (1-healthLerp) - iconOpponent.width;
 		iconOpponent.y = healthBar.y + (healthBar.height/2) - (iconOpponent.height/2);
 
+		iconPlayer.updateFromHealth(health);
+		iconOpponent.updateFromHealth(health);
+
 		for (i in SONG.events) {
 			if (i.time <= Conductor.songPosition) {
 				handleEvent(i);
 			}
 		}
+
+		if (health == 0 || Controls.reset) {
+			FlxG.switchState(new GameOverState(strumLines.members[1].characters[0]));
+		}
+
+		callSongScripts("postUpdate", [elapsed]);
+		callSongScripts("onUpdatePost", [elapsed]);
 	}
 
-	function startCountdown(?saidAssets:CountdownAssets):Void {
-		saidAssets ??= countdownAssets;
-		final assets:CountdownAssets = {
-			images: saidAssets.images.copy(),
-			sounds: saidAssets.sounds.copy()
+	function onVoidTap(id:Int, strumLine:StrumLine) {
+		strumLine.strums.members[id].playStrumAnim('press', ghostTapping);
+		if (!Conductor.instrumental.playing) return;
+		if (!ghostTapping) {
+			FlxG.sound.play(Cache.sound('miss/${FlxG.random.int(1, 3)}'), 0.7);
+			for (char in strumLine.characters)
+				char.playSingAnim(id, true);
+			score += Math.round(Scoring.missScore);
+			health -= Constants.DEFAULT_HEALTH_LOSS;
 		}
-		assets.images.reverse();
-		assets.sounds.reverse();
+	}
 
-		countdownStarted = true;
-		if (countdownLength >= 1) {
-			countdownTimer.start(Conductor.beatLengthMs / 1000, timer -> {
-				if (!songStarted)
-					startSong(countdownLength);
+	function onNoteHit(note:Note) {
+		if (!Conductor.instrumental.playing) return; if (note.wasHit) return;
+		final event:NoteHitEvent = runSongEvent("noteHit", new NoteHitEvent(note));
+		if (event.cancelled) return;
 
-				final assetIndex:Int = timer.loopsLeft - 1;
+		note.wasHit = true; note.visible = false;
+		generalVocals.resume(); note.parent.vocals.resume();
+		if (event.playStrumAnim) note.parentStrum.playStrumAnim('confirm', true);
 
-				final soundAsset:String = assets.sounds[assetIndex];
-				if (Paths.fileExists(Paths.sound(soundAsset), true))
-					FlxG.sound.play(Cache.sound(soundAsset));
+		if (!event.animCancelled)
+			for (char in note.parent.characters)
+				char.playSingAnim(note.id, event.animationSuffix);
 
-				final imageAsset:String = assets.images[assetIndex];
-				if (Paths.fileExists(Paths.image(imageAsset), true)) {
-					final sprite:NovaSprite = new NovaSprite(imageAsset);
-					sprite.cameras = [camHUD];
-					sprite.screenCenter();
-					add(sprite);
+		if (note.parent.isPlayer) {
+			final judgement:Judgement = Scoring.judgeNoteHit(note.time - Conductor.framePosition);
+			if (judgement.splash && event.spawnSplash != false) note.parentStrum.spawnSplash();
+			score += Math.round(judgement.score);
+			health += Constants.DEFAULT_HEALTH_GAIN;
+			comboGroup.popupRating(judgement.rating, 0);
+		} else if (event.spawnSplash == true) // on purpose ***do not touch***
+			note.parentStrum.spawnSplash();
 
-					FlxTween.tween(sprite, {alpha: 0}, Conductor.beatLengthMs / 1.2 / 1000, {
-						ease: FlxEase.cubeInOut,
-						onComplete: tween ->
-							sprite.destroy()
-					});
-				}
-			}, countdownLength + 1);
+		if (event.spawnHoldCover)
+			note.parentStrum.spawnHoldCover();
+
+		runSongEvent("noteHitPost", event);
+	}
+
+	function onNoteMissed(note:Note) {
+		if (!Conductor.instrumental.playing) return; if (note.wasMissed) return;
+
+		note.wasMissed = true; note.alpha *= 0.6;
+		generalVocals.pause(); note.parent.vocals.pause();
+		FlxG.sound.play(Cache.sound('miss/${FlxG.random.int(1, 3)}'), 0.7);
+
+		for (sustain in Note.filterTail(note.tail, true)) {
+			sustain.wasMissed = true;
+			sustain.alpha *= 0.6;
 		}
+
+		for (char in note.parent.characters)
+			char.playSingAnim(note.id, true);
+
+		if (note.parent.isPlayer) score += Math.round(Scoring.missScore);
+		health -= Constants.DEFAULT_HEALTH_LOSS * (note.parent.isPlayer ? 1 : -1);
+
+		note.parentStrum.holdCover?.playAnim('end', true);
+		if (note.parent.isComputer) note.parentStrum.holdCover?.animation.finish();
+		note.parentStrum.holdCover = null;
+	}
+
+	function onSustainHit(sustain:Sustain) {
+		if (!Conductor.instrumental.playing) return; if (sustain.wasHit && !sustain.parentNote.wasHit) return;
+		final event:SustainHitEvent = runSongEvent("sustainHit", new SustainHitEvent(sustain));
+		if (event.cancelled) return;
+
+		sustain.wasHit = true;
+		generalVocals.resume(); sustain.parent.vocals.resume();
+		if (event.playStrumAnim) sustain.parentStrum.playStrumAnim('confirm', true);
+
+		if (!event.animCancelled)
+			for (char in sustain.parent.characters)
+				char.playSingAnim(sustain.id, event.animationSuffix);
+
+		if (sustain.parent.isPlayer)
+			health += Constants.DEFAULT_HEALTH_GAIN;
+
+		if (sustain.isEnd) {
+			sustain.visible = false;
+			sustain.parentStrum.holdCover?.playAnim('end', true);
+			if (sustain.parent.isComputer) sustain.parentStrum.holdCover?.animation.finish();
+			sustain.parentStrum.holdCover = null;
+		}
+	}
+
+	function onSustainMissed(sustain:Sustain) {
+		if (!Conductor.instrumental.playing) return; if (sustain.wasMissed) return;
+
+		sustain.wasMissed = true; sustain.alpha *= 0.6;
+		generalVocals.pause(); sustain.parent.vocals.pause();
+		FlxG.sound.play(Cache.sound('miss/${FlxG.random.int(1, 3)}'), 0.7);
+		for (sustain in Note.filterTail(sustain.parentNote.tail, true)) {
+			sustain.wasMissed = true;
+			sustain.alpha *= 0.6;
+		}
+
+		for (char in sustain.parent.characters)
+			char.playSingAnim(sustain.id, true);
+
+		if (sustain.parent.isPlayer) score += Math.round(Scoring.missScore);
+		health -= Constants.DEFAULT_HEALTH_LOSS * (sustain.parent.isPlayer ? 1 : -1);
+
+		sustain.parentStrum.holdCover?.playAnim('end', true);
+		if (sustain.parent.isComputer) sustain.parentStrum.holdCover?.animation.finish();
+		sustain.parentStrum.holdCover = null;
+	}
+
+	var countdownTick = 0;
+
+	function startCountdown():Void {
+		countdownTick = 0;
+		var event:EventBase = songScripts.event("startCountdown", new EventBase());
+		event = songScripts.event("onStartCountdown", event);
+		if (event.cancelled) return;
+		tickCountdown();
+	}
+
+	function tickCountdown() {
+		countdownTimer.cancel();
+		if (countdownTick == countdownLength) {
+			countdownTimer = new FlxTimer().start(Conductor.beatLengthMs / 1000, _ -> startSong());
+			return;
+		}
+		countdownTimer = new FlxTimer().start(Conductor.beatLengthMs / 1000, _ -> {
+			if (countdownSounds[countdownTick] != null) FlxG.sound.play(Paths.sound('game/countdown/funkin/${countdownSounds[countdownTick]}'));
+			if (countdownSprites[countdownTick] != null) {
+				var countdownSprite:NovaSprite = new NovaSprite(Paths.image('game/countdown/funkin/${countdownSprites[countdownTick]}'));
+				countdownSprite.camera = camHUD;
+				countdownSprite.scale.set(0.8, 0.8);
+				countdownSprite.updateHitbox();
+				countdownSprite.screenCenter();
+				countdownSprite.alpha = 0;
+				add(countdownSprite);
+				var ms = Conductor.beatLengthMs / 1000;
+				FlxTween.tween(countdownSprite, { alpha: 1 }, ms/4);
+				FlxTween.tween(countdownSprite, { alpha: 0 }, ms/4, { startDelay: (ms/4)*3 });
+				FlxTween.tween(countdownSprite, { y: countdownSprite.y + 200 }, ms, { ease: FlxEase.backIn, onComplete: (_)->{
+					remove(countdownSprite);
+					countdownSprite.destroy();
+				}});
+			}
+			countdownTick++;
+			tickCountdown();
+			beatHit(0-countdownTick);
+		});
+		//
 	}
 
 
 	function handleEvent(event:ChartEvent) {
 		if (event.ran) return;
 		event.ran = true;
+		var eventName = event.type != null ? [null, "Camera Movement"][event.type] : event.name;
+		var scriptEvent:SongEvent = runSongEvent("onEvent", new SongEvent(eventName, event.params));
+		if (scriptEvent.cancelled) return;
 
-		var cameraMovementEventHandler = (event:ChartEvent) -> {
-			var targetCharacter:Character = strumLines.members[event.params[0]].characters[0];
-			FlxTween.cancelTweensOf(camGame.scroll);
-			FlxTween.tween(camGame.scroll, {
-				x: targetCharacter.x + targetCharacter.cameraOffsets[0],
-				y: targetCharacter.y + targetCharacter.cameraOffsets[1]
-			}, 0.75, { ease: FlxEase.quartOut });
-		}
-
-		switch (event.type) {
-			case 1:
-				cameraMovementEventHandler(event);
-			}
-
-		switch (event.name) {
+		switch (eventName) {
 			case "Camera Movement":
-				cameraMovementEventHandler(event);
-			case "Play Animation":
-				var targetCharacter:Character = strumLines.members[event.params[0]].characters[0];
-				targetCharacter.canDance = false;
-				targetCharacter.playAnim(event.params[1], true);
-				targetCharacter.animation.onFinish.addOnce((_)->{ if (event.params[1] == _) targetCharacter.canDance = true; });
+				var targetCharacter:Character = strumLines.members[scriptEvent.params[0]].characters[0];
+				FlxTween.cancelTweensOf(camGame.scroll);
+				FlxTween.tween(camGame.scroll, {
+					x: targetCharacter.x + targetCharacter.cameraOffsets[0],
+					y: targetCharacter.y + targetCharacter.cameraOffsets[1]
+				}, (Conductor.stepLengthMs / 1000) * 16, { ease: FlxEase.expoOut });
 
+			case "Play Animation":
+				var targetCharacter:Character = strumLines.members[scriptEvent.params[0]].characters[0];
+				targetCharacter.canDance = false;
+				targetCharacter.isSinging = false;
+				targetCharacter.playAnim(scriptEvent.params[1], true);
+				targetCharacter.animation.onFinish.addOnce(name -> {
+					if (name == scriptEvent.params[1]) {
+						targetCharacter.canDance = true;
+						targetCharacter.dance(true);
+						targetCharacter.animation.finish();
+					}
+				});
 		}
 
 
 		if (event.name != null) {
-			trace('debug:Ran song event named "${event.name}" with parameters "${event.params.join(", ")}"');
+			trace('debug:Ran song event named "<yellow>${event.name}<reset>" with parameters "<yellow>${event.params.join(", ")}<reset>"');
 		} else if (event.type != null) {
-			trace('debug:Ran song event named "${[null, "Camera Movement"][event.type]}" with parameters "${event.params.join(", ")}"');
+			trace('debug:Ran song event named "<yellow>${[null, "Camera Movement"][event.type]}<reset>" with parameters "<yellow>${event.params.join(", ")}<reset>"');
 		}
 
 		// trace('debug:Ran event ');
@@ -433,35 +510,36 @@ class PlayState extends violet.backend.StateBackend {
 
 	function endSong():Void {
 		songEnded = true;
-		FlxG.switchState(violet.states.menus.MainMenu.new);
+		if (playlist.length == 0) {
+			FlxG.switchState(violet.states.menus.MainMenu.new);
+		} else {
+			loadSong(playlist.shift(), difficulty, variation);
+		}
 	}
 
-	public function callSongScripts<T>(funcName:String, ?args:Array<Dynamic>, ?def:T):T {
-		return #if SCRIPT_SUPPORT songScripts.call(funcName, args, def) ?? #end def;
+	public function callSongScripts(func:String, ?params:Array<Dynamic>):Void {
+		songScripts.call(func, params);
+		stage.stageScripts.call(func, params);
 	}
 
 	public function runSongEvent<T:violet.backend.scripting.events.EventBase>(func:String, event:T):T {
-		#if SCRIPT_SUPPORT
-		if (songScripts == null) return event;
-		return songScripts.event(func, event);
-		#else
-		return event;
-		#end
+		songScripts.event(func, event);
+		return stage.stageScripts.event(func, event);
 	}
 
-	@:unreflective var alternator:Bool = false;
+	override function stepHit(curStep:Int) {
+		super.stepHit(curStep);
+		songScripts.set('curStep', curStep);
+		songScripts.set('curBeat', curBeat);
+
+		callSongScripts('stepHit', [curStep]);
+		callSongScripts('postStepHit', [curStep]);
+	}
 
 	override function beatHit(curBeat:Int) {
 		super.beatHit(curBeat);
-		alternator = !alternator;
 
-		iconOpponent.scale.x = iconOpponent.scale.y = iconOpponent._data.scale * 1.2;
-		iconPlayer.scale.x = iconPlayer.scale.y = iconPlayer._data.scale * 1.2;
-
-		if (sillyBop) {
-			iconPlayer.angle = alternator ? 20 : -20;
-			iconOpponent.angle = alternator ? -20 : 20;
-		}
+		callSongScripts('beatHit', [curBeat]);
 
 		if (curBeat % 4 == 0) {
 			FlxTween.cancelTweensOf(camGame);
@@ -470,9 +548,14 @@ class PlayState extends violet.backend.StateBackend {
 			FlxTween.tween(camGame, { zoom: defaultCamZoom }, 1, { ease: FlxEase.quartOut });
 			FlxTween.tween(camHUD, { zoom: 1 }, 1, { ease: FlxEase.quartOut });
 		}
+
+		callSongScripts('postBeatHit', [curBeat]);
 	}
 
-
+	override function closeSubState() {
+		super.closeSubState();
+		countdownTimer.active = true;
+	}
 
 	override public function destroy():Void {
 		instance = null;

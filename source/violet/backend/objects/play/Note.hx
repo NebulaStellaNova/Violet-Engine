@@ -2,8 +2,9 @@ package violet.backend.objects.play;
 
 import flixel.util.FlxSort;
 import violet.backend.audio.Conductor;
-import violet.data.noteskin.NoteSkin;
-import violet.data.noteskin.NoteSkinRegistry;
+import violet.backend.options.Options;
+import violet.data.notestyles.NoteStyle;
+import violet.data.notestyles.NoteStyleRegistry;
 
 class Note extends NovaSprite {
 	public static var swagWidth:Float = 160 * 0.7;
@@ -12,21 +13,21 @@ class Note extends NovaSprite {
 	 * The parent strumline.
 	 */
 	public final parent:StrumLine;
-	public var parentStrum(get, never):Strum;
 	/**
 	 * The parent strum.
 	 */
+	public var parentStrum(get, never):Strum;
 	inline function get_parentStrum():Strum
 		return parent.strums.members[id];
 
-	var preventAutoSkinSet:Bool = true;
+	var preventAutoStyleSet:Bool = true;
 	/**
 	 * The direction id of the note.
 	 */
 	public var id(default, set):Int;
 	inline function set_id(value:Int):Int {
-		if (id != value && !preventAutoSkinSet)
-			reloadSkin(true);
+		if (id != value && !preventAutoStyleSet)
+			reloadStyle(true);
 		return id = value;
 	}
 	/**
@@ -34,15 +35,15 @@ class Note extends NovaSprite {
 	 */
 	public var time:Float;
 	/**
-	 * The skin the note will use.
+	 * The style the note will use.
 	 */
-	public var skin(default, set):String;
-	inline function set_skin(value:String):String {
-		if (skin != value && !preventAutoSkinSet)
-			reloadSkin(value, true);
-		return skin = value;
+	public var style(default, set):String;
+	inline function set_style(value:String):String {
+		if (style != value && !preventAutoStyleSet)
+			reloadStyle(value, true);
+		return style = value;
 	}
-	var skinMeta:NoteSkin;
+	var styleMeta:NoteStyle;
 
 	/**
 	 * The scroll speed of this note.
@@ -52,13 +53,19 @@ class Note extends NovaSprite {
 	 * The resulting scroll speed information.
 	 */
 	public var __scrollSpeed(get, never):Float;
-	inline function get___scrollSpeed():Float
+	inline function get___scrollSpeed():Float {
+		if (Options.data.personalScrollSpeed != 0) return Options.data.personalScrollSpeed;
 		return scrollSpeed ?? parent.scrollSpeed ?? StrumLine.generalScrollSpeed;
+	}
 
 	/**
 	 * The sustains tied to this note.
 	 */
-	public final tail:Array<Sustain> = [];
+	@:isVar public var tail(get, never):Array<Sustain> = [];
+	function get_tail():Array<Sustain> {
+		tail.sort(sortTail);
+		return tail;
+	}
 	/**
 	 * The tail length in time.
 	 */
@@ -73,14 +80,14 @@ class Note extends NovaSprite {
 	 */
 	public var canHit(get, never):Bool;
 	inline function get_canHit():Bool {
-		return time >= Conductor.songPosition - 230 && time <= Conductor.songPosition + 230;
+		return time >= Conductor.framePosition - 230 && time <= Conductor.framePosition + 230;
 	}
 	/**
 	 * If true it's too late to hit the note.
 	 */
 	public var tooLate(get, never):Bool;
 	inline function get_tooLate():Bool {
-		return time < Conductor.songPosition - (300 / Math.abs(__scrollSpeed)) && !wasHit;
+		return time < Conductor.framePosition - (300 / Math.abs(__scrollSpeed)) && !wasHit;
 	}
 	/**
 	 * If true this note has been hit.
@@ -91,41 +98,61 @@ class Note extends NovaSprite {
 	 */
 	public var wasMissed:Bool = false;
 
+	/**
+	 * The current note type.
+	 */
+	public var noteType:String = null;
 
 	public function new(parent:StrumLine, id:Int, time:Float, tailLength:Float) {
 		super(-10000, -10000);
 		this.parent = parent;
 		this.id = id;
 		this.time = time;
-		skin = 'default';
-		preventAutoSkinSet = false;
+		style = null;
+		preventAutoStyleSet = false;
 
-		var roundedLength:Int = Math.round(tailLength / Conductor.stepLengthMs);
+		final stepLengthMs:Float = flixel.addons.sound.FlxRhythmConductorUtil.getStepLengthMs(flixel.addons.sound.FlxRhythmConductor.instance.getCurrentTimeChangeBPMAccurate(time));
+		final roundedLength:Int = Math.round(tailLength / stepLengthMs);
 		if (roundedLength > 1) {
 			for (susNote in 0...roundedLength)
-				tail.push(new Sustain(this, (Conductor.stepLengthMs * susNote), susNote == (roundedLength - 1)));
+				tail.push(new Sustain(this, (stepLengthMs * susNote), susNote == (roundedLength - 1)));
 			tail.sort(sortTail);
 		}
-		reloadSkin(true);
 
-		scale.set(0.7, 0.7);
-		scale.scale(parent.strumScale);
+		reloadStyle(true);
 		updateHitbox();
 	}
 
-	public function reloadSkin(?skin:String, effectTail:Bool = false):Void {
+	public function reloadStyle(?style:String, effectTail:Bool = false):Void {
 		this.anims.clear();
 		animation.destroyAnimations();
-		final skin:String = skin ?? this.skin ?? 'default';
-		this.skinMeta = NoteSkinRegistry.getNoteSkinByID(skin);
-		loadSprite(skinMeta.getNoteAssetPath());
-		for (data in skinMeta.getNoteAnimations(id, parent.keyCount))
+		final style:String = style ?? this.style ?? parentStrum.style ?? parent.noteStyle ?? 'default';
+		this.styleMeta = NoteStyleRegistry.getNoteStyleByID(style);
+		loadSprite(styleMeta.getNoteAssetPath());
+		for (data in styleMeta.getNoteAnimations(id, parent.keyCount))
 			addAnimFromData(data);
-		var lol:Array<Float> = skinMeta.getNoteOffsets();
+		var lol:Array<Float> = styleMeta.getNoteOffsets();
 		globalOffset.set(lol[0], lol[1]);
-		if (effectTail) for (sustain in tail) sustain.reloadSkin(skin);
+		this.antialiasing = styleMeta.isNotePixel();
+		if (effectTail) for (sustain in tail) sustain.reloadStyle(style);
 
-		playAnim('note', true); updateHitbox();
+		playAnim('note', true);
+		final daScale:Float = styleMeta.noteProperties.scale;
+		scale.set(daScale, daScale);
+		scale.scale(parent.strumScale);
+		updateHitbox(); alpha = styleMeta.noteProperties.alpha;
+		blend = styleMeta.noteProperties.blendMode;
+	}
+
+	override public function draw():Void {
+		if (parent.downscroll) {
+			final prevY:Float = y;
+			y = getDefaultCamera().height - y - height + (getDefaultCamera().height / 2 + height) + 10;
+			globalOffset.y *= -1;
+			super.draw();
+			globalOffset.y *= -1;
+			y = prevY;
+		} else super.draw();
 	}
 
 	/**

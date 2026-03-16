@@ -1,6 +1,11 @@
 package violet.backend.utils;
 
 class StringUtil {
+
+    public static function capitalizeFirst(string:String) {
+        return string.substr(0, 1).toUpperCase() + string.substr(1);
+    }
+
     public static function removeLeadingSlash(str:String) {
         var splitStr = str.split("");
         if (splitStr[0] == "/")

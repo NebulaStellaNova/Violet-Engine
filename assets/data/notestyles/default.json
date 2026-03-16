@@ -1,0 +1,298 @@
+{
+	"name": "Funkin'",
+	"offsets": [28, -25],
+	"strums": {
+		"animations": [
+			{
+				"id": 0,
+				"mania": 4,
+				"name": "static",
+				"prefix": "staticLeft"
+			},
+			{
+				"id": 1,
+				"mania": 4,
+				"name": "static",
+				"prefix": "staticDown"
+			},
+			{
+				"id": 2,
+				"mania": 4,
+				"name": "static",
+				"prefix": "staticUp"
+			},
+			{
+				"id": 3,
+				"mania": 4,
+				"name": "static",
+				"prefix": "staticRight"
+			},
+
+			{
+				"id": 0,
+				"mania": 4,
+				"name": "press",
+				"prefix": "left press"
+			},
+			{
+				"id": 1,
+				"mania": 4,
+				"name": "press",
+				"prefix": "down press"
+			},
+			{
+				"id": 2,
+				"mania": 4,
+				"name": "press",
+				"prefix": "up press"
+			},
+			{
+				"id": 3,
+				"mania": 4,
+				"name": "press",
+				"prefix": "right press"
+			},
+
+			{
+				"id": 0,
+				"mania": 4,
+				"name": "confirm",
+				"prefix": "left confirm"
+			},
+			{
+				"id": 1,
+				"mania": 4,
+				"name": "confirm",
+				"prefix": "down confirm"
+			},
+			{
+				"id": 2,
+				"mania": 4,
+				"name": "confirm",
+				"prefix": "up confirm"
+			},
+			{
+				"id": 3,
+				"mania": 4,
+				"name": "confirm",
+				"prefix": "right confirm"
+			}
+		]
+	},
+	"notes": {
+		"animations": [
+			{
+				"id": 0,
+				"mania": 4,
+				"name": "note",
+				"prefix": "noteLeft"
+			},
+			{
+				"id": 1,
+				"mania": 4,
+				"name": "note",
+				"prefix": "noteDown"
+			},
+			{
+				"id": 2,
+				"mania": 4,
+				"name": "note",
+				"prefix": "noteUp"
+			},
+			{
+				"id": 3,
+				"mania": 4,
+				"name": "note",
+				"prefix": "noteRight"
+			}
+		]
+	},
+	"sustains": {
+		"animations": [
+			{
+				"id": 0,
+				"mania": 4,
+				"name": "tail",
+				"prefix": "purple hold piece"
+			},
+			{
+				"id": 1,
+				"mania": 4,
+				"name": "tail",
+				"prefix": "blue hold piece"
+			},
+			{
+				"id": 2,
+				"mania": 4,
+				"name": "tail",
+				"prefix": "green hold piece"
+			},
+			{
+				"id": 3,
+				"mania": 4,
+				"name": "tail",
+				"prefix": "red hold piece"
+			},
+
+			{
+				"id": 0,
+				"mania": 4,
+				"name": "end",
+				"prefix": "purple hold end"
+			},
+			{
+				"id": 1,
+				"mania": 4,
+				"name": "end",
+				"prefix": "blue hold end"
+			},
+			{
+				"id": 2,
+				"mania": 4,
+				"name": "end",
+				"prefix": "green hold end"
+			},
+			{
+				"id": 3,
+				"mania": 4,
+				"name": "end",
+				"prefix": "red hold end"
+			}
+		]
+	},
+	"holdcovers": {
+		"offsets": [70, 130],
+		"animations": [
+			{
+				"id": 0,
+				"mania": 4,
+				"name": "start",
+				"prefix": "holdCoverStartPurple"
+			},
+			{
+				"id": 0,
+				"mania": 4,
+				"name": "hold",
+				"prefix": "holdCoverPurple",
+				"looped": true
+			},
+			{
+				"id": 0,
+				"mania": 4,
+				"name": "end",
+				"prefix": "holdCoverEndPurple"
+			},
+			{
+				"id": 1,
+				"mania": 4,
+				"name": "start",
+				"prefix": "holdCoverStartBlue"
+			},
+			{
+				"id": 1,
+				"mania": 4,
+				"name": "hold",
+				"prefix": "holdCoverBlue",
+				"looped": true
+			},
+			{
+				"id": 1,
+				"mania": 4,
+				"name": "end",
+				"prefix": "holdCoverEndBlue"
+			},
+			{
+				"id": 2,
+				"mania": 4,
+				"name": "start",
+				"prefix": "holdCoverStartGreen"
+			},
+			{
+				"id": 2,
+				"mania": 4,
+				"name": "hold",
+				"prefix": "holdCoverGreen",
+				"looped": true
+			},
+			{
+				"id": 2,
+				"mania": 4,
+				"name": "end",
+				"prefix": "holdCoverEndGreen"
+			},
+			{
+				"id": 3,
+				"mania": 4,
+				"name": "start",
+				"prefix": "holdCoverStartRed"
+			},
+			{
+				"id": 3,
+				"mania": 4,
+				"name": "hold",
+				"prefix": "holdCoverRed",
+				"looped": true
+			},
+			{
+				"id": 3,
+				"mania": 4,
+				"name": "end",
+				"prefix": "holdCoverEndRed"
+			}
+		]
+	},
+	"splashes": {
+		"offsets": [75, 75],
+		"properties": {"alpha": 0.8},
+		"animations": [
+			{
+				"id": 0,
+				"mania": 4,
+				"name": "1",
+				"prefix": "note impact 1 purple"
+			},
+			{
+				"id": 0,
+				"mania": 4,
+				"name": "2",
+				"prefix": "note impact 2 purple"
+			},
+			{
+				"id": 1,
+				"mania": 4,
+				"name": "1",
+				"prefix": "note impact 1 blue"
+			},
+			{
+				"id": 1,
+				"mania": 4,
+				"name": "2",
+				"prefix": "note impact 2 blue"
+			},
+			{
+				"id": 2,
+				"mania": 4,
+				"name": "1",
+				"prefix": "note impact 1 green"
+			},
+			{
+				"id": 2,
+				"mania": 4,
+				"name": "2",
+				"prefix": "note impact 2 green"
+			},
+			{
+				"id": 3,
+				"mania": 4,
+				"name": "1",
+				"prefix": "note impact 1 red"
+			},
+			{
+				"id": 3,
+				"mania": 4,
+				"name": "2",
+				"prefix": "note impact 2 red"
+			}
+		]
+	}
+}

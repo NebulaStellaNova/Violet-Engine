@@ -5,6 +5,7 @@ flipX: true
 singTime: 8
 isPixel: true
 healthIcon: bf-pixel
+offsets: [50, -30]
 death:
   cameraOffsets:
     - 0
@@ -12,47 +13,47 @@ death:
 scale: 6
 animations:
 - name: idle
-  prefix: BF IDLE instance 10
+  prefix: BF IDLE0
   offsets:
     - 0
     - 0
 - name: singUP
-  prefix: BF UP NOTE instance 10
+  prefix: BF UP NOTE0
   offsets:
     - 0
     - 0
 - name: singLEFT
-  prefix: BF LEFT NOTE instance 10
+  prefix: BF LEFT NOTE0
   offsets:
     - 0
     - 0
 - name: singRIGHT
-  prefix: BF RIGHT NOTE instance 10
+  prefix: BF RIGHT NOTE0
   offsets:
     - 0
     - 0
 - name: singDOWN
-  prefix: BF DOWN NOTE instance 10
+  prefix: BF DOWN NOTE0
   offsets:
     - 0
     - 0
 - name: singUPmiss
-  prefix: BF UP MISS instance 10
+  prefix: BF UP MISS0
   offsets:
     - 0
     - 0
 - name: singLEFTmiss
-  prefix: BF LEFT MISS instance 10
+  prefix: BF LEFT MISS0
   offsets:
     - 0
     - 0
 - name: singRIGHTmiss
-  prefix: BF RIGHT MISS instance 10
+  prefix: BF RIGHT MISS0
   offsets:
     - 0
     - 0
 - name: singDOWNmiss
-  prefix: BF DOWN MISS instance 10
+  prefix: BF DOWN MISS0
   offsets:
     - 0
     - 0

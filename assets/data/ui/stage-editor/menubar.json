@@ -1,0 +1,13 @@
+{
+    "id": "menuBar",
+    "children": [
+        {
+            "id": "fileMenu",
+            "text": "File",
+            "children": [
+                { "id": "newStage", "text": "New", "subtext": "Ctrl + N" },
+                { "id": "saveStage", "text": "Save", "subtext": "Ctrl + S" }
+            ]
+        }
+    ]
+}

@@ -1,0 +1,53 @@
+events:
+  - params:
+      - 1
+    time: 0
+    name: Camera Movement
+  - params:
+      - 0
+    time: 11545.4545454545
+    name: Camera Movement
+  - params:
+      - 1
+    time: 17363.6363636364
+    name: Camera Movement
+  - params:
+      - 0
+    time: 23181.8181818182
+    name: Camera Movement
+  - params:
+      - 1
+    time: 29000
+    name: Camera Movement
+  - params:
+      - 0
+    time: 34818.1818181818
+    name: Camera Movement
+  - params:
+      - 1
+    time: 40636.3636363636
+    name: Camera Movement
+  - params:
+      - 0
+    time: 46454.5454545455
+    name: Camera Movement
+  - params:
+      - 1
+    time: 52272.7272727273
+    name: Camera Movement
+  - params:
+      - 0
+    time: 58090.9090909091
+    name: Camera Movement
+  - params:
+      - 1
+    time: 63909.0909090909
+    name: Camera Movement
+  - params:
+      - 0
+    time: 69727.2727272727
+    name: Camera Movement
+  - params:
+      - 1
+    time: 75545.4545454545
+    name: Camera Movement

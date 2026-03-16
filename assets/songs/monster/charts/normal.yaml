@@ -1,0 +1,1632 @@
+events: []
+strumLines:
+  - visible: true
+    keyCount: 4
+    notes:
+      - id: 2
+        sLen: 789.473633
+        time: 2526.31567
+        type: 0
+      - id: 3
+        sLen: 157.89473
+        time: 3473.684
+        type: 0
+      - id: 2
+        sLen: 789.473633
+        time: 3789.47363
+        type: 0
+      - id: 3
+        sLen: 157.89473
+        time: 4736.842
+        type: 0
+      - id: 1
+        sLen: 1105.26306
+        time: 5052.63135
+        type: 0
+      - id: 0
+        sLen: 1105.26306
+        time: 7578.94727
+        type: 0
+      - id: 2
+        sLen: 1105.26306
+        time: 8842.10449
+        type: 0
+      - id: 1
+        sLen: 1105.26306
+        time: 10105.2627
+        type: 0
+      - id: 2
+        sLen: 0
+        time: 13263.1572
+        type: 0
+      - id: 1
+        sLen: 0
+        time: 13578.9463
+        type: 0
+      - id: 3
+        sLen: 315.789459
+        time: 13894.7363
+        type: 0
+      - id: 1
+        sLen: 157.89473
+        time: 14526.3154
+        type: 0
+      - id: 0
+        sLen: 0
+        time: 14842.1045
+        type: 0
+      - id: 3
+        sLen: 0
+        time: 15157.8945
+        type: 0
+      - id: 0
+        sLen: 0
+        time: 15473.6836
+        type: 0
+      - id: 3
+        sLen: 0
+        time: 15789.4727
+        type: 0
+      - id: 1
+        sLen: 0
+        time: 16105.2627
+        type: 0
+      - id: 2
+        sLen: 473.6842
+        time: 16421.0527
+        type: 0
+      - id: 0
+        sLen: 473.6842
+        time: 17052.63
+        type: 0
+      - id: 3
+        sLen: 0
+        time: 23368.42
+        type: 0
+      - id: 2
+        sLen: 0
+        time: 23684.209
+        type: 0
+      - id: 0
+        sLen: 473.6842
+        time: 23999.998
+        type: 0
+      - id: 2
+        sLen: 157.89473
+        time: 24631.5781
+        type: 0
+      - id: 1
+        sLen: 0
+        time: 24947.3672
+        type: 0
+      - id: 0
+        sLen: 473.6842
+        time: 25263.1563
+        type: 0
+      - id: 2
+        sLen: 473.6842
+        time: 25894.7363
+        type: 0
+      - id: 3
+        sLen: 1105.26306
+        time: 26526.3145
+        type: 0
+      - id: 2
+        sLen: 631.5789
+        time: 32842.1055
+        type: 0
+      - id: 0
+        sLen: 0
+        time: 33789.4727
+        type: 0
+      - id: 2
+        sLen: 157.89473
+        time: 34105.26
+        type: 0
+      - id: 1
+        sLen: 157.89473
+        time: 34421.05
+        type: 0
+      - id: 2
+        sLen: 157.89473
+        time: 34736.84
+        type: 0
+      - id: 0
+        sLen: 0
+        time: 35052.63
+        type: 0
+      - id: 3
+        sLen: 0
+        time: 35368.418
+        type: 0
+      - id: 0
+        sLen: 157.894737884213
+        time: 35789.471434903
+        type: 0
+      - id: 2
+        sLen: 0
+        time: 36210.5232243767
+        type: 0
+      - id: 3
+        sLen: 789.473709473685
+        time: 36631.5750138504
+        type: 0
+      - id: 3
+        sLen: 0
+        time: 45789.4751355596
+        type: 0
+      - id: 0
+        sLen: 0
+        time: 45947.3684987175
+        type: 0
+      - id: 1
+        sLen: 0
+        time: 46421.0556618754
+        type: 0
+      - id: 2
+        sLen: 0
+        time: 46736.8403987175
+        type: 0
+      - id: 3
+        sLen: 0
+        time: 47052.6316566122
+        type: 0
+      - id: 0
+        sLen: 0
+        time: 47368.4209250333
+        type: 0
+      - id: 3
+        sLen: 0
+        time: 47684.2118513491
+        type: 0
+      - id: 0
+        sLen: 473.684225368423
+        time: 48000.0014513491
+        type: 0
+      - id: 1
+        sLen: 947.368468421046
+        time: 48631.5819776649
+        type: 0
+      - id: 2
+        sLen: 164.473685526318
+        time: 55894.7369197701
+        type: 0
+      - id: 3
+        sLen: 164.473685526318
+        time: 56210.5261881912
+        type: 0
+      - id: 0
+        sLen: 164.473685526318
+        time: 56526.317114507
+        type: 0
+      - id: 3
+        sLen: 164.473685526311
+        time: 56842.106714507
+        type: 0
+      - id: 3
+        sLen: 0
+        time: 57157.8973092438
+        type: 0
+      - id: 1
+        sLen: 0
+        time: 57473.6872408228
+        type: 0
+      - id: 0
+        sLen: 164.473685526311
+        time: 57789.4775039806
+        type: 0
+      - id: 2
+        sLen: 947.368468421053
+        time: 58105.2632355596
+        type: 0
+      - id: 3
+        sLen: 0
+        time: 59368.4236250333
+        type: 0
+      - id: 2
+        sLen: 0
+        time: 59526.3156618754
+        type: 0
+      - id: 3
+        sLen: 0
+        time: 59684.2135566122
+        type: 0
+      - id: 1
+        sLen: 0
+        time: 60157.8961881912
+        type: 0
+      - id: 0
+        sLen: 0
+        time: 60315.7895513491
+        type: 0
+      - id: 3
+        sLen: 0
+        time: 65684.2119776648
+        type: 0
+      - id: 2
+        sLen: 0
+        time: 65842.1053408227
+        type: 0
+      - id: 3
+        sLen: 0
+        time: 66000.0025724017
+        type: 0
+      - id: 1
+        sLen: 0
+        time: 66315.7925039806
+        type: 0
+      - id: 0
+        sLen: 0
+        time: 66473.6855355596
+        type: 0
+      - id: 1
+        sLen: 0
+        time: 66631.5827671385
+        type: 0
+      - id: 2
+        sLen: 0
+        time: 66947.3684987175
+        type: 0
+      - id: 1
+        sLen: 0
+        time: 67105.2657302964
+        type: 0
+      - id: 0
+        sLen: 0
+        time: 67263.1577671385
+        type: 0
+      - id: 0
+        sLen: 0
+        time: 67578.9486934543
+        type: 0
+      - id: 1
+        sLen: 0
+        time: 67736.8459250333
+        type: 0
+      - id: 2
+        sLen: 315.789489473682
+        time: 67894.7382934543
+        type: 0
+      - id: 3
+        sLen: 315.789489473667
+        time: 68526.3188197701
+        type: 0
+      - id: 2
+        sLen: 315.789489473682
+        time: 69157.8948145069
+        type: 0
+      - id: 3
+        sLen: 0
+        time: 69789.4750092438
+        type: 0
+      - id: 2
+        sLen: 315.789489473682
+        time: 70105.2694724017
+        type: 0
+      - id: 2
+        sLen: 1105.26315789473
+        time: 75789.4737618754
+        type: 0
+      - id: 1
+        sLen: 1105.26315789473
+        time: 77052.6341513491
+        type: 0
+      - id: 3
+        sLen: 0
+        time: 78315.7945408227
+        type: 0
+      - id: 1
+        sLen: 0
+        time: 78473.6872408228
+        type: 0
+      - id: 0
+        sLen: 0
+        time: 78631.5802724017
+        type: 0
+      - id: 1
+        sLen: 0
+        time: 78789.4775039806
+        type: 0
+      - id: 3
+        sLen: 0
+        time: 78947.3747355596
+        type: 0
+      - id: 1
+        sLen: 0
+        time: 79105.2632355596
+        type: 0
+      - id: 0
+        sLen: 0
+        time: 79263.1604671385
+        type: 0
+      - id: 1
+        sLen: 0
+        time: 79421.0576987175
+        type: 0
+      - id: 2
+        sLen: 0
+        time: 79578.9503987175
+        type: 0
+      - id: 2
+        sLen: 0
+        time: 79894.7406618754
+        type: 0
+      - id: 2
+        sLen: 0
+        time: 80210.5263934543
+        type: 0
+      - id: 2
+        sLen: 0
+        time: 80526.3208566122
+        type: 0
+      - id: 3
+        sLen: 473.684200000003
+        time: 88736.8385478789
+        type: 0
+      - id: 0
+        sLen: 473.684200000018
+        time: 89368.4185478789
+        type: 0
+      - id: 1
+        sLen: 0
+        time: 89999.9985478789
+        type: 0
+      - id: 2
+        sLen: 473.684200000003
+        time: 90315.7885478789
+        type: 0
+      - id: 3
+        sLen: 157.89473
+        time: 93157.8985478789
+        type: 0
+      - id: 1
+        sLen: 157.894729999985
+        time: 93473.6885478789
+        type: 0
+      - id: 2
+        sLen: 157.89473
+        time: 93789.4785478789
+        type: 0
+      - id: 0
+        sLen: 157.89473
+        time: 94105.2641478789
+        type: 0
+      - id: 3
+        sLen: 157.89473
+        time: 94421.0532478789
+        type: 0
+      - id: 1
+        sLen: 473.684200000003
+        time: 94736.8385478789
+        type: 0
+      - id: 2
+        sLen: 157.89473
+        time: 97263.1585478789
+        type: 0
+      - id: 0
+        sLen: 0
+        time: 97578.9438478789
+        type: 0
+      - id: 1
+        sLen: 0
+        time: 97736.8385478789
+        type: 0
+      - id: 3
+        sLen: 157.894730000015
+        time: 97894.7385478789
+        type: 0
+      - id: 2
+        sLen: 315.789459000007
+        time: 98210.5285478789
+        type: 0
+      - id: 2
+        sLen: 157.89473
+        time: 100736.838547879
+        type: 0
+      - id: 3
+        sLen: 0
+        time: 101210.528547879
+        type: 0
+      - id: 1
+        sLen: 157.894730000015
+        time: 101368.418547879
+        type: 0
+      - id: 1
+        sLen: 0
+        time: 101684.208547879
+        type: 0
+      - id: 2
+        sLen: 0
+        time: 103894.732947879
+        type: 0
+      - id: 0
+        sLen: 0
+        time: 104052.628547879
+        type: 0
+      - id: 2
+        sLen: 157.89473
+        time: 104210.528547879
+        type: 0
+      - id: 3
+        sLen: 473.684200000003
+        time: 104526.318547879
+        type: 0
+      - id: 1
+        sLen: 157.89473
+        time: 105157.898547879
+        type: 0
+      - id: 3
+        sLen: 315.789459000007
+        time: 105473.688547879
+        type: 0
+      - id: 0
+        sLen: 473.684200000003
+        time: 107999.998547879
+        type: 0
+      - id: 1
+        sLen: 0
+        time: 108631.576547879
+        type: 0
+      - id: 3
+        sLen: 0
+        time: 108789.475547879
+        type: 0
+      - id: 0
+        sLen: 0
+        time: 108947.365547879
+        type: 0
+      - id: 2
+        sLen: 0
+        time: 109263.154547879
+        type: 0
+      - id: 0
+        sLen: 0
+        time: 109578.943547879
+        type: 0
+      - id: 0
+        sLen: 0
+        time: 109894.732547879
+        type: 0
+      - id: 3
+        sLen: 473.684200000003
+        time: 112421.053547879
+        type: 0
+      - id: 1
+        sLen: 473.684200000003
+        time: 113052.631547879
+        type: 0
+      - id: 0
+        sLen: 0
+        time: 113684.209547879
+        type: 0
+      - id: 3
+        sLen: 157.89473
+        time: 113999.998547879
+        type: 0
+      - id: 0
+        sLen: 157.89473
+        time: 114315.787547879
+        type: 0
+      - id: 3
+        sLen: 0
+        time: 114631.576547879
+        type: 0
+      - id: 1
+        sLen: 473.684200000003
+        time: 114947.365547879
+        type: 0
+      - id: 2
+        sLen: 0
+        time: 124105.26612636
+        type: 0
+      - id: 2
+        sLen: 0
+        time: 124421.055978992
+        type: 0
+      - id: 2
+        sLen: 0
+        time: 124736.847221097
+        type: 0
+      - id: 2
+        sLen: 0
+        time: 125052.637073729
+        type: 0
+      - id: 0
+        sLen: 0
+        time: 125368.428315834
+        type: 0
+      - id: 0
+        sLen: 157.894742905279
+        time: 125684.207052676
+        type: 0
+      - id: 1
+        sLen: 631.578970231596
+        time: 125999.998294781
+        type: 0
+      - id: 2
+        sLen: 0
+        time: 128526.321284255
+        type: 0
+      - id: 3
+        sLen: 1105.26309473685
+        time: 128842.11252636
+        type: 0
+      - id: 3
+        sLen: 473.684223157892
+        time: 130105.263600044
+        type: 0
+      - id: 0
+        sLen: 0
+        time: 130736.844694781
+        type: 0
+      - id: 2
+        sLen: 473.684223157892
+        time: 131052.634547413
+        type: 0
+      - id: 1
+        sLen: 947.368446315813
+        time: 131684.21564215
+        type: 0
+      - id: 2
+        sLen: 0
+        time: 146842.115770375
+        type: 0
+      - id: 0
+        sLen: 315.789473684184
+        time: 147000.010507217
+        type: 0
+      - id: 1
+        sLen: 0
+        time: 147473.694717744
+        type: 0
+      - id: 2
+        sLen: 0
+        time: 147789.484191428
+        type: 0
+      - id: 3
+        sLen: 0
+        time: 148105.273665112
+        type: 0
+      - id: 0
+        sLen: 0
+        time: 148421.063138796
+        type: 0
+      - id: 3
+        sLen: 0
+        time: 148736.852612481
+        type: 0
+      - id: 0
+        sLen: 473.68421052632
+        time: 149052.642086165
+        type: 0
+      - id: 3
+        sLen: 947.368421052612
+        time: 149684.221033533
+        type: 0
+      - id: 3
+        sLen: 157.894736842107
+        time: 156947.37892827
+        type: 0
+      - id: 1
+        sLen: 157.894736842107
+        time: 157263.168401954
+        type: 0
+      - id: 0
+        sLen: 157.894736842107
+        time: 157578.957875639
+        type: 0
+      - id: 2
+        sLen: 157.894736842107
+        time: 157894.747349323
+        type: 0
+      - id: 3
+        sLen: 157.894736842107
+        time: 158210.536823007
+        type: 0
+      - id: 0
+        sLen: 157.894736842107
+        time: 158526.326296691
+        type: 0
+      - id: 2
+        sLen: 157.894736842078
+        time: 158842.115770375
+        type: 0
+      - id: 3
+        sLen: 631.578947368427
+        time: 159157.90524406
+        type: 0
+      - id: 2
+        sLen: 0
+        time: 160421.063138796
+        type: 0
+      - id: 0
+        sLen: 0
+        time: 160578.957875639
+        type: 0
+      - id: 2
+        sLen: 0
+        time: 160736.852612481
+        type: 0
+      - id: 2
+        sLen: 0
+        time: 161210.536823007
+        type: 0
+      - id: 0
+        sLen: 0
+        time: 161368.431559849
+        type: 0
+      - id: 3
+        sLen: 0
+        time: 166736.852612481
+        type: 0
+      - id: 2
+        sLen: 0
+        time: 166894.747349323
+        type: 0
+      - id: 3
+        sLen: 0
+        time: 167052.642086165
+        type: 0
+      - id: 1
+        sLen: 0
+        time: 167368.431559849
+        type: 0
+      - id: 0
+        sLen: 0
+        time: 167526.326296691
+        type: 0
+      - id: 1
+        sLen: 0
+        time: 167684.221033533
+        type: 0
+      - id: 2
+        sLen: 0
+        time: 168000.010507217
+        type: 0
+      - id: 1
+        sLen: 0
+        time: 168157.90524406
+        type: 0
+      - id: 0
+        sLen: 0
+        time: 168315.799980902
+        type: 0
+      - id: 0
+        sLen: 0
+        time: 168631.589454586
+        type: 0
+      - id: 1
+        sLen: 0
+        time: 168789.484191428
+        type: 0
+      - id: 2
+        sLen: 315.789473684214
+        time: 168947.37892827
+        type: 0
+      - id: 3
+        sLen: 315.789473684214
+        time: 169578.957875639
+        type: 0
+      - id: 0
+        sLen: 315.789473684214
+        time: 170210.536823007
+        type: 0
+      - id: 3
+        sLen: 0
+        time: 170842.115770375
+        type: 0
+      - id: 0
+        sLen: 315.789473684214
+        time: 171157.90524406
+        type: 0
+      - id: 2
+        sLen: 1105.26315789472
+        time: 176842.115770375
+        type: 0
+      - id: 1
+        sLen: 1105.26315789475
+        time: 178105.273665112
+        type: 0
+      - id: 3
+        sLen: 0
+        time: 179368.431559849
+        type: 0
+      - id: 1
+        sLen: 0
+        time: 179526.326296691
+        type: 0
+      - id: 0
+        sLen: 0
+        time: 179684.221033533
+        type: 0
+      - id: 1
+        sLen: 0
+        time: 179842.115770375
+        type: 0
+      - id: 3
+        sLen: 0
+        time: 180000.010507217
+        type: 0
+      - id: 1
+        sLen: 0
+        time: 180157.90524406
+        type: 0
+      - id: 0
+        sLen: 0
+        time: 180315.799980902
+        type: 0
+      - id: 1
+        sLen: 0
+        time: 180473.694717744
+        type: 0
+      - id: 3
+        sLen: 0
+        time: 180631.589454586
+        type: 0
+      - id: 3
+        sLen: 0
+        time: 180947.37892827
+        type: 0
+      - id: 3
+        sLen: 0
+        time: 181263.168401954
+        type: 0
+      - id: 3
+        sLen: 0
+        time: 181578.957875639
+        type: 0
+      - id: 1
+        sLen: 0
+        time: 187263.168401954
+        type: 0
+      - id: 0
+        sLen: 0
+        time: 187578.957875639
+        type: 0
+      - id: 2
+        sLen: 0
+        time: 187894.747349323
+        type: 0
+      - id: 1
+        sLen: 0
+        time: 188210.536823007
+        type: 0
+      - id: 0
+        sLen: 0
+        time: 188526.326296691
+        type: 0
+      - id: 3
+        sLen: 0
+        time: 188842.115770375
+        type: 0
+      - id: 2
+        sLen: 0
+        time: 189157.90524406
+        type: 0
+      - id: 3
+        sLen: 0
+        time: 189473.694717744
+        type: 0
+      - id: 1
+        sLen: 631.578947368427
+        time: 189789.484191428
+        type: 0
+    position: dad
+    type: 0
+    characters:
+      - monster
+  - visible: true
+    keyCount: 4
+    notes:
+      - id: 2
+        sLen: 789.473633000001
+        time: 7578.94727
+        type: 0
+      - id: 3
+        sLen: 157.89473
+        time: 8526.315
+        type: 0
+      - id: 2
+        sLen: 789.473633
+        time: 8842.10449
+        type: 0
+      - id: 3
+        sLen: 157.89473
+        time: 9789.474
+        type: 0
+      - id: 1
+        sLen: 1105.26306
+        time: 10105.2627
+        type: 0
+      - id: 2
+        sLen: 0
+        time: 18315.79
+        type: 0
+      - id: 1
+        sLen: 0
+        time: 18631.5781
+        type: 0
+      - id: 3
+        sLen: 315.789459
+        time: 18947.3672
+        type: 0
+      - id: 1
+        sLen: 157.89473
+        time: 19578.9473
+        type: 0
+      - id: 0
+        sLen: 0
+        time: 19894.7363
+        type: 0
+      - id: 3
+        sLen: 0
+        time: 20210.5254
+        type: 0
+      - id: 0
+        sLen: 0
+        time: 20526.3145
+        type: 0
+      - id: 3
+        sLen: 0
+        time: 20842.1035
+        type: 0
+      - id: 1
+        sLen: 0
+        time: 21157.8945
+        type: 0
+      - id: 2
+        sLen: 473.684200000007
+        time: 21473.6836
+        type: 0
+      - id: 0
+        sLen: 473.6842
+        time: 22105.2617
+        type: 0
+      - id: 3
+        sLen: 0
+        time: 28421.05
+        type: 0
+      - id: 2
+        sLen: 0
+        time: 28736.84
+        type: 0
+      - id: 0
+        sLen: 473.684200000007
+        time: 29052.63
+        type: 0
+      - id: 2
+        sLen: 157.89473
+        time: 29684.209
+        type: 0
+      - id: 1
+        sLen: 0
+        time: 29999.998
+        type: 0
+      - id: 0
+        sLen: 473.6842
+        time: 30315.79
+        type: 0
+      - id: 2
+        sLen: 473.6842
+        time: 30947.3672
+        type: 0
+      - id: 3
+        sLen: 1105.26306
+        time: 31578.9453
+        type: 0
+      - id: 2
+        sLen: 631.579315043069
+        time: 37894.735194903
+        type: 0
+      - id: 0
+        sLen: 0
+        time: 38842.1020099461
+        type: 0
+      - id: 2
+        sLen: 157.89473
+        time: 39157.8920099461
+        type: 0
+      - id: 1
+        sLen: 157.89473
+        time: 39473.6848099461
+        type: 0
+      - id: 2
+        sLen: 157.89473
+        time: 39789.4720099461
+        type: 0
+      - id: 0
+        sLen: 0
+        time: 40105.2620099461
+        type: 0
+      - id: 3
+        sLen: 0
+        time: 40421.0520099461
+        type: 0
+      - id: 0
+        sLen: 157.894737884213
+        time: 40842.1035900277
+        type: 0
+      - id: 2
+        sLen: 0
+        time: 41263.1553795014
+        type: 0
+      - id: 3
+        sLen: 789.473709473685
+        time: 41684.210912133
+        type: 0
+      - id: 3
+        sLen: 0
+        time: 50842.1082934543
+        type: 0
+      - id: 0
+        sLen: 0
+        time: 51000.0013250333
+        type: 0
+      - id: 1
+        sLen: 0
+        time: 51473.6842881912
+        type: 0
+      - id: 2
+        sLen: 0
+        time: 51789.4735566122
+        type: 0
+      - id: 3
+        sLen: 0
+        time: 52105.264482928
+        type: 0
+      - id: 0
+        sLen: 0
+        time: 52421.054082928
+        type: 0
+      - id: 3
+        sLen: 0
+        time: 52736.8446776648
+        type: 0
+      - id: 0
+        sLen: 473.684225368415
+        time: 53052.6346092438
+        type: 0
+      - id: 1
+        sLen: 947.36846842106
+        time: 53684.2106039806
+        type: 0
+      - id: 2
+        sLen: 164.473685526318
+        time: 60947.3697460859
+        type: 0
+      - id: 3
+        sLen: 164.473685526318
+        time: 61263.1593460859
+        type: 0
+      - id: 0
+        sLen: 164.473685526304
+        time: 61578.9499408227
+        type: 0
+      - id: 3
+        sLen: 164.473685526304
+        time: 61894.7398724017
+        type: 0
+      - id: 3
+        sLen: 0
+        time: 62210.5301355596
+        type: 0
+      - id: 1
+        sLen: 0
+        time: 62526.3158671385
+        type: 0
+      - id: 0
+        sLen: 164.473685526318
+        time: 62842.1051355596
+        type: 0
+      - id: 2
+        sLen: 947.368468421046
+        time: 63157.8960618754
+        type: 0
+      - id: 3
+        sLen: 0
+        time: 64421.0564513491
+        type: 0
+      - id: 2
+        sLen: 0
+        time: 64578.9488197701
+        type: 0
+      - id: 3
+        sLen: 0
+        time: 64736.842182928
+        type: 0
+      - id: 1
+        sLen: 0
+        time: 65210.5293460859
+        type: 0
+      - id: 0
+        sLen: 0
+        time: 65368.4223776649
+        type: 0
+      - id: 3
+        sLen: 0
+        time: 70736.8451355596
+        type: 0
+      - id: 2
+        sLen: 0
+        time: 70894.7381671385
+        type: 0
+      - id: 3
+        sLen: 0
+        time: 71052.6353987175
+        type: 0
+      - id: 1
+        sLen: 0
+        time: 71368.4211302964
+        type: 0
+      - id: 0
+        sLen: 0
+        time: 71526.3183618754
+        type: 0
+      - id: 1
+        sLen: 0
+        time: 71684.2155934543
+        type: 0
+      - id: 2
+        sLen: 0
+        time: 72000.0013250333
+        type: 0
+      - id: 1
+        sLen: 0
+        time: 72157.8985566122
+        type: 0
+      - id: 0
+        sLen: 0
+        time: 72315.7957881912
+        type: 0
+      - id: 0
+        sLen: 0
+        time: 72631.5815197701
+        type: 0
+      - id: 1
+        sLen: 0
+        time: 72789.478751349
+        type: 0
+      - id: 2
+        sLen: 315.789489473682
+        time: 72947.3714513491
+        type: 0
+      - id: 3
+        sLen: 315.789489473696
+        time: 73578.9474460859
+        type: 0
+      - id: 2
+        sLen: 315.789489473696
+        time: 74210.5276408227
+        type: 0
+      - id: 3
+        sLen: 0
+        time: 74842.1078355596
+        type: 0
+      - id: 2
+        sLen: 315.789489473682
+        time: 75157.8977671385
+        type: 0
+      - id: 2
+        sLen: 1105.26315789473
+        time: 80842.1065881912
+        type: 0
+      - id: 1
+        sLen: 1105.26315789473
+        time: 82105.2669776649
+        type: 0
+      - id: 3
+        sLen: 0
+        time: 83368.4273671385
+        type: 0
+      - id: 1
+        sLen: 0
+        time: 83526.3158671385
+        type: 0
+      - id: 0
+        sLen: 0
+        time: 83684.2130987175
+        type: 0
+      - id: 1
+        sLen: 0
+        time: 83842.1103302964
+        type: 0
+      - id: 3
+        sLen: 0
+        time: 84000.0030302964
+        type: 0
+      - id: 1
+        sLen: 0
+        time: 84157.8960618754
+        type: 0
+      - id: 0
+        sLen: 0
+        time: 84315.7932934543
+        type: 0
+      - id: 1
+        sLen: 0
+        time: 84473.6905250333
+        type: 0
+      - id: 2
+        sLen: 0
+        time: 84631.5790250333
+        type: 0
+      - id: 2
+        sLen: 0
+        time: 84947.3734881912
+        type: 0
+      - id: 2
+        sLen: 0
+        time: 85263.1592197701
+        type: 0
+      - id: 2
+        sLen: 0
+        time: 85578.953682928
+        type: 0
+      - id: 3
+        sLen: 473.684200000003
+        time: 90947.3685478789
+        type: 0
+      - id: 0
+        sLen: 473.684200000003
+        time: 91578.9485478789
+        type: 0
+      - id: 1
+        sLen: 0
+        time: 92210.5285478789
+        type: 0
+      - id: 2
+        sLen: 473.684200000003
+        time: 92526.3185478789
+        type: 0
+      - id: 3
+        sLen: 157.894730000015
+        time: 95368.4185478789
+        type: 0
+      - id: 1
+        sLen: 157.89473
+        time: 95684.2085478789
+        type: 0
+      - id: 2
+        sLen: 157.89473
+        time: 95999.9985478789
+        type: 0
+      - id: 0
+        sLen: 157.89473
+        time: 96315.7885478789
+        type: 0
+      - id: 3
+        sLen: 157.89473
+        time: 96631.5785478789
+        type: 0
+      - id: 1
+        sLen: 473.684200000003
+        time: 96947.3685478789
+        type: 0
+      - id: 2
+        sLen: 157.89473
+        time: 98842.1085478789
+        type: 0
+      - id: 0
+        sLen: 0
+        time: 99157.8985478789
+        type: 0
+      - id: 1
+        sLen: 0
+        time: 99315.7885478789
+        type: 0
+      - id: 3
+        sLen: 157.894729999985
+        time: 99473.6885478789
+        type: 0
+      - id: 2
+        sLen: 315.789459000007
+        time: 99789.4785478789
+        type: 0
+      - id: 2
+        sLen: 157.89473
+        time: 102315.788547879
+        type: 0
+      - id: 3
+        sLen: 0
+        time: 102789.478547879
+        type: 0
+      - id: 1
+        sLen: 157.89473
+        time: 102947.368547879
+        type: 0
+      - id: 1
+        sLen: 0
+        time: 103263.158547879
+        type: 0
+      - id: 2
+        sLen: 0
+        time: 106105.264147879
+        type: 0
+      - id: 0
+        sLen: 0
+        time: 106263.158547879
+        type: 0
+      - id: 2
+        sLen: 157.89473
+        time: 106421.053247879
+        type: 0
+      - id: 3
+        sLen: 473.684200000003
+        time: 106736.842547879
+        type: 0
+      - id: 1
+        sLen: 157.89473
+        time: 107368.420547879
+        type: 0
+      - id: 3
+        sLen: 315.789459000021
+        time: 107684.209547879
+        type: 0
+      - id: 0
+        sLen: 473.684200000003
+        time: 110210.529547879
+        type: 0
+      - id: 1
+        sLen: 0
+        time: 110842.107547879
+        type: 0
+      - id: 3
+        sLen: 0
+        time: 110999.998547879
+        type: 0
+      - id: 0
+        sLen: 0
+        time: 111157.896547879
+        type: 0
+      - id: 2
+        sLen: 0
+        time: 111473.686547879
+        type: 0
+      - id: 0
+        sLen: 0
+        time: 111789.475547879
+        type: 0
+      - id: 0
+        sLen: 0
+        time: 112105.264547879
+        type: 0
+      - id: 3
+        sLen: 473.684200000003
+        time: 115578.943547879
+        type: 0
+      - id: 1
+        sLen: 473.684200000003
+        time: 116210.521547879
+        type: 0
+      - id: 0
+        sLen: 0
+        time: 116842.107547879
+        type: 0
+      - id: 3
+        sLen: 157.89473
+        time: 117157.896547879
+        type: 0
+      - id: 0
+        sLen: 157.89473
+        time: 117473.686547879
+        type: 0
+      - id: 3
+        sLen: 0
+        time: 117789.475547879
+        type: 0
+      - id: 1
+        sLen: 473.684200000003
+        time: 118105.264547879
+        type: 0
+      - id: 2
+        sLen: 0
+        time: 134210.528905308
+        type: 0
+      - id: 2
+        sLen: 0
+        time: 134526.318757939
+        type: 0
+      - id: 2
+        sLen: 0
+        time: 134842.108610571
+        type: 0
+      - id: 2
+        sLen: 0
+        time: 135157.899852676
+        type: 0
+      - id: 0
+        sLen: 0
+        time: 135473.689705308
+        type: 0
+      - id: 0
+        sLen: 157.89474290525
+        time: 135789.480947413
+        type: 0
+      - id: 1
+        sLen: 631.578970231581
+        time: 136105.259684255
+        type: 0
+      - id: 2
+        sLen: 0
+        time: 138631.584063202
+        type: 0
+      - id: 3
+        sLen: 1105.26309473685
+        time: 138947.373915834
+        type: 0
+      - id: 3
+        sLen: 473.684223157907
+        time: 140210.524989518
+        type: 0
+      - id: 0
+        sLen: 0
+        time: 140842.106084255
+        type: 0
+      - id: 2
+        sLen: 473.684223157907
+        time: 141157.89732636
+        type: 0
+      - id: 1
+        sLen: 947.368446315784
+        time: 141789.477031623
+        type: 0
+      - id: 2
+        sLen: 0
+        time: 151894.747349323
+        type: 0
+      - id: 0
+        sLen: 315.789473684214
+        time: 152052.642086165
+        type: 0
+      - id: 1
+        sLen: 0
+        time: 152526.326296691
+        type: 0
+      - id: 2
+        sLen: 0
+        time: 152842.115770375
+        type: 0
+      - id: 3
+        sLen: 0
+        time: 153157.90524406
+        type: 0
+      - id: 0
+        sLen: 0
+        time: 153473.694717744
+        type: 0
+      - id: 3
+        sLen: 0
+        time: 153789.484191428
+        type: 0
+      - id: 0
+        sLen: 473.68421052632
+        time: 154105.273665112
+        type: 0
+      - id: 3
+        sLen: 947.368421052641
+        time: 154736.852612481
+        type: 0
+      - id: 3
+        sLen: 157.894736842107
+        time: 162000.010507217
+        type: 0
+      - id: 1
+        sLen: 157.894736842107
+        time: 162315.799980902
+        type: 0
+      - id: 0
+        sLen: 157.894736842107
+        time: 162631.589454586
+        type: 0
+      - id: 2
+        sLen: 157.894736842107
+        time: 162947.37892827
+        type: 0
+      - id: 3
+        sLen: 157.894736842107
+        time: 163263.168401954
+        type: 0
+      - id: 0
+        sLen: 157.894736842107
+        time: 163578.957875639
+        type: 0
+      - id: 2
+        sLen: 157.894736842107
+        time: 163894.747349323
+        type: 0
+      - id: 3
+        sLen: 631.578947368427
+        time: 164210.536823007
+        type: 0
+      - id: 2
+        sLen: 0
+        time: 165473.694717744
+        type: 0
+      - id: 0
+        sLen: 0
+        time: 165631.589454586
+        type: 0
+      - id: 2
+        sLen: 0
+        time: 165789.484191428
+        type: 0
+      - id: 2
+        sLen: 0
+        time: 166263.168401954
+        type: 0
+      - id: 0
+        sLen: 0
+        time: 166421.063138796
+        type: 0
+      - id: 3
+        sLen: 0
+        time: 171789.484191428
+        type: 0
+      - id: 2
+        sLen: 0
+        time: 171947.37892827
+        type: 0
+      - id: 3
+        sLen: 0
+        time: 172105.273665112
+        type: 0
+      - id: 1
+        sLen: 0
+        time: 172421.063138796
+        type: 0
+      - id: 0
+        sLen: 0
+        time: 172578.957875639
+        type: 0
+      - id: 1
+        sLen: 0
+        time: 172736.852612481
+        type: 0
+      - id: 2
+        sLen: 0
+        time: 173052.642086165
+        type: 0
+      - id: 1
+        sLen: 0
+        time: 173210.536823007
+        type: 0
+      - id: 0
+        sLen: 0
+        time: 173368.431559849
+        type: 0
+      - id: 0
+        sLen: 0
+        time: 173684.221033533
+        type: 0
+      - id: 1
+        sLen: 0
+        time: 173842.115770375
+        type: 0
+      - id: 2
+        sLen: 315.789473684214
+        time: 174000.010507217
+        type: 0
+      - id: 3
+        sLen: 315.789473684214
+        time: 174631.589454586
+        type: 0
+      - id: 0
+        sLen: 315.789473684214
+        time: 175263.168401954
+        type: 0
+      - id: 3
+        sLen: 0
+        time: 175894.747349323
+        type: 0
+      - id: 0
+        sLen: 315.789473684214
+        time: 176210.536823007
+        type: 0
+      - id: 2
+        sLen: 1105.26315789472
+        time: 181894.747349323
+        type: 0
+      - id: 1
+        sLen: 1105.26315789475
+        time: 183157.90524406
+        type: 0
+      - id: 3
+        sLen: 0
+        time: 184421.063138796
+        type: 0
+      - id: 1
+        sLen: 0
+        time: 184578.957875639
+        type: 0
+      - id: 0
+        sLen: 0
+        time: 184736.852612481
+        type: 0
+      - id: 1
+        sLen: 0
+        time: 184894.747349323
+        type: 0
+      - id: 3
+        sLen: 0
+        time: 185052.642086165
+        type: 0
+      - id: 1
+        sLen: 0
+        time: 185210.536823007
+        type: 0
+      - id: 0
+        sLen: 0
+        time: 185368.431559849
+        type: 0
+      - id: 1
+        sLen: 0
+        time: 185526.326296691
+        type: 0
+      - id: 3
+        sLen: 0
+        time: 185684.221033533
+        type: 0
+      - id: 3
+        sLen: 0
+        time: 186000.010507217
+        type: 0
+      - id: 3
+        sLen: 0
+        time: 186315.799980902
+        type: 0
+      - id: 3
+        sLen: 0
+        time: 186631.589454586
+        type: 0
+      - id: 1
+        sLen: 0
+        time: 192315.799980902
+        type: 0
+      - id: 0
+        sLen: 0
+        time: 192631.589454586
+        type: 0
+      - id: 2
+        sLen: 0
+        time: 192947.37892827
+        type: 0
+      - id: 1
+        sLen: 0
+        time: 193263.168401954
+        type: 0
+      - id: 0
+        sLen: 0
+        time: 193578.957875639
+        type: 0
+      - id: 3
+        sLen: 0
+        time: 193894.747349323
+        type: 0
+      - id: 2
+        sLen: 0
+        time: 194210.536823007
+        type: 0
+      - id: 3
+        sLen: 0
+        time: 194526.326296691
+        type: 0
+      - id: 1
+        sLen: 631.578947368398
+        time: 194842.115770375
+        type: 0
+    position: boyfriend
+    type: 1
+    characters:
+      - bf
+  - keyCount: 4
+    notes: []
+    visible: false
+    position: girlfriend
+    type: 2
+    characters:
+      - gf
+codenameChart: true
+scrollSpeed: 1.3
+chartVersion: 1.6.0
+stage: spooky
+noteTypes: []

@@ -1,6 +1,5 @@
 package violet.data.song;
 
-import violet.backend.utils.FileUtil;
 import violet.backend.utils.ParseUtil;
 import violet.data.level.LevelRegistry;
 
@@ -12,7 +11,7 @@ class SongRegistry {
     public static var songDatas:Map<String, SongData> = new Map<String, SongData>();
 
     public static function registerSongs() {
-        trace("debug:Registering songs...");
+        trace('debug:<yellow>Registering songs...');
         // Implementation for registering songs goes here
         songs = [];
         songDatas.clear();
@@ -21,14 +20,15 @@ class SongRegistry {
             songList = songList.concat(level.getSongs());
         }
         for (songID in songList) {
-            var folderName = songID.replace("-", " ");
-            final jsonPath = Paths.json('songs/$folderName/meta');
-            if (!Paths.fileExists(jsonPath, true)) {
-                trace('warning:Could not find meta file for song with ID "$folderName". Skipping registration.');
+            final parsed:Dynamic = ParseUtil.jsonOrYaml('songs/$songID/meta');
+            if (parsed == {}) {
+                trace('warning:Could not find meta file for song with ID "$songID". Skipping registration.');
                 continue;
+            } else {
+                songDatas.set(songID, parsed);
+                registerSong(new Song(songID));
+
             }
-            songDatas.set(songID, new json2object.JsonParser<SongData>().fromJson(ParseUtil.removeJsonComments(FileUtil.getFileContent(jsonPath)), jsonPath));
-            registerSong(new Song(songID));
         }
     }
 
@@ -39,7 +39,7 @@ class SongRegistry {
                 return;
             }
         }
-        trace('debug:Found and registered song with ID "${song.id}"');
+        trace('debug:<cyan>Found and registered song with ID "<magenta>${song.id}<cyan>"');
         songs.push(song);
     }
 
