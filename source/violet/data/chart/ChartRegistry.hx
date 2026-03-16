@@ -44,11 +44,6 @@ class ChartRegistry {
 	}
 
 	public static function fetchChart(id:String):ChartData {
-		if (id.endsWith(":")) {
-			var idSplit = id.split("");
-			idSplit.pop();
-			id = idSplit.join("");
-		}
 		if (chartDatas.exists(id)) return chartDatas.get(id);
 
 		var data = ChartConverters.convertChart(chartCache.get(id));
@@ -58,6 +53,6 @@ class ChartRegistry {
 	}
 
 	public static function getChart(songID:String, diff:String, ?variant:String):Chart {
-		return new Chart(songID, diff, variant);
+		return new Chart(songID, diff, '');
 	}
 }
