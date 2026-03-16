@@ -102,7 +102,6 @@ class PauseMenu extends EditorListBackend {
 
     override function close() {
         super.close();
-        pauseMusicSound.stop();
         if (PlayState.instance.songStarted) Conductor.play();
         FlxG.state.persistentUpdate = true;
         FlxTween.globalManager.forEach((tween:FlxTween)->{
@@ -124,5 +123,11 @@ class PauseMenu extends EditorListBackend {
         for (i=>item in items) {
             if (amt == 0) item.x = 80 + ((i-debugCurSelected)*20);
         }
+    }
+
+    override function destroy() {
+        super.destroy();
+
+        pauseMusicSound.stop();
     }
 }
