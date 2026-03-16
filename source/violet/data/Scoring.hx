@@ -37,12 +37,12 @@ class Scoring {
             judgement.rating = 'sick';
         } else if (msAbs < goodWindow) {
             judgement.rating = 'good';
-        } else if (msAbs < sickWindow) {
+        } else if (msAbs < badWindow) {
             judgement.rating = 'bad';
-        } else if (msAbs < sickWindow) {
+        } else if (msAbs < shitWindow) {
             judgement.rating = 'shit';
         } else {
-            judgement.rating = 'miss';
+            judgement.rating = 'shit';//'miss';
         }
 
         if (judgement.rating == 'sick' || judgement.rating == 'killer')

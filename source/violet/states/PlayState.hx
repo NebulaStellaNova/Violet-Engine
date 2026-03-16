@@ -1,5 +1,6 @@
 package violet.states;
 
+import violet.backend.objects.play.ComboGroup;
 import flixel.FlxCamera;
 import flixel.group.FlxGroup;
 import flixel.math.FlxMath;
@@ -77,6 +78,8 @@ class PlayState extends violet.backend.StateBackend {
 	public var countdownSprites:Array<String> = [null, 'ready', 'set', 'go'];
 	public var countdownSounds:Array<String> = ['introTHREE', 'introTWO', 'introONE', 'introGO'];
 	public var countdownTimer:FlxTimer = new FlxTimer();
+
+	public var comboGroup:ComboGroup;
 
 	/**
 	 * The amount of beats the countdown lasts for.
@@ -219,6 +222,15 @@ class PlayState extends violet.backend.StateBackend {
 
 		health = 0.5; // Deal with this being weird before songs starts once countdown works.
 
+		var spectator = strumLines.members[2].characters[0];
+
+		comboGroup = new ComboGroup();
+		comboGroup.camera =  camGame;
+		comboGroup.x = 1100;
+		comboGroup.y = 300;
+		comboGroup.z = 100;
+		add(comboGroup);
+
 		callSongScripts('create');
 
 		startCountdown();
@@ -329,6 +341,7 @@ class PlayState extends violet.backend.StateBackend {
 			if (judgement.splash && event.spawnSplash != false) note.parentStrum.spawnSplash();
 			score += Math.round(judgement.score);
 			health += Constants.DEFAULT_HEALTH_GAIN;
+			comboGroup.popupRating(judgement.rating, 0);
 		} else if (event.spawnSplash == true) // on purpose ***do not touch***
 			note.parentStrum.spawnSplash();
 

@@ -1,6 +1,6 @@
 version: 1.0.0
 name: Pico (Blazin')
-assetPath: shared:characters/picoBlazin
+assetPath: characters/picoBlazin
 healthIcon: pico
 flipX: true
 singTime: 999

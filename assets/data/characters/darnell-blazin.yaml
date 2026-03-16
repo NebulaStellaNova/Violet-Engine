@@ -1,6 +1,6 @@
 version: 1.0.0
 name: Darnell (Blazin')
-assetPath: shared:characters/darnellBlazin
+assetPath: characters/darnellBlazin
 healthIcon: darnell
 singTime: 999
 animations:
