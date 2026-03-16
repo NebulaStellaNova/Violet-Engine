@@ -1,5 +1,6 @@
 package violet.states.menus;
 
+import violet.backend.utils.NovaUtils;
 import flixel.text.FlxText;
 import violet.backend.utils.StringUtil;
 import lemonui.utils.MathUtil;
@@ -9,6 +10,10 @@ import violet.backend.EditorListBackend;
 import violet.backend.audio.Conductor;
 
 class PauseMenu extends EditorListBackend {
+
+    public var pauseMusic:String = "game/pause/breakfast";
+
+    public var pauseMusicSound:FlxSound;
 
     public var pauseInfo:Array<String> = [ // Variable named by @ShamrockDeveloper
         PlayState.SONG.meta.displayName,
@@ -62,6 +67,9 @@ class PauseMenu extends EditorListBackend {
         showLocks = false;
         super.create();
 
+        pauseMusicSound = FlxG.sound.play(Paths.sound(pauseMusic), 0);
+        pauseMusicSound.fadeIn(1, 0, 0.5);
+
         FlxTween.num(0, 0.6, 0.5, { ease: FlxEase.sineOut }, (v)->{ subCamera.bgColor.alphaFloat = v; });
 
         FlxG.state.persistentUpdate = false;
@@ -94,6 +102,7 @@ class PauseMenu extends EditorListBackend {
 
     override function close() {
         super.close();
+        pauseMusicSound.stop();
         if (PlayState.instance.songStarted) Conductor.play();
         FlxG.state.persistentUpdate = true;
         FlxTween.globalManager.forEach((tween:FlxTween)->{
