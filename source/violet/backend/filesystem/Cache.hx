@@ -62,7 +62,7 @@ class Cache {
 		if (Paths.fileExists(audioPath, true))
 			sound = Sound.fromFile(audioPath);
 
-		if (sound == null) {
+		if (sound == null && audioPath != "" && audioPath != '.$ext') {
 			trace('error:No sound data from path "$audioPath".');
 			return /* beepWhenNull ? Sound.fromFile('flixel/sounds/beep.ogg') : */ null;
 		}

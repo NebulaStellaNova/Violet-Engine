@@ -175,7 +175,7 @@ class Conductor {
 	}
 
 	public static function playSong(id:String, ?variation:String):Void {
-		NovaUtils.playMusic('$id/song/Inst${variation == null ? '' : '-$variation'}', 'songs');
+		NovaUtils.playMusic('$id/song/Inst${variation == '' ? '' : '-$variation'}', 'songs');
 		final songMetaData = violet.data.song.SongRegistry.getSongByID(id);
 		Conductor.setInitialBPM(songMetaData.bpm, songMetaData.stepsPerBeat, songMetaData.beatsPerMeasure);
 		instrumental.looped = false;

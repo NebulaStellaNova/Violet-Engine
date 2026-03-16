@@ -1,5 +1,7 @@
 package violet.states;
 
+import violet.backend.utils.NovaUtils;
+import violet.data.song.Song;
 import violet.backend.objects.play.ComboGroup;
 import flixel.FlxCamera;
 import flixel.group.FlxGroup;
@@ -38,6 +40,7 @@ class PlayState extends violet.backend.StateBackend {
 
 	public static var instance:PlayState;
 	public static var SONG:Chart;
+	public static var songData:Song;
 	public static var song:String;
 	public static var difficulty:String;
 	public static var variation:Null<String>;
@@ -80,6 +83,13 @@ class PlayState extends violet.backend.StateBackend {
 	public var countdownTimer:FlxTimer = new FlxTimer();
 
 	public var comboGroup:ComboGroup;
+
+	public var camGameBase:{zoom:Float} = {
+		zoom: 1
+	};
+	public var camGameOffset:{zoom:Float} = {
+		zoom: 0
+	};
 
 	/**
 	 * The amount of beats the countdown lasts for.
@@ -136,8 +146,10 @@ class PlayState extends violet.backend.StateBackend {
 		strumLines = new FlxTypedGroup<StrumLine>();
 
 		SONG = ChartRegistry.getChart(song, difficulty, variation);
-		Conductor.playSong(song, variation); Conductor.pause();
-		if (SONG.meta.needsVoices) generalVocals = Conductor.addAdditionalTrack(FlxG.sound.load(Cache.sound(Paths.vocal(PlayState.song, null, PlayState.variation), 'root', null, true), FlxG.sound.defaultMusicGroup));
+		songData = new Song(song);
+		variation = songData.variant;
+		Conductor.playSong(songData.songName, songData.variant); Conductor.pause();
+		if (SONG.meta.needsVoices) generalVocals = Conductor.addAdditionalTrack(FlxG.sound.load(Cache.sound(Paths.vocal(songData.songName, null, PlayState.variation), 'root', null, true), FlxG.sound.defaultMusicGroup));
 		else generalVocals = Conductor.addAdditionalTrack(new FlxSound());
 		StrumLine.generalScrollSpeed = SONG.scrollSpeed ?? 1;
 		for (i => data in SONG.strumLines) {
@@ -189,7 +201,7 @@ class PlayState extends violet.backend.StateBackend {
 		stage.stageScripts.parent = this;
 		stage.load(characters);
 		defaultCamZoom = stage._data.zoom;
-		camGame.zoom = defaultCamZoom;
+		camGameBase.zoom = defaultCamZoom;
 
 		healthBar = new HealthBar();
 		healthBar.y = Options.data.downscroll ? FlxG.height * 0.1 : FlxG.height * 0.9;
@@ -265,6 +277,8 @@ class PlayState extends violet.backend.StateBackend {
 
 		callSongScripts("update", [elapsed]);
 		callSongScripts("onUpdate", [elapsed]);
+
+		camGame.zoom = camGameBase.zoom + camGameOffset.zoom;
 
 		if (Controls.accept && !FlxG.mouse.justPressed) {
 			var event:EventBase = songScripts.event("onPause", new EventBase());
@@ -478,6 +492,16 @@ class PlayState extends violet.backend.StateBackend {
 					y: targetCharacter.y + targetCharacter.cameraOffsets[1]
 				}, (Conductor.stepLengthMs / 1000) * 16, { ease: FlxEase.expoOut });
 
+			case "Camera Zoom":
+				if (scriptEvent.params[0]) {
+					var targetCamera = ["camGame" => camGameBase].get(scriptEvent.params[2]);
+					var	targetZoom = scriptEvent.params[1];
+					var targetDuration = (Conductor.stepLengthMs/1000) * scriptEvent.params[3];
+					var targetEase = NovaUtils.easeFromString(scriptEvent.params[4], scriptEvent.params[5]);
+					FlxTween.cancelTweensOf(targetCamera);
+					FlxTween.tween(targetCamera, { zoom: targetZoom }, targetDuration, { ease: targetEase });
+				}
+
 			case "Play Animation":
 				var targetCharacter:Character = strumLines.members[scriptEvent.params[0]].characters[0];
 				targetCharacter.canDance = false;
@@ -542,10 +566,10 @@ class PlayState extends violet.backend.StateBackend {
 		callSongScripts('beatHit', [curBeat]);
 
 		if (curBeat % 4 == 0) {
-			FlxTween.cancelTweensOf(camGame);
-			camGame.zoom = defaultCamZoom + 0.025;
+			FlxTween.cancelTweensOf(camGameOffset);
+			camGameOffset.zoom += 0.025;
 			camHUD.zoom = 1 + 0.035;
-			FlxTween.tween(camGame, { zoom: defaultCamZoom }, 1, { ease: FlxEase.quartOut });
+			FlxTween.tween(camGameOffset, { zoom: 0 }, 1, { ease: FlxEase.quartOut });
 			FlxTween.tween(camHUD, { zoom: 1 }, 1, { ease: FlxEase.quartOut });
 		}
 

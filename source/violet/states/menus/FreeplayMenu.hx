@@ -256,7 +256,7 @@ class FreeplayMenu extends SubStateBackend {
 	}
 
 	function playInst() {
-		var inst = '${songs[curSelectedSong].id}/song/Inst';
+		var inst = '${songs[curSelectedSong].songName}/song/Inst${songs[curSelectedSong].variant != '' ? '-${songs[curSelectedSong].variant}' : ''}';
 		instTimer.cancel();
 
 		if (inst == prevInst)
@@ -264,7 +264,7 @@ class FreeplayMenu extends SubStateBackend {
 
 		instTimer = new FlxTimer().start(0.8, (_) -> {
 			prevInst = inst;
-			Conductor.playSong(songs[curSelectedSong].id);
+			Conductor.playSong(songs[curSelectedSong].songName, songs[curSelectedSong].variant);
 			Conductor.instrumental.volume = 0.8;
 			Conductor.instrumental.looped = true;
 		});
@@ -280,7 +280,11 @@ class FreeplayMenu extends SubStateBackend {
 		var distance = 80;
 
 		if (pureSelect) {
-			diffSprite.loadGraphic(Paths.image('menus/freeplay/difficulties/${song.difficulties[curSelectedDiff]}'));
+			diffSprite.loadSprite(Paths.image('menus/freeplay/difficulties/${song.difficulties[curSelectedDiff]}'));
+			if (diffSprite.animated) {
+				diffSprite.addAnim('idle', 'idle', 24, true);
+				diffSprite.playAnim('idle', true);
+			}
 			for (i => capsule in daCapsules)
 				capsule.updateRatingForDiff(songs[i], songs[i].difficulties[FlxMath.wrap(curSelectedDiff, 0, songs[i].difficulties.length - 1)]);
 			diffSprite.y = selector1.y + (selector1.height / 2) - (diffSprite.height / 2);
@@ -291,7 +295,11 @@ class FreeplayMenu extends SubStateBackend {
 		FlxTween.tween(diffSprite, {x: diffSprite.x - (distance * amount), alpha: 0}, 0.15, {
 			ease: FlxEase.expoIn,
 			onComplete: (_) -> {
-				diffSprite.loadGraphic(Paths.image('menus/freeplay/difficulties/${song.difficulties[curSelectedDiff]}'));
+				diffSprite.loadSprite(Paths.image('menus/freeplay/difficulties/${song.difficulties[curSelectedDiff]}'));
+				if (diffSprite.animated) {
+					diffSprite.addAnim('idle', 'idle', 24, true);
+					diffSprite.playAnim('idle', true);
+				}
 				diffSprite.x = distance * direction * 2;
 				diffSprite.y = selector1.y + (selector1.height / 2) - (diffSprite.height / 2);
 				for (i => capsule in daCapsules)

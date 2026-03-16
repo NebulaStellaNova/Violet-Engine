@@ -12,8 +12,8 @@ class PauseMenu extends EditorListBackend {
 
     public var pauseInfo:Array<String> = [ // Variable named by @ShamrockDeveloper
         PlayState.SONG.meta.displayName,
-        PlayState.SONG._data.meta?.composer != null ? 'Composer: ${PlayState.SONG._data.meta.composer}' : null,
-        PlayState.SONG._data.meta?.charter != null ? 'Charter: ${PlayState.SONG._data.meta.charter}' : null,
+        PlayState.songData._data?.composer != null ? 'Composer: ${PlayState.songData._data?.composer}' : null,
+        PlayState.songData._data?.charter != null ? 'Charter: ${PlayState.songData._data?.charter}' : null,
         'Difficulty: ${StringUtil.capitalizeFirst(PlayState.difficulty.toLowerCase())}',
         '0 Blue Balls'
     ];

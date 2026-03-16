@@ -23,21 +23,22 @@ class ChartRegistry {
 		var chartList:Array<String> = [];
 		for (song in SongRegistry.getAllSongs()) {
 			for (diff in song.difficulties) {
-				final yamlPath = Paths.yaml('songs/${song.songName}/charts/$diff');
-				final jsonPath = Paths.json('songs/${song.songName}/charts/$diff');
-				final eventsYamlPath = Paths.yaml('songs/${song.songName}/events');
+				var sub = song.variant != '' ? '/${song.variant}' : '';
+				final yamlPath = Paths.yaml('songs/${song.songName}/charts$sub/$diff');
+				final jsonPath = Paths.json('songs/${song.songName}/charts$sub/$diff');
+				final eventsYamlPath = song.variant != '' ? Paths.yaml('songs/${song.songName}/events-${song.variant}') : Paths.yaml('songs/${song.songName}/events');
 				if (yamlPath != "") {
 					chartCache.set('${song.id}:$diff', { filePath: yamlPath, fileExt: "yaml", eventsPath: eventsYamlPath });
-					trace('debug:<cyan>Found and registered chart for song with ID "<magenta>${song.id}<cyan>" for difficulty "<magenta>$diff<cyan>"');
+					trace('debug:<cyan>Found and registered chart for song with ID "<magenta>${song.songName}<cyan>" for difficulty "<magenta>$diff<cyan>"' + (song.variant != '' ? ' for variant "<magenta>${song.variant}<cyan>"' : ""));
 					continue;
 				}
 				if (jsonPath != "") {
 					chartCache.set('${song.id}:$diff', { filePath: jsonPath, fileExt: "json", eventsPath: eventsYamlPath });
-					trace('debug:<cyan>Found and registered chart for song with ID "<magenta>${song.id}<cyan>" for difficulty "<magenta>$diff<cyan>"');
+					trace('debug:<cyan>Found and registered chart for song with ID "<magenta>${song.songName}<cyan>" for difficulty "<magenta>$diff<cyan>"' + (song.variant != '' ? ' for variant "<magenta>${song.variant}<cyan>"' : ""));
 					continue;
 				}
 
-				trace('warning:<red>Could not find chart for song "${song.id}" for difficulty "$diff"');
+				trace('warning:<red>Could not find chart for song "${song.songName}" for difficulty "$diff"');
 			}
 		}
 	}

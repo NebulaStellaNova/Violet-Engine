@@ -1,5 +1,6 @@
 package violet.backend.utils;
 
+import openfl.text.ReturnKeyLabel;
 import flixel.graphics.atlas.FlxAtlas;
 import flixel.FlxCamera;
 import haxe.io.Path;
@@ -29,6 +30,12 @@ class NovaUtils {
 		if (type == ERROR) {
 			notification.componentColor = 0xFF591818;
 		}
+	}
+
+	public static function easeFromString(type:String, direction:String):Float->Float {
+		var ease = '$type$direction';
+		if (Reflect.hasField(FlxEase, ease)) return Reflect.field(FlxEase, ease);
+		return FlxEase.linear;
 	}
 
 	public static function playMenuMusic():Void {
