@@ -1,0 +1,75 @@
+name: Main Stage (Erect)
+zoom: 0.85
+version: 1.0.0
+directory: stages/week1/erect
+cameraPosition: [0, 100]
+props:
+  - name: "bgColor"
+    type: Solid
+    color: "#222026"
+    position: [-500, -1000]
+    width: 2400
+    height: 2000
+    scroll: [0, 0]
+
+  - name: crowd
+    assetPath: crowd
+    position: [682, 290]
+    scroll: [0.8, 0.8]
+    animations:
+      - name: idle
+        prefix: idle
+        looped: true
+        frameRate: 12
+    startingAnimation: idle
+
+  - name: brightLightSmall
+    assetPath: brightLightSmall
+    position: [967, -103]
+    scroll: [1.2, 1.2]
+
+  - name: orangeLight
+    assetPath: orangeLight
+    position: [189, -500]
+    scale: [1, 1700]
+
+  - name: bg
+    assetPath: bg
+    position: [-765, -247]
+
+  - name: server
+    assetPath: server
+    position: [-991, 205]
+
+  - name: lightgreen
+    assetPath: lightgreen
+    position: [-171, 242]
+
+  - name: red
+    assetPath: lightred
+    position: [-101, 560]
+
+  - id: spectator
+    type: Character
+    position: [501.5, 815]
+    cameraOffsets: [0, 0]
+
+  - id: opponent
+    type: Character
+    position: [40, 985]
+    cameraOffsets: [-300, -250]
+
+  - id: player
+    type: Character
+    position: [977.5, 1005]
+    cameraOffsets: [-550, -300]
+
+  - name: lights
+    assetPath: lights
+    position: [-847, -245]
+    scroll: [1.2, 1.2]
+
+  - name: lightAbove
+    assetPath: lightAbove
+    position: [804, -117]
+    scroll: [1, 1]

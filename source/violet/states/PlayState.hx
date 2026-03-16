@@ -197,6 +197,11 @@ class PlayState extends violet.backend.StateBackend {
 			}
 		}
 
+		comboGroup = new ComboGroup();
+		comboGroup.camera =  camGame;
+		comboGroup.x = 1100;
+		comboGroup.y = 300;
+
 		stage = new Stage(SONG.stage);
 		stage.stageScripts.parent = this;
 		stage.load(characters);
@@ -232,16 +237,7 @@ class PlayState extends violet.backend.StateBackend {
 		iconOpponent.isOpponent = true;
 		add(iconOpponent);
 
-		health = 0.5; // Deal with this being weird before songs starts once countdown works.
-
-		var spectator = strumLines.members[2].characters[0];
-
-		comboGroup = new ComboGroup();
-		comboGroup.camera =  camGame;
-		comboGroup.x = 1100;
-		comboGroup.y = 300;
-		comboGroup.z = 100;
-		add(comboGroup);
+		health = 0.5;
 
 		callSongScripts('create');
 

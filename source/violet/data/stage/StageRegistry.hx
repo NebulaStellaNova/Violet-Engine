@@ -20,6 +20,7 @@ class StageRegistry {
 
         var stageFiles = Paths.readFolder("data/stages");
         for (file in stageFiles) {
+            if (!file.endsWith("yaml")) continue;
             final filePath = Paths.file('data/stages/$file');
             final stageID = file.replace(".yaml", "");
             final options = new ParserOptions();

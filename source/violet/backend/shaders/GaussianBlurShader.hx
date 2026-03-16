@@ -7,7 +7,6 @@ import flixel.addons.display.FlxRuntimeShader;
 /**
  * Note... not actually gaussian!
  */
-@:nullSafety
 class GaussianBlurShader extends FlxRuntimeShader
 {
   public var amount:Float = 1;

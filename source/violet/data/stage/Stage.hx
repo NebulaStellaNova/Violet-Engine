@@ -7,7 +7,13 @@ import violet.backend.utils.NovaUtils;
 import violet.backend.StateBackend;
 import violet.states.PlayState;
 import violet.backend.objects.play.StageProp;
-
+/*
+enum abstract StageItemType(String) {
+    STAGEPROP = "StageProp";
+    SOLID = "Solid";
+    CHARACTER = "Character";
+}
+ */
 class Stage extends flixel.group.FlxGroup {
 
     public var stageScripts:ScriptPack = new ScriptPack();
@@ -36,13 +42,16 @@ class Stage extends flixel.group.FlxGroup {
         for (i in members) {
             remove(i);
         }
+        var hasCombo = false;
         for (i in this._data.props) {
             i.scroll ??= [1, 1];
             i.scale ??= [1, 1];
+            i.position ??= [0, 0];
             i.alpha ??= 1;
             i.visible ??= true;
             i.color ??= FlxColor.WHITE;
-            i.zIndex ??= 0;
+            i.zIndex ??= members.length-1;
+            i.type ??= "StageProp";
             // trace(i);
 
             var positionalArrays = [
@@ -52,6 +61,11 @@ class Stage extends flixel.group.FlxGroup {
             ];
 
             switch (i.type) {
+                case "Combo":
+                    PlayState.instance.comboGroup.x = i.position[0];
+                    PlayState.instance.comboGroup.y = i.position[1];
+                    PlayState.instance.comboGroup.z = i.zIndex;
+                    add(PlayState.instance.comboGroup);
                 case "Solid":
                     var prop:StageProp = new StageProp(i.position[0], i.position[1]);
                     prop.name = i.name;

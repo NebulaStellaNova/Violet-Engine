@@ -4,6 +4,8 @@ assetPath: characters/BOYFRIEND
 flipX: true
 singTime: 8.0
 healthIcon: bf
+offsets: [0, -80]
+cameraOffsets: [0, -80]
 animations:
 - name: idle
   prefix: BF idle dance

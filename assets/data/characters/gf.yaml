@@ -4,6 +4,7 @@ assetPath: characters/GF_assets
 startingAnimation: danceRight
 singTime: 8
 danceEvery: 1
+cameraOffsets: [-400, -100]
 animations:
   - name: danceLeft
     prefix: GF Dancing Beat

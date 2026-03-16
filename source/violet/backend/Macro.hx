@@ -121,6 +121,9 @@ class Macro {
 			 * The property sort the objects by.
 			 */
 			public var sortBy:String = "zIndex";
+
+			public var last(get, never):T;
+			function get_last() return this.members.copy().pop();
 		}
 
 		var drawFuncy = classFields.filter(field -> return field.name == 'draw')[0];

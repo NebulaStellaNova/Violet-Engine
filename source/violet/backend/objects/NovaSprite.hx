@@ -16,6 +16,7 @@ import violet.data.animation.AnimationData;
 
 #if ANIMATE_SUPPORT
 import animate.FlxAnimate;
+import animate.FlxAnimateController;
 #end
 
 typedef AnimationInfo = {
@@ -60,6 +61,7 @@ class NovaSprite extends #if ANIMATE_SUPPORT FlxAnimate #else FlxSprite #end {
 			fromWeb(path);
 		else if (Paths.fileExists('${haxe.io.Path.withoutExtension(path)}/Animation.json', true)) {
 			#if ANIMATE_SUPPORT
+			this.animation = new FlxAnimateController(this);
 			this.filePath = '${haxe.io.Path.withoutExtension(path)}/Animation.json';
 			this.fileName = Paths.getFileName(path, true);
 			this.animated = true;
