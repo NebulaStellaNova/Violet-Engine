@@ -153,7 +153,7 @@ class FreeplayMenu extends SubStateBackend {
 			add(capsule);
 			daCapsules.push(capsule);
 			capsule.updateBPM(Std.int(song._data.bpm));
-			trace(ChartRegistry.fetchChart(song.songName));
+
 		}
 
 		add(black);

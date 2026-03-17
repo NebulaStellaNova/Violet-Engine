@@ -1557,7 +1557,7 @@ strumLines:
         time: 120677.677419355
         type: null
     position: dad
-    vocalsSuffix: darnell-bf
+    vocalsSuffix: darnell
     type: 0
     characters:
       - darnell
@@ -2699,7 +2699,7 @@ strumLines:
         time: 123870.967741935
         type: null
     position: boyfriend
-    vocalsSuffix: -bf-bf
+    vocalsSuffix: bf
     type: 1
     characters:
       - bf

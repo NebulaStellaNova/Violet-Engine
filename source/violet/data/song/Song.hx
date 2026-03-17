@@ -9,6 +9,11 @@ class Song {
         return _data?.name ?? id.split(":")[0];
     }
 
+    public var playableCharacter(get, never):String;
+    function get_playableCharacter():String {
+        return _data?.playableCharacter ?? 'bf';
+    }
+
     public var displayName(get, never):String;
     function get_displayName():String {
         return _data?.displayName ?? songName;

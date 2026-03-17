@@ -5,6 +5,8 @@ typedef SongData = {
 	public var ?variant:String;
 	public var ?displayName:String;
 
+	public var ?playableCharacter:String;
+
 	public var ?composer:String;
 	public var ?charter:String;
 
@@ -18,6 +20,7 @@ typedef SongData = {
 	public var ?difficulties:Array<String>;
 	public var ?varients:Array<String>;
 	public var ?customValues:Dynamic;
+
 
 	public var ?icon:String;
 	public var ?color:violet.backend.utils.ParseUtil.ParseColor; // Doesn't do shit, only here for compatibility
