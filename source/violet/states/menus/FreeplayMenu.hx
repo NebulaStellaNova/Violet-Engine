@@ -137,14 +137,8 @@ class FreeplayMenu extends SubStateBackend {
 
 		player = new Player('bf');
 
-		songs = SongRegistry.getAllSongs().filter(song -> {
-			var conditions:Array<Bool> = [
-				Options.data.developerMode ? true : !song._data?.isDev ?? true
-			];
-			var conditionsMet:Bool = true;
-			for (i in conditions) if (!i) conditionsMet = false;
-			return conditionsMet;
-		});
+		conditionCheck();
+
 		for (i => song in songs) {
 			var yOffset = 10;
 			var startY = (FlxG.height / 2) + spacing * (i - curSelectedSong) - spacing + yOffset;
@@ -263,6 +257,18 @@ class FreeplayMenu extends SubStateBackend {
 		changeDiff(newIndex, true);
 		playInst();
 		updateAlbum();
+	}
+
+	function conditionCheck() {
+		songs = SongRegistry.getAllSongs().filter(song -> {
+			var conditions:Array<Bool> = [
+				Options.data.developerMode ? true : !song._data?.isDev ?? true,
+				song.playableCharacter == player.id
+			];
+			var conditionsMet:Bool = true;
+			for (i in conditions) if (!i) conditionsMet = false;
+			return conditionsMet;
+		});
 	}
 
 	function playInst() {

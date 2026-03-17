@@ -8,6 +8,7 @@ class Player {
     public var _data:PlayerData;
 
     public function new(id:String) {
+        this.id = id;
         _data = ParseUtil.yaml('data/players/$id');
     }
 
