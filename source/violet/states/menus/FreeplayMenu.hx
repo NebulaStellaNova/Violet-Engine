@@ -138,11 +138,12 @@ class FreeplayMenu extends SubStateBackend {
 		player = new Player('bf');
 
 		songs = SongRegistry.getAllSongs().filter(song -> {
-			if (Options.data.developerMode) {
-				return true;
-			} else {
-				return !song._data?.isDev ?? true;
-			}
+			var conditions:Array<Bool> = [
+				Options.data.developerMode ? true : !song._data?.isDev ?? true
+			];
+			var conditionsMet:Bool = true;
+			for (i in conditions) if (!i) conditionsMet = false;
+			return conditionsMet;
 		});
 		for (i => song in songs) {
 			var yOffset = 10;
