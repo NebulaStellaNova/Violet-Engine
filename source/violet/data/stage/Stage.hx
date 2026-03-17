@@ -88,6 +88,7 @@ class Stage extends flixel.group.FlxGroup {
                     prop.flipY = i.flipY ?? false;
                     prop.visible = i.visible;
                     prop.color = i.color;
+                    prop.antialiasing = !i.isPixel;
                     prop.updateHitbox();
                     for (i in i?.animations ?? []) {
                         prop.addAnimFromData(i);

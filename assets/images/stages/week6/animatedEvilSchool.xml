@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TextureAtlas imagePath="animatedEvilSchool.png" width="1595" height="1341">
+	<SubTexture name="background 20000" x="5" y="5" width="313" height="162" frameX="-100" frameY="-174" frameWidth="513" frameHeight="512"/>
+	<SubTexture name="background 20001" x="5" y="172" width="313" height="162" frameX="-100" frameY="-174" frameWidth="513" frameHeight="512"/>
+	<SubTexture name="background 20002" x="323" y="5" width="313" height="162" frameX="-100" frameY="-174" frameWidth="513" frameHeight="512"/>
+	<SubTexture name="background 20003" x="323" y="172" width="313" height="162" frameX="-100" frameY="-174" frameWidth="513" frameHeight="512"/>
+	<SubTexture name="background 20004" x="5" y="339" width="313" height="162" frameX="-100" frameY="-174" frameWidth="513" frameHeight="512"/>
+	<SubTexture name="background 20005" x="323" y="339" width="313" height="162" frameX="-100" frameY="-174" frameWidth="513" frameHeight="512"/>
+	<SubTexture name="background 20006" x="5" y="506" width="313" height="162" frameX="-100" frameY="-174" frameWidth="513" frameHeight="512"/>
+	<SubTexture name="background 20007" x="323" y="506" width="313" height="162" frameX="-100" frameY="-174" frameWidth="513" frameHeight="512"/>
+	<SubTexture name="background 20008" x="641" y="5" width="313" height="162" frameX="-100" frameY="-174" frameWidth="513" frameHeight="512"/>
+	<SubTexture name="background 20009" x="641" y="172" width="313" height="162" frameX="-100" frameY="-174" frameWidth="513" frameHeight="512"/>
+	<SubTexture name="background 20010" x="641" y="339" width="313" height="162" frameX="-100" frameY="-174" frameWidth="513" frameHeight="512"/>
+	<SubTexture name="background 20011" x="641" y="506" width="313" height="162" frameX="-100" frameY="-174" frameWidth="513" frameHeight="512"/>
+	<SubTexture name="background 20012" x="5" y="673" width="313" height="162" frameX="-100" frameY="-174" frameWidth="513" frameHeight="512"/>
+	<SubTexture name="background 20013" x="323" y="673" width="313" height="162" frameX="-100" frameY="-174" frameWidth="513" frameHeight="512"/>
+	<SubTexture name="background 20014" x="641" y="673" width="313" height="162" frameX="-100" frameY="-174" frameWidth="513" frameHeight="512"/>
+	<SubTexture name="background 20015" x="5" y="840" width="313" height="162" frameX="-100" frameY="-174" frameWidth="513" frameHeight="512"/>
+	<SubTexture name="background 20016" x="323" y="840" width="313" height="162" frameX="-100" frameY="-174" frameWidth="513" frameHeight="512"/>
+	<SubTexture name="background 20017" x="641" y="840" width="313" height="162" frameX="-100" frameY="-174" frameWidth="513" frameHeight="512"/>
+	<SubTexture name="background 20018" x="959" y="5" width="313" height="162" frameX="-100" frameY="-174" frameWidth="513" frameHeight="512"/>
+	<SubTexture name="background 20019" x="959" y="172" width="313" height="162" frameX="-100" frameY="-174" frameWidth="513" frameHeight="512"/>
+	<SubTexture name="background 20020" x="959" y="339" width="313" height="162" frameX="-100" frameY="-174" frameWidth="513" frameHeight="512"/>
+	<SubTexture name="background 20021" x="959" y="506" width="313" height="162" frameX="-100" frameY="-174" frameWidth="513" frameHeight="512"/>
+	<SubTexture name="background 20022" x="959" y="673" width="313" height="162" frameX="-100" frameY="-174" frameWidth="513" frameHeight="512"/>
+	<SubTexture name="background 20023" x="959" y="840" width="313" height="162" frameX="-100" frameY="-174" frameWidth="513" frameHeight="512"/>
+	<SubTexture name="background 20024" x="5" y="1007" width="313" height="162" frameX="-100" frameY="-174" frameWidth="513" frameHeight="512"/>
+	<SubTexture name="background 20025" x="323" y="1007" width="313" height="162" frameX="-100" frameY="-174" frameWidth="513" frameHeight="512"/>
+	<SubTexture name="background 20026" x="641" y="1007" width="313" height="162" frameX="-100" frameY="-174" frameWidth="513" frameHeight="512"/>
+	<SubTexture name="background 20027" x="959" y="1007" width="313" height="162" frameX="-100" frameY="-174" frameWidth="513" frameHeight="512"/>
+	<SubTexture name="background 20028" x="5" y="1174" width="313" height="162" frameX="-100" frameY="-174" frameWidth="513" frameHeight="512"/>
+	<SubTexture name="background 20029" x="323" y="1174" width="313" height="162" frameX="-100" frameY="-174" frameWidth="513" frameHeight="512"/>
+	<SubTexture name="background 20030" x="641" y="1174" width="313" height="162" frameX="-100" frameY="-174" frameWidth="513" frameHeight="512"/>
+	<SubTexture name="background 20031" x="959" y="1174" width="313" height="162" frameX="-100" frameY="-174" frameWidth="513" frameHeight="512"/>
+	<SubTexture name="background 20032" x="1277" y="5" width="313" height="162" frameX="-100" frameY="-174" frameWidth="513" frameHeight="512"/>
+	<SubTexture name="background 20033" x="1277" y="172" width="313" height="162" frameX="-100" frameY="-174" frameWidth="513" frameHeight="512"/>
+	<SubTexture name="background 20034" x="1277" y="339" width="313" height="162" frameX="-100" frameY="-174" frameWidth="513" frameHeight="512"/>
+	<SubTexture name="background 20035" x="1277" y="506" width="313" height="162" frameX="-100" frameY="-174" frameWidth="513" frameHeight="512"/>
+	<SubTexture name="background 20036" x="1277" y="673" width="313" height="162" frameX="-100" frameY="-174" frameWidth="513" frameHeight="512"/>
+	<SubTexture name="background 20037" x="1277" y="840" width="313" height="162" frameX="-100" frameY="-174" frameWidth="513" frameHeight="512"/>
+	<SubTexture name="background 20038" x="1277" y="1007" width="313" height="162" frameX="-100" frameY="-174" frameWidth="513" frameHeight="512"/>
+	<SubTexture name="background 20039" x="1277" y="1174" width="313" height="162" frameX="-100" frameY="-174" frameWidth="513" frameHeight="512"/>
+</TextureAtlas>
