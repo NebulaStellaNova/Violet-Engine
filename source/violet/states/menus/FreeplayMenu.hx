@@ -1,5 +1,7 @@
 package violet.states.menus;
 
+import violet.data.chart.ChartRegistry;
+import violet.data.freeplay.Player;
 import violet.ui.freeplay.Album;
 import violet.backend.audio.Conductor;
 import violet.backend.options.Options;
@@ -47,10 +49,10 @@ class FreeplayMenu extends SubStateBackend {
 
 	var songs:Array<Song> = [];
 	var album:Album;
+	var player:Player;
 
 	override function create() {
 		super.create();
-
 
 		prevInst = "";
 
@@ -133,6 +135,8 @@ class FreeplayMenu extends SubStateBackend {
 		FlxTween.tween(ostText, 		{ y: -78 }, 				0.8, 	{ ease: FlxEase.expoOut, startDelay: 0.7 });
 		FlxTween.tween(album, 		    { x: 0 },            		0.8, 	{ ease: FlxEase.expoOut, startDelay: 0.7 });
 
+		player = new Player('bf');
+
 		songs = SongRegistry.getAllSongs().filter(song -> {
 			if (Options.data.developerMode) {
 				return true;
@@ -149,6 +153,7 @@ class FreeplayMenu extends SubStateBackend {
 			add(capsule);
 			daCapsules.push(capsule);
 			capsule.updateBPM(Std.int(song._data.bpm));
+			trace(ChartRegistry.fetchChart(song.songName));
 		}
 
 		add(black);
