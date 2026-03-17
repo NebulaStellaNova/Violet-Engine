@@ -23,15 +23,15 @@ class Stage extends flixel.group.FlxGroup {
 
     public function new(id:String) {
         super();
-        this.id = StageRegistry.stageDatas.get(id) != null ? id : 'mainStage';
-		this._data = StageRegistry.stageDatas.get(id) ?? StageRegistry.stageDatas.get('mainStage');
+        this.id = StageRegistry.stageDatas.get(id) != null ? id : 'default';
+		this._data = StageRegistry.stageDatas.get(id) ?? StageRegistry.stageDatas.get('default');
         this._data.cameraPosition ??= [0, 0];
 
         ModdingAPI.checkForScripts('data/stages', id, stageScripts);
         stageScripts.set('directory', this._data.directory);
 
         if (StageRegistry.stageDatas.get(id) == null) {
-            NovaUtils.addNotification('Stage not found!', 'Could not find stage with ID "$id" using default stage "mainStage."', ERROR);
+            NovaUtils.addNotification('Stage not found!', 'Could not find stage with ID "$id" using default stage "theVoid."', ERROR);
         }
 
         FlxG.camera.scroll.x = this._data.cameraPosition[0];

@@ -38,7 +38,7 @@ class ChartConverters {
             meta: { name: "Unknown Song" },
             scrollSpeed: 1,
             noteTypes: [],
-            stage: "mainStage",
+            stage: "default",
             codenameChart: true
         };
     }
