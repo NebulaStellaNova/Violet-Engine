@@ -12,6 +12,7 @@ import flixel.util.FlxSave;
     public var forceMouseScrolling:Bool = true;
     public var debugDisplayOnStart:Bool = false;
     public var personalScrollSpeed:Float = 0;
+    public var disableScoreLerping:Bool = false;
     public var controls:Map<String, Array<String>> = [
         'note_left' => ['A', 'LEFT'],
         'note_down' => ['S', 'DOWN'],

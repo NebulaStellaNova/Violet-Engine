@@ -85,6 +85,10 @@ menus:
     type: number
     min: 0
     step: 0.1
+  - name: Disable Score Text Lerp
+    description: If checked, score text won't lerp and will hard cut to the current score.
+    saveID: disableScoreLerping
+    type: bool
 
 - title: Appearance
   options:

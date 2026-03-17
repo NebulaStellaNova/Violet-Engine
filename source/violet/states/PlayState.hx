@@ -1,5 +1,7 @@
 package violet.states;
 
+import violet.states.menus.MainMenu;
+import violet.states.menus.FreeplayMenu;
 import violet.backend.utils.NovaUtils;
 import violet.data.song.Song;
 import violet.backend.objects.play.ComboGroup;
@@ -291,7 +293,7 @@ class PlayState extends violet.backend.StateBackend {
 		}
 
 		scoreLerp = MathUtil.lerp(scoreLerp, score, 0.25);
-		scoreTxt.value = Math.round(scoreLerp);
+		scoreTxt.value = Options.data.disableScoreLerping ? Math.round(score) : Math.round(scoreLerp);
 
 		health = FlxMath.bound(health, 0, 1);
 
@@ -531,7 +533,7 @@ class PlayState extends violet.backend.StateBackend {
 	function endSong():Void {
 		songEnded = true;
 		if (playlist.length == 0) {
-			FlxG.switchState(violet.states.menus.MainMenu.new);
+			FlxG.switchState(new FreeplayMenu().build());
 		} else {
 			loadSong(playlist.shift(), difficulty, variation);
 		}
