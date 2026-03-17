@@ -85,16 +85,16 @@ menus:
     type: number
     min: 0
     step: 0.1
-  - name: Disable Score Text Lerp
-    description: If checked, score text won't lerp and will hard cut to the current score.
-    saveID: disableScoreLerping
-    type: bool
 
 - title: Appearance
   options:
   - name: Colored Health Bar
     description: If disabled, the health bar will have basic colors like in V-Slice.
     saveID: coloredHealthBar
+    type: bool
+  - name: Disable Score Text Lerp
+    description: If checked, score text won't lerp and will hard cut to the current score.
+    saveID: disableScoreLerping
     type: bool
 
 - title: Miscellaneous
@@ -114,4 +114,8 @@ menus:
   - name: Debug Display on Start
     description: Shows the debug display when you start the game.
     saveID: debugDisplayOnStart
+    type: bool
+  - name: GPU Caching
+    description: < Insert Description >
+    saveID: gpuCaching
     type: bool

@@ -38,6 +38,14 @@ import violet.backend.scripting.ScriptPack;
 import violet.backend.display.DebugDisplay;
 #end
 
+class CameraOffset {
+	public var zoom:Float;
+
+	public function new(initialZoom:Float) {
+		zoom = initialZoom;
+	}
+}
+
 class PlayState extends violet.backend.StateBackend {
 
 	public static var instance:PlayState;
@@ -86,12 +94,9 @@ class PlayState extends violet.backend.StateBackend {
 
 	public var comboGroup:ComboGroup;
 
-	public var camGameBase:{zoom:Float} = {
-		zoom: 1
-	};
-	public var camGameOffset:{zoom:Float} = {
-		zoom: 0
-	};
+	public var cameraOffsets:Array<CameraOffset> = [];
+	public var camGameBase:CameraOffset = new CameraOffset(1);
+	public var camGameOffset:CameraOffset = new CameraOffset(0);
 
 	/**
 	 * The amount of beats the countdown lasts for.
@@ -277,6 +282,7 @@ class PlayState extends violet.backend.StateBackend {
 		callSongScripts("onUpdate", [elapsed]);
 
 		camGame.zoom = camGameBase.zoom + camGameOffset.zoom;
+		for (i in cameraOffsets) camGame.zoom += i.zoom;
 
 		if (Controls.accept && !FlxG.mouse.justPressed) {
 			var event:EventBase = songScripts.event("onPause", new EventBase());

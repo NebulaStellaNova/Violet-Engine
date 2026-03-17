@@ -26,6 +26,8 @@ class FreeplayMenu extends SubStateBackend {
 	static var curSelectedVar:Int = 0;
 	static var lastSong:Int = -1;
 
+	static var playableID:String = 'bf';
+
 	var canSelect:Bool = true;
 	var daCapsules:Array<Capsule> = [];
 	var camHUD:FlxCamera;
@@ -135,7 +137,7 @@ class FreeplayMenu extends SubStateBackend {
 		FlxTween.tween(ostText, 		{ y: -78 }, 				0.8, 	{ ease: FlxEase.expoOut, startDelay: 0.7 });
 		FlxTween.tween(album, 		    { x: 0 },            		0.8, 	{ ease: FlxEase.expoOut, startDelay: 0.7 });
 
-		player = new Player('bf');
+		player = new Player(playableID);
 
 		conditionCheck();
 
@@ -179,6 +181,17 @@ class FreeplayMenu extends SubStateBackend {
 
 	override function update(elapsed) {
 		super.update(elapsed);
+
+		if (FlxG.keys.justPressed.TAB) {
+			FlxG.sound.music.fadeOut(0.5);
+			camHUD.fade(FlxColor.BLACK, 0.5, ()->{
+				playableID = playableID == "bf" ? "pico" : "bf";
+				FreeplayMenu.skipTransition = true;
+				FreeplayMenu.curSelectedSong = 0;
+				FlxG.switchState(new FreeplayMenu().build());
+			});
+
+		}
 
 		if (Controls.back && canSelect)
 			exit();
