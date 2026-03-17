@@ -238,8 +238,8 @@ class Project extends HXProject {
 		/* Libraries */
 		addHaxelib('hxhardware', 'git');
 		// required for flixel, don't put below flixel, causes weird issues
-		addHaxelib('lime');
-		addHaxelib('openfl');
+		addHaxelib('lime', '8.3.1');
+		addHaxelib('openfl', '9.5.1');
 
 		// the game engine
 		addHaxelib('flixel');
@@ -451,14 +451,9 @@ class Project extends HXProject {
 	 */
 	inline public function addHaxelib(name:String, ?version:LibraryVersion):Void {
 		var addLib:Bool = !FileSystem.exists('./.haxelib');
-		final folderName:String = name.replace('.', ',');
 		if (!addLib)
-			if (version != null) addLib = FileSystem.exists('./.haxelib/$folderName/$version');
-			else {
-				addLib = FileSystem.exists('./.haxelib/$folderName');
-				if (addLib && FileSystem.exists('./.haxelib/$folderName/.current'))
-					version = sys.io.File.getContent('./.haxelib/$folderName/.current');
-			}
+			if (version != null) addLib = FileSystem.exists('./.haxelib/${name.replace('.', ',')}/$version');
+			else addLib = FileSystem.exists('./.haxelib/${name.replace('.', ',')}');
 		if (addLib) {
 			info('Added library "$name"${version == null ? '' : ' version "$version"'}.');
 			haxelibs.push(new Haxelib(name, version));
