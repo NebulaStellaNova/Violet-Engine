@@ -88,8 +88,15 @@ class Paths {
 		return xml('data/ui/$path', directory);
 	}
 
-	#if release inline #end public static function image(path:String, directory:String = '', ?ext:String = 'png'):String
-		return notifyIfBlank(file(path, directory == 'root' ? 'root' : [directory, 'images'].join('/'), ext), '$path.$ext', 'image');
+	#if release inline #end public static function atlas(path:String, directory:String = ''):String {
+		return file(Path.withoutExtension(path) + '/Animation', directory == 'root' ? 'root' : [directory, 'images'].join('/'), "json");
+	}
+
+	#if release inline #end public static function image(path:String, directory:String = '', ?ext:String = 'png'):String {
+		var out = file(path, directory == 'root' ? 'root' : [directory, 'images'].join('/'), ext);
+		if (out != '') return out;
+		else return atlas(path, directory);
+	}
 
 	#if release inline #end public static function sound(path:String, directory:String = '', ?ext:String = 'ogg'):String
 		return file(path, directory == 'root' ? 'root' : [directory, 'sounds'].join('/'), ext);

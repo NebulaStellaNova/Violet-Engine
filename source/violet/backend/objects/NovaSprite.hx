@@ -16,6 +16,7 @@ import violet.data.animation.AnimationData;
 
 #if ANIMATE_SUPPORT
 import animate.FlxAnimate;
+import animate.FlxAnimateFrames;
 import animate.FlxAnimateController;
 #end
 
@@ -24,6 +25,9 @@ typedef AnimationInfo = {
 }
 
 class NovaSprite extends #if ANIMATE_SUPPORT FlxAnimate #else FlxSprite #end {
+
+	public static var cachedFrames:Map<String, FlxAnimateFrames> = [];
+
 	public var filePath:String;
 	public var fileName:String;
 
@@ -57,15 +61,25 @@ class NovaSprite extends #if ANIMATE_SUPPORT FlxAnimate #else FlxSprite #end {
 	}
 
 	public function loadSprite(path:String):NovaSprite {
+		var framesPath = path;
+		if (path.endsWith('Animation.json')) {
+			var split = path.split('/');
+			split.pop();
+			framesPath = split.join('/');
+		}
+		var atlasPath = path.endsWith('Animation.json') ? path : '${haxe.io.Path.withoutExtension(path)}/Animation.json';
 		if (path.startsWith("https://"))
 			fromWeb(path);
-		else if (Paths.fileExists('${haxe.io.Path.withoutExtension(path)}/Animation.json', true)) {
+		else if (Paths.fileExists(atlasPath, true)) {
+			trace(framesPath);
 			#if ANIMATE_SUPPORT
 			this.animation = new FlxAnimateController(this);
-			this.filePath = '${haxe.io.Path.withoutExtension(path)}/Animation.json';
+			this.filePath = atlasPath;
 			this.fileName = Paths.getFileName(path, true);
 			this.animated = true;
-			this.frames = NovaUtils.getAtlasFrames(path);
+			var frames = NovaUtils.getAtlasFrames(framesPath);
+			// cachedFrames.set(framesPath, frames);
+			this.frames = frames;
 			this.onLoaded();
 			#else
 			trace('warning:Atlas\'s aren\'t supported in this build of Violet Engine.');
