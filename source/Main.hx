@@ -11,6 +11,9 @@ import violet.boot.DiscordRPC;
 import violet.data.Constants;
 
 class Main extends openfl.display.Sprite {
+
+	public static var threadCallacks:Array<Void->Void> = [];
+
 	/**
 	 * The current version of the engine.
 	 */
@@ -47,6 +50,7 @@ class Main extends openfl.display.Sprite {
 		super();
 		instance = this;
 
+
 		lemonui.Constants.FONT_REGULAR = Paths.font('Inconsolata-Medium.ttf');
 		lemonui.Constants.FONT_BOLD = Paths.font('Inconsolata-Bold.ttf');
 
@@ -54,7 +58,7 @@ class Main extends openfl.display.Sprite {
 
 		/* FlxG.signals.postStateSwitch.add(()->{
 			@:privateAccess violet.backend.CrashHandler.notificationManager = null;//new haxe.ui.notifications.NotificationManager();
-		}); */
+			}); */
 
 		moonchart.Moonchart.DEFAULT_DIFF = 'normal';
 		moonchart.Moonchart.CASE_SENSITIVE_DIFFS = moonchart.Moonchart.SPACE_SENSITIVE_DIFFS = false;
@@ -101,6 +105,13 @@ class Main extends openfl.display.Sprite {
 		// literally just cause nebs pause bind is backslash
 		FlxG.debugger.toggleKeys.remove(BACKSLASH);
 		#end
+
+		sys.thread.Thread.create(() -> {
+			while (true) {
+				try { for (i in threadCallacks) try {i();} catch (_) {} } catch (_) {}
+				Sys.sleep(FlxG.elapsed);
+			}
+		});
 	}
 
 	public static function switchState(targetClass:Dynamic) {

@@ -1,4 +1,5 @@
 package violet.backend.filesystem;
+import violet.states.InitialState;
 import violet.backend.utils.NovaUtils;
 #if MOD_SUPPORT
 
@@ -79,7 +80,12 @@ class ModdingAPI {
 
 		activeModsIds = FlxG.save.data.enabledModIds;
 
-		reloadRegistries();
+		var reloader:Void->Void;
+		reloader = ()->{
+			reloadRegistries();
+			Main.threadCallacks.remove(reloader);
+		}
+		Main.threadCallacks.push(reloader);
 	}
 
 	public static function getMod(id:String):ModMeta {
@@ -114,12 +120,19 @@ class ModdingAPI {
 		NovaUtils.CURRENT_MUSIC = null;
 		registered = true;
 		violet.data.notestyles.NoteStyleRegistry.registerNoteStyles();
+		InitialState.loadingPercent += 1/7;
 		violet.data.level.LevelRegistry.registerLevels();
+		InitialState.loadingPercent += 1/7;
 		violet.data.song.SongRegistry.registerSongs();
+		InitialState.loadingPercent += 1/7;
 		violet.data.stage.StageRegistry.registerStages();
+		InitialState.loadingPercent += 1/7;
 		violet.data.icon.HealthIconRegistry.registerIcons();
+		InitialState.loadingPercent += 1/7;
 		violet.data.character.CharacterRegistry.registerCharacters();
+		InitialState.loadingPercent += 1/7;
 		violet.data.chart.ChartRegistry.registerCharts();
+		InitialState.loadingPercent += 1/7;
 	}
 
 	#if SCRIPT_SUPPORT

@@ -37,12 +37,13 @@ class ChartRegistry {
 
 	public static function registerChart(song:Song, diff:String, cache:ChartCache) {
 		chartCache.set('${song.id}:$diff', cache);
+		// fetchChart('${song.id}:$diff', true); // Uncomment if you want to enable chart preloading for whatever reason.
 		trace('debug:<cyan>Found and registered chart for song with ID "<magenta>${song.songName}<cyan>" for difficulty "<magenta>$diff<cyan>"' + (song.variant != '' ? ' for variant "<magenta>${song.variant}<cyan>"' : ""));
 	}
 
-	public static function fetchChart(id:String):ChartData {
+	public static function fetchChart(id:String, force:Bool = false):ChartData {
 		// trace(id);
-		if (chartDatas.exists(id)) return chartDatas.get(id);
+		if (chartDatas.exists(id) && !force) return chartDatas.get(id);
 
 		var data = ChartConverters.convertChart(chartCache.get(id));
 		data.stage ??= "default"; // Prevent bug where if no stage is assigned it will load all stage's scripts.
