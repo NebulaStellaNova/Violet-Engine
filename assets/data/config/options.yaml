@@ -79,6 +79,10 @@ menus:
     description: If enabled, the notes will scroll from top to bottom instead of bottom to top.
     saveID: downscroll
     type: bool
+  - name: Opponent Play
+    description: If enabled, you will be able to play as the opponent.
+    saveID: playAsOpponent
+    type: bool
   - name: Personal Scroll Speed
     description: Set it to 0 to use the default scroll speed.
     saveID: personalScrollSpeed

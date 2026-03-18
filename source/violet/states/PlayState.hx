@@ -85,7 +85,7 @@ class PlayState extends violet.backend.StateBackend {
 
 	public var scoreTxt:ScoreTxt;
 
-	public var playAsOpponent:Bool = false;
+	public var playAsOpponent:Bool = Options.data.playAsOpponent;
 	public var ghostTapping:Bool = Options.data.ghostTapping;
 
 	public var countdownSprites:Array<String> = [null, 'ready', 'set', 'go'];
