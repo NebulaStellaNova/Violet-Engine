@@ -1,6 +1,6 @@
 package violet.backend.filesystem;
-import violet.states.InitialState;
 import violet.backend.utils.NovaUtils;
+import violet.states.InitialState;
 #if MOD_SUPPORT
 
 import thx.semver.Version;
@@ -80,12 +80,8 @@ class ModdingAPI {
 
 		activeModsIds = FlxG.save.data.enabledModIds;
 
-		var reloader:Void->Void;
-		reloader = ()->{
-			reloadRegistries();
-			Main.threadCallacks.remove(reloader);
-		}
-		Main.threadCallacks.push(reloader);
+		Main.threadCallacks.addOnce(reloadRegistries);
+		// reloadRegistries();
 	}
 
 	public static function getMod(id:String):ModMeta {
