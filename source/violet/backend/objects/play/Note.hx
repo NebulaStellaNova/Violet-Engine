@@ -113,9 +113,10 @@ class Note extends NovaSprite {
 	 */
 	public var noteType:String = null;
 
-	@:allow(violet.backend.objects.play.StrumLine)
 	@:allow(violet.backend.objects.play.Sustain)
-	final _stepLengthMs:Float = 0;
+	final _stepLengthMs:Float;
+	@:allow(violet.backend.objects.play.StrumLine)
+	var _beingRendered:Bool = false;
 
 	public function new(parent:StrumLine, id:Int, time:Float, tailLength:Float) {
 		super(-10000, -10000);

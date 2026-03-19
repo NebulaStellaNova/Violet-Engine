@@ -1,5 +1,6 @@
 package violet.backend.objects.play;
 
+import flixel.FlxCamera;
 import flixel.group.FlxGroup;
 import flixel.input.keyboard.FlxKey;
 import flixel.math.FlxMath;
@@ -8,6 +9,7 @@ import flixel.math.FlxRect;
 import openfl.events.KeyboardEvent;
 import violet.backend.audio.Conductor;
 import violet.backend.options.Options;
+import violet.data.Scoring;
 import violet.data.character.Character;
 import violet.data.chart.Chart;
 import violet.data.chart.ChartData;
@@ -37,9 +39,14 @@ class StrumLine extends FlxGroup {
 		return !isPlayer; // like this for now, will be changed later
 	}
 
+	/**
+	 * Wether the notes and sustains should show up at all.
+	 */
+	public var renderNotes:Bool = true;
+
 	public final strums:FlxTypedGroup<Strum>;
-	public final notes:FlxTypedGroup<Note>;
-	public final sustains:FlxTypedGroup<Sustain>;
+	public final notes:NoteGroup;
+	public final sustains:SustainGroup;
 
 	public var splashes(get, never):Array<StrumElement>;
 	function get_splashes():Array<StrumElement> {
@@ -112,9 +119,8 @@ class StrumLine extends FlxGroup {
 		});
 
 		add(strums = new FlxTypedGroup<Strum>());
-		add(sustains = new FlxTypedGroup<Sustain>());
-		add(notes = new FlxTypedGroup<Note>());
-		notes.sortBy = sustains.sortBy = 'time';
+		add(sustains = new SustainGroup());
+		add(notes = new NoteGroup(this));
 
 		generateStrums(chartData.keyCount);
 
@@ -242,6 +248,7 @@ class StrumLine extends FlxGroup {
 			pos.resize(0);
 
 			for (sustain in note.tail) {
+				if (sustain == null) continue; if (!sustain.exists) continue;
 				final pos:Array<Float> = [strum.x, strum.y];
 				disPos = 0.45 * (Conductor.framePosition - (note.time + sustain.time)) * Math.abs(sustain.__scrollSpeed) * Math.abs(scale.x / scale.y);
 
@@ -321,4 +328,92 @@ class StrumLine extends FlxGroup {
 		super.destroy();
 	}
 
+}
+
+class NoteGroup extends FlxTypedGroup<Note> {
+	/**
+	 * Applies a function to all rendered members.
+	 * @param func A function that modifies one note at a time.
+	 */
+	public function forEachRendered(func:Note->Void):Void {
+		var shouldRender:Bool = true;
+		forEachExists((note:Note) -> {
+			note._beingRendered = false;
+			if (!parentField.renderNotes) return;
+
+			shouldRender = true;
+			if ((note.time + note.length) < Conductor.framePosition - (Scoring.maxWindow * note.earlyWindow)) shouldRender = false;
+			if (note.time > Conductor.framePosition + (note.getDefaultCamera().height / note.getDefaultCamera().zoom / 0.45 / Math.min(note.__scrollSpeed, 1))) shouldRender = false;
+
+			if (shouldRender) {
+				note._beingRendered = true;
+				func(note);
+			}
+		});
+	}
+
+	var parentField:StrumLine;
+	override public function new(parent:StrumLine) {
+		super();
+		this.parentField = parent;
+		sortBy = 'time';
+	}
+
+	override public function update(elapsed:Float):Void {
+		forEachRendered(
+			(note:Note) ->
+				if (note.visible)
+					note.update(elapsed)
+		);
+	}
+
+	@:access(flixel.FlxCamera)
+	override public function draw():Void {
+		final oldDefaultCameras = FlxCamera._defaultCameras;
+		if (_cameras != null) FlxCamera._defaultCameras = _cameras;
+		forEachRendered(
+			(note:Note) ->
+				if (note.visible)
+					note.draw()
+		);
+		FlxCamera._defaultCameras = oldDefaultCameras;
+	}
+}
+
+class SustainGroup extends FlxTypedGroup<Sustain> {
+	/**
+	 * Applies a function to all rendered members.
+	 * @param func A function that modifies one sustain at a time.
+	 */
+	public function forEachRendered(func:Sustain->Void):Void {
+		forEachExists((sustain:Sustain) ->
+			if (sustain.parentNote._beingRendered)
+				func(sustain)
+		);
+	}
+
+	override public function new() {
+		super();
+		sortBy = 'time';
+	}
+
+	override public function update(elapsed:Float):Void {
+		forEachRendered(
+			(sustain:Sustain) ->
+				if (sustain.visible)
+					sustain.update(elapsed)
+		);
+	}
+
+	@:access(flixel.FlxCamera)
+	override public function draw():Void {
+		final oldDefaultCameras = FlxCamera._defaultCameras;
+		if (_cameras != null) FlxCamera._defaultCameras = _cameras;
+		forEachRendered(
+			(sustain:Sustain) ->
+				if (sustain.visible)
+					sustain.draw()
+		);
+		FlxCamera._defaultCameras = oldDefaultCameras;
+	}
 }
