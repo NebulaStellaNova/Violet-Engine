@@ -55,6 +55,10 @@ class NoteStyle {
 	public final splashProperties:_NoteStyleProperties;
 	public final holdCoverProperties:_NoteStyleProperties;
 
+	public function getSustainGapFix():Float {
+		return _data.sustains?.gapFixAmount ?? 0;
+	}
+
 	public function isStrumPixel():Bool {
 		return !(_data.strums?.isPixel ?? _data?.isPixel ?? false);
 	}

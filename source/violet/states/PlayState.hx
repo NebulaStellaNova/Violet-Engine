@@ -409,7 +409,6 @@ class PlayState extends violet.backend.StateBackend {
 			health += Constants.DEFAULT_HEALTH_GAIN;
 
 		if (sustain.isEnd) {
-			sustain.visible = false;
 			sustain.parentStrum.holdCover?.playAnim('end', true);
 			if (sustain.parent.isComputer) sustain.parentStrum.holdCover?.animation.finish();
 			sustain.parentStrum.holdCover = null;

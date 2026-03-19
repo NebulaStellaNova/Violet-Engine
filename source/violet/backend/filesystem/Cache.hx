@@ -30,7 +30,11 @@ class Cache {
 
 	public static function image(path:String, directory:String = '', ?ext:String = 'png'):FlxGraphic {
 		var imagePath:String = Paths.image(path, directory, ext);
-		if (cache.exists(imagePath)) return cache.get(imagePath);
+		if (cache.exists(imagePath)) {
+			var graphic:FlxGraphic = cache.get(imagePath);
+			if (!graphic.isDestroyed)
+				return graphic;
+		}
 
 		var bitmap:BitmapData = null;
 		if (Paths.fileExists(imagePath, true))

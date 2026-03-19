@@ -99,6 +99,6 @@ class NovaUtils {
 	}
 
 	public static function getAtlasFrames(path:String):FlxAtlasFrames {
-		return animate.FlxAnimateFrames.fromAnimate(haxe.io.Path.withoutExtension(path));
+		return animate.FlxAnimateFrames.fromAnimate(Path.withoutExtension(path));
 	}
 }

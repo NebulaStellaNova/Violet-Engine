@@ -178,27 +178,25 @@ class StrumLine extends FlxGroup {
 	override public function update(elapsed:Float):Void {
 		// auto hit and note miss
 		notes.forEachExists((note:Note) -> {
-			if (note.tooLate && (Conductor.framePosition - note.time) > Math.max(Conductor.stepLengthMs, 350 / Math.abs(note.__scrollSpeed)))
-				if (!note.wasHit && !note.wasMissed)
-					_onNoteMissed(note);
+			if (note.tooLate && !note.wasHit && !note.wasMissed)
+				_onNoteMissed(note);
 			if (isComputer)
-				if (note.time <= Conductor.framePosition && !note.tooLate && !note.wasHit && !note.wasMissed)
+				if (note.time < Conductor.framePosition && !note.tooLate && !note.wasHit && !note.wasMissed)
 					_onNoteHit(note);
 		});
 		// auto hit and sustain miss
 		sustains.forEachExists((sustain:Sustain) -> {
-			if (sustain.tooLate && (Conductor.framePosition - (sustain.time + sustain.parentNote.time)) > Math.max(Conductor.stepLengthMs, 350 / Math.abs(sustain.__scrollSpeed)))
-				if (!sustain.wasHit && !sustain.wasMissed)
-					_onSustainMissed(sustain);
+			if (sustain.tooLate && !sustain.wasHit && !sustain.wasMissed)
+				_onSustainMissed(sustain);
 			if (isComputer)
-				if ((sustain.time + sustain.parentNote.time) <= Conductor.framePosition && !sustain.tooLate && !sustain.wasHit && !sustain.wasMissed)
+				if ((sustain.time + sustain.parentNote.time) < Conductor.framePosition && !sustain.tooLate && !sustain.wasHit && !sustain.wasMissed)
 					_onSustainHit(sustain);
 		});
 
 		if (isPlayer) {
 			for (i => input in currentInputs)
 				if (input) for (sustain in Note.filterTail(sustains.members, i))
-					if ((sustain.time + sustain.parentNote.time) <= Conductor.framePosition)
+					if ((sustain.time + sustain.parentNote.time) < Conductor.framePosition)
 						_onSustainHit(sustain);
 		}
 
@@ -257,16 +255,8 @@ class StrumLine extends FlxGroup {
 				sustain.setPosition(pos[0], pos[1]);
 				pos.resize(0);
 
-				// temp placement?
-				if (!sustain.isEnd) { // prevent scaling on sustain end
-					sustain.scale.y = (flixel.addons.sound.FlxRhythmConductorUtil.getStepLengthMs(flixel.addons.sound.FlxRhythmConductor.instance.getCurrentTimeChangeBPMAccurate(note.time)) * 0.45 * Math.abs(sustain.__scrollSpeed)) / sustain.frameHeight;
-					sustain.updateHitbox();
-					// sustain.origin.y = 0;
-				}
-
 				if (sustain.wasHit) {
-					// it's working, sorta (I fucking HATE cliprect bro JUST WORK)
-					var t = FlxMath.bound((Conductor.framePosition - (sustain.time + sustain.parentNote.time)) / sustain.height * 0.45 * sustain.__scrollSpeed, 0, 1);
+					var t = FlxMath.bound((Conductor.framePosition - (note.time + sustain.time)) / sustain.height * 0.45 * sustain.__scrollSpeed, 0, 1);
 					var rect = sustain.clipRect == null ? FlxRect.get() : sustain.clipRect;
 					sustain.clipRect = rect.set(0, sustain.frameHeight * t, sustain.frameWidth, sustain.frameHeight * (1 - t));
 				}

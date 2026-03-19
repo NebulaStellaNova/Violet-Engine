@@ -2,6 +2,7 @@ package violet.backend.objects.play;
 
 import flixel.math.FlxRect;
 import violet.backend.audio.Conductor;
+import violet.data.Scoring;
 import violet.data.notestyles.NoteStyle;
 import violet.data.notestyles.NoteStyleRegistry;
 
@@ -60,14 +61,14 @@ class Sustain extends NovaSprite {
 	 */
 	public var canHit(get, never):Bool;
 	inline function get_canHit():Bool {
-		return (time + parentNote.time) >= Conductor.framePosition - 230 && (time + parentNote.time) <= Conductor.framePosition + 230;
+		return (time + parentNote.time) > Conductor.framePosition - (Scoring.maxWindow * parentNote.earlyWindow) && (time + parentNote.time) < Conductor.framePosition + (Scoring.maxWindow * parentNote.lateWindow);
 	}
 	/**
 	 * If true it's too late to hit the sustain.
 	 */
 	public var tooLate(get, never):Bool;
 	inline function get_tooLate():Bool {
-		return (time + parentNote.time) < Conductor.framePosition - (300 / Math.abs(__scrollSpeed)) && !wasHit;
+		return (time + parentNote.time) < Conductor.framePosition - (Scoring.maxWindow * parentNote.earlyWindow) && !wasHit;
 	}
 	/**
 	 * If true this sustain has been hit.
@@ -114,6 +115,18 @@ class Sustain extends NovaSprite {
 		scale.set(daScale, isEnd ? daScale : scale.y);
 		updateHitbox(); alpha = styleMeta.sustainProperties.alpha;
 		blend = styleMeta.sustainProperties.blendMode;
+	}
+
+	var lastScrollSpeed:Float = 0;
+	override public function update(elapsed:Float):Void {
+		super.update(elapsed);
+		if (!isEnd && lastScrollSpeed != __scrollSpeed) {
+			lastScrollSpeed = __scrollSpeed;
+			scale.y = (parentNote._stepLengthMs * 0.45 * Math.abs(lastScrollSpeed)) / frameHeight;
+			updateHitbox();
+			if (styleMeta.getSustainGapFix() != 0)
+				scale.y += styleMeta.getSustainGapFix() / frameHeight;
+		}
 	}
 
 	override public function draw():Void {
