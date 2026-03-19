@@ -109,13 +109,13 @@ class Options {
     }
 
     private static function getSongScore(id:String, difficulty:String, ?variation:String) {
-        var saveID:String = [ id, variation != null ? ':$variation' : '', ':$difficulty' ].join('');
+        var saveID:String = [ id, variation != '' && variation != null ? ':$variation' : '', ':$difficulty' ].join('');
         return data.savedScores.get(saveID) ?? 0;
     }
 
     private static function saveSongScore(id:String, difficulty:String, ?variation:String, score:Int, force:Bool = false) {
         if (score > getSongScore(id, difficulty, variation)) {
-            var saveID:String = [ id, variation != null ? ':$variation' : '', ':$difficulty' ].join('');
+            var saveID:String = [ id, variation != '' && variation != null ? ':$variation' : '', ':$difficulty' ].join('');
             data.savedScores.set(saveID, score);
             flush();
         }
