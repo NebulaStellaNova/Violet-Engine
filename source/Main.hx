@@ -22,9 +22,11 @@ class StupidSignal {
 	public function new() {}
 
 	public function add(callback:Void->Void):Void {
+		for (member in members) if (member.callback == callback) return;
 		members.push({callback: callback, removeAfterCall: false});
 	}
 	public function addOnce(callback:Void->Void):Void {
+		for (member in members) if (member.callback == callback) return;
 		members.push({callback: callback, removeAfterCall: true});
 	}
 
