@@ -80,8 +80,8 @@ class ModdingAPI {
 
 		activeModsIds = FlxG.save.data.enabledModIds;
 
-		Main.threadCallacks.addOnce(reloadRegistries);
-		// reloadRegistries();
+		// Main.threadCallacks.addOnce(reloadRegistries);
+		reloadRegistries();
 	}
 
 	public static function getMod(id:String):ModMeta {

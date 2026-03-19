@@ -173,16 +173,14 @@ class Conductor {
 
 	public static function playSong(id:String, ?variation:String, threaded:Bool = false):Void {
 		inline function result() {
-			trace(1);
 			NovaUtils.playMusic('$id/song/Inst${variation == '' ? '' : '-$variation'}', 'songs');
 			final songMetaData = violet.data.song.SongRegistry.getSongByID(id);
 			Conductor.setInitialBPM(songMetaData.bpm, songMetaData.stepsPerBeat, songMetaData.beatsPerMeasure);
 			instrumental.looped = false;
 		}
-		trace(0);
-		if (threaded)
+		/* if (threaded)
 			Main.threadCallacks.addOnce(() -> result());
-		else result();
+		else */ result();
 	}
 
 	public static function stop() {
