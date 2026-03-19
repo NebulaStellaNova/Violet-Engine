@@ -1,7 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--
-Created with Funkin Packer v0.1.3 https://neeeoo.github.io/funkin-packer/
--->
 <TextureAtlas imagePath="violetEngineText.png" width="2544" height="2404">
 	<SubTexture name="writingAnimation0000" x="1289" y="375" width="22" height="18" frameX="-4" frameY="-55" frameWidth="663" frameHeight="133"/>
 	<SubTexture name="writingAnimation0001" x="2511" y="40" width="28" height="25" frameX="-1" frameY="-48" frameWidth="663" frameHeight="133"/>
