@@ -1,14 +1,21 @@
+package violet.backend.scripting;
 #if CAN_HAXE_SCRIPT
 
-package violet.backend.scripting;
 
+import paopao.hython.Parser;
+import paopao.hython.Interp;
+
+import violet.backend.console.Logs;
+import violet.backend.utils.NovaUtils;
 import violet.backend.filesystem.Paths;
 import violet.backend.utils.FileUtil;
 using violet.backend.utils.ArrayUtil;
 using violet.backend.utils.StringUtil;
 
-class PythonScript extends FunkinScript {
+class PythonScript extends Script {
 
+    var interp = new Interp();
+    var parser = new Parser();
 
 	public function new(path:String) {
 		var filePath = path.split("/");
@@ -21,56 +28,49 @@ class PythonScript extends FunkinScript {
 				code += '\n' + FileUtil.getFileContent('mods/${i.folder}/data/scripts/import.py') + '\n';
 		}
         code += '\n' + FileUtil.getFileContent(path);
-		checkForBlacklistedImports(); // Just to be safe, LOL
-		super(convertToHscript(code), true);
+		super(code, true);
+		initVars();
+		executeScript();
 	}
 
-	override public function initVars():Void {
-		set('print', (value:Dynamic) -> violet.backend.console.Logs.traceCallback(value, internalScript.getInterp(rulescript.interps.RuleScriptInterp).posInfos()));
-		set('True', true);
-		set('False', true);
-		super.initVars();
+	public function initVars():Void {
+		for (key in autoImports.keys()) set(key, autoImports.get(key));
+		set('print', (value) ->{
+			var lineNumber = 0;
+			for (ln => i in scriptCode.split('\n')) {
+				if (i.contains('print("$value")') || i.contains('print(\'$value\')')) {
+					if (i.contains("# ")) continue;
+					lineNumber = ln;
+					break;
+				}
+			}
+			Logs.traceCallback(value, {methodName: "??", lineNumber: lineNumber, fileName: fileName, className: ""});
+		});
         set('NovaSprite', violet.backend.objects.NovaSprite.new);
+		set('add', FlxG.state.add);
 	}
 
-	public function convertToHscript(code) { // To be changed to work like my old lua one
-        code = StringTools.replace(code, "    ", "\t");
-        var rawLines:Array<String> = code.split('\n');
-        rawLines.push("");
-        var isTheFunction:Bool = false;
-        var finalString:String = "";
-        var lineNumber:Int = 1;
-        var funcCount:Int = 0;
-        for (i=>line in rawLines) {
-            var skip:Bool = false;
-            if (funcCount != 0 && !(StringTools.startsWith(line, "\t") || StringTools.startsWith(line, "    ") || StringTools.startsWith(rawLines[i+1], "\t") || StringTools.startsWith(rawLines[i+1], "    "))) {
-                funcCount--;
-                finalString += "}\n";
-                skip = true;
-            }
-            var lineSplit = StringTools.trim(line).split('');
-            if (lineSplit[lineSplit.length-1] == ":") {
-                funcCount++;
-                var daFunc:String = StringTools.trim(line);
-                daFunc = daFunc.replaceOutsideString("def", "function");
-                daFunc = daFunc.replaceOutsideString(":", "{\n");
-                finalString += daFunc;
-            } else if (!skip && lineSplit != []) {
-                var daLine = StringTools.trim(line);
-                if (daLine + ";\n" != ";\n") {
-                    finalString += daLine + ";\n";
-                }
-            }
-            lineNumber++;
-        }
-
-        finalString = finalString.replaceOutsideString("except", "catch");
-        finalString = finalString.replaceOutsideString("#", "//");
-
-		return finalString;
-        //trace(finalString);
-        //hscriptInterp.execute(new Parser().parseString(finalString));
+    override public function set(variable:String, value:Dynamic) {
+		interp.setVar(variable, value);
     }
+
+	override public function get<T>(variable:String, ?def:T):T
+		return interp.getVar(variable) ?? def;
+
+	override public function call<T>(funcName:String, ?args:Array<Dynamic>, ?def:T):T {
+		var out = null;
+		try { out = interp.calldef(funcName, args); } catch (_) { /* trace(_); *//* Do Nothing idgaf */ }
+		return out;
+	}
+
+	public function executeScript() {
+		try {
+			interp.execute(parser.parseString(scriptCode));
+		} catch (_) {
+			var errorMsg = '$_'.replace('SyntaxError: ', '');
+			NovaUtils.addNotification('Novamod Script Exception!', 'Error executing "$fileName": ${errorMsg}', ERROR);
+		}
+	}
 }
 
 #end

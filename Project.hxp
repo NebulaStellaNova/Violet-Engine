@@ -267,7 +267,9 @@ class Project extends HXProject {
 			addHaxelib('lscript', 'git');
 			addHaxelib('linc_luajit', 'git');
 		}
-
+		// if (canPythonScript.exists()) {
+			addHaxelib('hython');
+		// }
 		if (discordRPC.exists()) addHaxelib('hxdiscord_rpc');
 		if (allowVideos.exists()) addHaxelib('hxvlc');
 		addHaxelib('thx.semver');
