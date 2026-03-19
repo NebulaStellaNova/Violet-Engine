@@ -95,7 +95,7 @@ class NovaUtils {
 
 
 	public static function getSparrowFrames(path:String):FlxAtlasFrames {
-		return FlxAtlasFrames.fromSparrow(Cache.image(path, 'root', null), path.replace(".png", ".xml"));
+		return FlxAtlasFrames.fromSparrow(Cache.image(path, 'root', null),FileUtil.getFileContent(path.replace(".png", ".xml")));
 	}
 
 	public static function getAtlasFrames(path:String):FlxAtlasFrames {

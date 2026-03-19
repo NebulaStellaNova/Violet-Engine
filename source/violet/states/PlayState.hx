@@ -567,6 +567,8 @@ class PlayState extends violet.backend.StateBackend {
 	override function beatHit(curBeat:Int) {
 		super.beatHit(curBeat);
 
+		if (!Conductor.instrumental.playing) return;
+
 		callSongScripts('beatHit', [curBeat]);
 
 		if (curBeat % 4 == 0) {
