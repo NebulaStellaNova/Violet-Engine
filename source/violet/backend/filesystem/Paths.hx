@@ -61,7 +61,7 @@ class Paths {
 	public static function root(path:String, startFromRoot:Bool = false):String {
 		if (startFromRoot)
 			return path;
-		var rootPaths:Array<String> = [ASSETS_FOLDER].concat(#if MOD_SUPPORT [for (meta in ModdingAPI.getActiveMods()) 'mods/${meta.folder}'] #else [] #end);
+		var rootPaths:Array<String> = [].concat(#if MOD_SUPPORT [for (meta in ModdingAPI.getActiveMods()) 'mods/${meta.folder}'] #else [] #end).concat([ASSETS_FOLDER]);
 		for (root in rootPaths) {
 			if (folderExists(fixPath('$root/$path'), true) || fileExists(fixPath('$root/$path'), true))
 				return Path.normalize('$root/$path');
