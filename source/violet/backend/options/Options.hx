@@ -43,6 +43,8 @@ import flixel.util.FlxSave;
 		'shortcutState' => ['F4', 'NONE'],
 		'debugDisplay' => ['F6', 'NONE']
     ];
+
+    public var savedScores:Map<String, Int> = [];
 }
 
 class Options {
@@ -103,6 +105,18 @@ class Options {
     public static function updateControls() {
         for (key in data.controls.keys()) {
             Controls.bindMap.set(key, [ for (i in data.controls.get(key)) FlxKey.fromString(i) ]);
+        }
+    }
+
+    public static function getSongScore(id:String, difficulty:String, ?variation:String) {
+        var saveID:String = [ id, variation != null ? ':$variation' : '', ':$difficulty' ].join('');
+        return data.savedScores.get(saveID) ?? 0;
+    }
+
+    public static function saveSongScore(id:String, difficulty:String, ?variation:String, score:Int, force:Bool = false) {
+        if (score > getSongScore(id, difficulty, variation)) {
+            var saveID:String = [ id, variation != null ? ':$variation' : '', ':$difficulty' ].join('');
+            data.savedScores.set(saveID, score);
         }
     }
 }

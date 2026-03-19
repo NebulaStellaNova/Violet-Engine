@@ -537,6 +537,7 @@ class PlayState extends violet.backend.StateBackend {
 
 	function endSong():Void {
 		songEnded = true;
+		Options.saveSongScore(songData.songName, difficulty, songData.variant, score);
 		if (playlist.length == 0) {
 			FlxG.switchState(MainMenu.new);
 			FlxG.switchState(new FreeplayMenu().build());
