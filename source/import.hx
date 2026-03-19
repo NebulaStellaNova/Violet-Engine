@@ -15,6 +15,8 @@ import violet.backend.filesystem.Paths;
 import violet.backend.objects.ClassData;
 import violet.backend.objects.NovaSprite;
 import violet.backend.objects.NovaText;
+import flixel.group.FlxSpriteGroup;
+
 
 using StringTools;
 #end

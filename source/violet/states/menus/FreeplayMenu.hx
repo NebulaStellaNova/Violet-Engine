@@ -1,5 +1,6 @@
 package violet.states.menus;
 
+import violet.ui.freeplay.ScoreText;
 import violet.data.chart.ChartRegistry;
 import violet.data.freeplay.Player;
 import violet.ui.freeplay.Album;
@@ -48,6 +49,7 @@ class FreeplayMenu extends SubStateBackend {
 	var dj:GenzuSprite;
 	var selector1:GenzuSprite;
 	var selector2:GenzuSprite;
+	var scoreText:FreeplayScore;
 
 	var songs:Array<Song> = [];
 	var album:Album;
@@ -137,6 +139,9 @@ class FreeplayMenu extends SubStateBackend {
 		FlxTween.tween(ostText, 		{ y: -78 }, 				0.8, 	{ ease: FlxEase.expoOut, startDelay: 0.7 });
 		FlxTween.tween(album, 		    { x: 0 },            		0.8, 	{ ease: FlxEase.expoOut, startDelay: 0.7 });
 
+		scoreText = new FreeplayScore(0, 0);
+		scoreText.camera = camHUD;
+		add(scoreText);
 		player = new Player(playableID);
 
 		conditionCheck();
@@ -170,6 +175,8 @@ class FreeplayMenu extends SubStateBackend {
 		}
 
 		skipTransition = false;
+
+		scoreText.updateScore(100);
 	}
 
 	public function build() {
