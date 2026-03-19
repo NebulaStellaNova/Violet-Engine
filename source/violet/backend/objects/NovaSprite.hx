@@ -60,7 +60,7 @@ class NovaSprite extends #if ANIMATE_SUPPORT FlxAnimate #else FlxSprite #end {
 		_scaledFrameOffset = FlxPoint.get();
 	}
 
-	public function loadSprite(path:String):NovaSprite {
+	public function loadSprite(path:String, useCache:Bool = true):NovaSprite {
 		var framesPath = path;
 		if (path.endsWith('Animation.json')) {
 			var split = path.split('/');
@@ -98,7 +98,7 @@ class NovaSprite extends #if ANIMATE_SUPPORT FlxAnimate #else FlxSprite #end {
 				this.frames = FlxAtlasFrames.fromSpriteSheetPacker(path, path.replace(".png", ".txt"));
 				this.onLoaded();
 			} else {
-				this.loadGraphic(path);
+				this.loadGraphic(useCache ? Cache.image(path, 'root', null) : path);
 				this.updateHitbox();
 				this.onLoaded();
 			}

@@ -93,7 +93,7 @@ class Stage extends flixel.group.FlxGroup {
                     for (i in i?.animations ?? []) {
                         prop.addAnimFromData(i);
                     }
-                    prop.playAnim(i.startingAnimation ??= prop.animationList[0], true);
+                    if (i?.animations?.length > 0) prop.playAnim(i.startingAnimation ??= prop.animationList[0], true);
                     add(prop);
                     stageScripts.set(i?.id ?? i.name, prop);
                     applyProperties(prop, i.properties ?? {});
@@ -122,6 +122,8 @@ class Stage extends flixel.group.FlxGroup {
 
     public function applyProperties(object:FlxBasic, array:Dynamic) {
         for (i in Reflect.fields(array)) {
+            var recursion = i.split(".");
+            var piece = Reflect.field(object, i);
             Reflect.setProperty(object, i, Reflect.field(array, i));
         }
     }
