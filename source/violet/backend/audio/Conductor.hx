@@ -178,14 +178,14 @@ class Conductor {
 			Conductor.setInitialBPM(songMetaData.bpm, songMetaData.stepsPerBeat, songMetaData.beatsPerMeasure);
 			instrumental.looped = false;
 		}
-		if (threaded) {
+		/* if (threaded) {
 			var threadCallback;
 			threadCallback = function() {
 				func();
 				Main.threadCallacks.remove(threadCallback);
 			}
 			Main.threadCallacks.push(threadCallback);
-		} else func();
+		} else  */func();
 	}
 
 	public static function stop() {
