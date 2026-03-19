@@ -3,6 +3,7 @@ package violet.states;
 import violet.states.menus.MainMenu;
 import violet.states.menus.FreeplayMenu;
 import violet.backend.utils.NovaUtils;
+import violet.backend.utils.ScoreUtil;
 import violet.data.song.Song;
 import violet.backend.objects.play.ComboGroup;
 import flixel.FlxCamera;
@@ -537,7 +538,7 @@ class PlayState extends violet.backend.StateBackend {
 
 	function endSong():Void {
 		songEnded = true;
-		Options.saveSongScore(songData.songName, difficulty, songData.variant, score);
+		ScoreUtil.saveSongScore(songData.songName, difficulty, songData.variant, score);
 		if (playlist.length == 0) {
 			FlxG.switchState(MainMenu.new);
 			FlxG.switchState(new FreeplayMenu().build());
