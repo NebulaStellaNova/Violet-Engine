@@ -492,8 +492,8 @@ class PlayState extends violet.backend.StateBackend {
 				var targetCharacter:Character = strumLines.members[scriptEvent.params[0]].characters[0];
 				FlxTween.cancelTweensOf(camGame.scroll);
 				FlxTween.tween(camGame.scroll, {
-					x: targetCharacter.x + targetCharacter.cameraOffsets[0],
-					y: targetCharacter.y + targetCharacter.cameraOffsets[1]
+					x: targetCharacter.x + (targetCharacter.cameraOffsets ?? [0, 0])[0],
+					y: targetCharacter.y + (targetCharacter.cameraOffsets ?? [0, 0])[1]
 				}, (Conductor.stepLengthMs / 1000) * 16, { ease: FlxEase.expoOut });
 
 			case "Camera Zoom":

@@ -1,5 +1,6 @@
 package violet.states.menus;
 
+import violet.backend.utils.ScoreUtil;
 import violet.ui.freeplay.ScoreText;
 import violet.data.chart.ChartRegistry;
 import violet.data.freeplay.Player;
@@ -175,8 +176,6 @@ class FreeplayMenu extends SubStateBackend {
 		}
 
 		skipTransition = false;
-
-		scoreText.updateScore(100);
 	}
 
 	public function build() {
@@ -276,6 +275,7 @@ class FreeplayMenu extends SubStateBackend {
 				}
 		changeDiff(newIndex, true);
 		playInst();
+		updateScore();
 		updateAlbum();
 	}
 
@@ -344,6 +344,12 @@ class FreeplayMenu extends SubStateBackend {
 		});
 
 		updateAlbum();
+		updateScore();
+	}
+
+	function updateScore() {
+		var newSong:Song = songs[curSelectedSong];
+		scoreText.updateScore(ScoreUtil.getSongScore(newSong.songName, newSong.difficulties[curSelectedDiff], newSong.variant));
 	}
 
 	function updateAlbum() {

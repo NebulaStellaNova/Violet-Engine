@@ -29,6 +29,7 @@ class ComboGroup extends FlxSpriteGroup {
         FlxTween.tween(comboSprite, { y: comboSprite.y + 20, alpha: 0 }, 0.5, { ease: FlxEase.quadIn, startDelay: 0.25 });
         FlxTween.tween(comboSprite.scale, { x: comboSprite.scale.x * 1.1, y: comboSprite.scale.x * 1.1 }, 0.25, { ease: FlxEase.quadOut });
         FlxTween.tween(comboSprite.scale, { x: comboSprite.scale.x * 0.8, y: comboSprite.scale.x * 0.8 }, 0.5, { ease: FlxEase.quadIn, startDelay: 0.25, onComplete: _->{
+            FlxTween.cancelTweensOf(comboSprite);
             remove(comboSprite);
             comboSprite.destroy();
         }});

@@ -136,6 +136,7 @@ class Main extends openfl.display.Sprite {
 
 		var startFPS:Int = Application.current.window.displayMode.refreshRate;
 		new flixel.FlxGame(1280, 720, violet.states.InitialState, startFPS, startFPS, true);
+		FlxG.sound.volume = FlxG.save.data.volume ?? 0.4;
 		@:privateAccess FlxG.game._customSoundTray = violet.backend.display.VioletSoundTray;
 		addChild(FlxG.game);
 		addChild(new DebugDisplay());
