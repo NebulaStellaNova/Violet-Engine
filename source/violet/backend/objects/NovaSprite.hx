@@ -71,9 +71,9 @@ class NovaSprite extends #if ANIMATE_SUPPORT FlxAnimate #else FlxSprite #end {
 		if (path.startsWith("https://"))
 			fromWeb(path);
 		else if (Paths.fileExists(atlasPath, true)) {
-			trace(framesPath);
+			// trace(framesPath);
 			#if ANIMATE_SUPPORT
-			this.animation = new FlxAnimateController(this);
+			this.animation = this.anim = new FlxAnimateController(this);
 			this.filePath = atlasPath;
 			this.fileName = Paths.getFileName(path, true);
 			this.animated = true;
@@ -157,22 +157,26 @@ class NovaSprite extends #if ANIMATE_SUPPORT FlxAnimate #else FlxSprite #end {
 	}
 
 	public function playAnim(name:String, forced:Bool = false, reversed:Bool = false, frame:Int = 0):Void {
-		if (this.animation.exists(name)) {
+		/* if (this.animation.exists(name)) {
 			this.animation.play(name, forced, reversed, frame);
-			if (this.anims.exists(name)) {
-				// TODO: Rodney, add animation offsets like how you did in your engine! -Rodney
-				final info:AnimationInfo = this.anims.get(name);
-				this.animationOffset.set(info.offset[0] ?? 0, info.offset[1] ?? 0);
-			}
+		} */
+		if (this.anim.exists(name)) {
+			this.anim.play(name, forced, reversed, frame);
+		}
+		if (this.anims.exists(name)) {
+			// TODO: Rodney, add animation offsets like how you did in your engine! -Rodney
+			final info:AnimationInfo = this.anims.get(name);
+			this.animationOffset.set(info.offset[0] ?? 0, info.offset[1] ?? 0);
 		}
 	}
 
-	public function addAnim(name:String, prefix:OneOfTwo<String, Array<Int>>, ?indices:Array<Int>, ?offsets:Array<Float>, fps:Int = 24, looped:Bool = false, label:Bool = false):Void {
-		prefix += "0";
+	public function addAnim(name:String, prefix:OneOfTwo<String, Array<Int>>, ?indices:Array<Int>, ?offsets:Array<Float>, fps:Int = 24, looped:Bool = false, label:Bool = true):Void {
+		// trace([name, '$prefix', (indices ?? []).toString(), (offsets ?? []).toString(), '$fps', '$looped', '$label'].join(", "));
 		if (Std.isOfType(prefix, Array)) {
 			this.animation.add(name, prefix, fps, looped);
 		} else if (#if ANIMATE_SUPPORT isAnimate #else false #end) {
 			#if ANIMATE_SUPPORT
+			// trace(prefix);
 			if (label) {
 				if (indices == null || indices.length == 0)
 					this.anim.addByFrameLabel(name, prefix, fps, looped);
@@ -184,6 +188,7 @@ class NovaSprite extends #if ANIMATE_SUPPORT FlxAnimate #else FlxSprite #end {
 			}
 			#end
 		} else {
+			prefix += "0";
 			if (indices == null || indices.length == 0)
 				this.animation.addByPrefix(name, prefix, fps, looped);
 			else this.animation.addByIndices(name, prefix, indices, "", fps, looped);
