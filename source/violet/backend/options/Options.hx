@@ -117,6 +117,7 @@ class Options {
         if (score > getSongScore(id, difficulty, variation)) {
             var saveID:String = [ id, variation != null ? ':$variation' : '', ':$difficulty' ].join('');
             data.savedScores.set(saveID, score);
+            flush();
         }
     }
 }
