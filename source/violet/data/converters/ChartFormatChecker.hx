@@ -2,14 +2,14 @@ package violet.data.converters;
 
 import Reflect;
 
-typedef VSliceChart = {
+@:structInit @:publicFields class VSliceChart {
     var version:String;
-    var scrollSpeed:Map<String, Float>;
+    var scrollSpeed:Dynamic<Float>;
     var events:Array<Dynamic>;
     var notes:Array<Dynamic>;
 }
 
-typedef CodenameEngineChart = {
+@:structInit @:publicFields class CodenameEngineChart {
     var strumLines:Array<Dynamic>;
     var events:Array<Dynamic>;
     var stage:String;
@@ -17,7 +17,7 @@ typedef CodenameEngineChart = {
     var noteTypes:Array<String>;
 }
 
-typedef PsychEngineChart = {
+@:structInit @:publicFields class PsychEngineChart {
     var song:String;
     var notes:Array<Dynamic>;
     var events:Array<Dynamic>;
@@ -43,26 +43,27 @@ enum abstract ChartFileFormat(String) {
 class ChartFormatChecker {
 
     public static function checkFormat(parsedChartObject:Dynamic):ChartFileFormat {
-        var VSLICE_CHART:VSliceChart = parsedChartObject;
+        /* var VSLICE_CHART:VSliceChart = parsedChartObject;
         var CNE_CHART:CodenameEngineChart = parsedChartObject;
-        var PE_CHART:PsychEngineChart = parsedChartObject;
+        var PE_CHART:PsychEngineChart = parsedChartObject; */
 
         var isVSlice:Bool = true;
         var isCNE:Bool = true;
         var isPE:Bool = true;
 
-        for (i in Reflect.fields(PE_CHART)) {
-            if (Reflect.field(PE_CHART, i) == null) isPE = false;
+        for (i in Type.getInstanceFields(PsychEngineChart)) {
+            trace(i);
+            if (Reflect.field(parsedChartObject, i) == null) isPE = false;
         }
-        if (isPE) return CODENAME;
+        if (isPE) return PSYCH;
 
-        for (i in Reflect.fields(CNE_CHART)) {
-            if (Reflect.field(CNE_CHART, i) == null) isCNE = false;
+        for (i in Type.getInstanceFields(CodenameEngineChart)) {
+            if (Reflect.field(parsedChartObject, i) == null) isCNE = false;
         }
         if (isCNE) return CODENAME;
 
-        for (i in Reflect.fields(VSLICE_CHART)) {
-            if (Reflect.field(VSLICE_CHART, i) == null) isVSlice = false;
+        for (i in Type.getInstanceFields(VSliceChart)) {
+            if (Reflect.field(parsedChartObject, i) == null) isVSlice = false;
         }
         if (isVSlice) return VSLICE;
 

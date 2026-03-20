@@ -9,6 +9,7 @@ typedef ChartCache = {
 	var filePath:String;
 	var eventsPath:String;
 	var fileExt:String;
+	var difficulty:String;
 }
 
 class ChartRegistry {
@@ -29,7 +30,7 @@ class ChartRegistry {
 				final jsonPath = Paths.json('songs/${song.songName}/charts$sub/$diff');
 				final eventsYamlPath = song.variant != '' ? Paths.yaml('songs/${song.songName}/events-${song.variant}') : Paths.yaml('songs/${song.songName}/events');
 
-				if (yamlPath != "" || jsonPath != "") registerChart(song, diff, { filePath: yamlPath != "" ? yamlPath : jsonPath, fileExt: yamlPath != "" ? "yaml" : "json", eventsPath: eventsYamlPath })
+				if (yamlPath != "" || jsonPath != "") registerChart(song, diff, { difficulty: diff, filePath: yamlPath != "" ? yamlPath : jsonPath, fileExt: yamlPath != "" ? "yaml" : "json", eventsPath: eventsYamlPath })
 				else trace('warning:<red>Could not find chart for song "${song.songName}" for difficulty "$diff"');
 			}
 		}
