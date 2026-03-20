@@ -36,12 +36,12 @@ class FunkinScript extends Script {
 	override function get_parent():Dynamic
 		return internalScript.superInstance;
 
-	public function new(path:String, isCode:Bool = false):Void {
+	public function new(path:String, isCode:Bool = false, isHXC:Bool = false):Void {
 		super(path, isCode);
 		internalScript = new RuleScript();
 		internalScript.scriptName = '$folderName/$fileName';
 		initVars();
-		for (i in violet.backend.filesystem.ModdingAPI.getActiveMods()) {
+		if (!isHXC) for (i in violet.backend.filesystem.ModdingAPI.getActiveMods()) {
 			if (Paths.fileExists('mods/${i.folder}/data/scripts/import.hx', true))
 				scriptCode += '\n' + FileUtil.getFileContent('mods/${i.folder}/data/scripts/import.hx');
 		}

@@ -1,4 +1,5 @@
 package violet.backend.filesystem;
+import sys.FileSystem;
 import violet.backend.utils.NovaUtils;
 import violet.states.InitialState;
 #if MOD_SUPPORT
@@ -45,7 +46,7 @@ class ModdingAPI {
 
 	public static var EXT_ALIASES:Map<String, Array<String>> = [
 		'lua' => ['lua', 'luac', 'luas'],
-		'hx' => ['hx', 'hxc', 'hxs', 'hscript'],
+		'hx' => ['hx', /* 'hxc',  */'hxs', 'hscript'],
 		'py' => ['py', 'pyc', 'pys']
 	];
 
@@ -82,6 +83,8 @@ class ModdingAPI {
 
 		// Main.threadCallacks.addOnce(reloadRegistries);
 		reloadRegistries();
+		new HXCHandler();
+		trace(checkForHXC().join('\n'));
 	}
 
 	public static function getMod(id:String):ModMeta {
@@ -167,6 +170,42 @@ class ModdingAPI {
 			}
 			#end
 		}
+	}
+
+	public static var allFolders(get, never):Array<String>;
+	static function get_allFolders() return checkFolder('');
+
+	public static function checkFolder(string:String) {
+		var out:Array<String> = [];
+		var files = FileSystem.isDirectory(string) || string == '' ? FileSystem.readDirectory(string) : [];
+		if (string == '') files = files.filter((v) -> {
+			return [Paths.ASSETS_FOLDER, MOD_FOLDER].contains(v);
+		});
+		for (i in files) {
+			var path = string == '' ? i : [string, i].join('/');
+			if (FileSystem.isDirectory(path)) {
+				out.push(path);
+				out = out.concat(checkFolder(path));
+			}
+		}
+		return out;
+	}
+
+	public static function checkForHXC():Array<String> {
+		HXCHandler.instance.clear();
+		var out:Array<String> = [];
+
+		for (i in allFolders) {
+			var files = (FileSystem.readDirectory(i) ?? []).filter((f)->return f.endsWith('.hxc'));
+			for (f in files) out.push([i, f].join('/'));
+		}
+
+		for (i in out) {
+			if (FileUtil.getFileContent(i).contains("scriptDisabled = true")) continue;
+			HXCHandler.instance.addScript(i);
+		}
+
+		return out;
 	}
 
 	public static function checkForScript(string:String, pack:ScriptPack) {

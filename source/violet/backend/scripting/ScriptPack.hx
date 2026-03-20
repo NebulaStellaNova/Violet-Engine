@@ -6,6 +6,13 @@ import violet.backend.scripting.events.EventBase;
 class ScriptPack {
 	public var scripts:Array<Script> = [];
 
+	public function clear() {
+		for (i in scripts) {
+			scripts.remove(i);
+			i.destroy();
+		}
+	}
+
 	public var parent(default, set):Dynamic;
 	inline function set_parent(value:Dynamic):Dynamic {
 		for (script in scripts) {
