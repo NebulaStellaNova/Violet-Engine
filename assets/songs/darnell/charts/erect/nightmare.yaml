@@ -2824,7 +2824,7 @@ strumLines:
     characters:
       - darnell
     type: 0
-    vocalsSuffix: darnell-erect
+    vocalsSuffix: darnell
   - keyCount: 4
     position: boyfriend
     notes:
@@ -4875,7 +4875,7 @@ strumLines:
     characters:
       - pico-playable
     type: 1
-    vocalsSuffix: pico-erect
+    vocalsSuffix: pico
   - keyCount: 4
     position: girlfriend
     visible: false

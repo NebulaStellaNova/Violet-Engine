@@ -1,11 +1,10 @@
 package violet.backend.utils;
 
-import flixel.graphics.atlas.FlxAtlas;
-import flixel.FlxCamera;
 import haxe.io.Path;
-import violet.data.Constants;
-import violet.backend.audio.Conductor;
+import flixel.FlxCamera;
 import flixel.graphics.frames.FlxAtlasFrames;
+import violet.backend.audio.Conductor;
+import violet.data.Constants;
 
 enum abstract MenuSFX(Int) {
 	var SCROLL;
@@ -29,6 +28,12 @@ class NovaUtils {
 		if (type == ERROR) {
 			notification.componentColor = 0xFF591818;
 		}
+	}
+
+	public static function easeFromString(type:String, direction:String):Float->Float {
+		var ease = '$type$direction';
+		if (Reflect.hasField(FlxEase, ease)) return Reflect.field(FlxEase, ease);
+		return FlxEase.linear;
 	}
 
 	public static function playMenuMusic():Void {
@@ -90,10 +95,10 @@ class NovaUtils {
 
 
 	public static function getSparrowFrames(path:String):FlxAtlasFrames {
-		return FlxAtlasFrames.fromSparrow(Cache.image(path, 'root', null), path.replace(".png", ".xml"));
+		return FlxAtlasFrames.fromSparrow(Cache.image(path, 'root', null), FileUtil.getFileContent(path.replace(".png", ".xml")));
 	}
 
 	public static function getAtlasFrames(path:String):FlxAtlasFrames {
-		return animate.FlxAnimateFrames.fromAnimate(haxe.io.Path.withoutExtension(path), null, null, null, null, {}); // rodney, please look into atlases vanashing on state reload
+		return animate.FlxAnimateFrames.fromAnimate(Path.withoutExtension(path));
 	}
 }

@@ -1,5 +1,6 @@
 package violet.backend.display;
 
+import violet.backend.options.Options;
 import lime.graphics.Image;
 import lime.graphics.cairo.CairoImageSurface;
 import openfl.display.BitmapData;
@@ -61,7 +62,7 @@ class BetterBitmapData extends BitmapData {
 		return null;
 		#else
 		var data:BitmapData;
-		if (pushToGPU /* && Settings.setup.gpuCaching */)
+		if (pushToGPU && Options.data.gpuCaching)
 			data = new BetterBitmapData(0, 0, true, 0);
 		else data = new BitmapData(0, 0, true, 0);
 		data.__fromFile(path);

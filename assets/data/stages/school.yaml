@@ -1,0 +1,105 @@
+name: School
+zoom: 1
+version: 1.0.0
+directory: stages/week6
+props:
+- name: sky
+  assetPath: weebSky
+  isPixel: true
+  position: [-626, -78]
+  scale: [6, 6]
+  scroll: [0.2, 0.2]
+
+- name: backTrees
+  assetPath: weebBackTrees
+  isPixel: true
+  position: [-842, -80]
+  scale: [6, 6]
+  scroll: [0.5, 0.5]
+
+- name: school
+  assetPath: weebSchool
+  isPixel: true
+  position: [-816, -38]
+  scale: [6, 6]
+  scroll: [0.75, 0.75]
+
+- name: street
+  assetPath: weebStreet
+  isPixel: true
+  position: [-662, 6]
+  scale: [6, 6]
+  scroll: [1, 1]
+
+- name: treesFG
+  assetPath: weebTreesBack
+  isPixel: true
+  position: [-500, 6]
+  scale: [6, 6]
+  scroll: [1, 1]
+
+- name: treesBG
+  assetPath: weebTrees
+  isPixel: true
+  position: [-806, -1050]
+  scale: [6, 6]
+  scroll: [1, 1]
+  assetPath: weebTrees
+  startingAnimation: treeLoop
+  animations:
+  - name: treeLoop
+    frameRate: 12
+    frameIndices: [ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18 ]
+    looped: true
+    prefix: trees_
+
+- name: petals
+  assetPath: petals
+  isPixel: true
+  position: [-20, -40]
+  scale: [6, 6]
+  scroll: [0.85, 0.85]
+  assetPath: petals
+  startingAnimation: leaves
+  animations:
+  - name: leaves
+    frameRate: 24
+    looped: true
+    prefix: PETALS ALL
+
+- name: freaks
+  assetPath: bgFreaks
+  isPixel: true
+  position: [-646, 222]
+  scale: [6, 6]
+  assetPath: bgFreaks
+  startingAnimation: danceLeft
+  animations:
+  - name: danceLeft
+    prefix: BG girls group
+    frameIndices: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14]
+  - name: danceRight
+    prefix: BG girls group
+    frameIndices: [15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29]
+
+  - name: danceLeft-alt
+    prefix: BG fangirls dissuaded
+    frameIndices: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14]
+  - name: danceRight-alt
+    prefix: BG fangirls dissuaded
+    frameIndices: [15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29]
+
+- id: spectator
+  type: Character
+  position: [724, 823]
+  cameraOffsets: [-270, -125]
+
+- id: opponent
+  type: Character
+  position: [306, 960]
+  cameraOffsets: [-220, -250]
+
+- id: player
+  type: Character
+  position: [1168, 900]
+  cameraOffsets: [-600, -250]

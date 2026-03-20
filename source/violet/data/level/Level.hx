@@ -76,6 +76,8 @@ class Level {
                 propSprite.addAnimFromData(i);
             propSprite.updateHitbox();
             propSprite.dance(true);
+            if (propData.startingAnimation != null)
+                propSprite.playAnim(propData.startingAnimation, true);
 
             propData.offsets ??= [0, 0];
             propSprite.x = propData.offsets[0] ?? 0;

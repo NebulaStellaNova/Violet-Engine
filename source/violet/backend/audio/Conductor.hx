@@ -165,20 +165,22 @@ class Conductor {
 				track.pause();
 			// setting the volume variable was NOT working so we doing pause and resume
 			else if (track.playing && instrumental.time < track.length) {
-				if (Math.abs(songPosition - track.time) > 25) {
-					track.pause();
+				if (Math.abs(songPosition - track.time) > 5)
 					track.time = songPosition;
-					track.play();
-				}
 			} else if (track.playing)
 				track.pause();
 	}
 
-	public static function playSong(id:String, ?variation:String):Void {
-		NovaUtils.playMusic('$id/song/Inst${variation == null ? '' : '-$variation'}', 'songs');
-		final songMetaData = violet.data.song.SongRegistry.getSongByID(id);
-		Conductor.setInitialBPM(songMetaData.bpm, songMetaData.stepsPerBeat, songMetaData.beatsPerMeasure);
-		instrumental.looped = false;
+	public static function playSong(id:String, ?variation:String, threaded:Bool = false):Void {
+		inline function result() {
+			NovaUtils.playMusic('$id/song/Inst${variation == '' ? '' : '-$variation'}', 'songs');
+			final songMetaData = violet.data.song.SongRegistry.getSongByID(id);
+			Conductor.setInitialBPM(songMetaData.bpm, songMetaData.stepsPerBeat, songMetaData.beatsPerMeasure);
+			instrumental.looped = false;
+		}
+		/* if (threaded)
+			Main.threadCallacks.addOnce(() -> result());
+		else */ result();
 	}
 
 	public static function stop() {

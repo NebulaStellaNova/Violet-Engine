@@ -27,7 +27,12 @@ class SongRegistry {
             } else {
                 songDatas.set(songID, parsed);
                 registerSong(new Song(songID));
-
+            }
+            for (i in (parsed?.varients ?? [])) {
+                final varientMeta:Dynamic = ParseUtil.jsonOrYaml('songs/$songID/meta-$i');
+                songDatas.set('$songID:$i', varientMeta);
+                registerSong(new Song('$songID:$i'));
+                // trace('$songID:$i');
             }
         }
     }

@@ -2,6 +2,8 @@ version: 1.0.0
 name: Pico (Playable)
 assetPath: characters/Pico_Basic
 healthIcon: pico
+offsets: [0, -180]
+cameraOffsets: [-100, -150]
 death:
   cameraOffsets:
     - 10
@@ -14,7 +16,7 @@ animations:
     offsets:
       - 0
       - 0
-  - name: singLEFT
+  - name: singRIGHT
     prefix: Pico Note Right0
     offsets:
       - -50
@@ -29,7 +31,7 @@ animations:
     offsets:
       - 21
       - 28
-  - name: singRIGHT
+  - name: singLEFT
     prefix: Pico NOTE LEFT0
     offsets:
       - 84

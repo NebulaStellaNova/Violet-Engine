@@ -70,8 +70,8 @@ class StateBackend extends flixel.FlxState {
 	override public function update(elapsed:Float) {
 		super.update(elapsed);
 
-		if (FlxG.keys.justPressed.TAB && Options.data.developerMode)
-			violet.states.PlayState.loadSong('test');
+		/* if (FlxG.keys.justPressed.TAB && Options.data.developerMode)
+			violet.states.PlayState.loadSong('test'); */
 
 		Conductor.update();
 

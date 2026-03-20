@@ -1,5 +1,6 @@
 package violet.data.stage;
 
+import violet.data.stage.Stage;
 import violet.backend.utils.ParseUtil.ParseColor;
 import violet.data.animation.AnimationData;
 import thx.semver.Version;
@@ -28,7 +29,7 @@ typedef StagePropData = {
     var ?name:String;
 
     @:default("StageProp")
-    var ?type:String;
+    var ?type:StageItemType;
 
     var ?zIndex:Int;
 
@@ -41,7 +42,7 @@ typedef StagePropData = {
     var ?color:ParseColor;
 
     @:default(1)
-    var ?alpha:Int;
+    var ?alpha:Float;
 
     @:default(false)
     var ?visible:Bool;

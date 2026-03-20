@@ -3,40 +3,29 @@ package violet.boot;
 #if DISCORD_RICH_PRESENCE
 import hxdiscord_rpc.Discord;
 import hxdiscord_rpc.Types;
-import sys.thread.Thread;
 
 class DiscordRPC {
-    public static function init() {
-        final handlers:DiscordEventHandlers = new DiscordEventHandlers();
+	public static function init() {
+		final handlers:DiscordEventHandlers = new DiscordEventHandlers();
 		handlers.ready = cpp.Function.fromStaticFunction(onReady);
 		handlers.disconnected = cpp.Function.fromStaticFunction(onDisconnected);
 		handlers.errored = cpp.Function.fromStaticFunction(onError);
 		Discord.Initialize("1481604217335713814", cpp.RawPointer.addressOf(handlers), false, null);
 
-        Thread.create(function():Void
-		{
-			while (true)
-			{
-				#if DISCORD_DISABLE_IO_THREAD
-				Discord.UpdateConnection();
-				#end
-
-				Discord.RunCallbacks();
-
-				Sys.sleep(2);
-			}
+		Main.threadCallacks.add(() -> {
+			#if DISCORD_DISABLE_IO_THREAD
+			Discord.UpdateConnection();
+			#end
+			Discord.RunCallbacks();
 		});
-    }
+	}
 
-    private static function onReady(request:cpp.RawConstPointer<DiscordUser>) {
+	private static function onReady(request:cpp.RawConstPointer<DiscordUser>) {
 		final username:String = request[0].username;
-		final globalName:String = request[0].username;
+		final globalName:String = request[0].globalName;
 		final discriminator:Int = Std.parseInt(request[0].discriminator);
 
-		if (discriminator != 0)
-			trace('sys:Discord: Connected to user ${username}#${discriminator} ($globalName)');
-		else
-			trace('sys:Discord: Connected to user @${username} ($globalName)');
+		trace('sys:Discord: Connected to user! $username${discriminator != 0 ? '#$discriminator' : ''} ($globalName)');
 
 		final discordPresence:DiscordRichPresence = new DiscordRichPresence();
 		discordPresence.type = DiscordActivityType_Playing;

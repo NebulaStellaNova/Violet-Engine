@@ -12,6 +12,9 @@ import flixel.util.FlxSave;
     public var forceMouseScrolling:Bool = true;
     public var debugDisplayOnStart:Bool = false;
     public var personalScrollSpeed:Float = 0;
+    public var disableScoreLerping:Bool = false;
+    public var playAsOpponent:Bool = false;
+    public var gpuCaching:Bool = false;
     public var controls:Map<String, Array<String>> = [
         'note_left' => ['A', 'LEFT'],
         'note_down' => ['S', 'DOWN'],
@@ -40,6 +43,8 @@ import flixel.util.FlxSave;
 		'shortcutState' => ['F4', 'NONE'],
 		'debugDisplay' => ['F6', 'NONE']
     ];
+
+    public var savedScores:Map<String, Int> = [];
 }
 
 class Options {
@@ -100,6 +105,19 @@ class Options {
     public static function updateControls() {
         for (key in data.controls.keys()) {
             Controls.bindMap.set(key, [ for (i in data.controls.get(key)) FlxKey.fromString(i) ]);
+        }
+    }
+
+    private static function getSongScore(id:String, difficulty:String, ?variation:String) {
+        var saveID:String = [ id, variation != '' && variation != null ? ':$variation' : '', ':$difficulty' ].join('');
+        return data.savedScores.get(saveID) ?? 0;
+    }
+
+    private static function saveSongScore(id:String, difficulty:String, ?variation:String, score:Int, force:Bool = false) {
+        if (score > getSongScore(id, difficulty, variation)) {
+            var saveID:String = [ id, variation != '' && variation != null ? ':$variation' : '', ':$difficulty' ].join('');
+            data.savedScores.set(saveID, score);
+            flush();
         }
     }
 }

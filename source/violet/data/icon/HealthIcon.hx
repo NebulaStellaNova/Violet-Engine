@@ -33,7 +33,7 @@ class HealthIcon extends Bopper {
 			this.animation.addByPrefix("fromLosing", "fromLosing", 24, false); */
 		} else {
 			var frameSize = this._data.isPixel ? 32 : 150;
-			this.loadGraphic(this.filePath, true, frameSize, frameSize);
+			this.loadGraphic(this.graphic, true, frameSize, frameSize);
 			this.animation.add("idle", [0], 1, false, false);
 			this.animation.add("losing", [1], 1, false, false);
 			if (animation.numFrames >= 3) this.animation.add("winning", [2], 1, false, false);
@@ -62,9 +62,9 @@ class HealthIcon extends Bopper {
 
 	override function update(elapsed:Float) {
 		super.update(elapsed);
-		// this.globalOffset.x = this._data.offsets[0] ?? 0;
+		this.globalOffset.x = this._data.offsets[0] ?? 0;
 		// this.globalOffset.y = this._data.offsets[1] ?? 0;
-		// if (this.flipX) this.globalOffset.x *= -1;
+		if (this.flipX) this.globalOffset.x *= -1;
 		// if (this._data.isPixel) this.antialiasing = false;
 		if (sillyBop) this.angle = MathUtil.lerp(this.angle, 0, 0.2);
 		this.scale.x = this.scale.y = MathUtil.lerp(this.scale.y, this._data.scale, 0.2);

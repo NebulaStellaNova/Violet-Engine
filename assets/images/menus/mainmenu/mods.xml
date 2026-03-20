@@ -1,7 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--
-Created with Funkin Packer v0.1.3 https://neeeoo.github.io/funkin-packer/
--->
 <TextureAtlas imagePath="mods.png" width="1714" height="170">
 	<SubTexture name="mods basic0000" x="10" y="10" width="296" height="125" frameX="-0" frameY="-0" frameWidth="296" frameHeight="125"/>
 	<SubTexture name="mods basic0001" x="10" y="10" width="296" height="125" frameX="-0" frameY="-0" frameWidth="296" frameHeight="125"/>

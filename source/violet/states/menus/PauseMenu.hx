@@ -1,5 +1,6 @@
 package violet.states.menus;
 
+import violet.backend.utils.NovaUtils;
 import flixel.text.FlxText;
 import violet.backend.utils.StringUtil;
 import lemonui.utils.MathUtil;
@@ -10,10 +11,14 @@ import violet.backend.audio.Conductor;
 
 class PauseMenu extends EditorListBackend {
 
+    public var pauseMusic:String = "game/pause/breakfast";
+
+    public var pauseMusicSound:FlxSound;
+
     public var pauseInfo:Array<String> = [ // Variable named by @ShamrockDeveloper
         PlayState.SONG.meta.displayName,
-        PlayState.SONG._data.meta?.composer != null ? 'Composer: ${PlayState.SONG._data.meta.composer}' : null,
-        PlayState.SONG._data.meta?.charter != null ? 'Charter: ${PlayState.SONG._data.meta.charter}' : null,
+        PlayState.songData._data?.composer != null ? 'Composer: ${PlayState.songData._data?.composer}' : null,
+        PlayState.songData._data?.charter != null ? 'Charter: ${PlayState.songData._data?.charter}' : null,
         'Difficulty: ${StringUtil.capitalizeFirst(PlayState.difficulty.toLowerCase())}',
         '0 Blue Balls'
     ];
@@ -61,6 +66,9 @@ class PauseMenu extends EditorListBackend {
         options = pauseMenuOptions;
         showLocks = false;
         super.create();
+
+        pauseMusicSound = FlxG.sound.play(Paths.sound(pauseMusic), 0);
+        pauseMusicSound.fadeIn(1, 0, 0.5);
 
         FlxTween.num(0, 0.6, 0.5, { ease: FlxEase.sineOut }, (v)->{ subCamera.bgColor.alphaFloat = v; });
 
@@ -115,5 +123,11 @@ class PauseMenu extends EditorListBackend {
         for (i=>item in items) {
             if (amt == 0) item.x = 80 + ((i-debugCurSelected)*20);
         }
+    }
+
+    override function destroy() {
+        super.destroy();
+
+        pauseMusicSound.stop();
     }
 }

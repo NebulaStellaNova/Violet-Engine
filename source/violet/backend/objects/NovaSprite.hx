@@ -16,6 +16,8 @@ import violet.data.animation.AnimationData;
 
 #if ANIMATE_SUPPORT
 import animate.FlxAnimate;
+import animate.FlxAnimateFrames;
+import animate.FlxAnimateController;
 #end
 
 typedef AnimationInfo = {
@@ -23,6 +25,9 @@ typedef AnimationInfo = {
 }
 
 class NovaSprite extends #if ANIMATE_SUPPORT FlxAnimate #else FlxSprite #end {
+
+	public static var cachedFrames:Map<String, FlxAnimateFrames> = [];
+
 	public var filePath:String;
 	public var fileName:String;
 
@@ -55,15 +60,26 @@ class NovaSprite extends #if ANIMATE_SUPPORT FlxAnimate #else FlxSprite #end {
 		_scaledFrameOffset = FlxPoint.get();
 	}
 
-	public function loadSprite(path:String):NovaSprite {
+	public function loadSprite(path:String, useCache:Bool = true):NovaSprite {
+		var framesPath = path;
+		if (path.endsWith('Animation.json')) {
+			var split = path.split('/');
+			split.pop();
+			framesPath = split.join('/');
+		}
+		var atlasPath = path.endsWith('Animation.json') ? path : '${haxe.io.Path.withoutExtension(path)}/Animation.json';
 		if (path.startsWith("https://"))
 			fromWeb(path);
-		else if (Paths.fileExists('${haxe.io.Path.withoutExtension(path)}/Animation.json', true)) {
+		else if (Paths.fileExists(atlasPath, true)) {
+			// trace(framesPath);
 			#if ANIMATE_SUPPORT
-			this.filePath = '${haxe.io.Path.withoutExtension(path)}/Animation.json';
+			this.animation = this.anim = new FlxAnimateController(this);
+			this.filePath = atlasPath;
 			this.fileName = Paths.getFileName(path, true);
 			this.animated = true;
-			this.frames = NovaUtils.getAtlasFrames(path);
+			var frames = NovaUtils.getAtlasFrames(framesPath);
+			// cachedFrames.set(framesPath, frames);
+			this.frames = frames;
 			this.onLoaded();
 			#else
 			trace('warning:Atlas\'s aren\'t supported in this build of Violet Engine.');
@@ -82,7 +98,7 @@ class NovaSprite extends #if ANIMATE_SUPPORT FlxAnimate #else FlxSprite #end {
 				this.frames = FlxAtlasFrames.fromSpriteSheetPacker(path, path.replace(".png", ".txt"));
 				this.onLoaded();
 			} else {
-				this.loadGraphic(path);
+				this.loadGraphic(useCache ? Cache.image(path, 'root', null) : path);
 				this.updateHitbox();
 				this.onLoaded();
 			}
@@ -141,22 +157,26 @@ class NovaSprite extends #if ANIMATE_SUPPORT FlxAnimate #else FlxSprite #end {
 	}
 
 	public function playAnim(name:String, forced:Bool = false, reversed:Bool = false, frame:Int = 0):Void {
-		if (this.animation.exists(name)) {
+		/* if (this.animation.exists(name)) {
 			this.animation.play(name, forced, reversed, frame);
-			if (this.anims.exists(name)) {
-				// TODO: Rodney, add animation offsets like how you did in your engine! -Rodney
-				final info:AnimationInfo = this.anims.get(name);
-				this.animationOffset.set(info.offset[0] ?? 0, info.offset[1] ?? 0);
-			}
+		} */
+		if (this.anim.exists(name)) {
+			this.anim.play(name, forced, reversed, frame);
+		}
+		if (this.anims.exists(name)) {
+			// TODO: Rodney, add animation offsets like how you did in your engine! -Rodney
+			final info:AnimationInfo = this.anims.get(name);
+			this.animationOffset.set(info.offset[0] ?? 0, info.offset[1] ?? 0);
 		}
 	}
 
-	public function addAnim(name:String, prefix:OneOfTwo<String, Array<Int>>, ?indices:Array<Int>, ?offsets:Array<Float>, fps:Int = 24, looped:Bool = false, label:Bool = false):Void {
-		prefix += "0";
+	public function addAnim(name:String, prefix:OneOfTwo<String, Array<Int>>, ?indices:Array<Int>, ?offsets:Array<Float>, fps:Int = 24, looped:Bool = false, label:Bool = true):Void {
+		// trace([name, '$prefix', (indices ?? []).toString(), (offsets ?? []).toString(), '$fps', '$looped', '$label'].join(", "));
 		if (Std.isOfType(prefix, Array)) {
 			this.animation.add(name, prefix, fps, looped);
 		} else if (#if ANIMATE_SUPPORT isAnimate #else false #end) {
 			#if ANIMATE_SUPPORT
+			// trace(prefix);
 			if (label) {
 				if (indices == null || indices.length == 0)
 					this.anim.addByFrameLabel(name, prefix, fps, looped);
@@ -168,6 +188,7 @@ class NovaSprite extends #if ANIMATE_SUPPORT FlxAnimate #else FlxSprite #end {
 			}
 			#end
 		} else {
+			prefix += "0";
 			if (indices == null || indices.length == 0)
 				this.animation.addByPrefix(name, prefix, fps, looped);
 			else this.animation.addByIndices(name, prefix, indices, "", fps, looped);

@@ -3,6 +3,7 @@ package violet.backend.objects.play;
 import flixel.util.FlxSort;
 import violet.backend.audio.Conductor;
 import violet.backend.options.Options;
+import violet.data.Scoring;
 import violet.data.notestyles.NoteStyle;
 import violet.data.notestyles.NoteStyleRegistry;
 
@@ -76,18 +77,27 @@ class Note extends NovaSprite {
 	}
 
 	/**
+	 * How much earlier the note can be hit before it's considered a miss.
+	 */
+	public var earlyWindow:Float = 1;
+	/**
+	 * How much later the note can be hit without it being considered untouched.
+	 */
+	public var lateWindow:Float = 1;
+
+	/**
 	 * If true the note can be hit.
 	 */
 	public var canHit(get, never):Bool;
 	inline function get_canHit():Bool {
-		return time >= Conductor.framePosition - 230 && time <= Conductor.framePosition + 230;
+		return time > Conductor.framePosition - (Scoring.maxWindow * earlyWindow) && time < Conductor.framePosition + (Scoring.maxWindow * lateWindow);
 	}
 	/**
 	 * If true it's too late to hit the note.
 	 */
 	public var tooLate(get, never):Bool;
 	inline function get_tooLate():Bool {
-		return time < Conductor.framePosition - (300 / Math.abs(__scrollSpeed)) && !wasHit;
+		return time < Conductor.framePosition - (Scoring.maxWindow * earlyWindow) && !wasHit;
 	}
 	/**
 	 * If true this note has been hit.
@@ -103,6 +113,11 @@ class Note extends NovaSprite {
 	 */
 	public var noteType:String = null;
 
+	@:allow(violet.backend.objects.play.Sustain)
+	final _stepLengthMs:Float;
+	@:allow(violet.backend.objects.play.StrumLine)
+	var _beingRendered:Bool = false;
+
 	public function new(parent:StrumLine, id:Int, time:Float, tailLength:Float) {
 		super(-10000, -10000);
 		this.parent = parent;
@@ -111,11 +126,11 @@ class Note extends NovaSprite {
 		style = null;
 		preventAutoStyleSet = false;
 
-		final stepLengthMs:Float = flixel.addons.sound.FlxRhythmConductorUtil.getStepLengthMs(flixel.addons.sound.FlxRhythmConductor.instance.getCurrentTimeChangeBPMAccurate(time));
-		final roundedLength:Int = Math.round(tailLength / stepLengthMs);
+		_stepLengthMs = flixel.addons.sound.FlxRhythmConductorUtil.getStepLengthMs(flixel.addons.sound.FlxRhythmConductor.instance.getCurrentTimeChangeBPMAccurate(time));
+		final roundedLength:Int = Math.round(tailLength / _stepLengthMs);
 		if (roundedLength > 1) {
 			for (susNote in 0...roundedLength)
-				tail.push(new Sustain(this, (stepLengthMs * susNote), susNote == (roundedLength - 1)));
+				tail.push(new Sustain(this, (_stepLengthMs * susNote), susNote == (roundedLength - 1)));
 			tail.sort(sortTail);
 		}
 

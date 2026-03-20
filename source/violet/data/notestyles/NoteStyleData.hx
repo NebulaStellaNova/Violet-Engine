@@ -14,6 +14,11 @@ typedef NotePartMeta = {
 	var ?isPixel:Bool;
 	var ?properties:NoteStyleProperties;
 	var animations:Array<NoteAnimationData>;
+
+}
+typedef SustainPartMeta = {
+	> NotePartMeta,
+	var ?gapFixAmount:Float;
 }
 
 typedef NoteStyleData = {
@@ -25,7 +30,7 @@ typedef NoteStyleData = {
 	var ?properties:NoteStyleProperties;
 	var strums:NotePartMeta;
 	var notes:NotePartMeta;
-	var sustains:NotePartMeta;
+	var sustains:SustainPartMeta;
 	// not all styles will have them
 	var ?splashes:NotePartMeta;
 	var ?holdcovers:NotePartMeta;

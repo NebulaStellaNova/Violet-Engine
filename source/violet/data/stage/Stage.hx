@@ -8,6 +8,13 @@ import violet.backend.StateBackend;
 import violet.states.PlayState;
 import violet.backend.objects.play.StageProp;
 
+enum abstract StageItemType(String) {
+    var COMBO = "Combo";
+    var PROP = "StageProp";
+    var SOLID = "Solid";
+    var CHARACTER = "Character";
+}
+
 class Stage extends flixel.group.FlxGroup {
 
     public var stageScripts:ScriptPack = new ScriptPack();
@@ -17,15 +24,15 @@ class Stage extends flixel.group.FlxGroup {
 
     public function new(id:String) {
         super();
-        this.id = StageRegistry.stageDatas.get(id) != null ? id : 'mainStage';
-		this._data = StageRegistry.stageDatas.get(id) ?? StageRegistry.stageDatas.get('mainStage');
+        this.id = StageRegistry.stageDatas.get(id) != null ? id : 'default';
+		this._data = StageRegistry.stageDatas.get(id) ?? StageRegistry.stageDatas.get('default');
         this._data.cameraPosition ??= [0, 0];
 
         ModdingAPI.checkForScripts('data/stages', id, stageScripts);
         stageScripts.set('directory', this._data.directory);
 
         if (StageRegistry.stageDatas.get(id) == null) {
-            NovaUtils.addNotification('Stage not found!', 'Could not find stage with ID "$id" using default stage "mainStage."', ERROR);
+            NovaUtils.addNotification('Stage not found!', 'Could not find stage with ID "$id" using default stage "theVoid."', ERROR);
         }
 
         FlxG.camera.scroll.x = this._data.cameraPosition[0];
@@ -36,13 +43,16 @@ class Stage extends flixel.group.FlxGroup {
         for (i in members) {
             remove(i);
         }
+        var hasCombo = false;
         for (i in this._data.props) {
             i.scroll ??= [1, 1];
             i.scale ??= [1, 1];
+            i.position ??= [0, 0];
             i.alpha ??= 1;
             i.visible ??= true;
             i.color ??= FlxColor.WHITE;
-            i.zIndex ??= 0;
+            i.zIndex ??= members.length-1;
+            i.type ??= PROP;
             // trace(i);
 
             var positionalArrays = [
@@ -52,19 +62,26 @@ class Stage extends flixel.group.FlxGroup {
             ];
 
             switch (i.type) {
-                case "Solid":
-                    var prop:StageProp = new StageProp(i.position[0], i.position[1]);
+                case COMBO:
+                    PlayState.instance.comboGroup.x = i.position[0];
+                    PlayState.instance.comboGroup.y = i.position[1];
+                    PlayState.instance.comboGroup.z = i.zIndex;
+                    add(PlayState.instance.comboGroup);
+
+                case SOLID:
+                    var prop:StageProp = new StageProp(i.position[0], i.position[1], i.color);
                     prop.name = i.name;
                     prop.makeGraphic(1, 1, i.color);
                     prop.scale.set(i.width ?? 0, i.height ?? 0);
                     prop.scrollFactor.set(i.scroll[0] ?? 1, i.scroll[1] ?? 1);
                     prop.updateHitbox();
                     prop.z = i.zIndex;
+                    prop.alpha = i.alpha;
                     add(prop);
                     stageScripts.set(i?.id ?? i.name, prop);
                     applyProperties(prop, i.properties ?? {});
 
-                case "StageProp":
+                case PROP:
                     var prop:StageProp = new StageProp(i.position[0], i.position[1], Paths.image([this._data.directory, i.assetPath].join("/")));
                     prop.name = i.name;
                     prop.z = i.zIndex;
@@ -74,19 +91,21 @@ class Stage extends flixel.group.FlxGroup {
                     prop.flipY = i.flipY ?? false;
                     prop.visible = i.visible;
                     prop.color = i.color;
+                    prop.alpha = i.alpha;
+                    prop.antialiasing = !i.isPixel;
                     prop.updateHitbox();
                     for (i in i?.animations ?? []) {
                         prop.addAnimFromData(i);
                     }
-                    prop.playAnim(i.startingAnimation ??= prop.animationList[0], true);
+                    if (i?.animations?.length > 0) prop.playAnim(i.startingAnimation ??= prop.animationList[0], true);
                     add(prop);
                     stageScripts.set(i?.id ?? i.name, prop);
                     applyProperties(prop, i.properties ?? {});
 
-                case "Character":
+                case CHARACTER:
                     i.cameraOffsets ??= [0, 0];
                     for (char in characters) {
-                        if (positionalArrays.get(i.id).contains(char.stagePosition.toLowerCase())) {
+                        if (positionalArrays.get(i.id).contains(char.stagePosition.toLowerCase()) || i.id == char.id) {
                             if (i.id == "player") char.flipX = !char.flipX;
                             char.x = i.position[0] - (char.width/2);
                             char.y = i.position[1] - (char.height);
@@ -107,6 +126,8 @@ class Stage extends flixel.group.FlxGroup {
 
     public function applyProperties(object:FlxBasic, array:Dynamic) {
         for (i in Reflect.fields(array)) {
+            var recursion = i.split(".");
+            var piece = Reflect.field(object, i);
             Reflect.setProperty(object, i, Reflect.field(array, i));
         }
     }

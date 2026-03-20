@@ -1,11 +1,11 @@
 package violet.backend.filesystem;
 
-import violet.backend.utils.StringUtil;
-import violet.backend.utils.NovaUtils;
 import haxe.io.Path;
 import sys.FileSystem;
 import moonchart.backend.Util as MoonUtil;
 import violet.backend.utils.FileUtil;
+import violet.backend.utils.NovaUtils;
+import violet.backend.utils.StringUtil;
 #if ANIMATE_SUPPORT
 import animate.FlxAnimateAssets;
 
@@ -61,7 +61,7 @@ class Paths {
 	public static function root(path:String, startFromRoot:Bool = false):String {
 		if (startFromRoot)
 			return path;
-		var rootPaths:Array<String> = [ASSETS_FOLDER].concat(#if MOD_SUPPORT [for (meta in ModdingAPI.getActiveMods()) 'mods/${meta.folder}'] #else [] #end);
+		var rootPaths:Array<String> = [].concat(#if MOD_SUPPORT [for (meta in ModdingAPI.getActiveMods()) 'mods/${meta.folder}'] #else [] #end).concat([ASSETS_FOLDER]);
 		for (root in rootPaths) {
 			if (folderExists(fixPath('$root/$path'), true) || fileExists(fixPath('$root/$path'), true))
 				return Path.normalize('$root/$path');
@@ -88,8 +88,15 @@ class Paths {
 		return xml('data/ui/$path', directory);
 	}
 
-	#if release inline #end public static function image(path:String, directory:String = '', ?ext:String = 'png'):String
-		return notifyIfBlank(file(path, directory == 'root' ? 'root' : [directory, 'images'].join('/'), ext), '$path.$ext', 'image');
+	#if release inline #end public static function atlas(path:String, directory:String = ''):String {
+		return file(Path.withoutExtension(path) + '/Animation', directory == 'root' ? 'root' : [directory, 'images'].join('/'), "json");
+	}
+
+	#if release inline #end public static function image(path:String, directory:String = '', ?ext:String = 'png'):String {
+		var out = file(path, directory == 'root' ? 'root' : [directory, 'images'].join('/'), ext);
+		if (out != '') return out;
+		else return atlas(path, directory);
+	}
 
 	#if release inline #end public static function sound(path:String, directory:String = '', ?ext:String = 'ogg'):String
 		return file(path, directory == 'root' ? 'root' : [directory, 'sounds'].join('/'), ext);
@@ -112,8 +119,9 @@ class Paths {
 			'$path${ext == null || path.endsWith('.$ext') ? '' : '.$ext'}'
 		]).join('/'), directory == 'root');
 
-	#if release inline #end public static function vocal(song:String, suffix:String = '', ?variant:String):String
-		return root('songs/$song/song/Voices${variant != null ? '-$variant' : ''}${suffix != '' ? '-$suffix' : ''}.ogg');
+	#if release inline #end public static function vocal(song:String, suffix:String = '', ?variant:String):String {
+		return root('songs/$song/song/Voices${suffix != '' ? '-$suffix' : ''}${variant != '' ? '-$variant' : ''}.ogg');
+	}
 
 	#if release inline #end public static function inst(song:String, ?variant:String):String
 		return root('songs/$song/song/${variant != null ? '$variant/' : ''}Inst.ogg');

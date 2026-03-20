@@ -14,5 +14,7 @@ stepsPerBeat: 4
 displayName: Bopeebo
 beatsPerMeasure: 4
 needsVoices: true
-album: volume1
 bpm: 100
+album: volume1
+varients:
+  - erect

@@ -1,5 +1,6 @@
 package violet.ui.freeplay;
 
+import violet.data.Constants;
 import flixel.math.FlxRect;
 import violet.data.song.Song;
 import violet.backend.shaders.GaussianBlurShader;
@@ -64,7 +65,8 @@ class Capsule extends FlxSpriteGroup {
 
 		iconGroup = new FlxTypedSpriteGroup<GenzuSprite>(0, 0);
 
-		icon = new GenzuSprite(30, 30, Paths.image('menus/freeplay/icons/${song.icon}'));
+		var iconPath = Paths.image('menus/freeplay/icons/${song.icon}');
+		icon = new GenzuSprite(30, 30, iconPath != '' ? iconPath : Paths.image('menus/freeplay/icons/' + Constants.DEFAULT_HEALTH_ICON));
 		icon.scale.set(2.5, 2.5);
 		icon.pixelPerfectRender = true;
 		icon.antialiasing = false;

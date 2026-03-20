@@ -1,30 +1,23 @@
 package violet.states.menus;
 
+import violet.backend.utils.ScoreUtil;
+import violet.ui.freeplay.ScoreText;
+import violet.data.chart.ChartRegistry;
+import violet.data.freeplay.Player;
+import violet.ui.freeplay.Album;
 import violet.backend.audio.Conductor;
 import violet.backend.options.Options;
 import flixel.FlxCamera;
 import flixel.math.FlxMath;
-import thx.semver.Version;
 import violet.backend.SubStateBackend;
 import violet.backend.objects.special_thanks.GenzuSprite;
 import violet.backend.shaders.AngleMask;
 import violet.backend.shaders.GaussianBlurShader;
 import violet.backend.utils.NovaUtils;
-import violet.backend.utils.ParseUtil;
 import violet.data.song.Song;
 import violet.data.song.SongRegistry;
 import violet.states.PlayState;
 import violet.ui.freeplay.Capsule;
-
-typedef AlbumData = {
-	var version:Version;
-	var name:String;
-	var ostText:String;
-	var artists:Array<String>;
-	var albumArtAsset:String;
-	var albumTitleAsset:String;
-	var albumTitleOffsets:Array<Float>;
-}
 
 class FreeplayMenu extends SubStateBackend {
 	static var prevInst:String = "";
@@ -34,6 +27,8 @@ class FreeplayMenu extends SubStateBackend {
 	static var curSelectedDiff:Int = 0;
 	static var curSelectedVar:Int = 0;
 	static var lastSong:Int = -1;
+
+	static var playableID:String = 'bf';
 
 	var canSelect:Bool = true;
 	var daCapsules:Array<Capsule> = [];
@@ -55,8 +50,11 @@ class FreeplayMenu extends SubStateBackend {
 	var dj:GenzuSprite;
 	var selector1:GenzuSprite;
 	var selector2:GenzuSprite;
+	var scoreText:FreeplayScore;
 
 	var songs:Array<Song> = [];
+	var album:Album;
+	var player:Player;
 
 	override function create() {
 		super.create();
@@ -98,6 +96,7 @@ class FreeplayMenu extends SubStateBackend {
 		diffSprite = new GenzuSprite(0, 0, Paths.image("menus/freeplay/difficulties/easy"));
 		diffSprite.scale.set(1.3, 1.3);
 		diffSprite.camera = camHUD;
+		diffSprite.updateHitbox();
 
 		selector1 = new GenzuSprite(-250, 10, Paths.image("menus/freeplay/difficulties/selector"));
 		selector1.scale.set(1.28, 1.28);
@@ -124,23 +123,30 @@ class FreeplayMenu extends SubStateBackend {
 		ostText.x = FlxG.width - ostText.width + 150;
 		ostText.camera = camHUD;
 
+		album = new Album('placeholder');
+		album.x = FlxG.width;
+		album.camera = camHUD;
+
+		diffSprite.y = selector2.y;
+
 		// Rodney don't flame gen for this I did it.
 		FlxTween.tween(backingCard, 	{ x: -160 }, 				1.0, 	{ ease: FlxEase.expoOut, startDelay: 0.0 });
 		FlxTween.tween(backingImage, 	{ x: 315 }, 				1.0, 	{ ease: FlxEase.expoOut, startDelay: 0.1 });
 		FlxTween.tween(black, 			{ y: -175 }, 				0.6, 	{ ease: FlxEase.expoOut, startDelay: 0.2 });
 		FlxTween.tween(selector2, 		{ x: 260 }, 				0.6, 	{ ease: FlxEase.expoOut, startDelay: 0.3 });
 		FlxTween.tween(selector1, 		{ x: -130 }, 				0.6, 	{ ease: FlxEase.expoOut, startDelay: 0.4 });
-		FlxTween.tween(diffSprite, 		{ x: -13.4285714285714 }, 	0.7, 	{ ease: FlxEase.expoOut, startDelay: 0.5 });
+		FlxTween.tween(diffSprite, { x: ((-130 + 260) / 2) - (diffSprite.width / 2) + 27}, 0.7, { ease: FlxEase.expoOut, startDelay: 0.5 }); // idk mane
 		FlxTween.tween(freeplayText, 	{ y: -78 }, 				0.8, 	{ ease: FlxEase.expoOut, startDelay: 0.6 });
 		FlxTween.tween(ostText, 		{ y: -78 }, 				0.8, 	{ ease: FlxEase.expoOut, startDelay: 0.7 });
+		FlxTween.tween(album, 		    { x: 0 },            		0.8, 	{ ease: FlxEase.expoOut, startDelay: 0.7 });
 
-		songs = SongRegistry.getAllSongs().filter(song -> {
-			if (Options.data.developerMode) {
-				return true;
-			} else {
-				return !song._data?.isDev ?? true;
-			}
-		});
+		scoreText = new FreeplayScore(0, 0);
+		scoreText.camera = camHUD;
+		add(scoreText);
+		player = new Player(playableID);
+
+		conditionCheck();
+
 		for (i => song in songs) {
 			var yOffset = 10;
 			var startY = (FlxG.height / 2) + spacing * (i - curSelectedSong) - spacing + yOffset;
@@ -150,6 +156,7 @@ class FreeplayMenu extends SubStateBackend {
 			add(capsule);
 			daCapsules.push(capsule);
 			capsule.updateBPM(Std.int(song._data.bpm));
+
 		}
 
 		add(black);
@@ -158,6 +165,7 @@ class FreeplayMenu extends SubStateBackend {
 		add(selector2);
 		add(freeplayText);
 		add(ostText);
+		add(album);
 
 		changeSelection(0);
 		diffSprite.x = -FlxG.width;
@@ -179,6 +187,17 @@ class FreeplayMenu extends SubStateBackend {
 
 	override function update(elapsed) {
 		super.update(elapsed);
+
+		if (FlxG.keys.justPressed.TAB) {
+			FlxG.sound.music.fadeOut(0.5);
+			camHUD.fade(FlxColor.BLACK, 0.5, ()->{
+				playableID = playableID == "bf" ? "pico" : "bf";
+				FreeplayMenu.skipTransition = true;
+				FreeplayMenu.curSelectedSong = 0;
+				FlxG.switchState(new FreeplayMenu().build());
+			});
+
+		}
 
 		if (Controls.back && canSelect)
 			exit();
@@ -256,14 +275,24 @@ class FreeplayMenu extends SubStateBackend {
 				}
 		changeDiff(newIndex, true);
 		playInst();
+		updateScore();
+		updateAlbum();
+	}
 
-		var albumMeta:AlbumData = ParseUtil.yaml('data/ui/freeplay/albums/${song._data.album}');
-		ostText.text = albumMeta?.ostText ?? "OFFICIAL OST";
-		ostText.updateHitbox();
+	function conditionCheck() {
+		songs = SongRegistry.getAllSongs().filter(song -> {
+			var conditions:Array<Bool> = [
+				Options.data.developerMode ? true : !song._data?.isDev ?? true,
+				song.playableCharacter == player.id
+			];
+			var conditionsMet:Bool = true;
+			for (i in conditions) if (!i) conditionsMet = false;
+			return conditionsMet;
+		});
 	}
 
 	function playInst() {
-		var inst = '${songs[curSelectedSong].id}/song/Inst';
+		var inst = '${songs[curSelectedSong].songName}/song/Inst${songs[curSelectedSong].variant != '' ? '-${songs[curSelectedSong].variant}' : ''}';
 		instTimer.cancel();
 
 		if (inst == prevInst)
@@ -271,7 +300,7 @@ class FreeplayMenu extends SubStateBackend {
 
 		instTimer = new FlxTimer().start(0.8, (_) -> {
 			prevInst = inst;
-			Conductor.playSong(songs[curSelectedSong].id);
+			Conductor.playSong(songs[curSelectedSong].songName, songs[curSelectedSong].variant, true);
 			Conductor.instrumental.volume = 0.8;
 			Conductor.instrumental.looped = true;
 		});
@@ -287,10 +316,13 @@ class FreeplayMenu extends SubStateBackend {
 		var distance = 80;
 
 		if (pureSelect) {
-			diffSprite.loadGraphic(Paths.image('menus/freeplay/difficulties/${song.difficulties[curSelectedDiff]}'));
+			diffSprite.loadSprite(Paths.image('menus/freeplay/difficulties/${song.difficulties[curSelectedDiff]}'));
+			if (diffSprite.animated) {
+				diffSprite.addAnim('idle', 'idle', 24, true);
+				diffSprite.playAnim('idle', true);
+			}
 			for (i => capsule in daCapsules)
 				capsule.updateRatingForDiff(songs[i], songs[i].difficulties[FlxMath.wrap(curSelectedDiff, 0, songs[i].difficulties.length - 1)]);
-			diffSprite.y = selector1.y + (selector1.height / 2) - (diffSprite.height / 2);
 			return;
 		}
 
@@ -298,14 +330,32 @@ class FreeplayMenu extends SubStateBackend {
 		FlxTween.tween(diffSprite, {x: diffSprite.x - (distance * amount), alpha: 0}, 0.15, {
 			ease: FlxEase.expoIn,
 			onComplete: (_) -> {
-				diffSprite.loadGraphic(Paths.image('menus/freeplay/difficulties/${song.difficulties[curSelectedDiff]}'));
+				diffSprite.loadSprite(Paths.image('menus/freeplay/difficulties/${song.difficulties[curSelectedDiff]}'));
+				if (diffSprite.animated) {
+					diffSprite.addAnim('idle', 'idle', 24, true);
+					diffSprite.playAnim('idle', true);
+				}
+				diffSprite.updateHitbox();
 				diffSprite.x = distance * direction * 2;
-				diffSprite.y = selector1.y + (selector1.height / 2) - (diffSprite.height / 2);
 				for (i => capsule in daCapsules)
 					capsule.updateRatingForDiff(songs[i], songs[i].difficulties[FlxMath.wrap(curSelectedDiff, 0, songs[i].difficulties.length - 1)]);
-				FlxTween.tween(diffSprite, {x: -13.4285714285714, alpha: 1}, 0.1, {ease: FlxEase.expoOut});
+				FlxTween.tween(diffSprite, {x: ((selector1.x + selector2.x) / 2) - (diffSprite.width / 2) + 27, alpha: 1}, 0.1, {ease: FlxEase.expoOut});
 			}
 		});
+
+		updateAlbum();
+		updateScore();
+	}
+
+	function updateScore() {
+		var newSong:Song = songs[curSelectedSong];
+		scoreText.updateScore(ScoreUtil.getSongScore(newSong.songName, newSong.difficulties[curSelectedDiff], newSong.variant));
+	}
+
+	function updateAlbum() {
+		album.setAlbum(songs[curSelectedSong]?._data?.album ?? 'placeholder');
+		ostText.text = album?.ostText;
+		ostText.updateHitbox();
 	}
 
 	function playSong(?id:String, ?difficulty:String, ?variation:String) {
@@ -340,6 +390,7 @@ class FreeplayMenu extends SubStateBackend {
 		FlxTween.cancelTweensOf(black);
 		FlxTween.cancelTweensOf(backingImage);
 		FlxTween.cancelTweensOf(backingCard);
+		FlxTween.cancelTweensOf(album);
 
 		FlxTween.tween(ostText, {y: -150}, 0.3, {ease: FlxEase.expoIn});
 		FlxTween.tween(freeplayText, {y: -150}, 0.3, {ease: FlxEase.expoIn, startDelay: 0.1});
@@ -349,8 +400,9 @@ class FreeplayMenu extends SubStateBackend {
 		FlxTween.tween(black, {y: -300}, 0.3, {ease: FlxEase.expoIn, startDelay: 0.4});
 		FlxTween.tween(backingImage, {x: -backingImage.width - 160}, 0.3, {ease: FlxEase.expoIn, startDelay: 0.5});
 		FlxTween.tween(backingCard, {x: -backingCard.width - 160}, 0.3, {ease: FlxEase.expoIn, startDelay: 0.6});
+		FlxTween.tween(album, {x: FlxG.width}, 0.3, {ease: FlxEase.expoIn, startDelay: 0.5});
 
-		FlxTween.tween(cast(_parentState, MainMenu).bg, {x: 0}, 0.3 * 2, {ease: FlxEase.quadInOut, startDelay: 0.6});
+		FlxTween.tween(cast(_parentState, MainMenu).bg, {x: 0}, 0.3 * 2, {ease: FlxEase.quadInOut, startDelay: 0.7});
 
 		var origin = curSelectedSong - 1;
 
@@ -362,7 +414,7 @@ class FreeplayMenu extends SubStateBackend {
 				startDelay: 0.2 + (distance * 0.05)
 			});
 		}
-		new FlxTimer().start(1.1, (_) -> {
+		new FlxTimer().start(1.2, (_) -> {
 			close();
 		});
 	}

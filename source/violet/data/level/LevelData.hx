@@ -90,6 +90,11 @@ typedef LevelPropData =
 	var ?animations:Array<AnimationData>;
 
 	/**
+	 * The animation to play if idle/danceLeft/danceRight is not present.
+	 */
+	var ?startingAnimation:String;
+
+	/**
 	 * Flips the sprite on X axis.
 	 */
 	var ?flipX:Bool;

@@ -1,0 +1,13 @@
+version: 1.0.0
+name: Volume 3
+artists:
+  - Kawai Sprite
+  - Saruky
+  - Kohta Takahashi
+  - Saster
+  - MtH
+albumArtAsset: menus/freeplay/albums/volume3
+albumTitleAsset: menus/freeplay/albums/volume3-text
+albumTitleOffsets:
+  - 8
+  - -7

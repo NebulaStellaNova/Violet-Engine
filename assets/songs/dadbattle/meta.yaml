@@ -15,3 +15,6 @@ displayName: Dadbattle
 beatsPerMeasure: 4
 needsVoices: true
 bpm: 180
+album: volume1
+varients:
+  - erect

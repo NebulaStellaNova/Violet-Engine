@@ -1,0 +1,22 @@
+color: "#9271FD"
+customValues:
+  ratings:
+    nightmare: 10
+    erect: 9
+  noteStyle: funkin
+  artist: Kawai Sprite
+  charter: Jenny Crowe + fabs + Spazkid
+  album: volume3
+instSuffix: -erect
+opponentModeAllowed: false
+difficulties:
+  - erect
+  - nightmare
+icon: dad
+coopAllowed: false
+stepsPerBeat: 4
+displayName: DadBattle Erect
+beatsPerMeasure: 4
+needsVoices: false
+vocalsSuffix: -erect
+bpm: 190

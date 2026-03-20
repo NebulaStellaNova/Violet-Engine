@@ -1,10 +1,7 @@
 version: 1.0.0
 name: Volume 1
-ostText: TEST
 artists:
   - Kawai Sprite
-albumArtAsset: freeplay/albumRoll/volume1
-albumTitleAsset: freeplay/albumRoll/volume1-text
-albumTitleOffsets:
-  - 8
-  - 0
+albumArtAsset: menus/freeplay/albums/volume1
+albumTitleAsset: menus/freeplay/albums/volume1-text
+albumTitleOffsets: [8, 0]

@@ -5,7 +5,7 @@ import openfl.display.BitmapData;
 import openfl.media.Sound;
 import violet.backend.display.BetterBitmapData;
 
-@:bitmap('assets/images/logo/logo.png')
+@:bitmap('assets/images/logo/default.png')
 private class HaxeLogo extends BitmapData {}
 
 class Cache {
@@ -30,7 +30,11 @@ class Cache {
 
 	public static function image(path:String, directory:String = '', ?ext:String = 'png'):FlxGraphic {
 		var imagePath:String = Paths.image(path, directory, ext);
-		if (cache.exists(imagePath)) return cache.get(imagePath);
+		if (cache.exists(imagePath)) {
+			var graphic:FlxGraphic = cache.get(imagePath);
+			if (!graphic.isDestroyed)
+				return graphic;
+		}
 
 		var bitmap:BitmapData = null;
 		if (Paths.fileExists(imagePath, true))
@@ -62,7 +66,7 @@ class Cache {
 		if (Paths.fileExists(audioPath, true))
 			sound = Sound.fromFile(audioPath);
 
-		if (sound == null) {
+		if (sound == null && audioPath != "" && audioPath != '.$ext') {
 			trace('error:No sound data from path "$audioPath".');
 			return /* beepWhenNull ? Sound.fromFile('flixel/sounds/beep.ogg') : */ null;
 		}

@@ -1,5 +1,6 @@
 package violet.backend.objects.play;
 
+import flixel.FlxCamera;
 import flixel.group.FlxGroup;
 import flixel.input.keyboard.FlxKey;
 import flixel.math.FlxMath;
@@ -8,6 +9,7 @@ import flixel.math.FlxRect;
 import openfl.events.KeyboardEvent;
 import violet.backend.audio.Conductor;
 import violet.backend.options.Options;
+import violet.data.Scoring;
 import violet.data.character.Character;
 import violet.data.chart.Chart;
 import violet.data.chart.ChartData;
@@ -37,9 +39,14 @@ class StrumLine extends FlxGroup {
 		return !isPlayer; // like this for now, will be changed later
 	}
 
+	/**
+	 * Wether the notes and sustains should show up at all.
+	 */
+	public var renderNotes:Bool = true;
+
 	public final strums:FlxTypedGroup<Strum>;
-	public final notes:FlxTypedGroup<Note>;
-	public final sustains:FlxTypedGroup<Sustain>;
+	public final notes:NoteGroup;
+	public final sustains:SustainGroup;
 
 	public var splashes(get, never):Array<StrumElement>;
 	function get_splashes():Array<StrumElement> {
@@ -112,9 +119,8 @@ class StrumLine extends FlxGroup {
 		});
 
 		add(strums = new FlxTypedGroup<Strum>());
-		add(sustains = new FlxTypedGroup<Sustain>());
-		add(notes = new FlxTypedGroup<Note>());
-		notes.sortBy = sustains.sortBy = 'time';
+		add(sustains = new SustainGroup());
+		add(notes = new NoteGroup(this));
 
 		generateStrums(chartData.keyCount);
 
@@ -129,7 +135,7 @@ class StrumLine extends FlxGroup {
 		/* if (Paths.fileExists(Paths.vocal(PlayState.song, characters[0].id, PlayState.variation)))
 			vocals = Conductor.addAdditionalTrack(FlxG.sound.load(Cache.sound(Paths.vocal(PlayState.song, characters[0].id, PlayState.variation), 'root', null, true), FlxG.sound.defaultMusicGroup));
 		else */ if (chartData.vocalsSuffix == null) vocals = Conductor.addAdditionalTrack(new FlxSound());
-		else vocals = Conductor.addAdditionalTrack(FlxG.sound.load(Cache.sound(Paths.vocal(PlayState.song, chartData.vocalsSuffix, PlayState.variation), 'root', null, true), FlxG.sound.defaultMusicGroup));
+		else vocals = Conductor.addAdditionalTrack(FlxG.sound.load(Cache.sound(Paths.vocal(PlayState.songData.songName, chartData.vocalsSuffix, PlayState.variation), 'root', null, true), FlxG.sound.defaultMusicGroup));
 
 		noteStyle = chartData.noteStyle;
 
@@ -178,27 +184,25 @@ class StrumLine extends FlxGroup {
 	override public function update(elapsed:Float):Void {
 		// auto hit and note miss
 		notes.forEachExists((note:Note) -> {
-			if (note.tooLate && (Conductor.framePosition - note.time) > Math.max(Conductor.stepLengthMs, 350 / Math.abs(note.__scrollSpeed)))
-				if (!note.wasHit && !note.wasMissed)
-					_onNoteMissed(note);
+			if (note.tooLate && !note.wasHit && !note.wasMissed)
+				_onNoteMissed(note);
 			if (isComputer)
-				if (note.time <= Conductor.framePosition && !note.tooLate && !note.wasHit && !note.wasMissed)
+				if (note.time < Conductor.framePosition && !note.tooLate && !note.wasHit && !note.wasMissed)
 					_onNoteHit(note);
 		});
 		// auto hit and sustain miss
 		sustains.forEachExists((sustain:Sustain) -> {
-			if (sustain.tooLate && (Conductor.framePosition - (sustain.time + sustain.parentNote.time)) > Math.max(Conductor.stepLengthMs, 350 / Math.abs(sustain.__scrollSpeed)))
-				if (!sustain.wasHit && !sustain.wasMissed)
-					_onSustainMissed(sustain);
+			if (sustain.tooLate && !sustain.wasHit && !sustain.wasMissed)
+				_onSustainMissed(sustain);
 			if (isComputer)
-				if ((sustain.time + sustain.parentNote.time) <= Conductor.framePosition && !sustain.tooLate && !sustain.wasHit && !sustain.wasMissed)
+				if ((sustain.time + sustain.parentNote.time) < Conductor.framePosition && !sustain.tooLate && !sustain.wasHit && !sustain.wasMissed)
 					_onSustainHit(sustain);
 		});
 
 		if (isPlayer) {
 			for (i => input in currentInputs)
 				if (input) for (sustain in Note.filterTail(sustains.members, i))
-					if ((sustain.time + sustain.parentNote.time) <= Conductor.framePosition)
+					if ((sustain.time + sustain.parentNote.time) < Conductor.framePosition)
 						_onSustainHit(sustain);
 		}
 
@@ -244,6 +248,7 @@ class StrumLine extends FlxGroup {
 			pos.resize(0);
 
 			for (sustain in note.tail) {
+				if (sustain == null) continue; if (!sustain.exists) continue;
 				final pos:Array<Float> = [strum.x, strum.y];
 				disPos = 0.45 * (Conductor.framePosition - (note.time + sustain.time)) * Math.abs(sustain.__scrollSpeed) * Math.abs(scale.x / scale.y);
 
@@ -257,16 +262,8 @@ class StrumLine extends FlxGroup {
 				sustain.setPosition(pos[0], pos[1]);
 				pos.resize(0);
 
-				// temp placement?
-				if (!sustain.isEnd) { // prevent scaling on sustain end
-					sustain.scale.y = (flixel.addons.sound.FlxRhythmConductorUtil.getStepLengthMs(flixel.addons.sound.FlxRhythmConductor.instance.getCurrentTimeChangeBPMAccurate(note.time)) * 0.45 * Math.abs(sustain.__scrollSpeed)) / sustain.frameHeight;
-					sustain.updateHitbox();
-					// sustain.origin.y = 0;
-				}
-
 				if (sustain.wasHit) {
-					// it's working, sorta (I fucking HATE cliprect bro JUST WORK)
-					var t = FlxMath.bound((Conductor.framePosition - (sustain.time + sustain.parentNote.time)) / sustain.height * 0.45 * sustain.__scrollSpeed, 0, 1);
+					var t = FlxMath.bound((Conductor.framePosition - (note.time + sustain.time)) / sustain.height * 0.45 * sustain.__scrollSpeed, 0, 1);
 					var rect = sustain.clipRect == null ? FlxRect.get() : sustain.clipRect;
 					sustain.clipRect = rect.set(0, sustain.frameHeight * t, sustain.frameWidth, sustain.frameHeight * (1 - t));
 				}
@@ -331,4 +328,92 @@ class StrumLine extends FlxGroup {
 		super.destroy();
 	}
 
+}
+
+class NoteGroup extends FlxTypedGroup<Note> {
+	/**
+	 * Applies a function to all rendered members.
+	 * @param func A function that modifies one note at a time.
+	 */
+	public function forEachRendered(func:Note->Void):Void {
+		var shouldRender:Bool = true;
+		forEachExists((note:Note) -> {
+			note._beingRendered = false;
+			if (!parentField.renderNotes) return;
+
+			shouldRender = true;
+			if ((note.time + note.length) < Conductor.framePosition - (Scoring.maxWindow * note.earlyWindow)) shouldRender = false;
+			if (note.time > Conductor.framePosition + (note.getDefaultCamera().height / note.getDefaultCamera().zoom / 0.45 / Math.min(note.__scrollSpeed, 1))) shouldRender = false;
+
+			if (shouldRender) {
+				note._beingRendered = true;
+				func(note);
+			}
+		});
+	}
+
+	var parentField:StrumLine;
+	override public function new(parent:StrumLine) {
+		super();
+		this.parentField = parent;
+		sortBy = 'time';
+	}
+
+	override public function update(elapsed:Float):Void {
+		forEachRendered(
+			(note:Note) ->
+				if (note.visible)
+					note.update(elapsed)
+		);
+	}
+
+	@:access(flixel.FlxCamera)
+	override public function draw():Void {
+		final oldDefaultCameras = FlxCamera._defaultCameras;
+		if (_cameras != null) FlxCamera._defaultCameras = _cameras;
+		forEachRendered(
+			(note:Note) ->
+				if (note.visible)
+					note.draw()
+		);
+		FlxCamera._defaultCameras = oldDefaultCameras;
+	}
+}
+
+class SustainGroup extends FlxTypedGroup<Sustain> {
+	/**
+	 * Applies a function to all rendered members.
+	 * @param func A function that modifies one sustain at a time.
+	 */
+	public function forEachRendered(func:Sustain->Void):Void {
+		forEachExists((sustain:Sustain) ->
+			if (sustain.parentNote._beingRendered)
+				func(sustain)
+		);
+	}
+
+	override public function new() {
+		super();
+		sortBy = 'time';
+	}
+
+	override public function update(elapsed:Float):Void {
+		forEachRendered(
+			(sustain:Sustain) ->
+				if (sustain.visible)
+					sustain.update(elapsed)
+		);
+	}
+
+	@:access(flixel.FlxCamera)
+	override public function draw():Void {
+		final oldDefaultCameras = FlxCamera._defaultCameras;
+		if (_cameras != null) FlxCamera._defaultCameras = _cameras;
+		forEachRendered(
+			(sustain:Sustain) ->
+				if (sustain.visible)
+					sustain.draw()
+		);
+		FlxCamera._defaultCameras = oldDefaultCameras;
+	}
 }

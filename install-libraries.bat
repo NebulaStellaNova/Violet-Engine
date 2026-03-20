@@ -4,7 +4,6 @@ haxelib fixrepo
 @REM INSTALL HAXELIB LIBS
 haxelib install flixel
 haxelib install flixel-addons --skip-dependencies
-haxelib install flixel-animate --skip-dependencies
 haxelib install hxdiscord_rpc --skip-dependencies
 haxelib install hxp
 haxelib install hxvlc --skip-dependencies
@@ -22,3 +21,5 @@ haxelib git hxhardware https://github.com/Vortex2Oblivion/hxhardware
 haxelib git linc_luajit https://github.com/superpowers04/linc_luajit
 haxelib git lscript https://github.com/SrtHero278/lscript
 haxelib git rulescript https://github.com/Kriptel/RuleScript dev
+haxelib git flixel-animate https://github.com/NebulaStellaNova/flixel-animate bullshity-fix --skip-dependencies
+haxelib git hython https://github.com/Paopun20/hython.git dev

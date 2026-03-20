@@ -11,7 +11,7 @@ class NullChecker {
 			anim.flipY ??= false;
 			anim.frameRate ??= 24;
 			anim.frameIndices ??= [];
-			anim.byLabel ??= false;
+			anim.byLabel ??= true;
 		}
 		return anims;
 	}

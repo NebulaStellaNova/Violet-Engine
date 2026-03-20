@@ -10,7 +10,51 @@ import violet.backend.utils.ParseUtil;
 import violet.boot.DiscordRPC;
 import violet.data.Constants;
 
+typedef StupidSignalMember = {
+	var callback:Void->Void;
+	var removeAfterCall:Bool;
+}
+
+class StupidSignal {
+
+	final members:Array<StupidSignalMember> = [];
+
+	public function new() {}
+
+	public function add(callback:Void->Void):Void {
+		for (member in members) if (member.callback == callback) return;
+		members.push({callback: callback, removeAfterCall: false});
+	}
+	public function addOnce(callback:Void->Void):Void {
+		for (member in members) if (member.callback == callback) return;
+		members.push({callback: callback, removeAfterCall: true});
+	}
+
+	public function remove(callback:Void->Void):Void {
+		final _members = members.copy();
+		for (member in _members) {
+			if (member.callback == callback)
+				members.remove(member);
+		}
+		_members.resize(0);
+	}
+
+	public function dispatch(?intervalCallback:Void->Void):Void {
+		for (member in members) {
+			member.callback();
+			if (member.removeAfterCall)
+				members.remove(member);
+			if (intervalCallback != null)
+				intervalCallback();
+		}
+	}
+
+}
+
 class Main extends openfl.display.Sprite {
+
+	public static var threadCallacks:StupidSignal = new StupidSignal();
+
 	/**
 	 * The current version of the engine.
 	 */
@@ -47,6 +91,7 @@ class Main extends openfl.display.Sprite {
 		super();
 		instance = this;
 
+
 		lemonui.Constants.FONT_REGULAR = Paths.font('Inconsolata-Medium.ttf');
 		lemonui.Constants.FONT_BOLD = Paths.font('Inconsolata-Bold.ttf');
 
@@ -54,7 +99,7 @@ class Main extends openfl.display.Sprite {
 
 		/* FlxG.signals.postStateSwitch.add(()->{
 			@:privateAccess violet.backend.CrashHandler.notificationManager = null;//new haxe.ui.notifications.NotificationManager();
-		}); */
+			}); */
 
 		moonchart.Moonchart.DEFAULT_DIFF = 'normal';
 		moonchart.Moonchart.CASE_SENSITIVE_DIFFS = moonchart.Moonchart.SPACE_SENSITIVE_DIFFS = false;
@@ -91,6 +136,7 @@ class Main extends openfl.display.Sprite {
 
 		var startFPS:Int = Application.current.window.displayMode.refreshRate;
 		new flixel.FlxGame(1280, 720, violet.states.InitialState, startFPS, startFPS, true);
+		FlxG.sound.volume = FlxG.save.data.volume ?? 0.4;
 		@:privateAccess FlxG.game._customSoundTray = violet.backend.display.VioletSoundTray;
 		addChild(FlxG.game);
 		addChild(new DebugDisplay());
@@ -101,6 +147,15 @@ class Main extends openfl.display.Sprite {
 		// literally just cause nebs pause bind is backslash
 		FlxG.debugger.toggleKeys.remove(BACKSLASH);
 		#end
+
+		sys.thread.Thread.create(() -> {
+			while (true) {
+				try {
+					threadCallacks.dispatch(() -> Sys.sleep(FlxG.elapsed));
+				} catch(error:haxe.Exception)
+					trace('debug:Error in thread callback: $error');
+			}
+		});
 	}
 
 	public static function switchState(targetClass:Dynamic) {

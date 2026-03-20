@@ -1,5 +1,7 @@
 package violet.data.converters;
 
+import moonchart.formats.fnf.legacy.FNFPsych;
+import moonchart.formats.fnf.FNFVSlice;
 import yaml.Renderer.RenderOptions;
 import yaml.Parser.ParserOptions;
 import yaml.Yaml;
@@ -10,6 +12,7 @@ import violet.backend.utils.ParseUtil;
 import haxe.Json;
 import Xml;
 import yaml.Renderer;
+import moonchart.formats.fnf.FNFCodename;
 
 
 enum FileType {
@@ -38,23 +41,22 @@ class ChartConverters {
             meta: { name: "Unknown Song" },
             scrollSpeed: 1,
             noteTypes: [],
-            stage: "mainStage",
+            stage: "default",
             codenameChart: true
         };
     }
 
     public static function convertChart(chartCache:ChartCache):ChartData {
         var parsedCache:Dynamic = parseFromCache(chartCache);
-
         var detectedFormat:ChartFormatChecker.ChartFileFormat = ChartFormatChecker.checkFormat(parsedCache);
         var convertedChart:ChartData;
         switch (detectedFormat) {
             case CODENAME:
                 convertedChart = parsedCache;
             case VSLICE:
-                convertedChart = fromVSlice(parsedCache);
+                convertedChart = fromVSlice(chartCache.filePath, chartCache.difficulty);
             case PSYCH:
-                convertedChart = fromPsych(parsedCache);
+                convertedChart = fromPsych(chartCache.filePath);
             default:
                 convertedChart = blankChart;
         }
@@ -83,13 +85,17 @@ class ChartConverters {
         return parsedCache;
     }
 
-    public static function fromVSlice(chartData):ChartData {
-        return blankChart;
+    public static function fromVSlice(chartPath, difficulty:String):ChartData {
+        return cast new FNFCodename().fromFormat(new FNFVSlice().fromFile(chartPath, difficulty)).data; // Crashes someone fix this please
     }
 
-    public static function fromPsych(chartData):ChartData {
-        return blankChart;
+    public static function fromPsych(chartPath:String):ChartData {
+        return cast new FNFCodename().fromFormat(new FNFPsych().fromFile(chartPath)).data;
     }
+
+    // public static function fromImaginative(chartPath:String) {
+        // return case new FNFCodename()
+    // }
 
     /**
     ```haxe
