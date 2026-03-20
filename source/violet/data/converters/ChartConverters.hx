@@ -50,7 +50,6 @@ class ChartConverters {
         var parsedCache:Dynamic = parseFromCache(chartCache);
         var detectedFormat:ChartFormatChecker.ChartFileFormat = ChartFormatChecker.checkFormat(parsedCache);
         var convertedChart:ChartData;
-        trace(detectedFormat);
         switch (detectedFormat) {
             case CODENAME:
                 convertedChart = parsedCache;

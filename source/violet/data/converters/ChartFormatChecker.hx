@@ -52,7 +52,6 @@ class ChartFormatChecker {
         var isPE:Bool = true;
 
         for (i in Type.getInstanceFields(PsychEngineChart)) {
-            trace(i);
             if (Reflect.field(parsedChartObject, i) == null) isPE = false;
         }
         if (isPE) return PSYCH;
