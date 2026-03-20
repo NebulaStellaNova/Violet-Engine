@@ -5,7 +5,7 @@ import openfl.display.BitmapData;
 import openfl.media.Sound;
 import violet.backend.display.BetterBitmapData;
 
-@:bitmap('assets/images/logo/logo.png')
+@:bitmap('assets/images/logo/default.png')
 private class HaxeLogo extends BitmapData {}
 
 class Cache {
