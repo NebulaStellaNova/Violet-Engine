@@ -101,7 +101,7 @@ class Stage extends flixel.group.FlxGroup {
                 case "Character":
                     i.cameraOffsets ??= [0, 0];
                     for (char in characters) {
-                        if (positionalArrays.get(i.id).contains(char.stagePosition.toLowerCase())) {
+                        if (positionalArrays.get(i.id).contains(char.stagePosition.toLowerCase()) || i.id == char.id) {
                             if (i.id == "player") char.flipX = !char.flipX;
                             char.x = i.position[0] - (char.width/2);
                             char.y = i.position[1] - (char.height);
