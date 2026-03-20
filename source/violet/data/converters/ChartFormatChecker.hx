@@ -43,10 +43,6 @@ enum abstract ChartFileFormat(String) {
 class ChartFormatChecker {
 
     public static function checkFormat(parsedChartObject:Dynamic):ChartFileFormat {
-        /* var VSLICE_CHART:VSliceChart = parsedChartObject;
-        var CNE_CHART:CodenameEngineChart = parsedChartObject;
-        var PE_CHART:PsychEngineChart = parsedChartObject; */
-
         var isVSlice:Bool = true;
         var isCNE:Bool = true;
         var isPE:Bool = true;
