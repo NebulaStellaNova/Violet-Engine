@@ -33,7 +33,7 @@ class InitialState extends StateBackend { // for now
 				if (!OptionsMenu.instance.canSelectMenu) return;
 
 			#if !mobile
-			if (Controls.reloadGame) {
+			/* if (Controls.reloadGame) {
 				Conductor.pause();
 				ModdingAPI.reloadRegistries();
 				FlxG.resetState();
@@ -41,7 +41,7 @@ class InitialState extends StateBackend { // for now
 			if (Controls.resetState)
 				FlxG.resetState();
 			if (Controls.shortcutState)
-				FlxG.switchState(() -> new violet.states.menus.MainMenu());
+				FlxG.switchState(() -> new violet.states.menus.MainMenu()); */
 			#end
 
 			if (!Std.isOfType(FlxG.state, PlayState)) {
