@@ -8,10 +8,7 @@ This engine serves as a passion project for me and a way to get better at coding
 The version you see now is actually V2, I have already coded the engine a lot before but had to stop due to it not being able to compile anymore. So, this is a recode of a recode essentially.
 
 Here's Bopeebo Erect on the engine:
-
-<p align="center">
-  <video src="./screenrecordings/2026-03-16_18-49-56.mp4" width="80%" controls></video>
-</p>
+https://youtu.be/iwcN0Sr3S3A
 
 # What I hope to accomplish with this engine:
 ### Main Focuses
