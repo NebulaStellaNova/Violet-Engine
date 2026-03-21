@@ -1,5 +1,6 @@
 package violet.backend.utils;
 
+import animate.FlxAnimateFrames.FlxAnimateSettings;
 import haxe.io.Path;
 import flixel.FlxCamera;
 import flixel.graphics.frames.FlxAtlasFrames;
@@ -69,6 +70,7 @@ class NovaUtils {
 
 		// Setup Conductor
 		Conductor.resetConductor();
+		// trace(Paths.fileExists('$folder/${musicPath.join('/')}-intro.ogg'));
 		FlxG.sound.playMusic(Cache.music(musicPath.join('/'), '', 'ogg', false, folder), volume);
 		Conductor.initCallbacks();
 		Conductor.initCallbacksSubState();
@@ -98,7 +100,7 @@ class NovaUtils {
 		return FlxAtlasFrames.fromSparrow(Cache.image(path, 'root', null), FileUtil.getFileContent(path.replace(".png", ".xml")));
 	}
 
-	public static function getAtlasFrames(path:String):FlxAtlasFrames {
-		return animate.FlxAnimateFrames.fromAnimate(Path.withoutExtension(path));
+	public static function getAtlasFrames(path:String, ?options:FlxAnimateSettings):FlxAtlasFrames {
+		return animate.FlxAnimateFrames.fromAnimate(Path.withoutExtension(path), null, null, null, null, options);
 	}
 }
