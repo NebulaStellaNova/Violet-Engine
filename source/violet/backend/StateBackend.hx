@@ -73,6 +73,16 @@ class StateBackend extends flixel.FlxState {
 		/* if (FlxG.keys.justPressed.TAB && Options.data.developerMode)
 			violet.states.PlayState.loadSong('test'); */
 
+		if (Controls.reloadGame) {
+			Conductor.pause();
+			ModdingAPI.reloadRegistries();
+			FlxG.resetState();
+		}
+		if (Controls.resetState)
+			FlxG.resetState();
+		if (Controls.shortcutState)
+			FlxG.switchState(() -> new violet.states.menus.MainMenu());
+
 		Conductor.update();
 
 		callInScripts('update');
