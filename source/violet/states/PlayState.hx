@@ -105,7 +105,6 @@ class PlayState extends violet.backend.StateBackend {
 	public var countdownLength(default, set):Int = 4;
 	inline function set_countdownLength(value:Int):Int
 		return countdownLength = Std.int(Math.max(value, 1));
-
 	/**
 	 * States if the countdown has started.
 	 */
@@ -157,6 +156,7 @@ class PlayState extends violet.backend.StateBackend {
 		songData = new Song(song);
 		variation = songData.variant;
 		Conductor.playSong(songData.songName, songData.variant); Conductor.pause();
+		Conductor.offset = (countdownLength+1) * Conductor.beatLengthMs;
 		if (SONG.meta.needsVoices) generalVocals = Conductor.addAdditionalTrack(FlxG.sound.load(Cache.sound(Paths.vocal(songData.songName, null, PlayState.variation), 'root', null, true), FlxG.sound.defaultMusicGroup));
 		else generalVocals = Conductor.addAdditionalTrack(new FlxSound());
 		StrumLine.generalScrollSpeed = SONG.scrollSpeed ?? 1;
@@ -281,6 +281,14 @@ class PlayState extends violet.backend.StateBackend {
 
 		callSongScripts("update", [elapsed]);
 		callSongScripts("onUpdate", [elapsed]);
+
+		if (countdownStarted && Conductor.offset != 0) {
+			if (Conductor.offset > 0) {
+				Conductor.offset -= elapsed * 1000;
+			} else {
+				Conductor.offset = 0;
+			}
+		}
 
 		camGame.zoom = camGameBase.zoom + camGameOffset.zoom;
 		for (i in cameraOffsets) camGame.zoom += i.zoom;
@@ -445,6 +453,7 @@ class PlayState extends violet.backend.StateBackend {
 		var event:EventBase = songScripts.event("startCountdown", new EventBase());
 		event = songScripts.event("onStartCountdown", event);
 		if (event.cancelled) return;
+		countdownStarted = true;
 		tickCountdown();
 	}
 
@@ -591,6 +600,7 @@ class PlayState extends violet.backend.StateBackend {
 
 	override public function destroy():Void {
 		instance = null;
+		Conductor.offset = 0;
 		super.destroy();
 		for (i in SONG.events) i.ran = false;
 	}
