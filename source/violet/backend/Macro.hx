@@ -12,6 +12,7 @@ class Macro {
 		Compiler.addMetadata('@:build(violet.backend.Macro.buildFlxSprite())', 'flixel.FlxSprite');
 		Compiler.addMetadata('@:build(violet.backend.Macro.buildFlxTypedGroup())', 'flixel.group.FlxTypedGroup');
 		Compiler.addMetadata('@:build(violet.backend.Macro.buildFlxSpriteGroup())', 'flixel.group.FlxTypedSpriteGroup');
+		Compiler.addMetadata('@:build(violet.backend.VarTweenMacro.init())', 'flixel.tweens.misc.VarTween');
 		#if SCRIPT_SUPPORT
 		Compiler.include('violet', true);
 		Compiler.include('haxe', true, ['haxe.atomic.*', 'haxe.macro.*']);
