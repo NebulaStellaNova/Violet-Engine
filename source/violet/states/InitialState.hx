@@ -7,7 +7,7 @@ import violet.backend.audio.Conductor;
 
 class InitialState extends StateBackend { // for now
 
-	var logo:FlxSprite = new FlxSprite().loadGraphic(Paths.image("icons/dad"));
+	var logo:NovaSprite = new NovaSprite(Paths.image("icons/dad"));
 	var loadingBar:NovaSprite;
 
 	public static var loadingPercent:Float = 0;

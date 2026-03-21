@@ -7,8 +7,8 @@ class VioletSoundTray extends FlxSoundTray {
     public function new() {
         super();
 
-        volumeUpSound = Paths.sound("soundtray/up");
-        volumeDownSound = Paths.sound("soundtray/down");
+        volumeUpSound = null;   // Cache.sound("soundtray/up");
+        volumeDownSound = null; // Cache.sound("soundtray/down");
         // volumeMaxSound = Paths.sound("soundtray/max");
     }
 

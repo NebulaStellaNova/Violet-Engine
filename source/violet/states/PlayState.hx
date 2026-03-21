@@ -455,7 +455,7 @@ class PlayState extends violet.backend.StateBackend {
 			return;
 		}
 		countdownTimer = new FlxTimer().start(Conductor.beatLengthMs / 1000, _ -> {
-			if (countdownSounds[countdownTick] != null) FlxG.sound.play(Paths.sound('game/countdown/funkin/${countdownSounds[countdownTick]}'));
+			if (countdownSounds[countdownTick] != null) NovaUtils.playSound('game/countdown/funkin/${countdownSounds[countdownTick]}');
 			if (countdownSprites[countdownTick] != null) {
 				var countdownSprite:NovaSprite = new NovaSprite(Paths.image('game/countdown/funkin/${countdownSprites[countdownTick]}'));
 				countdownSprite.camera = camHUD;
