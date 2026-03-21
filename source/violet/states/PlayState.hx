@@ -340,7 +340,6 @@ class PlayState extends violet.backend.StateBackend {
 
 	function onVoidTap(id:Int, strumLine:StrumLine) {
 		strumLine.strums.members[id].playStrumAnim('press', ghostTapping);
-		if (!Conductor.instrumental.playing) return;
 		if (!ghostTapping) {
 			FlxG.sound.play(Cache.sound('miss/${FlxG.random.int(1, 3)}'), 0.7);
 			for (char in strumLine.characters)
@@ -351,7 +350,7 @@ class PlayState extends violet.backend.StateBackend {
 	}
 
 	function onNoteHit(note:Note) {
-		if (!Conductor.instrumental.playing) return; if (note.wasHit) return;
+		if (note.wasHit) return;
 		final event:NoteHitEvent = runSongEvent("noteHit", new NoteHitEvent(note));
 		if (event.cancelled) return;
 
@@ -379,7 +378,7 @@ class PlayState extends violet.backend.StateBackend {
 	}
 
 	function onNoteMissed(note:Note) {
-		if (!Conductor.instrumental.playing) return; if (note.wasMissed) return;
+		if (note.wasMissed) return;
 
 		note.wasMissed = true; note.alpha *= 0.6;
 		generalVocals.pause(); note.parent.vocals.pause();
@@ -402,7 +401,7 @@ class PlayState extends violet.backend.StateBackend {
 	}
 
 	function onSustainHit(sustain:Sustain) {
-		if (!Conductor.instrumental.playing) return; if (sustain.wasHit && !sustain.parentNote.wasHit) return;
+		if (sustain.wasHit && !sustain.parentNote.wasHit) return;
 		final event:SustainHitEvent = runSongEvent("sustainHit", new SustainHitEvent(sustain));
 		if (event.cancelled) return;
 
@@ -425,7 +424,7 @@ class PlayState extends violet.backend.StateBackend {
 	}
 
 	function onSustainMissed(sustain:Sustain) {
-		if (!Conductor.instrumental.playing) return; if (sustain.wasMissed) return;
+		if (sustain.wasMissed) return;
 
 		sustain.wasMissed = true; sustain.alpha *= 0.6;
 		generalVocals.pause(); sustain.parent.vocals.pause();
