@@ -222,6 +222,11 @@ class PlayState extends violet.backend.StateBackend {
 		healthBar.y = Options.data.downscroll ? FlxG.height * 0.1 : FlxG.height * 0.9;
 		healthBar.screenCenter(X);
 		healthBar.camera = camHUD;
+		add(healthBar);
+
+		if (iconOpponent == null) iconOpponent = new HealthIcon('face'); // Null safety
+		if (iconPlayer == null) iconPlayer = new HealthIcon('face'); // Null safety
+
 		if (iconOpponent._data.color != null && Options.data.coloredHealthBar) {
 			healthBar.leftColor = iconOpponent._data.color;
 		} else {
@@ -232,7 +237,6 @@ class PlayState extends violet.backend.StateBackend {
 		} else {
 			healthBar.rightColor = FlxColor.LIME;
 		}
-		add(healthBar);
 
 		scoreTxt = new ScoreTxt();
 		scoreTxt.x = healthBar.x + healthBar.width - scoreTxt.width;
