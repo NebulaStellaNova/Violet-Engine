@@ -51,7 +51,9 @@ class Conductor {
 	 * Same as songPosition, but for timing stuff other than audio tracks.
 	 */
 	public static var framePosition(get, never):Float;
-	static function get_framePosition():Float return FlxRhythmConductor.instance.frameMusicPosition;
+	static function get_framePosition():Float return FlxRhythmConductor.instance.frameMusicPosition - offset;
+
+	public static var offset:Float = 0;
 
 	/**
 	 * The current BPM of the song.

@@ -7,7 +7,7 @@ import violet.backend.audio.Conductor;
 
 class InitialState extends StateBackend { // for now
 
-	var logo:FlxSprite = new FlxSprite().loadGraphic(Paths.image("icons/dad"));
+	var logo:NovaSprite = new NovaSprite(Paths.image("icons/dad"));
 	var loadingBar:NovaSprite;
 
 	public static var loadingPercent:Float = 0;
@@ -31,18 +31,6 @@ class InitialState extends StateBackend { // for now
 		FlxG.signals.preUpdate.add(() -> {
 			if (OptionsMenu.instance != null)
 				if (!OptionsMenu.instance.canSelectMenu) return;
-
-			#if !mobile
-			/* if (Controls.reloadGame) {
-				Conductor.pause();
-				ModdingAPI.reloadRegistries();
-				FlxG.resetState();
-			}
-			if (Controls.resetState)
-				FlxG.resetState();
-			if (Controls.shortcutState)
-				FlxG.switchState(() -> new violet.states.menus.MainMenu()); */
-			#end
 
 			if (!Std.isOfType(FlxG.state, PlayState)) {
 				PlayState.hasSeenCutscene = false;

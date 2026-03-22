@@ -1,0 +1,13 @@
+<vbox spacing="10" id="box">
+    <tabpanel id="panel1" height="200">
+        <tab text="T" id="tab1">
+            <dropdown id="characterDropdown" x="15" label="Character:" y="15"/>
+        </tab>
+    </tabpanel>
+    <tabpanel id="panel2">
+        <tab text="Animations">
+            <tickbox id="isGhost" x="15" y="70" label="isGhost"/>
+            <dropdown id="animationDropdown" x="15" label="Aniamtions:" y="15"/>
+        </tab>
+    </tabpanel>
+</vbox>

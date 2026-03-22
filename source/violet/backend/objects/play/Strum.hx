@@ -51,6 +51,11 @@ class Strum extends NovaSprite {
 		scale.set(daScale, daScale);
 		scale.scale(parent.strumScale);
 		updateHitbox();
+
+		spawnSplash();
+		for (element in splashes) element.animation.finish();
+		spawnHoldCover();
+		for (element in holdCovers) element.animation.finish();
 	}
 
 	public function reloadStyle(?style:String):Void {

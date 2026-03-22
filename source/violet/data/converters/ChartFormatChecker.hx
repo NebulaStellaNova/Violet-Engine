@@ -12,7 +12,7 @@ import Reflect;
 @:structInit @:publicFields class CodenameEngineChart {
     var strumLines:Array<Dynamic>;
     var events:Array<Dynamic>;
-    var stage:String;
+    // var stage:String;
     var scrollSpeed:Float;
     var noteTypes:Array<String>;
 }
@@ -24,13 +24,11 @@ import Reflect;
     var bpm:Float;
     var needsVoices:Bool;
     var speed:Float;
-    var offset:Float;
 
     var player1:String;
     var player2:String;
     var gfVersion:String;
     var stage:String;
-    var format:String;
 }
 
 enum abstract ChartFileFormat(String) {
@@ -48,17 +46,19 @@ class ChartFormatChecker {
         var isPE:Bool = true;
 
         for (i in Type.getInstanceFields(PsychEngineChart)) {
-            if (Reflect.field(parsedChartObject, i) == null) isPE = false;
+            if (Reflect.hasField(parsedChartObject, 'song')) {
+                if (!Reflect.hasField(Reflect.field(parsedChartObject, 'song'), i)) isPE = false;
+            } else isPE = false;
         }
         if (isPE) return PSYCH;
 
         for (i in Type.getInstanceFields(CodenameEngineChart)) {
-            if (Reflect.field(parsedChartObject, i) == null) isCNE = false;
+            if (!Reflect.hasField(parsedChartObject, i)) isCNE = false;
         }
         if (isCNE) return CODENAME;
 
         for (i in Type.getInstanceFields(VSliceChart)) {
-            if (Reflect.field(parsedChartObject, i) == null) isVSlice = false;
+            if (!Reflect.hasField(parsedChartObject, i)) isVSlice = false;
         }
         if (isVSlice) return VSLICE;
 

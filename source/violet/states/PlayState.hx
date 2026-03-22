@@ -60,6 +60,8 @@ class PlayState extends violet.backend.StateBackend {
 	public static var hasSeenCutscene:Bool = false;
 	public static var isStoryMode:Bool = false;
 
+	public var countdownEase:Float->Float = FlxEase.linear;
+
 	public var inCutscene = false;
 
 	#if SCRIPT_SUPPORT
@@ -105,7 +107,6 @@ class PlayState extends violet.backend.StateBackend {
 	public var countdownLength(default, set):Int = 4;
 	inline function set_countdownLength(value:Int):Int
 		return countdownLength = Std.int(Math.max(value, 1));
-
 	/**
 	 * States if the countdown has started.
 	 */
@@ -157,6 +158,7 @@ class PlayState extends violet.backend.StateBackend {
 		songData = new Song(song);
 		variation = songData.variant;
 		Conductor.playSong(songData.songName, songData.variant); Conductor.pause();
+		Conductor.offset = (countdownLength+1) * Conductor.beatLengthMs;
 		if (SONG.meta.needsVoices) generalVocals = Conductor.addAdditionalTrack(FlxG.sound.load(Cache.sound(Paths.vocal(songData.songName, null, PlayState.variation), 'root', null, true), FlxG.sound.defaultMusicGroup));
 		else generalVocals = Conductor.addAdditionalTrack(new FlxSound());
 		StrumLine.generalScrollSpeed = SONG.scrollSpeed ?? 1;
@@ -220,6 +222,11 @@ class PlayState extends violet.backend.StateBackend {
 		healthBar.y = Options.data.downscroll ? FlxG.height * 0.1 : FlxG.height * 0.9;
 		healthBar.screenCenter(X);
 		healthBar.camera = camHUD;
+		add(healthBar);
+
+		if (iconOpponent == null) iconOpponent = new HealthIcon('face'); // Null safety
+		if (iconPlayer == null) iconPlayer = new HealthIcon('face'); // Null safety
+
 		if (iconOpponent._data.color != null && Options.data.coloredHealthBar) {
 			healthBar.leftColor = iconOpponent._data.color;
 		} else {
@@ -230,7 +237,6 @@ class PlayState extends violet.backend.StateBackend {
 		} else {
 			healthBar.rightColor = FlxColor.LIME;
 		}
-		add(healthBar);
 
 		scoreTxt = new ScoreTxt();
 		scoreTxt.x = healthBar.x + healthBar.width - scoreTxt.width;
@@ -332,7 +338,6 @@ class PlayState extends violet.backend.StateBackend {
 
 	function onVoidTap(id:Int, strumLine:StrumLine) {
 		strumLine.strums.members[id].playStrumAnim('press', ghostTapping);
-		if (!Conductor.instrumental.playing) return;
 		if (!ghostTapping) {
 			FlxG.sound.play(Cache.sound('miss/${FlxG.random.int(1, 3)}'), 0.7);
 			for (char in strumLine.characters)
@@ -343,7 +348,8 @@ class PlayState extends violet.backend.StateBackend {
 	}
 
 	function onNoteHit(note:Note) {
-		if (!Conductor.instrumental.playing) return; if (note.wasHit) return;
+		if (!Conductor.instrumental.playing && note.parent.isComputer) return;
+		if (note.wasHit) return;
 		final event:NoteHitEvent = runSongEvent("noteHit", new NoteHitEvent(note));
 		if (event.cancelled) return;
 
@@ -371,7 +377,8 @@ class PlayState extends violet.backend.StateBackend {
 	}
 
 	function onNoteMissed(note:Note) {
-		if (!Conductor.instrumental.playing) return; if (note.wasMissed) return;
+		if (!Conductor.instrumental.playing && note.parent.isComputer) return;
+		if (note.wasMissed) return;
 
 		note.wasMissed = true; note.alpha *= 0.6;
 		generalVocals.pause(); note.parent.vocals.pause();
@@ -394,7 +401,8 @@ class PlayState extends violet.backend.StateBackend {
 	}
 
 	function onSustainHit(sustain:Sustain) {
-		if (!Conductor.instrumental.playing) return; if (sustain.wasHit && !sustain.parentNote.wasHit) return;
+		if (!Conductor.instrumental.playing && sustain.parent.isComputer) return;
+		if (sustain.wasHit && !sustain.parentNote.wasHit) return;
 		final event:SustainHitEvent = runSongEvent("sustainHit", new SustainHitEvent(sustain));
 		if (event.cancelled) return;
 
@@ -417,7 +425,8 @@ class PlayState extends violet.backend.StateBackend {
 	}
 
 	function onSustainMissed(sustain:Sustain) {
-		if (!Conductor.instrumental.playing) return; if (sustain.wasMissed) return;
+		if (!Conductor.instrumental.playing && sustain.parent.isComputer) return;
+		if (sustain.wasMissed) return;
 
 		sustain.wasMissed = true; sustain.alpha *= 0.6;
 		generalVocals.pause(); sustain.parent.vocals.pause();
@@ -445,7 +454,11 @@ class PlayState extends violet.backend.StateBackend {
 		var event:EventBase = songScripts.event("startCountdown", new EventBase());
 		event = songScripts.event("onStartCountdown", event);
 		if (event.cancelled) return;
+		countdownStarted = true;
 		tickCountdown();
+		FlxTween.num(0, Conductor.offset, ((countdownLength+1) * Conductor.beatLengthMs)/1000, { ease: countdownEase }, (v)->{
+			Conductor.offset = ((countdownLength+1) * Conductor.beatLengthMs) - v;
+		});
 	}
 
 	function tickCountdown() {
@@ -455,7 +468,7 @@ class PlayState extends violet.backend.StateBackend {
 			return;
 		}
 		countdownTimer = new FlxTimer().start(Conductor.beatLengthMs / 1000, _ -> {
-			if (countdownSounds[countdownTick] != null) FlxG.sound.play(Paths.sound('game/countdown/funkin/${countdownSounds[countdownTick]}'));
+			if (countdownSounds[countdownTick] != null) NovaUtils.playSound('game/countdown/funkin/${countdownSounds[countdownTick]}');
 			if (countdownSprites[countdownTick] != null) {
 				var countdownSprite:NovaSprite = new NovaSprite(Paths.image('game/countdown/funkin/${countdownSprites[countdownTick]}'));
 				countdownSprite.camera = camHUD;
@@ -591,6 +604,7 @@ class PlayState extends violet.backend.StateBackend {
 
 	override public function destroy():Void {
 		instance = null;
+		Conductor.offset = 0;
 		super.destroy();
 		for (i in SONG.events) i.ran = false;
 	}

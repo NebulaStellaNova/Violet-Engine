@@ -13,7 +13,7 @@ typedef AssetType = #if (flixel >= "5.9.0") flixel.system.frontEnds.AssetFrontEn
 #end
 
 class Paths {
-	public static #if release inline #end final ASSETS_FOLDER:String = "resources";
+	public static #if release inline #end final ASSETS_FOLDER:String = #if REDIRECT_ASSETS_FOLDER "../../../../assets" #else "resources" #end;
 
 	private static function notifyIfBlank(foundPath:String, targetPath:String, type:String) {
 		if (foundPath == "" && Path.withoutExtension(Path.withoutDirectory('$targetPath')) != 'null') {

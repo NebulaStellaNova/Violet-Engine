@@ -148,6 +148,8 @@ class Project extends HXProject {
 			return;
 		}
 
+		if (isDebug() && isWindows() && !hasDefine('action')) redirectAssetsFolder.enable();
+
 		if (isAndroid()) setupAndroid();
 
 		if (FileSystem.exists('./.haxelib'))

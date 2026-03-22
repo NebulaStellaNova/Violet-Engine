@@ -69,7 +69,7 @@ class Stage extends flixel.group.FlxGroup {
                     add(PlayState.instance.comboGroup);
 
                 case SOLID:
-                    var prop:StageProp = new StageProp(i.position[0], i.position[1], i.color);
+                    var prop:StageProp = new StageProp(i.position[0], i.position[1]);
                     prop.name = i.name;
                     prop.makeGraphic(1, 1, i.color);
                     prop.scale.set(i.width ?? 0, i.height ?? 0);

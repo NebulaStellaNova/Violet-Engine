@@ -21,7 +21,7 @@ class Cache {
 			for (item in Paths.readFolder(['sounds', i].join('/'))) {
 				final jointPath:String = [i, item].join('/');
 				sound(jointPath);
-				trace('debug:<cyan>Cached sound asset "<magenta>${Paths.sound(jointPath)}<cyan>"');
+				trace('debug:<cyan>Cached sound asset "<magenta>${Paths.sound(jointPath)#if REDIRECT_ASSETS_FOLDER .replace('../../../../', '') #end}<cyan>"');
 			}
 		}
 	}
