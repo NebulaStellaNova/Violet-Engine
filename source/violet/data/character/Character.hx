@@ -11,6 +11,11 @@ class Character extends violet.backend.objects.Bopper {
 	public var id:String;
 	public var _data:CharacterData;
 
+	public var name(get, never):String;
+	function get_name():String {
+		return '${_data.name}';
+	}
+
 	public var idleSuffix:String = null;
 
 	public var stagePosition:String;

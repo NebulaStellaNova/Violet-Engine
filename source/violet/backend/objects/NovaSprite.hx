@@ -35,6 +35,8 @@ class NovaSprite extends #if ANIMATE_SUPPORT FlxAnimate #else FlxSprite #end {
 
 	public var anims:Map<String, AnimationInfo> = new Map<String, AnimationInfo>();
 
+	public var animationIndex:Int = 0;
+
 	public var animationList(get, never):Array<String>;
 	function get_animationList() return [ for (i in this.anims.keys()) i ];
 
@@ -162,6 +164,15 @@ class NovaSprite extends #if ANIMATE_SUPPORT FlxAnimate #else FlxSprite #end {
 		} */
 		if (this.anim.exists(name)) {
 			this.anim.play(name, forced, reversed, frame);
+		}
+
+		var i = 0;
+		for (key in this.anims.keys()) {
+			if (key == name) {
+				animationIndex = i;
+				break;
+			}
+			i++;
 		}
 		if (this.anims.exists(name)) {
 			// TODO: Rodney, add animation offsets like how you did in your engine! -Rodney
