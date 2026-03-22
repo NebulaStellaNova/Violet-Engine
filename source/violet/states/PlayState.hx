@@ -282,14 +282,6 @@ class PlayState extends violet.backend.StateBackend {
 		callSongScripts("update", [elapsed]);
 		callSongScripts("onUpdate", [elapsed]);
 
-		if (countdownStarted && Conductor.offset != 0) {
-			if (Conductor.offset > 0) {
-				Conductor.offset -= elapsed * 1000;
-			} else {
-				Conductor.offset = 0;
-			}
-		}
-
 		camGame.zoom = camGameBase.zoom + camGameOffset.zoom;
 		for (i in cameraOffsets) camGame.zoom += i.zoom;
 
@@ -454,6 +446,9 @@ class PlayState extends violet.backend.StateBackend {
 		if (event.cancelled) return;
 		countdownStarted = true;
 		tickCountdown();
+		FlxTween.num(0, Conductor.offset, ((countdownLength+1) * Conductor.beatLengthMs)/1000, { ease: FlxEase.linear }, (v)->{
+			Conductor.offset = ((countdownLength+1) * Conductor.beatLengthMs) - v;
+		});
 	}
 
 	function tickCountdown() {
