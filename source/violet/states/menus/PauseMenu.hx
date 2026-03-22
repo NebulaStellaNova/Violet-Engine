@@ -67,7 +67,7 @@ class PauseMenu extends EditorListBackend {
         showLocks = false;
         super.create();
 
-        pauseMusicSound = FlxG.sound.play(Paths.sound(pauseMusic), 0);
+        pauseMusicSound = FlxG.sound.play(Cache.sound(pauseMusic), 0);
         pauseMusicSound.fadeIn(1, 0, 0.5);
 
         FlxTween.num(0, 0.6, 0.5, { ease: FlxEase.sineOut }, (v)->{ subCamera.bgColor.alphaFloat = v; });

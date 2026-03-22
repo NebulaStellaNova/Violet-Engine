@@ -60,6 +60,8 @@ class PlayState extends violet.backend.StateBackend {
 	public static var hasSeenCutscene:Bool = false;
 	public static var isStoryMode:Bool = false;
 
+	public var countdownEase:Float->Float = FlxEase.linear;
+
 	public var inCutscene = false;
 
 	#if SCRIPT_SUPPORT
@@ -342,6 +344,7 @@ class PlayState extends violet.backend.StateBackend {
 	}
 
 	function onNoteHit(note:Note) {
+		if (!Conductor.instrumental.playing && note.parent.isComputer) return;
 		if (note.wasHit) return;
 		final event:NoteHitEvent = runSongEvent("noteHit", new NoteHitEvent(note));
 		if (event.cancelled) return;
@@ -370,6 +373,7 @@ class PlayState extends violet.backend.StateBackend {
 	}
 
 	function onNoteMissed(note:Note) {
+		if (!Conductor.instrumental.playing && note.parent.isComputer) return;
 		if (note.wasMissed) return;
 
 		note.wasMissed = true; note.alpha *= 0.6;
@@ -393,6 +397,7 @@ class PlayState extends violet.backend.StateBackend {
 	}
 
 	function onSustainHit(sustain:Sustain) {
+		if (!Conductor.instrumental.playing && sustain.parent.isComputer) return;
 		if (sustain.wasHit && !sustain.parentNote.wasHit) return;
 		final event:SustainHitEvent = runSongEvent("sustainHit", new SustainHitEvent(sustain));
 		if (event.cancelled) return;
@@ -416,6 +421,7 @@ class PlayState extends violet.backend.StateBackend {
 	}
 
 	function onSustainMissed(sustain:Sustain) {
+		if (!Conductor.instrumental.playing && sustain.parent.isComputer) return;
 		if (sustain.wasMissed) return;
 
 		sustain.wasMissed = true; sustain.alpha *= 0.6;
@@ -446,7 +452,7 @@ class PlayState extends violet.backend.StateBackend {
 		if (event.cancelled) return;
 		countdownStarted = true;
 		tickCountdown();
-		FlxTween.num(0, Conductor.offset, ((countdownLength+1) * Conductor.beatLengthMs)/1000, { ease: FlxEase.linear }, (v)->{
+		FlxTween.num(0, Conductor.offset, ((countdownLength+1) * Conductor.beatLengthMs)/1000, { ease: countdownEase }, (v)->{
 			Conductor.offset = ((countdownLength+1) * Conductor.beatLengthMs) - v;
 		});
 	}
