@@ -187,7 +187,7 @@ class NovaSprite extends #if ANIMATE_SUPPORT FlxAnimate #else FlxSprite #end {
 		this.animation.remove(name);
 	}
 
-	public function addAnim(name:String, prefix:OneOfTwo<String, Array<Int>>, ?indices:Array<Int>, ?offsets:Array<Float>, fps:Int = 24, looped:Bool = false, label:Bool = true):Void {
+	public function addAnim(name:String, prefix:OneOfTwo<String, Array<Int>>, ?indices:Array<Int>, ?offsets:Array<Float>, fps:Int = 24, looped:Bool = false, label:Bool = true, flipX:Bool = false, flipY:Bool = false):Void {
 		// trace([name, '$prefix', (indices ?? []).toString(), (offsets ?? []).toString(), '$fps', '$looped', '$label'].join(", "));
 		if (Std.isOfType(prefix, Array)) {
 			this.animation.add(name, prefix, fps, looped);
@@ -196,25 +196,25 @@ class NovaSprite extends #if ANIMATE_SUPPORT FlxAnimate #else FlxSprite #end {
 			// trace(prefix);
 			if (label) {
 				if (indices == null || indices.length == 0)
-					this.anim.addByFrameLabel(name, prefix, fps, looped);
-				else this.anim.addByFrameLabelIndices(name, prefix, indices, fps, looped);
+					this.anim.addByFrameLabel(name, prefix, fps, looped, flipX, flipY);
+				else this.anim.addByFrameLabelIndices(name, prefix, indices, fps, looped, flipX, flipY);
 			} else {
 				if (indices == null || indices.length == 0)
-					this.anim.addBySymbol(name, prefix, fps, looped);
-				else this.anim.addBySymbolIndices(name, prefix, indices, fps, looped);
+					this.anim.addBySymbol(name, prefix, fps, looped, flipX, flipY);
+				else this.anim.addBySymbolIndices(name, prefix, indices, fps, looped, flipX, flipY);
 			}
 			#end
 		} else {
 			prefix += "0";
 			if (indices == null || indices.length == 0)
-				this.animation.addByPrefix(name, prefix, fps, looped);
-			else this.animation.addByIndices(name, prefix, indices, "", fps, looped);
+				this.animation.addByPrefix(name, prefix, fps, looped, flipX, flipY);
+			else this.animation.addByIndices(name, prefix, indices, "", fps, looped, flipX, flipY);
 		}
 		this.anims.set(name, {offset: offsets != null ? [-offsets[0] ?? 0, -offsets[1] ?? 0] : [0, 0]});
 	}
 
 	public function addAnimFromData(data:AnimationData):Void {
-		addAnim(data.name, data.prefix, data.frameIndices, data.offsets, data.frameRate, data.looped, data.byLabel);
+		addAnim(data.name, data.prefix, data.frameIndices, data.offsets, data.frameRate, data.looped, data.byLabel, data.flipX, data.flipY);
 	}
 
 	public function addFrames(path:String):Void {

@@ -28,6 +28,8 @@ import lemonui.utils.ElementUtil;
 import violet.backend.StateBackend;
 
 using violet.backend.utils.MathUtil;
+using violet.backend.utils.AnimationUtil;
+
 
 typedef CameraTarget = {
     var x:Float;
@@ -61,9 +63,15 @@ class CharacterEditorState extends StateBackend {
     public var yOffsetStepper:NumericStepper;
     public var characterDropdown:Dropdown;
     public var animationDropdown:Dropdown;
-    public var prefixField:TextInput;
     public var fpsStepper:NumericStepper;
+    public var assetPathField:TextInput;
+    public var indicesField:TextInput;
+    public var prefixField:TextInput;
+    public var animFlipX:Tickbox;
+    public var animFlipY:Tickbox;
+    public var loopedBox:Tickbox;
     public var ghostBox:Tickbox;
+    public var byLabel:Tickbox;
 
     public function new() {
         super();
@@ -101,11 +109,17 @@ class CharacterEditorState extends StateBackend {
 
         animationDropdown = characterWindow.findElement('animationDropdown');
         characterDropdown = characterWindow.findElement('characterDropdown');
+        indicesField = characterWindow.findElement('frameIndices');
+        assetPathField = characterWindow.findElement('assetPath');
         xOffsetStepper = characterWindow.findElement('xOffset');
         yOffsetStepper = characterWindow.findElement('yOffset');
         prefixField = characterWindow.findElement('prefixField');
         fpsStepper = characterWindow.findElement('fpsStepper');
+        animFlipX = characterWindow.findElement('animFlipX');
+        animFlipY = characterWindow.findElement('animFlipY');
+        loopedBox = characterWindow.findElement('isLooped');
         ghostBox = characterWindow.findElement('isGhost');
+        byLabel = characterWindow.findElement('byLabel');
         characterDropdown.onChange = function(v:Int, v2:String) {
             if (character != null) remove(character);
             if (ghost != null) remove(ghost);
@@ -149,6 +163,12 @@ class CharacterEditorState extends StateBackend {
                 for (i in animationList) {
                     if (i.name == label) {
                         prefixField.text = i.prefix;
+                        loopedBox.checked = i.looped;
+                        animFlipX.checked = i.flipX;
+                        animFlipY.checked = i.flipY;
+                        byLabel.checked = i.byLabel ?? false;
+                        assetPathField.text = i.assetPath ?? "";
+                        indicesField.text = i.frameIndices.indiciesToString();
                         fpsStepper.value = i.frameRate;
                         xOffsetStepper.value = i.offsets[0];
                         yOffsetStepper.value = i.offsets[1];
@@ -157,6 +177,47 @@ class CharacterEditorState extends StateBackend {
 
                 prefixField.onSubmit = function(value:String) {
                     selectedAnimation.prefix = value;
+                    refreshAnimations();
+                }
+
+                assetPathField.onChange = function(value:String) {
+                    assetPathField.elementColor = 0xFF3d3f41;
+
+                    if (value == "") {
+                        selectedAnimation.assetPath = null;
+                        refreshAnimations();
+                        return;
+                    }
+                    if (Paths.image(value) != "") {
+                        selectedAnimation.assetPath = value;
+                        refreshAnimations();
+                    } else {
+                        assetPathField.elementColor = 0xff751b1b;
+                    }
+                }
+
+                indicesField.onChange = function(value:String) {
+                    selectedAnimation.frameIndices = value.stringToIndices();
+                    refreshAnimations();
+                }
+
+                loopedBox.onChange = function(value:Bool) {
+                    selectedAnimation.looped = value;
+                    refreshAnimations();
+                }
+
+                animFlipX.onChange = function(value:Bool) {
+                    selectedAnimation.flipX = value;
+                    refreshAnimations();
+                }
+
+                animFlipY.onChange = function(value:Bool) {
+                    selectedAnimation.flipY = value;
+                    refreshAnimations();
+                }
+
+                byLabel.onChange = function(value:Bool) {
+                    selectedAnimation.byLabel = value;
                     refreshAnimations();
                 }
 
@@ -268,6 +329,8 @@ class CharacterEditorState extends StateBackend {
     }
     override function update(elapsed:Float) {
         super.update(elapsed);
+
+        if (ElementUtil.anythingFocused) return;
 
         var movement:Int = FlxG.keys.pressed.SHIFT ? 20 : 5;
         cameraTarget.x += FlxG.keys.pressed.A ? -movement : FlxG.keys.pressed.D ? movement : 0;

@@ -1,17 +1,23 @@
 <vbox spacing="10" id="box">
     <tabpanel id="panel1" height="200">
-        <tab text="T" id="tab1">
+        <tab name="Character" id="tab1">
             <dropdown id="characterDropdown" x="15" label="Character:" y="15"/>
         </tab>
     </tabpanel>
-    <tabpanel id="panel2">
-        <tab text="Animations">
-            <textinput id="prefixField" label="Prefix:" x="15" y="110"/>
-            <tickbox id="isGhost" x="15" y="70" label="isGhost"/>
-            <numericstepper id="fpsStepper" label="FPS:" x="15" y="160"/>
-                <numericstepper id="xOffset" label="Offset X:" x="15" y="220" min="-1000"/>
-                <numericstepper id="yOffset" label="Offset Y:" x="120" y="220" min="-1000"/>
-            <dropdown id="animationDropdown" x="15" label="Animations:" y="15"/>
+    <tabpanel id="panel2" >
+        <tab name="Animations">
+            <tickbox id="isGhost" x="15" y="65" label="isGhost"/>
+            <textinput id="prefixField" label="Prefix:" x="15" y="95"/>
+            <numericstepper id="fpsStepper" label="FPS:" x="180" y="95"/>
+            <numericstepper id="xOffset" label="Offset X:" x="15" y="150" min="-1000"/>
+            <numericstepper id="yOffset" label="Offset Y:" x="120" y="150" min="-1000"/>
+            <tickbox id="isLooped" x="15" y="205" label="Looping"/>
+            <tickbox id="byLabel" x="115" y="205" label="By Label* (Atlases)" tooltip="Test"/>
+            <tickbox id="animFlipX" x="15" y="235" label="Flip X"/>
+            <tickbox id="animFlipY" x="115" y="235" label="Flip Y"/>
+            <textinput id="frameIndices" label="Indices:" x="15" y="265" fieldWidth="270"/>
+            <textinput id="assetPath" label="Asset Path: (Leave Blank To Use Global)" x="15" y="315" fieldWidth="270"/>
+            <dropdown id="animationDropdown" x="15" label="Animations:" y="10"/>
         </tab>
     </tabpanel>
 </vbox>
