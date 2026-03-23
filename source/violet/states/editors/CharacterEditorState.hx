@@ -264,7 +264,7 @@ class CharacterEditorState extends StateBackend {
             var data = {
                 version: "1.0.0",
                 name: character.name,
-                animations: animationList
+                animations: animationList,
                 flipX: character._data.flipX,
                 scale: character._data.scale,
                 isPixel: character._data.isPixel,
@@ -275,7 +275,7 @@ class CharacterEditorState extends StateBackend {
                 offsets: character._data.offsets ?? [0, 0],
                 deathCharacter: character._data.deathCharacter,
                 startingAnimation: character._data.startingAnimation,
-                cameraOffsets: character._data.cameraOffsets ?? [0, 0],
+                cameraOffsets: character._data.cameraOffsets ?? [0, 0]
             };
             Yaml.write(path, data);
         });
