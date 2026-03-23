@@ -1,105 +1,150 @@
-version: 1.0.0
-offsets:
-  - 50
-  - -80
-danceEvery: 2
-scale: 1
-name: Tankman
-flipX: true
-cameraOffsets:
-  - 0
-  - 0
-singTime: 8
-startingAnimation: idle
-isPixel: false
-assetPath: characters/tankmanCaptain
-healthIcon: tankman
-animations:
-  - flipY: false
-    offsets:
-      - 0
-      - 0
-    frameRate: 24
+animations: 
+  - frameIndices: []
     prefix: Tankman Idle Dance
-    flipX: false
-    name: idle
-  - flipY: false
-    offsets:
-      - -90
-      - -13
-    frameRate: 24
-    prefix: Tankman Right Note
-    flipX: false
-    name: singLEFT
-  - flipY: false
-    offsets:
-      - 63
-      - -105
-    frameRate: 24
-    prefix: Tankman DOWN note
-    flipX: false
-    name: singDOWN
-  - flipY: false
-    offsets:
+    assetPath: null
+    offsets: 
       - 0
-      - 50
+      - 0
+    flipX: false
+    flipY: false
     frameRate: 24
+    name: idle
+    byLabel: true
+    looped: false
+  - frameIndices: []
+    prefix: Tankman Right Note
+    assetPath: null
+    offsets: 
+      - -26
+      - -12
+    flipX: false
+    flipY: false
+    frameRate: 24
+    name: singLEFT
+    byLabel: true
+    looped: false
+  - frameIndices: []
+    prefix: Tankman DOWN note
+    assetPath: null
+    offsets: 
+      - 72
+      - -107
+    flipX: false
+    flipY: false
+    frameRate: 24
+    name: singDOWN
+    byLabel: true
+    looped: false
+  - frameIndices: []
     prefix: Tankman UP note
+    assetPath: null
+    offsets: 
+      - 27
+      - 50
     flipX: false
-    name: singUP
-  - flipY: false
-    offsets:
-      - 68
-      - -23
+    flipY: false
     frameRate: 24
+    name: singUP
+    byLabel: true
+    looped: false
+  - frameIndices: []
     prefix: Tankman Note Left
+    assetPath: null
+    offsets: 
+      - 98
+      - -30
     flipX: false
+    flipY: false
+    frameRate: 24
     name: singRIGHT
-  - flipY: false
-    offsets:
+    byLabel: true
+    looped: false
+  - frameIndices: []
+    prefix: PRETTY GOOD tankman
+    assetPath: null
+    offsets: 
       - 98
       - 16
-    frameRate: 24
-    prefix: PRETTY GOOD tankman
     flipX: false
-    name: good!
-  - flipY: false
-    offsets:
-      - -20
-      - -10
+    flipY: false
     frameRate: 24
+    name: "good!"
+    byLabel: true
+    looped: false
+  - frameIndices: []
     prefix: TANKMAN UGH
+    assetPath: null
+    offsets: 
+      - -14
+      - -10
     flipX: false
-    name: singUP-alt
-  - flipY: false
-    offsets:
-      - -13
-      - -9
+    flipY: false
     frameRate: 24
+    name: "singUP-alt"
+    byLabel: true
+    looped: false
+  - frameIndices: []
     prefix: tankman laugh
-    flipX: true
     assetPath: characters/tankmanPico
-    name: laugh
-  - flipY: false
-    offsets:
-      - -90
-      - -9
+    offsets: 
+      - -18
+      - 13
+    flipX: true
+    flipY: false
     frameRate: 24
+    name: laugh
+    byLabel: true
+    looped: false
+  - frameIndices: []
     prefix: tankman beat it
     assetPath: characters/tankmanPico
+    offsets: 
+      - -9
+      - -13
     flipX: true
-    name: beat it
-  - flipY: false
-    offsets:
-      - -52
-      - -6
+    flipY: false
     frameRate: 24
+    name: beat it
+    byLabel: true
+    looped: false
+  - frameIndices: []
     prefix: tankman ARGH
     assetPath: characters/tankmanPico
+    offsets: 
+      - 21
+      - 2
     flipX: true
+    flipY: false
+    frameRate: 24
     name: augh
-
-  - name: ugh-cutscene
+    byLabel: true
+    looped: false
+  - frameIndices: []
     prefix: TANK TALK 1 P1
     assetPath: characters/tankmanPico
-    offsets: [0, 0]
+    offsets: 
+      - 0
+      - 0
+    flipX: false
+    flipY: false
+    frameRate: 24
+    name: "ugh-cutscene"
+    byLabel: true
+    looped: false
+assetPath: characters/tankmanCaptain
+offsets: 
+  - 50
+  - -80
+cameraOffsets: 
+  - 0
+  - 0
+deathCharacter: null
+healthIcon: tankman
+flipX: true
+danceEvery: 2
+singTime: 8
+name: Tankman
+isPixel: false
+startingAnimation: idle
+scale: 1
+version: 1.0.0
