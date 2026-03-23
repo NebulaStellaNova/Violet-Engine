@@ -236,7 +236,7 @@ class Controls {
 	 * @return Bool
 	 */
 	inline public static function pressed(key:String):Bool
-		return FlxG.keys.anyJustPressed(bindCheck(key));
+		return bindCheck(key) != [] ? FlxG.keys.anyJustPressed(bindCheck(key)) : false;
 	/**
 	 * Held input.
 	 * @param key The key name.
@@ -252,8 +252,14 @@ class Controls {
 	inline public static function released(key:String):Bool
 		return FlxG.keys.anyJustReleased(bindCheck(key));
 
-	inline static function bindCheck(key:String):Array<FlxKey>
-		return active && bindMap.exists(key) ? bindMap.get(key) : [];
+	inline static function bindCheck(key:String):Array<FlxKey> {
+		var reses = [];
+		return (active && bindMap.exists(key) ? bindMap.get(key) : []).filter((f) -> {
+			var out = !reses.contains(f);
+			reses.push(f);
+			return out;
+		});
+	}
 
 	/**
 	 * States whether that inputs will work.
