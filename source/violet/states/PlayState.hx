@@ -4,6 +4,7 @@ import violet.states.menus.MainMenu;
 import violet.states.menus.FreeplayMenu;
 import violet.backend.utils.NovaUtils;
 import violet.backend.utils.ScoreUtil;
+import violet.backend.objects.NovaCamera;
 import violet.data.song.Song;
 import violet.backend.objects.play.ComboGroup;
 import flixel.FlxCamera;
@@ -69,7 +70,7 @@ class PlayState extends violet.backend.StateBackend {
 	#end
 
 	public var camHUD:FlxCamera;
-	public var camGame:FlxCamera;
+	public var camGame:NovaCamera;
 
 	public var stage:Stage;
 	public var characters:Array<Character> = [];
@@ -125,7 +126,7 @@ class PlayState extends violet.backend.StateBackend {
 		instance = this;
 		inCutscene = false;
 
-		FlxG.cameras.reset(camGame = new FlxCamera());
+		FlxG.cameras.reset(camGame = new NovaCamera());
 		camHUD = new FlxCamera();
 		camHUD.bgColor = FlxColor.TRANSPARENT;
 		FlxG.cameras.add(camHUD, false);
@@ -220,8 +221,8 @@ class PlayState extends violet.backend.StateBackend {
 
 		healthBar = new HealthBar();
 		healthBar.y = Options.data.downscroll ? FlxG.height * 0.1 : FlxG.height * 0.9;
-		healthBar.screenCenter(X);
 		healthBar.camera = camHUD;
+		healthBar.screenCenter(X);
 		add(healthBar);
 
 		if (iconOpponent == null) iconOpponent = new HealthIcon('face'); // Null safety

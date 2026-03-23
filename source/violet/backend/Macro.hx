@@ -12,6 +12,7 @@ class Macro {
 		Compiler.addMetadata('@:build(violet.backend.Macro.buildFlxSprite())', 'flixel.FlxSprite');
 		Compiler.addMetadata('@:build(violet.backend.Macro.buildFlxTypedGroup())', 'flixel.group.FlxTypedGroup');
 		Compiler.addMetadata('@:build(violet.backend.Macro.buildFlxSpriteGroup())', 'flixel.group.FlxTypedSpriteGroup');
+		Compiler.addMetadata('@:build(violet.backend.Macro.buildFlxCamera())', 'flixel.FlxCamera');
 		Compiler.addMetadata('@:build(violet.backend.VarTweenMacro.init())', 'flixel.tweens.misc.VarTween');
 		#if SCRIPT_SUPPORT
 		Compiler.include('violet', true);
@@ -19,6 +20,25 @@ class Macro {
 		Compiler.include('flixel', true, ['flixel.addons.editors.spine.*', 'flixel.addons.nape.*', 'flixel.system.macros.*', 'flixel.addons.tile.FlxRayCastTilemap', 'flixel.addons.weapon.*']);
 		#end
 		Compiler.include('moonchart', true, ['moonchart.backend.*']); // force include, no matter what
+	}
+
+	public static macro function buildFlxCamera():Array<Field> {
+		var classFields:Array<Field> = Context.getBuildFields();
+		var tempClass = macro class TempClass {
+			/**
+			 * Adds a FlxShader as a filter to the camera
+			 * @param shader Shader to add
+			 * @return ShaderFilter
+			 */
+			public function addShader(shader:FlxShader) {
+				var filter:openfl.filters.ShaderFilter = null;
+				if (filters == null) filters = [];
+				filters.push(filter = new openfl.filters.ShaderFilter(shader));
+				return filter;
+			}
+		}
+
+		return classFields.concat(tempClass.fields);
 	}
 
 	public static macro function buildFlxBasic():Array<Field> {

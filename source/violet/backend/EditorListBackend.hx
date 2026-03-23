@@ -65,9 +65,10 @@ class EditorListBackend extends violet.backend.SubStateBackend {
         if (loadBG) {
             bg = new NovaSprite(Paths.image("menus/mainmenu/menuBGdesat"));
             bg.setGraphicSize(FlxG.width + offset, FlxG.height + offset);
+            bg.scale.x = bg.scale.y;
+            bg.camera = subCamera;
             bg.updateHitbox();
             bg.screenCenter();
-            bg.camera = subCamera;
             bg.scrollFactor.set(0, 1/(options.length-1));
             bg.color = FlxColor.interpolate(FlxColor.CYAN, FlxColor.BLUE);
             add(bg);

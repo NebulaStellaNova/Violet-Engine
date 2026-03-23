@@ -11,6 +11,9 @@
         <menu-item id="exitToMenu" text="Exit To Menu" shortcutText="Ctrl+Q" />
     </menu>
 
+    <text text="Violet Engine Character Editor" x="1040" y="4"/>
+    <button text="Powered By LemonUI" width="150" y="680" height="40" onClick="https://github.com/NebulaStellaNova/LemonUI"/>
+
     <!-- <menu text="Edit">
         <menu-item id="editHealthIcon" text="Edit Health Icon" />
         <menu-item id="editCopyOffests" text="Copy Offsets" shortcutText="Ctrl+C" />
