@@ -341,6 +341,14 @@ class CharacterEditorState extends StateBackend {
 
         if (FlxG.keys.justPressed.SPACE) character.playAnim(character.animation.name, true);
 
+        if (FlxG.keys.justPressed.I) {
+            animationDropdown.selectedIndex -= 1;
+            animationDropdown.onChange(animationDropdown.selectedIndex, animationDropdown.options[animationDropdown.selectedIndex]);
+        } else if (FlxG.keys.justPressed.K) {
+            animationDropdown.selectedIndex += 1;
+            animationDropdown.onChange(animationDropdown.selectedIndex, animationDropdown.options[animationDropdown.selectedIndex]);
+        }
+
         charCamera.scroll.pointLerp(cameraTarget.x, 0.1, x);
         charCamera.scroll.pointLerp(cameraTarget.y, 0.1, y);
         charCamera.zoom = charCamera.zoom.lerp(cameraTarget.zoom, 0.1);
