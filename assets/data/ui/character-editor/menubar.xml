@@ -3,29 +3,29 @@
     <menu text="File">
         <!-- <menu-separator /> -->
         <menu-item id="saveCharacter" text="Save" shortcutText="Ctrl+S" />
-        <menu-item id="saveFilePsych" text="Save for Psych Engine" disabled="true" />
-        <menu-item id="saveFileCNE" text="Save for Codename Engine" disabled="true" />
+        <!-- <menu-item id="saveFilePsych" text="Save for Psych Engine" disabled="true" /> -->
+        <!-- <menu-item id="saveFileCNE" text="Save for Codename Engine" disabled="true" /> -->
         <!-- <menu-separator /> -->
         <!-- <menu-item id="deleteCharacter" text="Delete Character" style="color: indianred"/>
         <menu-separator /> -->
         <menu-item id="exitToMenu" text="Exit To Menu" shortcutText="Ctrl+Q" />
     </menu>
 
-    <menu text="Edit">
+    <!-- <menu text="Edit">
         <menu-item id="editHealthIcon" text="Edit Health Icon" />
         <menu-item id="editCopyOffests" text="Copy Offsets" shortcutText="Ctrl+C" />
         <menu-item id="editPasteOffsets" text="Paste Offsets" shortcutText="Ctrl+V" />
         <menu-item id="editClearOffsets" text="Clear Offsets" />
-        <!-- <menu-separator /> -->
+        <!- <menu-separator /> ->
         <menu-item id="editNewAnimation" text="New Animation" shortcutText="Ctrl+Shift+N" />
         <menu-item id="editDeleteAnimation" text="Delete Animation" shortcutText="Ctrl+Del" />
         <menu-item id="editDuplicateAnimation" text="Duplicate Animation" shortcutText="Ctrl+D" />
-        <!-- <menu-separator /> -->
+        <!- <menu-separator /> ->
         <menu-item id="editClearAllOffsets" text="Clear All Animation Offsets"
             shortcutText="Ctrl+Shift+Del" />
     </menu>
 
     <menu text="View">
         <menu-item id="viewResetZoom" text="Reset Zoom" shortcutText="Ctrl+R" />
-    </menu>
+    </menu> -->
 </menubar>
