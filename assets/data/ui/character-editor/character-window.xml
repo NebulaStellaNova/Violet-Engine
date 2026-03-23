@@ -6,8 +6,12 @@
     </tabpanel>
     <tabpanel id="panel2">
         <tab text="Animations">
+            <textinput id="prefixField" label="Prefix:" x="15" y="110"/>
             <tickbox id="isGhost" x="15" y="70" label="isGhost"/>
-            <dropdown id="animationDropdown" x="15" label="Aniamtions:" y="15"/>
+            <numericstepper id="fpsStepper" label="FPS:" x="15" y="160"/>
+                <numericstepper id="xOffset" label="Offset X:" x="15" y="220" min="-1000"/>
+                <numericstepper id="yOffset" label="Offset Y:" x="120" y="220" min="-1000"/>
+            <dropdown id="animationDropdown" x="15" label="Animations:" y="15"/>
         </tab>
     </tabpanel>
 </vbox>

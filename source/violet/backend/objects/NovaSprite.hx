@@ -181,6 +181,12 @@ class NovaSprite extends #if ANIMATE_SUPPORT FlxAnimate #else FlxSprite #end {
 		}
 	}
 
+	public function removeAnim(name:String) {
+		this.anim.remove(name);
+		this.anims.remove(name);
+		this.animation.remove(name);
+	}
+
 	public function addAnim(name:String, prefix:OneOfTwo<String, Array<Int>>, ?indices:Array<Int>, ?offsets:Array<Float>, fps:Int = 24, looped:Bool = false, label:Bool = true):Void {
 		// trace([name, '$prefix', (indices ?? []).toString(), (offsets ?? []).toString(), '$fps', '$looped', '$label'].join(", "));
 		if (Std.isOfType(prefix, Array)) {

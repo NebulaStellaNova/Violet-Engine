@@ -1,44 +1,119 @@
+animations:
+  - frameIndices: []
+    prefix: BF idle dance
+    assetPath: null
+    offsets:
+      - -5
+      - 0
+    flipX: false
+    flipY: false
+    frameRate: 24
+    name: idle
+    byLabel: true
+    looped: false
+  - frameIndices: []
+    prefix: BF NOTE LEFT0
+    assetPath: null
+    offsets:
+      - 4
+      - -6
+    flipX: false
+    flipY: false
+    frameRate: 24
+    name: singLEFT
+    byLabel: true
+    looped: false
+  - frameIndices: []
+    prefix: BF NOTE DOWN0
+    assetPath: null
+    offsets:
+      - -29
+      - -48
+    flipX: false
+    flipY: false
+    frameRate: 24
+    name: singDOWN
+    byLabel: true
+    looped: false
+  - frameIndices: []
+    prefix: BF NOTE UP0
+    assetPath: null
+    offsets:
+      - -46
+      - 31
+    flipX: false
+    flipY: false
+    frameRate: 24
+    name: singUP
+    byLabel: true
+    looped: false
+  - frameIndices: []
+    prefix: BF NOTE RIGHT0
+    assetPath: null
+    offsets:
+      - -50
+      - -5
+    flipX: false
+    flipY: false
+    frameRate: 24
+    name: singRIGHT
+    byLabel: true
+    looped: false
+  - frameIndices: []
+    prefix: BF NOTE LEFT MISS
+    assetPath: null
+    offsets:
+      - 12
+      - 24
+    flipX: false
+    flipY: false
+    frameRate: 24
+    name: singLEFTmiss
+    byLabel: true
+    looped: false
+  - frameIndices: []
+    prefix: BF NOTE UP MISS
+    assetPath: null
+    offsets:
+      - -29
+      - 27
+    flipX: false
+    flipY: false
+    frameRate: 24
+    name: singDOWNmiss
+    byLabel: true
+    looped: false
+  - frameIndices: []
+    prefix: BF NOTE RIGHT MISS
+    assetPath: null
+    offsets:
+      - -30
+      - 21
+    flipX: false
+    flipY: false
+    frameRate: 24
+    name: singRIGHTmiss
+    byLabel: true
+    looped: false
+  - frameIndices: []
+    prefix: "BF HEY!!"
+    assetPath: null
+    offsets:
+      - 7
+      - 4
+    flipX: false
+    flipY: false
+    frameRate: 24
+    name: hey
+    byLabel: true
+    looped: false
+assetPath: characters/BOYFRIEND
+offsets:
+  - 0
+  - -80
+cameraOffsets:
+  - 0
+  - -80
+flipX: true
 name: Boyfriend
 version: 1.0.0
-assetPath: characters/BOYFRIEND
-flipX: true
-singTime: 8.0
-healthIcon: bf
-offsets: [0, -80]
-cameraOffsets: [0, -80]
-animations:
-- name: idle
-  prefix: BF idle dance
-  offsets: [-5, 0]
-
-- name: singLEFT
-  prefix: BF NOTE LEFT0
-  offsets: [12, -6]
-
-- name: singDOWN
-  prefix: BF NOTE DOWN0
-  offsets: [-10, -50]
-
-- name: singUP
-  prefix: BF NOTE UP0
-  offsets: [-29, 27]
-
-- name: singRIGHT
-  prefix: BF NOTE RIGHT0
-  offsets: [-38, -7]
-
-- name: singLEFTmiss
-  prefix: BF NOTE LEFT MISS
-  offsets: [12, 24]
-
-- name: singDOWNmiss
-  prefix: BF NOTE UP MISS
-  offsets: [-29, 27]
-
-- name: singRIGHTmiss
-  prefix: BF NOTE RIGHT MISS
-  offsets: [-30, 21]
-
-- name: hey
-  prefix: BF HEY!!
-  offsets: [7, 4]
