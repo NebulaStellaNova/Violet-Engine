@@ -110,4 +110,23 @@ class Character extends violet.backend.objects.Bopper {
 		if (beat % danceEvery == 0 && !isSinging && canDance)
 			dance(true);
 	}
+
+	public function cloneData():Dynamic {
+		return {
+			version: "1.0.0",
+			name: '${_data.name}', // p sure I don't gotta do this but just bein safe
+			animations: (_data.animations ?? []).copy(),
+			flipX: _data.flipX,
+			scale: _data.scale,
+			isPixel: _data.isPixel,
+			singTime: _data.singTime,
+			assetPath: _data.assetPath,
+			danceEvery: _data.danceEvery,
+			healthIcon: _data.healthIcon,
+			offsets: (_data.offsets ?? [0, 0]).copy(),
+			deathCharacter: _data.deathCharacter,
+			startingAnimation: _data.startingAnimation,
+			cameraOffsets: (_data.cameraOffsets ?? [0, 0]).copy()
+		}
+	}
 }

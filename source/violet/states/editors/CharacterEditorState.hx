@@ -261,22 +261,8 @@ class CharacterEditorState extends StateBackend {
     public function save() {
         FileUtil.openSaveDialog("Test", FileUtil.characterFilter, (path:String)->{
             if (FileSystem.exists(path)) FileSystem.deleteFile(path);
-            var data = {
-                version: "1.0.0",
-                name: character.name,
-                animations: animationList,
-                flipX: character._data.flipX,
-                scale: character._data.scale,
-                isPixel: character._data.isPixel,
-                singTime: character._data.singTime,
-                assetPath: character._data.assetPath,
-                danceEvery: character._data.danceEvery,
-                healthIcon: character._data.healthIcon,
-                offsets: character._data.offsets ?? [0, 0],
-                deathCharacter: character._data.deathCharacter,
-                startingAnimation: character._data.startingAnimation,
-                cameraOffsets: character._data.cameraOffsets ?? [0, 0]
-            };
+            var data = character.cloneData();
+            data.animations = animationList;
             Yaml.write(path, data);
         });
     }
