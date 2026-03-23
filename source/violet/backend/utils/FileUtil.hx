@@ -9,7 +9,7 @@ class FileUtil {
 
 	public static var characterFilter(get, never):Array<String>;
 	static function get_characterFilter():Array<String> {
-		return ['*.yaml'];
+		return ['*.yaml', '*.yml'];
 	}
 
 	inline public static function getFileContent(path:String):String {
