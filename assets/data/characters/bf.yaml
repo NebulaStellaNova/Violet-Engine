@@ -3,117 +3,124 @@ animations:
     prefix: BF idle dance
     assetPath: null
     offsets:
-      - -5
+      - -47
       - 0
     flipX: false
     flipY: false
     frameRate: 24
     name: idle
-    byLabel: true
+    byLabel: false
     looped: false
   - frameIndices: []
-    prefix: BF NOTE LEFT0
+    prefix: BF NOTE LEFT
     assetPath: null
     offsets:
-      - 4
-      - -6
+      - -45
+      - 2
     flipX: false
     flipY: false
     frameRate: 24
     name: singLEFT
-    byLabel: true
+    byLabel: false
     looped: false
   - frameIndices: []
-    prefix: BF NOTE DOWN0
+    prefix: BF NOTE DOWN
     assetPath: null
     offsets:
-      - -29
-      - -48
+      - -67
+      - -42
     flipX: false
     flipY: false
     frameRate: 24
     name: singDOWN
-    byLabel: true
+    byLabel: false
     looped: false
   - frameIndices: []
-    prefix: BF NOTE UP0
+    prefix: BF NOTE UP
     assetPath: null
     offsets:
-      - -46
-      - 31
+      - -61
+      - 65
     flipX: false
     flipY: false
     frameRate: 24
     name: singUP
-    byLabel: true
+    byLabel: false
     looped: false
   - frameIndices: []
-    prefix: BF NOTE RIGHT0
+    prefix: BF NOTE RIGHT
     assetPath: null
     offsets:
-      - -50
-      - -5
+      - -95
+      - 7
     flipX: false
     flipY: false
     frameRate: 24
     name: singRIGHT
-    byLabel: true
+    byLabel: false
     looped: false
   - frameIndices: []
     prefix: BF NOTE LEFT MISS
     assetPath: null
     offsets:
+      - -46
       - 12
-      - 24
     flipX: false
     flipY: false
     frameRate: 24
     name: singLEFTmiss
-    byLabel: true
+    byLabel: false
     looped: false
   - frameIndices: []
     prefix: BF NOTE UP MISS
     assetPath: null
     offsets:
-      - -29
-      - 27
+      - -71
+      - 62
     flipX: false
     flipY: false
     frameRate: 24
     name: singDOWNmiss
-    byLabel: true
+    byLabel: false
     looped: false
   - frameIndices: []
     prefix: BF NOTE RIGHT MISS
     assetPath: null
     offsets:
-      - -30
-      - 21
+      - -88
+      - 16
     flipX: false
     flipY: false
     frameRate: 24
     name: singRIGHTmiss
-    byLabel: true
+    byLabel: false
     looped: false
   - frameIndices: []
     prefix: "BF HEY!!"
     assetPath: null
     offsets:
-      - 7
-      - 4
+      - -49
+      - 9
     flipX: false
     flipY: false
     frameRate: 24
     name: hey
-    byLabel: true
+    byLabel: false
     looped: false
-assetPath: characters/BOYFRIEND
+assetPath: characters/bf
 offsets:
   - 0
   - -80
 cameraOffsets:
   - 0
-  - -80
+  - 0
+deathCharacter: null
+healthIcon: bf
 flipX: true
+danceEvery: null
+singTime: null
 name: Boyfriend
+isPixel: null
+startingAnimation: null
+scale: null
 version: 1.0.0

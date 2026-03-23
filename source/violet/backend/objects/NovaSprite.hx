@@ -22,6 +22,7 @@ import animate.FlxAnimateController;
 
 typedef AnimationInfo = {
 	var offset:Array<Float>;
+	var byLabel:Bool;
 }
 
 class NovaSprite extends #if ANIMATE_SUPPORT FlxAnimate #else FlxSprite #end {
@@ -36,6 +37,9 @@ class NovaSprite extends #if ANIMATE_SUPPORT FlxAnimate #else FlxSprite #end {
 	public var anims:Map<String, AnimationInfo> = new Map<String, AnimationInfo>();
 
 	public var animationIndex:Int = 0;
+
+	public var currentByLabel(get, never):Bool;
+	function get_currentByLabel() { return (anims.get(animation.name)?.byLabel) ?? true; }
 
 	public var animationList(get, never):Array<String>;
 	function get_animationList() return [ for (i in this.anims.keys()) i ];
@@ -210,7 +214,7 @@ class NovaSprite extends #if ANIMATE_SUPPORT FlxAnimate #else FlxSprite #end {
 				this.animation.addByPrefix(name, prefix, fps, looped, flipX, flipY);
 			else this.animation.addByIndices(name, prefix, indices, "", fps, looped, flipX, flipY);
 		}
-		this.anims.set(name, {offset: offsets != null ? [-offsets[0] ?? 0, -offsets[1] ?? 0] : [0, 0]});
+		this.anims.set(name, {offset: offsets != null ? [-offsets[0] ?? 0, -offsets[1] ?? 0] : [0.0, 0.0], byLabel: label});
 	}
 
 	public function addAnimFromData(data:AnimationData):Void {
@@ -256,7 +260,13 @@ class NovaSprite extends #if ANIMATE_SUPPORT FlxAnimate #else FlxSprite #end {
 			flipY = !flipY;
 			scale.y *= -1;
 		}
+
+		// Fuck my fat chud life - Nebula D:
+		if (!currentByLabel) this.x -= (__baseFlipped ? animationOffset.x : -animationOffset.x) ?? 0;
+		if (!currentByLabel) this.y -= (flipY ? -animationOffset.y : animationOffset.y) ?? 0;
 		super.draw();
+		if (!currentByLabel) this.x += (__baseFlipped ? animationOffset.x : -animationOffset.x) ?? 0;
+		if (!currentByLabel) this.y += (flipY ? -animationOffset.y : animationOffset.y) ?? 0;
 		if (xFlip) {
 			__offsetFlipX = false;
 			flipX = !flipX;
@@ -303,6 +313,10 @@ class NovaSprite extends #if ANIMATE_SUPPORT FlxAnimate #else FlxSprite #end {
 	}
 
 	override function drawComplex(camera:FlxCamera):Void {
+		if (!currentByLabel) {
+			super.drawComplex(camera);
+			return;
+		}
 		_frame.prepareMatrix(_matrix, flixel.graphics.frames.FlxFrame.FlxFrameAngle.ANGLE_0, checkFlipX(), checkFlipY());
 		_matrix.translate(-origin.x, -origin.y);
 		_matrix.translate(-animationOffset.x, -animationOffset.y);

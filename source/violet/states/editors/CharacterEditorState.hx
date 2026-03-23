@@ -57,6 +57,16 @@ class CharacterEditorState extends StateBackend {
     public var character:Character;
     public var ghost:Character;
 
+    public var characterAnim(get, never):String;
+    function get_characterAnim():String {
+        return character.animation.name != null ? character.animation.name : character.anim.name;
+    }
+
+    public var ghostAnim(get, never):String;
+    function get_ghostAnim():String {
+        return ghost.animation.name != null ? ghost.animation.name : ghost.anim.name;
+    }
+
     public var cameraTarget:CameraTarget = { x: 0, y: 0, zoom: 1 }
 
     public var xOffsetStepper:NumericStepper;
@@ -134,6 +144,7 @@ class CharacterEditorState extends StateBackend {
             ghost.camera = charCamera;
             ghost.updateHitbox();
             ghost.canDance = false;
+            @:privateAccess ghost.__baseFlipped = false;
             add(ghost);
 
             character = new Character(characterDropdown.selectedOption.id);
@@ -143,12 +154,13 @@ class CharacterEditorState extends StateBackend {
             character.camera = charCamera;
             character.updateHitbox();
             character.canDance = false;
+            @:privateAccess character.__baseFlipped = false;
             add(character);
 
             animationDropdown.onChange = (index, label) -> {
                 character.playAnim(label, true);
 
-                ghostBox.checked = ghost.animation.name == label;
+                ghostBox.checked = ghostAnim == label;
                 ghostBox.onChange = (value:Bool) -> {
                     if (value) {
                         ghost.playAnim(label, true);
@@ -157,7 +169,7 @@ class CharacterEditorState extends StateBackend {
                         ghost.dance(true);
                         ghost.canDance = false;
                     }
-                    ghostBox.checked = ghost.animation.name == label;
+                    ghostBox.checked = ghostAnim == label;
                 }
                 refreshAnimationDropdown();
                 for (i in animationList) {
@@ -242,7 +254,7 @@ class CharacterEditorState extends StateBackend {
             refreshAnimationDropdown();
             refreshAnimations(true);
             for (i => label in animationDropdown.listLabels) {
-                if (label.text == character.animation.name) {
+                if (label.text == characterAnim) {
                     animationDropdown.onChange(i, label.text);
                     break;
                 }
@@ -272,13 +284,13 @@ class CharacterEditorState extends StateBackend {
         for (i in animationList) {
             animationDropdown.addOption(i.name);
         }
-        animationDropdown.selectedText.text = character.animation.name;
+        animationDropdown.selectedText.text = characterAnim ?? "Unknown Error Occurred";
         animationDropdown.selectedText.updateHitbox();
     }
 
     public function refreshAnimations(doArray:Bool = false) {
-        var cGA = character.animation.name;
-        var pGA = ghost.animation.name;
+        var cGA = characterAnim;
+        var pGA = ghostAnim;
 
         if (doArray) {
             animationList = [];
@@ -339,7 +351,7 @@ class CharacterEditorState extends StateBackend {
         cameraTarget.zoom += FlxG.keys.pressed.Q ? -zoomAmt : FlxG.keys.pressed.E ? zoomAmt : 0;
         cameraTarget.zoom = FlxMath.bound(cameraTarget.zoom, 0.1, 50);
 
-        if (FlxG.keys.justPressed.SPACE) character.playAnim(character.animation.name, true);
+        if (FlxG.keys.justPressed.SPACE) character.playAnim(characterAnim, true);
 
         if (FlxG.keys.justPressed.I) {
             animationDropdown.selectedIndex -= 1;
