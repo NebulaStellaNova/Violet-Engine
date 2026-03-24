@@ -152,7 +152,7 @@ class StoryMenu extends SubStateBackend {
         add(trackText);
 
         updateTrackList();
-        weekBG.color = levelList[curSelected]._data.background.toFlxColor();
+        weekBG.color = levelList[curSelected]._data.background;
 
         trackText.x = -trackText.getWidth();
 
@@ -252,7 +252,7 @@ class StoryMenu extends SubStateBackend {
         curSelected = FlxMath.wrap(curSelected + direction, 0, levelList.length - 1);
 
         weekBGColorTween?.cancel();
-        weekBGColorTween = FlxTween.color(weekBG, 0.35, weekBG.color, levelList[curSelected]._data.background.toFlxColor(), {ease: FlxEase.expoOut});
+        weekBGColorTween = FlxTween.color(weekBG, 0.35, weekBG.color, levelList[curSelected]._data.background, {ease: FlxEase.expoOut});
 
         updateTrackList();
         if (playSound)
