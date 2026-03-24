@@ -229,9 +229,11 @@ class Project extends HXProject {
 		for (path in sourceCodeDirectories)
 			sources.push(path);
 
-		var excludeList:Array<String> = [''];
-		addAssetPath('./assets', './resources', ['*'], excludeList);
-		if (modSupport.exists()) addAssetPath('./mods', './mods', ['*'], excludeList);
+		if (!redirectAssetsFolder.exists()) {
+			var excludeList:Array<String> = [''];
+			addAssetPath('./assets', './resources', ['*'], excludeList);
+			if (modSupport.exists()) addAssetPath('./mods', './mods', ['*'], excludeList);
+		}
 
 		/* Path Settings */
 

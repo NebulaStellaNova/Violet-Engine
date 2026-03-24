@@ -1,8 +1,6 @@
 #if CAN_HAXE_SCRIPT
 package violet.backend.scripting;
 
-import violet.backend.utils.NovaUtils;
-
 import flixel.*;
 import flixel.group.FlxGroup;
 import flixel.group.FlxSpriteGroup;
@@ -20,6 +18,7 @@ import rulescript.parsers.HxParser;
 import violet.backend.filesystem.Paths;
 import violet.backend.objects.NovaSprite;
 import violet.backend.utils.FileUtil;
+import violet.backend.utils.NovaUtils;
 
 using StringTools;
 using violet.backend.utils.ArrayUtil;
@@ -42,8 +41,8 @@ class FunkinScript extends Script {
 		internalScript.scriptName = '$folderName/$fileName';
 		initVars();
 		if (!isHXC) for (i in violet.backend.filesystem.ModdingAPI.getActiveMods()) {
-			if (Paths.fileExists('mods/${i.folder}/data/scripts/import.hx', true))
-				scriptCode += '\n' + FileUtil.getFileContent('mods/${i.folder}/data/scripts/import.hx');
+			if (Paths.fileExists('${ModdingAPI.MOD_FOLDER}/${i.folder}/data/scripts/import.hx', true))
+				scriptCode += '\n' + FileUtil.getFileContent('${ModdingAPI.MOD_FOLDER}/${i.folder}/data/scripts/import.hx');
 		}
 		checkForBlacklistedImports();
 		executeScript();

@@ -1,8 +1,8 @@
 package violet.backend.filesystem;
 import haxe.io.BytesInput;
 import haxe.io.Path;
-import openfl.Assets;
 import sys.FileSystem;
+import openfl.Assets;
 import violet.backend.utils.NovaUtils;
 import violet.states.InitialState;
 #if MOD_SUPPORT
@@ -45,7 +45,7 @@ class ModdingAPI {
 	public static var availableMods(default, null):Array<ModMeta> = [];
 	public static var activeModsIds(default, null):Array<String> = [];
 
-	public static var MOD_FOLDER:String = 'mods';
+	public static #if release inline #end final MOD_FOLDER:String = #if REDIRECT_ASSETS_FOLDER "../../../../mods" #else "mods" #end;
 	public static var API_VERSION:Version = "0.0.0";
 
 	public static var EXT_ALIASES:Map<String, Array<String>> = [

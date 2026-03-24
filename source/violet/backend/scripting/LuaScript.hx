@@ -1,11 +1,11 @@
 package violet.backend.scripting;
 #if CAN_LUA_SCRIPT
 
-import flixel.math.FlxAngle;
 import haxe.PosInfos;
 import flixel.*;
 import flixel.group.FlxGroup;
 import flixel.group.FlxSpriteGroup;
+import flixel.math.FlxAngle;
 import flixel.math.FlxMath;
 import flixel.sound.FlxSound;
 import flixel.text.FlxText;
@@ -17,8 +17,8 @@ import flixel.util.FlxTimer;
 // import hxwindowmode.WindowColorMode;
 import lscript.LScript;
 import violet.backend.filesystem.Paths;
-import violet.backend.utils.FileUtil;
 import violet.backend.objects.NovaSprite;
+import violet.backend.utils.FileUtil;
 
 #end
 using StringTools;
@@ -40,8 +40,8 @@ class LuaScript extends Script {
 		super(path);
 		// scriptCode += '\n' + FileUtil.getFileContent("assets/data/scripts/import.lua");
 		for (i in violet.backend.filesystem.ModdingAPI.getActiveMods()) {
-			if (Paths.fileExists('mods/${i.folder}/data/scripts/import.lua', true))
-				scriptCode += '\n' + FileUtil.getFileContent('mods/${i.folder}/data/scripts/import.lua');
+			if (Paths.fileExists('${ModdingAPI.MOD_FOLDER}/${i.folder}/data/scripts/import.lua', true))
+				scriptCode += '\n' + FileUtil.getFileContent('${ModdingAPI.MOD_FOLDER}/${i.folder}/data/scripts/import.lua');
 		}
 
 		internalScript = new LScript(scriptCode);

@@ -2,13 +2,13 @@ package violet.backend.scripting;
 #if CAN_HAXE_SCRIPT
 
 
-import paopao.hython.Parser;
 import paopao.hython.Interp;
-
+import paopao.hython.Parser;
 import violet.backend.console.Logs;
-import violet.backend.utils.NovaUtils;
 import violet.backend.filesystem.Paths;
 import violet.backend.utils.FileUtil;
+import violet.backend.utils.NovaUtils;
+
 using violet.backend.utils.ArrayUtil;
 using violet.backend.utils.StringUtil;
 
@@ -24,8 +24,8 @@ class PythonScript extends Script {
 		else this.folderName = filePath.getFirstOf();
         var code = "";
         for (i in violet.backend.filesystem.ModdingAPI.getActiveMods()) {
-			if (Paths.fileExists('mods/${i.folder}/data/scripts/import.py', true))
-				code += '\n' + FileUtil.getFileContent('mods/${i.folder}/data/scripts/import.py') + '\n';
+			if (Paths.fileExists('${ModdingAPI.MOD_FOLDER}/${i.folder}/data/scripts/import.py', true))
+				code += '\n' + FileUtil.getFileContent('${ModdingAPI.MOD_FOLDER}/${i.folder}/data/scripts/import.py') + '\n';
 		}
         code += '\n' + FileUtil.getFileContent(path);
 		super(code, true);
