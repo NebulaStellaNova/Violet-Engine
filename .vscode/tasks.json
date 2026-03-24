@@ -2,6 +2,17 @@
 	"version": "2.0.0",
 	"tasks": [
 		{
+			"command": "./install-libraries.bat",
+			"label": "Install Libraries",
+			"problemMatcher": [
+				"$haxe-absolute",
+				"$haxe",
+				"$haxe-error",
+				"$haxe-trace"
+			],
+			"type": "shell"
+		},
+		{
 			"type": "lime",
 			"command": "test",
 			"targetConfiguration": "Windows / Debug",
@@ -16,6 +27,18 @@
 				"kind": "build",
 				"isDefault": true
 			}
+		},
+		{
+			"type": "lime",
+			"command": "test",
+			"targetConfiguration": "Windows / Final",
+			"problemMatcher": [
+				"$haxe-absolute",
+				"$haxe",
+				"$haxe-error",
+				"$haxe-trace"
+			],
+			"label": "lime: test windows -final"
 		}
 	]
 }
