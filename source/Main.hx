@@ -156,6 +156,8 @@ class Main extends openfl.display.Sprite {
 					trace('debug:Error in thread callback: $error');
 			}
 		});
+
+		lime.app.Application.current.onExit.add((_)->ModdingAPI.powerDown());
 	}
 
 	public static function switchState(targetClass:Dynamic) {

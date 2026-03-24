@@ -1,4 +1,7 @@
 package violet.backend.filesystem;
+import haxe.io.BytesInput;
+import haxe.io.Path;
+import openfl.Assets;
 import sys.FileSystem;
 import violet.backend.utils.NovaUtils;
 import violet.states.InitialState;
@@ -37,6 +40,7 @@ class ModdingAPI {
 		sys.FileSystem
 	];
 
+	@:unreflective public static var tempFolders:Array<String> = [];
 
 	public static var availableMods(default, null):Array<ModMeta> = [];
 	public static var activeModsIds(default, null):Array<String> = [];
@@ -56,12 +60,36 @@ class ModdingAPI {
 		trace('debug:<yellow>Initializing Modding System...');
 		FlxG.save.data.registeredModIds ??= [];
 		FlxG.save.data.enabledModIds ??= [];
+
+		for (path in Paths.readFolder(MOD_FOLDER, true)) {
+			if (path.endsWith('.vmod') && !FileSystem.isDirectory('$MOD_FOLDER/$path')) {
+				var folderName:String = path.replace('.vmod', "");
+				trace('debug:Found violet mod with id "$folderName"');
+				var modPath:String = '$MOD_FOLDER/.$folderName';
+				tempFolders.push(modPath);
+				FileSystem.createDirectory(modPath);
+      			Sys.command("attrib +h " + modPath);
+
+				var bytesInput = new haxe.io.BytesInput(sys.io.File.getBytes('$MOD_FOLDER/$path'));
+				var reader = new haxe.zip.Reader(bytesInput);
+				var entries = reader.read();
+				for(_entry in entries) {
+					var data = haxe.zip.Reader.unzip(_entry);
+					if (data + "" != "") {
+						var location = modPath + "/" + _entry.fileName;
+						if (!FileSystem.exists(Path.directory(location))) FileSystem.createDirectory(Path.directory(location));
+						sys.io.File.saveBytes(location, data);
+					}
+				}
+				bytesInput.close();
+			}
+		}
+
 		@:bypassAccessor availableMods = [
-			for (path in Paths.readFolder('mods', true)) {
+			for (path in Paths.readFolder(MOD_FOLDER, true)) {
 				var meta:ModMeta = ParseUtil.json('$MOD_FOLDER/$path/novamod_meta', 'root');
 				if (meta == null) continue;
 
-				trace(path);
 				// null check all properties and set defaults
 				meta.folder = path;
 				meta.title ??= meta.folder;
@@ -238,6 +266,24 @@ class ModdingAPI {
 		#end
 	}
 	#end
+
+	@:unreflective public static function powerDown() {
+		for (i in tempFolders) {
+			if (FileSystem.exists(i)) deleteDirectory(i);
+		}
+	}
+
+	@:unreflective static function deleteDirectory(path) {
+		var subObjects = FileSystem.readDirectory(path);
+		for (i in subObjects) {
+			if (!StringTools.contains(i, ".")) {
+				deleteDirectory(path + "/" + i);
+			} else {
+				FileSystem.deleteFile(path + "/" + i);
+			}
+		}
+		FileSystem.deleteDirectory(path);
+	}
 }
 
 class ModIcon extends NovaSprite {

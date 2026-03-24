@@ -2,7 +2,7 @@
 	"id": "example",
 	"title": "Example Mod", // My engine supports .json and .jsonc, when it checks for json it also checks for jsonc
 	"description": "Example Mod Folder",
-	"tags": ["example"], // qol, weeks, songs, example, characters, enhancements
+	"tags": ["EXAMPLE"], // QoL, WEEKS, SONGS, EXAMPLE, CHARACTERS, ENHANCEMENTS, PORT
 	"contributors": [
 		{
 			"name": "Nebula S. Nova",

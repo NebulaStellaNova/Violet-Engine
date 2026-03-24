@@ -1,5 +1,7 @@
 package violet.states.menus;
 
+import flixel.addons.display.FlxRuntimeShader;
+import lemonui.utils.SpriteUtil;
 import flixel.group.FlxSpriteGroup;
 import flixel.math.FlxMath;
 
@@ -7,7 +9,54 @@ import violet.backend.utils.MathUtil;
 import violet.backend.utils.NovaUtils;
 import violet.backend.SubStateBackend;
 
+class ModTag extends FlxSpriteGroup {
+	override public function new(tag:String) {
+		super();
+
+		var label:NovaText = new NovaText(7.5, 5, 0, tag);
+		label.font = Paths.font('vcr.ttf');
+		label.size = 50;
+		label.updateHitbox();
+
+		var bg:NovaSprite = new NovaSprite().makeGraphic(label.width + 15, label.height + 10, FlxColor.BLACK);
+		bg.alpha = 0.5;
+		SpriteUtil.roundSpriteCorners(bg, 10);
+
+		add(bg);
+		add(label);
+	}
+}
+
 class ModMenu extends SubStateBackend {
+
+	public var roundCornerShader:FlxRuntimeShader = new FlxRuntimeShader("
+		#pragma header
+		// Shader by: @NebulaStellaNova
+
+		uniform float radius;
+
+		void main() {
+			vec2 uv = openfl_TextureCoordv;
+			vec2 size = openfl_TextureSize;
+			float aspect = size.x / size.y;
+
+			vec2 aspectUV = uv * vec2(aspect, 1.0);
+			vec2 center = vec2(aspect * 0.5, 0.5);
+
+			float resRadius = clamp(radius, 0.0, 360.0) / 720.0;
+
+			vec2 q = abs(aspectUV - center) - vec2(aspect * 0.5 - resRadius, 0.5 - resRadius);
+			float dist = length(max(q, 0.0)) + min(max(q.x, q.y), 0.0);
+
+			vec4 color = flixel_texture2D(bitmap, uv);
+
+			float smoothing = fwidth(dist);
+			float alpha = 1.0 - smoothstep(resRadius - smoothing, resRadius + smoothing, dist);
+
+			gl_FragColor = color * alpha;
+		}
+	");
+
 	public var statusText:NovaSprite;
 	public var tagImage:NovaSprite;
 
@@ -28,8 +77,12 @@ class ModMenu extends SubStateBackend {
 	public var selectedMod:ModMeta;
 	public var instant:Bool = true;
 
+	public var tagSprites:Array<ModTag> = [];
+
 	override public function create() {
 		super.create();
+
+		roundCornerShader.setFloat('radius', 35);
 
 		modInfoBox = new NovaSprite(Paths.image("menus/modmenu/modInfoPanel"));
 		modInfoBox.updateHitbox();
@@ -57,6 +110,7 @@ class ModMenu extends SubStateBackend {
 			modIcon.x = 10;
 			modIcon.y = 10;
 			modIcon.updateHitbox();
+			modIcon.shader = roundCornerShader;
 			icon.add(modIcon);
 
 			icon.scrollFactor.set();
@@ -85,7 +139,7 @@ class ModMenu extends SubStateBackend {
 		tagImage.x = tagsText.x + tagsText.width + 10;
 		tagImage.y = tagsText.y;
 		tagImage.scrollFactor.set();
-		add(tagImage);
+		// add(tagImage);
 
 		descriptionTitle = new NovaText(0, 0, modInfoBox.width/4, "", Paths.font("PhantomMuff/empty letters.ttf"));
 		descriptionTitle.size = 75;
@@ -183,6 +237,24 @@ class ModMenu extends SubStateBackend {
 		}
 		for (i in creditsStuff) {
 			creditsStuff.remove(i);
+		}
+
+		for (i in tagSprites) {
+			remove(i);
+		}
+
+		tagsText.text = selectedMod.tags.length > 1 ? "Tags:" : "Tag:";
+		tagsText.updateHitbox();
+
+		var xPos = 0.0;
+		for (i in selectedMod.tags) {
+			var tag = new ModTag(i);
+			tag.x = tagsText.x + tagsText.width + 10 + xPos;
+			tag.y = tagsText.y;
+			tag.scrollFactor.set();
+			add(tag);
+			tagSprites.push(tag);
+			xPos += tag.width + 10;
 		}
 
 		statusText.loadSprite(Paths.image("menus/modmenu/" + (ModdingAPI.checkModEnabled(selectedMod.id) ? "enabled" : "disabled")));
