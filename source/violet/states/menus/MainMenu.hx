@@ -74,10 +74,6 @@ class MainMenu extends StateBackend {
 
 		NovaUtils.playMenuMusic();
 
-		for (i in ModdingAPI.getActiveMods()) {
-			watermarkTexts.push('${i.title} v${i?.mod_version}');
-		}
-
 		var modMenu:violet.states.menus.ModMenu = new violet.states.menus.ModMenu();
 
 		// FlxG.camera.color = FlxColor.BLACK;
@@ -194,7 +190,13 @@ class MainMenu extends StateBackend {
 			// Main.switchState(new ClassData('TitleState')); // Crashes idk why
 		}
 
-		watermarkTexts.sort(function(a, b):Int {
+		var instance = watermarkTexts.copy();
+		for (i in ModdingAPI.getActiveMods()) {
+			instance.push('${i.title} v${i?.mod_version}');
+		}
+
+
+		instance.sort(function(a, b):Int {
 			if(a.length < b.length) return -1;
 			else if(a.length > b.length) return 1;
 			else return 0;
@@ -203,7 +205,7 @@ class MainMenu extends StateBackend {
 		leftWatermark.borderStyle = OUTLINE;
 		leftWatermark.borderColor = FlxColor.BLACK;
 		leftWatermark.borderSize = 3;
-		leftWatermark.text = watermarkTexts.join("\n");
+		leftWatermark.text = instance.join("\n");
 		leftWatermark.updateHitbox();
 		if (canSelect) {
 			leftWatermark.y = FlxG.height - leftWatermark.getHeight() - 5;

@@ -27,11 +27,6 @@ class InitialState extends StateBackend { // for now
 		FlxSprite.defaultAntialiasing = true; // this ain't a pixel game... yeah ik week 6 exists!
 		FlxG.cameras.useBufferLocking = true;
 
-		defaultParams.x = lime.app.Application.current.window.x;
-		defaultParams.y = lime.app.Application.current.window.y;
-		defaultParams.width = lime.app.Application.current.window.width;
-		defaultParams.height = lime.app.Application.current.window.height;
-
 		super.create();
 
 		#if CHECK_FOR_UPDATES
@@ -59,6 +54,11 @@ class InitialState extends StateBackend { // for now
 			if (Controls.fullscreen) {
 				fullscreen = !fullscreen;
 				if (fullscreen) {
+
+					defaultParams.x = lime.app.Application.current.window.x;
+					defaultParams.y = lime.app.Application.current.window.y;
+					defaultParams.width = lime.app.Application.current.window.width;
+					defaultParams.height = lime.app.Application.current.window.height;
 					lime.app.Application.current.window.borderless = true;
 					lime.app.Application.current.window.resize(Math.round(Capabilities.screenResolutionX), Math.round(Capabilities.screenResolutionY)+8);
 					lime.app.Application.current.window.x = 0;
