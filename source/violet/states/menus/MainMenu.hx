@@ -10,6 +10,8 @@ import violet.backend.utils.NovaUtils;
 import violet.backend.utils.ParseUtil;
 import violet.backend.scripting.events.SelectionEvent;
 
+import thx.semver.Version;
+
 #if debug
 import violet.backend.display.DebugDisplay;
 #end
@@ -43,7 +45,7 @@ typedef MenuData = {
 
 class MainMenu extends StateBackend {
 	public var watermarkTexts = [
-		Constants.ENGINE_TITLE + " v" + Constants.ENGINE_VERSION
+		Constants.ENGINE_TITLE + " v" + Constants.ENGINE_VERSION + (Constants.ENGINE_SUFFIX != '' ? '-${Constants.ENGINE_SUFFIX}' : '')
 	];
 
 	public var curSelectedString:String = "";
@@ -71,6 +73,10 @@ class MainMenu extends StateBackend {
 		super.create();
 
 		NovaUtils.playMenuMusic();
+
+		for (i in ModdingAPI.getActiveMods()) {
+			watermarkTexts.push('${i.title} v${i?.mod_version}');
+		}
 
 		var modMenu:violet.states.menus.ModMenu = new violet.states.menus.ModMenu();
 

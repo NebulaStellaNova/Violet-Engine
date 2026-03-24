@@ -31,7 +31,7 @@ typedef ModMeta = {
 	// Not enforced like V-Slice, it is literally only for backwards compatibility.
 	var ?api_version:Version;
 
-	var mod_version:Version;
+	var mod_version:String; // Version is being weird /shrug
 }
 
 class ModdingAPI {
@@ -288,7 +288,11 @@ class ModdingAPI {
 
 class ModIcon extends NovaSprite {
 	override public function new(modId:String) {
-		super(Paths.image('${ModdingAPI.MOD_FOLDER}/$modId/novamod_icon', 'root'));
+		var image = Paths.image('${ModdingAPI.MOD_FOLDER}/$modId/novamod_icon', 'root');
+		if (!Paths.fileExists(image, true)) {
+			image = Paths.image('${ModdingAPI.MOD_FOLDER}/example/novamod_icon', 'root');
+		}
+		super(image);
 	}
 }
 #end

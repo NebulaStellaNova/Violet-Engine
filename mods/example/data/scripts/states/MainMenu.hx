@@ -1,5 +1,4 @@
 function create() {
-	watermarkTexts.push("Example Mod v0.0.1");
 	trace("system:Violet Engine has HScript Support");
 }
 

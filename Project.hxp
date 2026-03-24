@@ -38,7 +38,7 @@ class Project extends HXProject {
 	 * The current engine version.
 	 * Remember to update this when a new engine version releases.
 	 */
-	static final engineVersion:String = '0.0.1';
+	static final engineVersion:String = '0.0.0';
 	/**
 	 * The starting window title.
 	 * Although slightly mananaged by the `FlxWindow` class I'm still having this here.

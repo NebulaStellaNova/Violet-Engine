@@ -68,6 +68,7 @@ class ModMenu extends SubStateBackend {
 	public static var curSelected:Int = 0;
 
 	public var tagsText:NovaText;
+	public var description:NovaText;
 	public var modTitleText:NovaText;
 	public var creditsTitle:NovaText;
 	public var descriptionTitle:NovaText;
@@ -78,6 +79,8 @@ class ModMenu extends SubStateBackend {
 	public var instant:Bool = true;
 
 	public var tagSprites:Array<ModTag> = [];
+
+	public var bootBools:Array<Bool> = [];
 
 	override public function create() {
 		super.create();
@@ -99,6 +102,7 @@ class ModMenu extends SubStateBackend {
 		add(infoSeperator);
 
 		for (i=>mod in ModdingAPI.availableMods) {
+			bootBools.push(ModdingAPI.checkModEnabled(mod.id));
 			var icon:FlxSpriteGroup = new FlxSpriteGroup();
 			icon.ID = i;
 
@@ -146,7 +150,15 @@ class ModMenu extends SubStateBackend {
 		descriptionTitle.text = 'Description:';
 		descriptionTitle.scrollFactor.set();
 		descriptionTitle.alignment = LEFT;
+		descriptionTitle.updateHitbox();
 		add(descriptionTitle);
+
+		description = new NovaText(0, descriptionTitle.y + descriptionTitle.height, modInfoBox.width/4, "", Paths.font("Tardling v1.1.ttf"));
+		description.size = 60;
+		description.text = 'Test';
+		description.scrollFactor.set();
+		description.alignment = LEFT;
+		add(description);
 
 		creditsTitle = new NovaText(0, 0, modInfoBox.width/2, "", Paths.font("PhantomMuff/empty letters.ttf"));
 		creditsTitle.size = 75;
@@ -192,10 +204,13 @@ class ModMenu extends SubStateBackend {
 		tagsText.x = infoSeperator.x;
 		tagsText.y = infoSeperator.y + 20;
 
-		descriptionTitle.text = "Description:\n" + selectedMod.description;
-		descriptionTitle.updateHitbox();
 		descriptionTitle.x = infoSeperator.x;
 		descriptionTitle.y = infoSeperator.y + 75;
+
+		description.text = selectedMod.description;
+		description.updateHitbox();
+		description.x = descriptionTitle.x;
+		description.y = descriptionTitle.y + descriptionTitle.height + 5;
 
 		creditsTitle.updateHitbox();
 		creditsTitle.x = modInfoBox.x - 65;
@@ -212,10 +227,18 @@ class ModMenu extends SubStateBackend {
 		statusText.x = modInfoBox.x + (modInfoBox.width/2) - (statusText.width/2);
 		statusText.y = (modInfoBox.y + modInfoBox.height) - (statusText.height + 20);
 
+
 		tagsText.updateHitbox();
 		tagImage.updateHitbox();
 		tagImage.x = tagsText.x + tagsText.width + 10;
 		tagImage.y = tagsText.y;
+
+		var xPos = 0.0;
+		for (tag in tagSprites) {
+			tag.x = tagsText.x + tagsText.width + 10 + xPos;
+			tag.y = tagsText.y;
+			xPos += tag.width + 10;
+		}
 
 		selectedMod = ModdingAPI.availableMods[curSelected];
 
@@ -241,7 +264,10 @@ class ModMenu extends SubStateBackend {
 
 		for (i in tagSprites) {
 			remove(i);
+			i.destroy();
 		}
+
+		tagSprites = [];
 
 		tagsText.text = selectedMod.tags.length > 1 ? "Tags:" : "Tag:";
 		tagsText.updateHitbox();
@@ -279,7 +305,7 @@ class ModMenu extends SubStateBackend {
 
 			var roles = new NovaText(creditsTitle.x, 0, modInfoBox.width/2, "", Paths.font("PhantomMuff/empty letters.ttf"));
 			roles.size = 125;
-			roles.text = "Role: " + i.role;
+			roles.text = i.role;
 			roles.scrollFactor.set();
 			roles.alignment = RIGHT;
 			roles.size = 55;
@@ -294,7 +320,15 @@ class ModMenu extends SubStateBackend {
 	override public function close() {
 		super.close();
 
+		var needsReset:Bool = false;
+
+		for (i => mod in ModdingAPI.availableMods) {
+			if (bootBools[i] != ModdingAPI.checkModEnabled(mod.id)) needsReset = true;
+		}
+
 		FlxG.save.flush();
+
+		if (needsReset) ModdingAPI.reloadRegistries();
 		// state.onCloseSubState();
 	}
 

@@ -10,6 +10,7 @@ class Constants {
 	 */
     public static var ENGINE_VERSION(default, null):Version = "0.0.0"; // Changes at runtime.
     public static final ENGINE_TITLE:String = "Violet Engine";
+	public static var ENGINE_SUFFIX:String = "beta";
 
     /**
 	 * The latest version of the engine.
