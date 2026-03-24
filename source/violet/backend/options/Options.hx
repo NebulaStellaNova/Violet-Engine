@@ -35,13 +35,15 @@ import flixel.util.FlxSave;
 		'volume_down' => ['MINUS', 'NUMPADMINUS'],
 		'volume_mute' => ['ZERO', 'NUMPADZERO'],
 
-		'fullscreen' => ['F11', 'NONE'],
+        // getAnyJustPressed([NONE]) will return true if nothing is pressed
 
-		'botplay' => ['F2', 'NONE'],
-		'reloadGame' => ['F5', 'NONE'],
-		'resetState' => ['F3', 'NONE'],
-		'shortcutState' => ['F4', 'NONE'],
-		'debugDisplay' => ['F6', 'NONE']
+		'fullscreen' => ['F11', 'F11'],
+
+		'botplay' => ['F2', 'F2'],
+		'reloadGame' => ['F5', 'F5'],
+		'resetState' => ['F3', 'F3'],
+		'shortcutState' => ['F4', 'F4'],
+		'debugDisplay' => ['F6', 'F6']
     ];
 
     public var savedScores:Map<String, Int> = [];
