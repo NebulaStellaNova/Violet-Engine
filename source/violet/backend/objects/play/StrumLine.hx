@@ -165,14 +165,27 @@ class StrumLine extends FlxGroup {
 		}
 	}
 	public function generateNotes(?time:Float):Void {
+		var stackedNoteCount:Int = 0;
 		for (data in chartData.notes) {
 			if (data.time < time ?? Math.NEGATIVE_INFINITY) continue;
 			var note:Note = new Note(this, data.id, data.time, data.sLen);
 			if (PlayState.SONG._data.noteTypes[data.type-1] != null) {
 				note.noteType = PlayState.SONG._data.noteTypes[data.type-1];
 			}
-			notes.add(note);
+			var exists = false;
+			for (i in notes) {
+				if (i.time == data.time && i.id == data.id) exists = true;
+				if (exists && data.sLen > i.length) {
+					notes.remove(i);
+					i.destroy();
+					exists = false;
+				}
+			}
+			if (!exists) notes.add(note);
+			else note.destroy();
+			if (exists) stackedNoteCount++;
 		}
+		if (stackedNoteCount != 0) trace('warning:Found <cyan>$stackedNoteCount<reset> stacked note${stackedNoteCount == 1 ? '' : 's'} for strumline <cyan>$ID<reset>. (They where removed)');
 	}
 
 	public dynamic function _onVoidTap(id:Int, strumLine:StrumLine):Void {}
