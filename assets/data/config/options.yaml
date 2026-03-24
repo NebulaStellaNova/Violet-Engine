@@ -56,6 +56,9 @@ menus:
   - name: DEVELOPER
     type: section
   # ---------------
+  - name: Fullscreen
+    type: control
+    saveID: fullscreen
   - name: Reload State
     type: control
     saveID: resetState
