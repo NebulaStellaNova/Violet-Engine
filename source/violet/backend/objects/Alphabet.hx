@@ -1,5 +1,6 @@
 package violet.backend.objects;
 
+import violet.backend.utils.NovaUtils;
 import flixel.util.FlxAxes;
 import flixel.math.FlxPoint;
 
@@ -8,7 +9,10 @@ class Alphabet extends flixel.group.FlxGroup {
     public static var characterOffsets:Map<String, Array<Float>> = [
         "." => [0, 38]
     ];
-    public static var boldCharacterOffsets:Map<String, Array<Float>> = [];
+    public static var boldCharacterOffsets:Map<String, Array<Float>> = [
+        "." => [0, 43],
+        ":" => [0, 10]
+    ];
 
     public static var xmlNames:Map<String, String> = [
         // -- Letters -- \\
@@ -88,7 +92,7 @@ class Alphabet extends flixel.group.FlxGroup {
         return value;
     }
 
-    public var letters:Array<NovaSprite> = [];
+    public var letters:Array</* NovaSprite */FlxSprite> = [];
 
     public var text(default, set):String;
     function set_text(value:String) {
@@ -123,11 +127,18 @@ class Alphabet extends flixel.group.FlxGroup {
                 xPos += 30 * scaleX;
                 continue;
             }
-            var letter = new NovaSprite(xPos + x, y, Paths.image('alphabet/english-${bold ? 'bold' : 'regular'}'));
-            letter.antialiasing = true;
             var animationName:String = 'character-' + ((useAlt && xmlNamesAlt.exists(i)) ? xmlNamesAlt.get(i) : xmlNames.get(i)) + (xmlNamesAlt.exists(i) ? "0" : "");
+            var letter = new FlxSprite(xPos + x, y);
+            letter.frames = NovaUtils.getSparrowFrames(Paths.image('alphabet/english-${bold ? 'bold' : 'regular'}'));
+            letter.animation.addByPrefix(i, '${animationName}0', 24, true);
+            letter.animation.play(i);
+            var off = (bold ? boldCharacterOffsets.get(i) : characterOffsets.get(i)) ?? [0, 0];
+            letter.offset.x = -off[0];
+            letter.offset.y = -off[1];
+            /* var letter = new NovaSprite(xPos + x, y, Paths.image('alphabet/english-${bold ? 'bold' : 'regular'}'));
             letter.addAnim("idle", animationName, null, (bold ? boldCharacterOffsets.get(i) : characterOffsets.get(i)) ?? [0, 0], 24, true);
-            letter.playAnim("idle", true);
+            letter.playAnim("idle", true); */
+            letter.antialiasing = true;
             letter.scale.set(scaleX, scaleY);
             letter.updateHitbox();
             if (isLowerCase) {
@@ -154,14 +165,15 @@ class Alphabet extends flixel.group.FlxGroup {
         for (id => e in textSplit) {
             var l = textSplit[id];
             var isLowerCase = l != l.toUpperCase();
+            var off = (bold ? boldCharacterOffsets.get(l) : characterOffsets.get(l)) ?? [0, 0];
             if (l == " ") {
                 xPos += 30 * scaleX;
                 offset++;
                 continue;
             }
             var i = letters[id - offset];
-            i.x = xPos + x;
-            i.y = y;
+            i.x = xPos + x + off[0];
+            i.y = y + off[1];
             if (isLowerCase) {
                 i.y += (i.height / 0.9) - i.height;
                 i.updateHitbox();
