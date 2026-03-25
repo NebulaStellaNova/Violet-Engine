@@ -111,7 +111,6 @@ class Paths {
 		return file(path, directory == 'root' ? 'root' : [directory, 'music'].join('/'), ext);
 
 	#if release inline #end public static function yaml(path:String, directory:String = '', ?ext:String = 'yaml'):String {
-		trace()
 		return file(path, directory, ext) != "" ? file(path, directory, ext) : file(path, directory, ext == 'yaml' ? 'yml' : ext);
 	}
 
