@@ -1,5 +1,6 @@
 package violet.backend.utils;
 
+import haxe.io.Path;
 import lime.ui.FileDialog;
 import openfl.net.FileReference;
 import openfl.events.Event;
@@ -35,6 +36,14 @@ class FileUtil {
 		fileDialog.browse(SAVE, filter, defaultPath, title);
 
 		// var result:Array<String> = Dialogs.openFile("Select a file please!", "Please select one or more files, so we can see if this method works", filters);
+	}
+
+	public static function isDataFile(file:String):Bool {
+		var isData:Bool = false;
+		for (i in ['yaml', 'yml', 'json']) {
+			if (Path.extension(file) == i) isData = true;
+		}
+		return isData;
 	}
 	// inline public static function setFileContent(path:String):String {
 	// 	return sys.io.File.getContent(path);

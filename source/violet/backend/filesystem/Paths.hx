@@ -48,8 +48,11 @@ class Paths {
 	}
 
 	#if release inline #end public static function getFileName(path:String, startFromRoot:Bool = false)
-		return Path.withoutExtension(Path.withoutDirectory(root(path, startFromRoot)));
+		return fileName(root(path, startFromRoot));
 
+	public static function fileName(file:String) {
+		return Path.withoutExtension(Path.withoutDirectory(file));
+	}
 
 	public static function fixPath(path:String) {
 		while (path.contains("//")) {
