@@ -36,7 +36,11 @@ class PauseMenu extends EditorListBackend {
             { title: "RESTART SONG", disabled: false, onClick: ()->{
                 var event:EventBase = PlayState.instance.songScripts.event('onRestartSong', new EventBase());
                 // event = subStateScripts.event('restartSong', event);
-                if (!event.cancelled) FlxG.resetState();
+                if (event.cancelled) return;
+                Conductor.stop();
+                Conductor.offset = 0;
+                Conductor.instrumental.time = 0;
+                FlxG.resetState();
             }},
             { title: "CHANGE DIFFICULTY", disabled: true, onClick: ()->{
 
