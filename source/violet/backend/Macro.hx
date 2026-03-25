@@ -45,6 +45,13 @@ class Macro {
 		var classFields:Array<Field> = Context.getBuildFields();
 		var tempClass = macro class TempClass {
 			/**
+			 * Signal's to help make scripting more convientent... ig
+			 */
+			public var onUpdate = new flixel.util.FlxSignal.FlxTypedSignal<Float->Void>();
+			// Doesn't work tho idk why ??
+
+
+			/**
 			 * Extra data the object can hold.
 			 */
 			public var extra:Map<String, Dynamic> = new Map<String, Dynamic>();
@@ -56,6 +63,20 @@ class Macro {
 			public var z(get, set):Int;
 			function get_z() return zIndex;
 			function set_z(v:Int) return zIndex = v;
+		}
+
+		var updateFunc = classFields.filter(field -> return field.name == 'update')[0];
+		trace(updateFunc);
+		switch (updateFunc.kind) {
+			case FFun(f):
+				var initExpr:Expr = f.expr;
+				f.expr = macro {
+					$initExpr;
+					// trace(onUpdate); // <---- And this traces so idk...
+					onUpdate.dispatch(elapsed); // See I'm even running it
+				}
+				updateFunc.kind = FFun(f);
+			default:
 		}
 
 		return classFields.concat(tempClass.fields);
