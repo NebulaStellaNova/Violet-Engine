@@ -39,7 +39,6 @@ class CharacterSelectMenu extends StateBackend {
         curtains.scrollFactor.set(1.4, 1.4);
         add(curtains);
 
-
         barThing = new NovaSprite(0, 50, Paths.image("menus/characterselectmenu/barThing"));
         barThing.addAnim('idle', 'name bar animated', null, [0, 0], 24, true, false);
         barThing.playAnim('idle', true);
@@ -88,6 +87,10 @@ class CharacterSelectMenu extends StateBackend {
 
         barThing.y += 80;
         FlxTween.tween(barThing, {y: barThing.y - 80}, 1.3, {ease: FlxEase.expoOut});
+
+        chooseDipshit.scrollFactor.set();
+        dipshitBacking.scrollFactor.set();
+        dipshitBlur.scrollFactor.set();
 
         // FlxG.camera.scroll.y -= FlxG.height/2;
 

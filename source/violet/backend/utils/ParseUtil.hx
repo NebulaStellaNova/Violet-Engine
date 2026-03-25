@@ -16,11 +16,12 @@ class ParseUtil {
 	}
 
 	public static function yaml(path:String, directory:String = ''):Dynamic {
+		final options = new ParserOptions(); options.maps = false;
 		try {
-			final options = new ParserOptions(); options.maps = false;
 			return Yaml.parse(FileUtil.getFileContent(Paths.yaml(path, directory)), options);
-		} catch(error:haxe.Exception)
+		} catch(error:haxe.Exception) {
 			return null;
+		}
 	}
 
 	public static function jsonOrYaml(path:String, ?directory:String):Dynamic {

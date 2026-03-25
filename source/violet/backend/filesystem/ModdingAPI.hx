@@ -61,12 +61,25 @@ class ModdingAPI {
 		FlxG.save.data.registeredModIds ??= [];
 		FlxG.save.data.enabledModIds ??= [];
 
+		reloadModList();
+
+		activeModsIds = FlxG.save.data.enabledModIds;
+
+		// Main.threadCallacks.addOnce(reloadRegistries);
+		reloadRegistries();
+		new HXCHandler();
+		trace(checkForHXC().join('\n'));
+	}
+
+	public static function reloadModList() {
+		tempFolders = [];
 		for (path in Paths.readFolder(MOD_FOLDER, true)) {
 			if (path.endsWith('.vmod') && !FileSystem.isDirectory('$MOD_FOLDER/$path')) {
 				var folderName:String = path.replace('.vmod', "");
 				trace('debug:Found violet mod with id "$folderName"');
 				var modPath:String = '$MOD_FOLDER/.$folderName';
 				tempFolders.push(modPath);
+				if (FileSystem.exists(modPath)) continue;
 				FileSystem.createDirectory(modPath);
       			Sys.command("attrib +h " + modPath);
 
@@ -88,6 +101,7 @@ class ModdingAPI {
 		@:bypassAccessor availableMods = [
 			for (path in Paths.readFolder(MOD_FOLDER, true)) {
 				var meta:ModMeta = ParseUtil.json('$MOD_FOLDER/$path/novamod_meta', 'root');
+				if (meta == null) meta = ParseUtil.yaml('$MOD_FOLDER/$path/novamod_meta', 'root');
 				if (meta == null) continue;
 
 				// null check all properties and set defaults
@@ -106,13 +120,6 @@ class ModdingAPI {
 			}
 			trace('debug:<cyan>Found mod "<magenta>${i.title}<cyan>" with id "<magenta>${i.id}<cyan>"');
 		}
-
-		activeModsIds = FlxG.save.data.enabledModIds;
-
-		// Main.threadCallacks.addOnce(reloadRegistries);
-		reloadRegistries();
-		new HXCHandler();
-		trace(checkForHXC().join('\n'));
 	}
 
 	public static function getMod(id:String):ModMeta {
@@ -143,7 +150,7 @@ class ModdingAPI {
 
 	private static var registered:Bool = false;
 	public static function reloadRegistries():Void {
-		trace('debug:<magenta>${registered ? "Reloading" : "Initializing"} Registries...');
+		trace('debug:<yellow>${registered ? "Reloading" : "Initializing"} Registries...');
 		NovaUtils.CURRENT_MUSIC = null;
 		registered = true;
 		violet.data.notestyles.NoteStyleRegistry.registerNoteStyles();

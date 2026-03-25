@@ -110,8 +110,10 @@ class Paths {
 	#if release inline #end public static function music(path:String, directory:String = '', ?ext:String = 'ogg'):String
 		return file(path, directory == 'root' ? 'root' : [directory, 'music'].join('/'), ext);
 
-	#if release inline #end public static function yaml(path:String, directory:String = '', ?ext:String = 'yaml'):String
+	#if release inline #end public static function yaml(path:String, directory:String = '', ?ext:String = 'yaml'):String {
+		trace()
 		return file(path, directory, ext) != "" ? file(path, directory, ext) : file(path, directory, ext == 'yaml' ? 'yml' : ext);
+	}
 
 	#if release inline #end public static function json(path:String, directory:String = '', ?ext:String = 'json'):String
 		return file(path, directory, ext) != '' ? file(path, directory, ext) : (ext == 'json' ? file(path, directory, ext + 'c') : '');
