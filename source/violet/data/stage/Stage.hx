@@ -115,6 +115,7 @@ class Stage extends flixel.group.FlxGroup {
                             char.visible = i.visible;
                             char.cameraOffsets[0] += i.cameraOffsets[0];
                             char.cameraOffsets[1] += i.cameraOffsets[1];
+                            char.color = i.color;
                             applyProperties(char, i.properties ?? {});
                             add(char);
                         }

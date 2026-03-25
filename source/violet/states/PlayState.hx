@@ -1,16 +1,11 @@
 package violet.states;
 
-import violet.states.menus.MainMenu;
-import violet.states.menus.FreeplayMenu;
-import violet.backend.utils.NovaUtils;
-import violet.backend.utils.ScoreUtil;
-import violet.backend.objects.NovaCamera;
-import violet.data.song.Song;
-import violet.backend.objects.play.ComboGroup;
 import flixel.FlxCamera;
 import flixel.group.FlxGroup;
 import flixel.math.FlxMath;
 import violet.backend.audio.Conductor;
+import violet.backend.objects.NovaCamera;
+import violet.backend.objects.play.ComboGroup;
 import violet.backend.objects.play.HealthBar;
 import violet.backend.objects.play.Note;
 import violet.backend.objects.play.ScoreTxt;
@@ -22,6 +17,8 @@ import violet.backend.scripting.events.NoteHitEvent;
 import violet.backend.scripting.events.SongEvent;
 import violet.backend.scripting.events.SustainHitEvent;
 import violet.backend.utils.MathUtil;
+import violet.backend.utils.NovaUtils;
+import violet.backend.utils.ScoreUtil;
 import violet.data.Constants;
 import violet.data.Scoring;
 import violet.data.character.Character;
@@ -29,7 +26,11 @@ import violet.data.chart.Chart;
 import violet.data.chart.ChartData.ChartEvent;
 import violet.data.chart.ChartRegistry;
 import violet.data.icon.HealthIcon;
+import violet.data.song.Song;
+import violet.data.song.SongRegistry;
 import violet.data.stage.Stage;
+import violet.states.menus.FreeplayMenu;
+import violet.states.menus.MainMenu;
 import violet.states.menus.PauseMenu;
 
 #if SCRIPT_SUPPORT
@@ -156,12 +157,14 @@ class PlayState extends violet.backend.StateBackend {
 		strumLines = new FlxTypedGroup<StrumLine>();
 
 		SONG = ChartRegistry.getChart(song, difficulty, variation);
-		songData = new Song(song);
+		songData = SongRegistry.getSongByID(song);
 		variation = songData.variant;
-		Conductor.playSong(songData.songName, songData.variant); Conductor.pause();
+
+		Conductor.playSong(song, variation); Conductor.pause();
 		Conductor.offset = (countdownLength+1) * Conductor.beatLengthMs;
 		if (SONG.meta.needsVoices) generalVocals = Conductor.addAdditionalTrack(FlxG.sound.load(Cache.sound(Paths.vocal(songData.songName, null, PlayState.variation), 'root', null, true), FlxG.sound.defaultMusicGroup));
 		else generalVocals = Conductor.addAdditionalTrack(new FlxSound());
+
 		StrumLine.generalScrollSpeed = SONG.scrollSpeed ?? 1;
 		for (i => data in SONG.strumLines) {
 			if (data == null) continue;
