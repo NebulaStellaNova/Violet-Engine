@@ -361,8 +361,8 @@ class CharacterEditorState extends StateBackend {
             animationDropdown.onChange(animationDropdown.selectedIndex, animationDropdown.options[animationDropdown.selectedIndex]);
         }
 
-        charCamera.scroll.pointLerp(cameraTarget.x, 0.1, x);
-        charCamera.scroll.pointLerp(cameraTarget.y, 0.1, y);
+        charCamera.scroll.pointLerp(cameraTarget.x, 0.1, X);
+        charCamera.scroll.pointLerp(cameraTarget.y, 0.1, Y);
         charCamera.zoom = charCamera.zoom.lerp(cameraTarget.zoom, 0.1);
     }
 }

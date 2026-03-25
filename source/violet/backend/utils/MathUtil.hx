@@ -1,29 +1,22 @@
 package violet.backend.utils;
 
-import flixel.math.FlxPoint;
 import flixel.FlxG;
 import flixel.math.FlxMath;
+import flixel.math.FlxPoint;
+import flixel.util.FlxAxes;
 import flixel.util.FlxColor;
 
-enum POINT {
-	x;
-	y;
-}
-
 class MathUtil {
-	public static function getElapsedRatio(ratio:Float, fps:Float = 60):Float
-		return FlxMath.bound(ratio * fps * FlxG.elapsed, 0, 1);
+
+	public static function getElapsedRatio(ratio:Float):Float
+		return FlxMath.bound(ratio * 60 * FlxG.elapsed, 0, 1);
 
 	public static function lerp(a:Float, b:Float, ratio:Float, fpsSensitive:Bool = true):Float
 		return a = FlxMath.lerp(a, b, fpsSensitive ? getElapsedRatio(ratio) : ratio);
 
-	public static function pointLerp(point:FlxPoint, target:Float, ratio:Float, pointer:POINT):FlxPoint{
-		switch (pointer) {
-			case x:
-				point.x = lerp(point.x, target, ratio);
-			case y:
-				point.y = lerp(point.y, target, ratio);
-		}
+	public static function pointLerp(point:FlxPoint, target:Float, ratio:Float, pointer:FlxAxes):FlxPoint{
+		if (pointer.x) point.x = lerp(point.x, target, ratio);
+		if (pointer.y) point.y = lerp(point.y, target, ratio);
 		return point;
 	}
 
@@ -35,4 +28,5 @@ class MathUtil {
 			lerp(a.alphaFloat, b.alphaFloat, ratio, fpsSensitive)
 		);
 	}
+
 }
