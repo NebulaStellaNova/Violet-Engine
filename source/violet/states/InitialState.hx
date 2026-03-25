@@ -73,6 +73,7 @@ class InitialState extends StateBackend { // for now
 
 			if (Controls.reloadGame) {
 				Conductor.pause();
+				ModdingAPI.reloadModList();
 				ModdingAPI.reloadRegistries();
 				FlxG.resetState();
 			}
