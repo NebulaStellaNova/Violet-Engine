@@ -221,6 +221,10 @@ class NovaSprite extends #if ANIMATE_SUPPORT FlxAnimate #else FlxSprite #end {
 		addAnim(data.name, data.prefix, data.frameIndices, data.offsets, data.frameRate, data.looped, data.byLabel, data.flipX, data.flipY);
 	}
 
+	public function addAnimsFromDataArray(data:Array<AnimationData>) {
+		for (i in data) addAnimFromData(i);
+	}
+
 	public function addFrames(path:String):Void {
 		var newFrames:FlxAtlasFrames = null;
 		if (Paths.fileExists('${haxe.io.Path.withoutExtension(path)}/Animation.json', true)) {

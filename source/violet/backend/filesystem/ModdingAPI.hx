@@ -68,7 +68,7 @@ class ModdingAPI {
 		// Main.threadCallacks.addOnce(reloadRegistries);
 		reloadRegistries();
 		new HXCHandler();
-		trace(checkForHXC().join('\n'));
+		// trace(checkForHXC().join('\n'));
 	}
 
 	public static function reloadModList() {

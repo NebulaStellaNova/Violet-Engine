@@ -1,8 +1,10 @@
 package violet.states;
 
+import violet.backend.utils.ParseUtil;
 import flixel.FlxCamera;
 import flixel.group.FlxGroup;
 import flixel.math.FlxMath;
+
 import violet.backend.audio.Conductor;
 import violet.backend.objects.NovaCamera;
 import violet.backend.objects.play.ComboGroup;
@@ -32,6 +34,7 @@ import violet.data.stage.Stage;
 import violet.states.menus.FreeplayMenu;
 import violet.states.menus.MainMenu;
 import violet.states.menus.PauseMenu;
+import violet.backend.objects.play.DialogueHandler;
 
 #if SCRIPT_SUPPORT
 import violet.backend.scripting.ScriptPack;
@@ -137,22 +140,16 @@ class PlayState extends violet.backend.StateBackend {
 		ModdingAPI.checkForScripts('songs/$song/scripts', songScripts);
 		ModdingAPI.checkForScripts('songs/$song/scripts/$difficulty', songScripts);
 
-		songScripts.parent = this;
+		// Start Dialogue
+		var sD:Array<ConverstationPiece> = ParseUtil.jsonOrYaml('songs/$song/start-dialogue');
+		var dialogueHandler = new DialogueHandler(sD);
+		dialogueHandler.camera = camHUD;
+		dialogueHandler.updateHitbox();
+		dialogueHandler.screenCenter();
+		dialogueHandler.y += 150;
+		add(dialogueHandler);
 
-		/* #if SCRIPT_SUPPORT
 		songScripts.parent = this;
-		final scriptPaths:Array<String> = ['$song/scripts', '$song/scripts/$difficulty'];
-		if (variation != null) scriptPaths.push('$song/scripts/$variation');
-		for (path in scriptPaths) {
-			for (folder in Paths.readFolder(path)) {
-				checkForScripts([Paths.ASSETS_FOLDER, haxe.io.Path.withoutExtension(folder)].join("/"), songScripts);
-				#if MOD_SUPPORT
-				for (mod in ModdingAPI.getActiveMods())
-					checkForScripts([ModdingAPI.MOD_FOLDER, mod.folder, haxe.io.Path.withoutExtension(folder)].join("/"), songScripts);
-				#end
-			}
-		}
-		#end */
 
 		strumLines = new FlxTypedGroup<StrumLine>();
 

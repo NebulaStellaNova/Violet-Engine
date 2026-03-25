@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TextureAtlas imagePath="loud.png" width="1567" height="1740">
+	<SubTexture name="idle0000" x="1" y="935" width="1231" height="408" frameX="-9" frameY="-5" frameWidth="1241" frameHeight="421"/>
+	<SubTexture name="idle0001" x="1" y="511" width="1228" height="421" frameX="-9" frameY="-0" frameWidth="1241" frameHeight="421"/>
+	<SubTexture name="idle0002" x="1" y="1346" width="1241" height="393" frameX="-0" frameY="-15" frameWidth="1241" frameHeight="421"/>
+	<SubTexture name="open0000" x="1232" y="511" width="334" height="295" frameX="-752" frameY="-105" frameWidth="1367" frameHeight="507"/>
+	<SubTexture name="open0001" x="1" y="1" width="1366" height="507" frameX="-0" frameY="-0" frameWidth="1367" frameHeight="507"/>
+	<SubTexture name="open0002" x="1" y="1" width="1366" height="507" frameX="-0" frameY="-0" frameWidth="1367" frameHeight="507"/>
+</TextureAtlas>

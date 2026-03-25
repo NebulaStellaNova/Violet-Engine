@@ -1,0 +1,6 @@
+assetPath: game/dialogue/portaits/gf
+animations:
+  - name: idle
+    prefix: gfPortEnter
+  - name: happy
+    prefix: gfPortHappy

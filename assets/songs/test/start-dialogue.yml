@@ -1,0 +1,5 @@
+- text: Hello everyone my name is welcome
+  side: left
+  portait: bf
+  speed: 1                # default * this (multiplier)
+  sound: sounds/dialogue/bf
