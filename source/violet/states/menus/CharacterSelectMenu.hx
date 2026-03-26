@@ -1,5 +1,6 @@
 package violet.states.menus;
 
+import violet.backend.utils.FileUtil;
 import violet.backend.utils.NovaUtils;
 import violet.backend.StateBackend;
 
@@ -91,6 +92,8 @@ class CharacterSelectMenu extends StateBackend {
         chooseDipshit.scrollFactor.set();
         dipshitBacking.scrollFactor.set();
         dipshitBlur.scrollFactor.set();
+
+        trace(Paths.readFolder('data/players', (v)->{ return FileUtil.isDataFile(v); }));
 
         // FlxG.camera.scroll.y -= FlxG.height/2;
 

@@ -137,14 +137,16 @@ class Paths {
 	#if release inline #end public static function folderExists(path:String, startFromRoot:Bool = false):Bool
 		return #if mobile _readFolder(Path.removeTrailingSlashes(root(path, startFromRoot))).length != 0 || #end FileSystem.isDirectory(Path.removeTrailingSlashes(root(path, startFromRoot)));
 
-	public static function readFolder(path:String, startFromRoot:Bool = false):Array<String> {
-		if (startFromRoot)
-			return folderExists(path, startFromRoot) ? _handleDirectories(Path.removeTrailingSlashes(root(path, true))) : [];
+	public static function readFolder(path:String, startFromRoot:Bool = false, ?filter:String->Bool):Array<String> {
+		if (startFromRoot) {
+			var files = folderExists(path, startFromRoot) ? _handleDirectories(Path.removeTrailingSlashes(root(path, true))) : [];
+			return filter != null ? files.filter(filter) : files;
+		}
 		var files:Array<String> = [];
 		for (folder in multiRoot(path))
 			for (file in _handleDirectories(Path.removeTrailingSlashes(folder)))
 				files.push(file);
-		return files;
+		return filter != null ? files.filter(filter) : files;
 	}
 
 	/**
