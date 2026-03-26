@@ -91,7 +91,6 @@ class Main extends openfl.display.Sprite {
 		super();
 		instance = this;
 
-
 		lemonui.Constants.FONT_REGULAR = Paths.font('Inconsolata-Medium.ttf');
 		lemonui.Constants.FONT_BOLD = Paths.font('Inconsolata-Bold.ttf');
 
@@ -109,10 +108,6 @@ class Main extends openfl.display.Sprite {
 		hxwindowmode.WindowColorMode.setDarkMode();
 		hxwindowmode.WindowColorMode.setWindowCornerType(1);
 		hxwindowmode.WindowColorMode.redrawWindowHeader();
-		#end
-
-		#if windows
-		violet.external.windows.WinAPI.setDarkMode(violet.external.windows.WinAPI.isSystemDarkMode());
 		#end
 
 		#if ALLOW_VIDEOS
@@ -158,6 +153,10 @@ class Main extends openfl.display.Sprite {
 		});
 
 		lime.app.Application.current.onExit.add((_)->ModdingAPI.powerDown());
+
+		#if windows
+		violet.external.windows.WinAPI.setDarkMode(violet.external.windows.WinAPI.isSystemDarkMode());
+		#end
 	}
 
 	public static function switchState(targetClass:Dynamic) {

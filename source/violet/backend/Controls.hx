@@ -224,6 +224,12 @@ class Controls {
 	public static var reloadGame(get, never):Bool;
 	inline static function get_reloadGame():Bool
 		return pressed('reloadGame');
+	/**
+	 * When "console" is pressed.
+	 */
+	public static var console(get, never):Bool;
+	inline static function get_console():Bool
+		return pressed('console');
 
 	// Rest of class
 	/**

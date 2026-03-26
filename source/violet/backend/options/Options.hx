@@ -39,10 +39,11 @@ import flixel.util.FlxSave;
 
 		'fullscreen' => ['F11', 'F11'],
 
-		'botplay' => ['F2', 'F2'],
-		'reloadGame' => ['F5', 'F5'],
+		'botplay' => ['F1', 'F1'],
+		'console' => ['F2', 'F2'],
 		'resetState' => ['F3', 'F3'],
 		'shortcutState' => ['F4', 'F4'],
+		'reloadGame' => ['F5', 'F5'],
 		'debugDisplay' => ['F6', 'F6']
     ];
 

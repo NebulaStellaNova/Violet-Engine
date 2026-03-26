@@ -6,20 +6,32 @@ import haxe.macro.Context;
 import haxe.macro.Expr;
 
 class Macro {
+
+	public static function print(message:String) {
+		Sys.println("\r\x1b[92m" + '[   MACRO   ] -> [  Macro.hx  ]: ' + "\033[0m" + '$message');
+	}
+
+	public static function addMetadata(buildPath:String, classPath:String) {
+		Compiler.addMetadata(buildPath, classPath);
+		print('Built $classPath.');
+	}
+
 	public static function init():Void {
-		Compiler.addMetadata('@:build(violet.backend.Macro.buildFlxBasic())', 'flixel.FlxBasic');
-		Compiler.addMetadata('@:build(violet.backend.Macro.buildFlxObject())', 'flixel.FlxObject');
-		Compiler.addMetadata('@:build(violet.backend.Macro.buildFlxSprite())', 'flixel.FlxSprite');
-		Compiler.addMetadata('@:build(violet.backend.Macro.buildFlxTypedGroup())', 'flixel.group.FlxTypedGroup');
-		Compiler.addMetadata('@:build(violet.backend.Macro.buildFlxSpriteGroup())', 'flixel.group.FlxTypedSpriteGroup');
-		Compiler.addMetadata('@:build(violet.backend.Macro.buildFlxCamera())', 'flixel.FlxCamera');
-		Compiler.addMetadata('@:build(violet.backend.VarTweenMacro.init())', 'flixel.tweens.misc.VarTween');
+		print('Initializing macros...');
+		addMetadata('@:build(violet.backend.Macro.buildFlxBasic())', 'flixel.FlxBasic');
+		addMetadata('@:build(violet.backend.Macro.buildFlxObject())', 'flixel.FlxObject');
+		addMetadata('@:build(violet.backend.Macro.buildFlxSprite())', 'flixel.FlxSprite');
+		addMetadata('@:build(violet.backend.Macro.buildFlxTypedGroup())', 'flixel.group.FlxTypedGroup');
+		addMetadata('@:build(violet.backend.Macro.buildFlxSpriteGroup())', 'flixel.group.FlxTypedSpriteGroup');
+		addMetadata('@:build(violet.backend.Macro.buildFlxCamera())', 'flixel.FlxCamera');
+		addMetadata('@:build(violet.backend.VarTweenMacro.init())', 'flixel.tweens.misc.VarTween');
 		#if SCRIPT_SUPPORT
 		Compiler.include('violet', true);
 		Compiler.include('haxe', true, ['haxe.atomic.*', 'haxe.macro.*']);
 		Compiler.include('flixel', true, ['flixel.addons.editors.spine.*', 'flixel.addons.nape.*', 'flixel.system.macros.*', 'flixel.addons.tile.FlxRayCastTilemap', 'flixel.addons.weapon.*']);
 		#end
 		Compiler.include('moonchart', true, ['moonchart.backend.*']); // force include, no matter what
+		print('Finished building macros.');
 	}
 
 	public static macro function buildFlxCamera():Array<Field> {
@@ -66,7 +78,6 @@ class Macro {
 		}
 
 		var updateFunc = classFields.filter(field -> return field.name == 'update')[0];
-		trace(updateFunc);
 		switch (updateFunc.kind) {
 			case FFun(f):
 				var initExpr:Expr = f.expr;

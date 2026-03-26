@@ -71,6 +71,13 @@ class InitialState extends StateBackend { // for now
 				}
 			}
 
+			if (FlxG.keys.justPressed.F2/* Controls.console // Doesn't work for some reason, crashes when I try to add setting for it. */) {
+				#if windows
+				violet.external.windows.WinAPI.allocConsole();
+				trace('sys:Hello World!');
+				#end
+			}
+
 			if (Controls.reloadGame) {
 				Conductor.pause();
 				ModdingAPI.reloadModList();
