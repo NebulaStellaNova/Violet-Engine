@@ -1,6 +1,7 @@
 <menubar id="menubar">
 
     <menu text="File">
+        <menu-item id="newCharacter" text="New" shortcutText="Ctrl+N" />
         <!-- <menu-separator /> -->
         <menu-item id="saveCharacter" text="Save" shortcutText="Ctrl+S" />
         <!-- <menu-item id="saveFilePsych" text="Save for Psych Engine" disabled="true" /> -->
@@ -9,6 +10,10 @@
         <!-- <menu-item id="deleteCharacter" text="Delete Character" style="color: indianred"/>
         <menu-separator /> -->
         <menu-item id="exitToMenu" text="Exit To Menu" shortcutText="Ctrl+Q" />
+    </menu>
+
+    <menu text="Animation">
+        <menu-item id="newAnimation" text="New Animation" shortcutText="Ctrl+N" />
     </menu>
 
     <text text="Violet Engine Character Editor" x="1040" y="4"/>

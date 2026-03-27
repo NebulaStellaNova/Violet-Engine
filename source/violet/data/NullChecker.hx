@@ -26,4 +26,8 @@ class NullChecker {
 		}
 		return anims;
 	}
+
+	public static function checkAnimation(animation:AnimationData):AnimationData {
+		return checkAnimations([animation])[0];
+	}
 }

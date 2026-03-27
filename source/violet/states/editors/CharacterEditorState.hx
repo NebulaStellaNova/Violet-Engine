@@ -1,5 +1,7 @@
 package violet.states.editors;
 
+import lemonui.elements.MenuBar;
+import violet.states.editors.sub.*;
 import violet.backend.utils.JsonUtil;
 import violet.states.menus.MainMenu;
 import violet.data.character.CharacterData;
@@ -40,7 +42,19 @@ typedef CameraTarget = {
 
 class CharacterEditorState extends StateBackend {
 
-    public var characterList:Array<String> = [for (i in CharacterRegistry.characterDatas.keys()) i];
+    public static var instance:CharacterEditorState;
+    public static var newList:Array<String> = [];
+
+    public var characterList(get, never):Array<String>;
+    function get_characterList() {
+        var out = [for (i in CharacterRegistry.characterDatas.keys()) i];
+        out.sort(function(a:String, b:String) {
+            a = a.toUpperCase();
+            b = b.toUpperCase();
+            return a == b ? 0 : a > b ? 1 : -1;
+        });
+        return out;
+    }
 
     public var animationList:Array<AnimationData> = [];
     public var selectedAnimation(get, never):AnimationData;
@@ -105,6 +119,10 @@ class CharacterEditorState extends StateBackend {
     public function new() {
         super();
 
+        instance = this;
+
+        newList = [];
+
         bgCamera = new FlxCamera();
         FlxG.cameras.add(bgCamera, false);
 
@@ -122,8 +140,21 @@ class CharacterEditorState extends StateBackend {
         add(bg);
 
         var menuBar = ElementUtil.buildFromXML(Paths.xml("data/ui/character-editor/menubar")).root;
+        var bar:MenuBar = menuBar.findElement('menubar');
         menuBar.camera = lemonCamera;
-        cast (menuBar.findElement('exitToMenu'), MenuItem).onClick = ()->{
+        var newCharacter:MenuItem = menuBar.findElement('newCharacter');
+        newCharacter.onClick = ()->{
+            bar.closeAll();
+            openSubState(new NewCharacterScreen());
+        }
+        var newAnimation:MenuItem = menuBar.findElement('newAnimation');
+        newAnimation.onClick = ()->{
+            bar.closeAll();
+            openSubState(new NewAnimationScreen());
+        }
+        var exitToMenu:MenuItem = menuBar.findElement('exitToMenu');
+        exitToMenu.onClick = ()->{
+            for (i in newList) if (CharacterRegistry.characterDatas.exists(i)) CharacterRegistry.characterDatas.remove(i);
             ModdingAPI.reloadRegistries();
             FlxG.switchState(new MainMenu());
         };
@@ -227,8 +258,12 @@ class CharacterEditorState extends StateBackend {
             yOffsetGlobal.onChange = value -> character._data.offsets[1] = value;
             cameraX.onChange = value -> character._data.cameraOffsets[0] = value;
             cameraY.onChange = value -> character._data.cameraOffsets[1] = value;
-            flipX.onChange = value -> character._data.flipX = value;
             isPixel.onChange = value -> character.antialiasing = !(character._data.isPixel = value);
+
+            flipX.onChange = value -> {
+                character._data.flipX = value;
+                reloadCharacters();
+            }
 
             assetPath.onChange = function(value:String) {
                 assetPath.elementColor = 0xFF3d3f41;
@@ -273,7 +308,7 @@ class CharacterEditorState extends StateBackend {
                         animFlipY.checked = i.flipY;
                         byLabel.checked = i.byLabel ?? false;
                         assetPathField.text = i.assetPath ?? "";
-                        indicesField.text = i.frameIndices.indiciesToString();
+                        indicesField.text = (i.frameIndices ?? []).indiciesToString();
                         fpsStepper.value = i.frameRate;
                         xOffsetStepper.value = i.offsets[0];
                         yOffsetStepper.value = i.offsets[1];
@@ -359,11 +394,6 @@ class CharacterEditorState extends StateBackend {
 
     public function refreshCharacterDropdown() {
         @:privateAccess characterDropdown.close();
-        characterList.sort(function(a:String, b:String){
-            a = a.toUpperCase();
-            b = b.toUpperCase();
-            return a == b ? 0 : a > b ? 1 : -1;
-        });
         characterDropdown.clearOptions();
         for (i in characterList) {
             characterDropdown.addOption(CharacterRegistry.characterDatas.get(i).name, i);
@@ -377,7 +407,7 @@ class CharacterEditorState extends StateBackend {
         for (i in animationList) {
             animationDropdown.addOption(i.name);
         }
-        animationDropdown.selectedText.text = characterAnim ?? "Unknown Error Occurred";
+        animationDropdown.selectedText.text = characterAnim ?? "";
         animationDropdown.selectedText.updateHitbox();
     }
 
@@ -410,6 +440,7 @@ class CharacterEditorState extends StateBackend {
         }
 
         for (i in animationList) {
+            i.offsets ??= [0, 0];
 			i.offsets[0] *= -1;
 			i.offsets[1] *= -1;
             character.addAnimFromData(i);
@@ -455,7 +486,7 @@ class CharacterEditorState extends StateBackend {
     }
 
     public function save() {
-        FileUtil.openSaveDialog("Test", FileUtil.characterFilter, (path:String)->{
+        FileUtil.openSaveDialog("Save Character!", FileUtil.characterFilter, (path:String)->{
             if (FileSystem.exists(path)) FileSystem.deleteFile(path);
             var data = character.cloneData();
             data.animations = animationList.copy();
