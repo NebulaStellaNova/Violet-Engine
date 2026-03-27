@@ -33,23 +33,43 @@ class Character extends violet.backend.objects.Bopper {
 	public var singTimer:Float = 4;
 	public var isSinging:Bool = false;
 
+	private var faceLeftCache:Bool = false;
+	private var initialFlipX:Bool = false;
+
+
 	/**
      * ![no blackie](https://raw.githubusercontent.com/NebulaStellaNova/Hamsters/refs/heads/main/extras/no-blackie.png)
     */
 	public function new(x:Float = 0, y:Float = 0, id:String = 'bf', faceLeft:Bool = false) {
 		this.id = id;
+		this.faceLeftCache = faceLeft;
+		this.initialFlipX = this.flipX;
 		this._data = CharacterRegistry.characterDatas.get(id) ?? CharacterRegistry.characterDatas.get('bf');
 		super(x, y, Paths.image(this._data.assetPath)); // did this for atlases
 
-		this._data.healthIcon ??= this.id;
-
 		if (CharacterRegistry.characterDatas.get(id) == null) {
-            NovaUtils.addNotification('Character not found!', 'Could not find character with ID "$id" using default character "bf."', ERROR);
+			NovaUtils.addNotification('Character not found!', 'Could not find character with ID "$id" using default character "bf."', ERROR);
         }
+
+		__refresh();
+
+		dance(true);
+	}
+
+	private function __refresh() {
+		for (i in animation.getNameList()) {
+			this.removeAnim(i);
+		}
+
+		this.flipX = this.initialFlipX;
+
+		this.loadSprite(Paths.image(this._data.assetPath));
+
+		this._data.healthIcon ??= this.id;
 
 		this.cameraOffsets = this._data.cameraOffsets?.copy() ?? [0, 0];
 
-		if (faceLeft) flipX = !flipX;
+		if (faceLeftCache) flipX = !flipX;
 		if (this._data.flipX ?? false) flipX = !flipX;
 		__baseFlipped = flipX;
 
@@ -66,12 +86,10 @@ class Character extends violet.backend.objects.Bopper {
 
 		this.danceEvery = this._data.danceEvery ?? (this.animationList.contains('danceLeft') ? 1 : 2);
 		this.singTimer = this._data.singTime ?? 4;
-		this.scale.scale(this._data.scale ?? 1);
+		this.scale.set(this._data.scale ?? 1, this._data.scale ?? 1);
 		if (this._data.offsets != null) this.globalOffset.set(this._data.offsets[0] ?? 0, this._data.offsets[1] ?? 0);
 		this.antialiasing = !(this._data.isPixel ?? false);
 		this.updateHitbox();
-
-		dance(true);
 	}
 
 	public static var singAnimations:Array<String> = ['singLEFT', 'singDOWN', 'singUP', 'singRIGHT'];
@@ -114,7 +132,7 @@ class Character extends violet.backend.objects.Bopper {
 	public function cloneData():Dynamic {
 		return {
 			version: "1.0.0",
-			name: '${_data.name}', // p sure I don't gotta do this but just bein safe
+			name: _data.name,
 			animations: (_data.animations ?? []).copy(),
 			flipX: _data.flipX,
 			scale: _data.scale,

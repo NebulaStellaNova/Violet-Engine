@@ -29,6 +29,8 @@ class NovaSprite extends #if ANIMATE_SUPPORT FlxAnimate #else FlxSprite #end {
 
 	public static var cachedFrames:Map<String, FlxAnimateFrames> = [];
 
+	public var allowOnComplete:Bool = true;
+
 	public var filePath:String;
 	public var fileName:String;
 
@@ -52,6 +54,7 @@ class NovaSprite extends #if ANIMATE_SUPPORT FlxAnimate #else FlxSprite #end {
 			this.loadSprite(path);
 
 		this.animation.onFinish.add((name)->{
+			if (!allowOnComplete) return;
 			for (i in ['hold', 'end']) {
 				if (animationList.contains('$name-$i')) {
 					playAnim('$name-$i', true);

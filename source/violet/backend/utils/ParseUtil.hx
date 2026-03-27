@@ -33,6 +33,17 @@ class ParseUtil {
 		return {};
 	}
 
+	public static function stringifyYaml(data:Dynamic):String {
+		//               We've lost ALL the plot <3
+		var regex:EReg = ~/:[ \t]*\r?\n[ \t]*-[ \t]*(-?\d+(?:\.\d+)?)[ \t]*\r?\n[ \t]*-[ \t]*(-?\d+(?:\.\d+)?)/g;
+		var rawYaml:String = Yaml.render(data, null);
+		return regex.replace(rawYaml, ": [$1, $2]");
+	}
+
+	public static function stringifyJson(data:Dynamic) {
+
+	}
+
 	public static function removeJsonComments(str:String) {
 		var split = str.split('');
 		var string = "";
@@ -61,7 +72,7 @@ class ParseUtil {
 	/**
 	 * Correctly formats JSON files for export :D
 	 */
-	public static function stringifyJson(jsonObject:Dynamic) {
+/* 	public static function stringifyJson(jsonObject:Dynamic) {
 		var string = jsonObject is String ? jsonObject : Json.stringify(jsonObject, null, "\t");
 		string = string.trim();
 		string = string.replace("    ", "\t");
@@ -97,7 +108,7 @@ class ParseUtil {
 		finalStr = finalStr.replace("[ {", "[\n{");
 		finalStr = finalStr.replace("}, {", "},\n{");
 		return finalStr;
-	}
+	} */
 }
 
 /**

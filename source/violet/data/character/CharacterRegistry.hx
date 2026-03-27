@@ -12,11 +12,16 @@ class CharacterRegistry {
 
 		characterDatas.clear();
 
-		for (file in Paths.readFolder("data/characters")) {
-			if (!FileUtil.isDataFile(file)) continue;
-            final charID = Paths.fileName(file);
-			characterDatas.set(charID, ParseUtil.jsonOrYaml('data/characters/$charID'));
-			trace('debug:<cyan>Found and registered character with ID "<magenta>${charID}<cyan>"');
+		for (file in Paths.readFolder("data/characters", v -> return FileUtil.isDataFile(v))) {
+			register(Paths.fileName(file), ParseUtil.jsonOrYaml('data/characters/${Paths.fileName(file)}'));
+		}
+	}
+
+	public static function register(id:String, data:CharacterData) {
+		if (characterDatas.exists(id)) trace('warning:<cyan>Character with id "<magenta>$id<cyan>" already exists, skipping...');
+		else {
+			characterDatas.set(id, data);
+			trace('debug:<cyan>Found and registered character with ID "<magenta>$id<cyan>"');
 		}
 	}
 

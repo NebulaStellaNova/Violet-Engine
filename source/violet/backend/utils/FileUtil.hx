@@ -10,7 +10,7 @@ class FileUtil {
 
 	public static var characterFilter(get, never):Array<String>;
 	static function get_characterFilter():Array<String> {
-		return ['*.yaml', '*.yml'];
+		return ['*.yml'];
 	}
 
 	inline public static function getFileContent(path:String):String {
@@ -25,7 +25,7 @@ class FileUtil {
 	}
 
 	public static function openSaveDialog(title:String, filters:Array<String>, ?defaultPath:String, ?onSelect:String->Void) {
-        var filter:Null<String> = [for (i in filters) i.replace("*.", "")].join(";");
+        var filter:Null<String> = filters[0].replace('*.', ''); // TODO: fork lime and add mutli support
 		var fileDialog:FileDialog = new FileDialog();
 		fileDialog.onSelect.add(onSelect);
 		/* if (onCancel != null)

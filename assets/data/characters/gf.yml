@@ -227,7 +227,7 @@ animations:
     frameRate: 24
     name: scared
     byLabel: false
-    looped: false
+    looped: true
 assetPath: characters/gf
 offsets: 
   - 0

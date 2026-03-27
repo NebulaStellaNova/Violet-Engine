@@ -1,5 +1,6 @@
 package violet.states.editors;
 
+import violet.backend.utils.JsonUtil;
 import violet.states.menus.MainMenu;
 import violet.data.character.CharacterData;
 import yaml.Yaml;
@@ -69,9 +70,27 @@ class CharacterEditorState extends StateBackend {
 
     public var cameraTarget:CameraTarget = { x: 0, y: 0, zoom: 1 }
 
+    // -- Character Window -- \\
+    public var characterDropdown:Dropdown;
+
+    // -- Properties Window -- \\
+    public var name:TextInput;
+    public var assetPath:TextInput;
+    public var healthIcon:TextInput;
+    public var deathCharacter:TextInput;
+    public var scale:NumericStepper;
+    public var singTime:NumericStepper;
+    public var xOffsetGlobal:NumericStepper;
+    public var yOffsetGlobal:NumericStepper;
+    public var danceEvery:NumericStepper;
+    public var cameraX:NumericStepper;
+    public var cameraY:NumericStepper;
+    public var isPixel:Tickbox;
+    public var flipX:Tickbox;
+
+    // -- Animation Window -- \\
     public var xOffsetStepper:NumericStepper;
     public var yOffsetStepper:NumericStepper;
-    public var characterDropdown:Dropdown;
     public var animationDropdown:Dropdown;
     public var fpsStepper:NumericStepper;
     public var assetPathField:TextInput;
@@ -124,8 +143,23 @@ class CharacterEditorState extends StateBackend {
         dropdown.camera = lemonCamera;
         insert(10, dropdown);
 
-        animationDropdown = characterWindow.findElement('animationDropdown');
         characterDropdown = dropdown.findElement('characterDropdown');
+
+        name = characterWindow.findElement('name');
+        assetPath = characterWindow.findElement('globalAssetPath');
+        healthIcon = characterWindow.findElement('healthIcon');
+        deathCharacter = characterWindow.findElement('deathCharacter');
+        scale = characterWindow.findElement('scale');
+        xOffsetGlobal = characterWindow.findElement('xOffsetGlobal');
+        yOffsetGlobal = characterWindow.findElement('yOffsetGlobal');
+        danceEvery = characterWindow.findElement('danceEvery');
+        cameraX = characterWindow.findElement('cameraX');
+        cameraY = characterWindow.findElement('cameraY');
+        singTime = characterWindow.findElement('singTime');
+        flipX = characterWindow.findElement('flipX');
+        isPixel = characterWindow.findElement('isPixel');
+
+        animationDropdown = characterWindow.findElement('animationDropdown');
         indicesField = characterWindow.findElement('frameIndices');
         assetPathField = characterWindow.findElement('assetPath');
         xOffsetStepper = characterWindow.findElement('xOffset');
@@ -144,25 +178,77 @@ class CharacterEditorState extends StateBackend {
             animationList = [];
 
             ghost = new Character(characterDropdown.selectedOption.id);
+            ghost.allowOnComplete = false;
+            ghost.camera = charCamera;
+            ghost.updateHitbox();
             ghost.screenCenter();
             ghost.alpha *= 0.5;
             ghost.x -= ghost.globalOffset.x;
             ghost.y -= ghost.globalOffset.y;
-            ghost.camera = charCamera;
-            ghost.updateHitbox();
             ghost.canDance = false;
             @:privateAccess ghost.__baseFlipped = false;
             add(ghost);
 
             character = new Character(characterDropdown.selectedOption.id);
+            character.allowOnComplete = false;
+            character.camera = charCamera;
+            character.updateHitbox();
             character.screenCenter();
             character.x -= character.globalOffset.x;
             character.y -= character.globalOffset.y;
-            character.camera = charCamera;
-            character.updateHitbox();
             character.canDance = false;
             @:privateAccess character.__baseFlipped = false;
             add(character);
+
+            ghost._data = character._data = character.cloneData();
+
+            name.text = character._data.name;
+            assetPath.text = character._data.assetPath;
+            healthIcon.text = character._data.healthIcon;
+            deathCharacter.text = character._data.deathCharacter ?? '';
+            scale.value = character._data.scale ?? 1;
+            xOffsetGlobal.value = (character._data.offsets ?? [0, 0])[0];
+            yOffsetGlobal.value = (character._data.offsets ?? [0, 0])[1];
+            danceEvery.value = character._data.danceEvery;
+            cameraX.value = character._data.cameraOffsets[0];
+            cameraY.value = character._data.cameraOffsets[1];
+            singTime.value = character._data.singTime;
+            isPixel.checked = character._data.isPixel;
+            flipX.checked = character._data.flipX;
+            // singTime.value = character._data.singTime;
+
+            // Yummy lambdas
+            name.onChange = value -> character._data.name = value;
+            healthIcon.onChange = value -> character._data.healthIcon = value;
+            deathCharacter.onChange = value -> character._data.deathCharacter = value;
+            danceEvery.onChange = value -> character._data.danceEvery = value;
+            singTime.onChange = value -> character._data.singTime = value;
+            xOffsetGlobal.onChange = value -> character._data.offsets[0] = value;
+            yOffsetGlobal.onChange = value -> character._data.offsets[1] = value;
+            cameraX.onChange = value -> character._data.cameraOffsets[0] = value;
+            cameraY.onChange = value -> character._data.cameraOffsets[1] = value;
+            flipX.onChange = value -> character._data.flipX = value;
+            isPixel.onChange = value -> character.antialiasing = !(character._data.isPixel = value);
+
+            assetPath.onChange = function(value:String) {
+                assetPath.elementColor = 0xFF3d3f41;
+                if (Paths.image(value) != "" && value != "") {
+                    character._data.assetPath = value;
+                    reloadCharacters();
+                } else {
+                    assetPath.elementColor = 0xff751b1b;
+                }
+            }
+
+            scale.onChange = function(value:Float) {
+                scale.elementColor = 0xFF3d3f41;
+                if (value != 0) {
+                    character._data.scale = value;
+                    reloadCharacters();
+                } else {
+                    assetPath.elementColor = 0xff751b1b;
+                }
+            }
 
             animationDropdown.onChange = (index, label) -> {
                 character.playAnim(label, true);
@@ -338,12 +424,62 @@ class CharacterEditorState extends StateBackend {
         ghost.animation.finish();
     }
 
+    public function reloadCharacters() {
+        final prevCharAnim:String = characterAnim;
+        final prevGhostAnim:String = ghostAnim;
+
+        @:privateAccess character.__refresh();
+        @:privateAccess ghost.__refresh();
+
+        refreshAnimations();
+
+        character.playAnim(prevCharAnim, true);
+
+        character.camera = charCamera;
+        character.updateHitbox();
+        character.screenCenter();
+        character.x -= character.globalOffset.x;
+        character.y -= character.globalOffset.y;
+        character.canDance = false;
+        @:privateAccess character.__baseFlipped = false;
+
+        ghost.playAnim(prevGhostAnim, true);
+
+        ghost.camera = charCamera;
+        ghost.updateHitbox();
+        ghost.screenCenter();
+        ghost.x -= ghost.globalOffset.x;
+        ghost.y -= ghost.globalOffset.y;
+        ghost.canDance = false;
+        @:privateAccess ghost.__baseFlipped = false;
+    }
+
     public function save() {
         FileUtil.openSaveDialog("Test", FileUtil.characterFilter, (path:String)->{
             if (FileSystem.exists(path)) FileSystem.deleteFile(path);
             var data = character.cloneData();
-            data.animations = animationList;
-            Yaml.write(path, data);
+            data.animations = animationList.copy();
+
+            // -- Removes null and unchanged fields -- \\
+            for (i in Reflect.fields(data)) if (Reflect.field(data, i) == null) Reflect.deleteField(data, i);
+            for (anim in data.animations) {
+                for (i in Reflect.fields(anim)) {
+                    var equal = true;
+                    if (Std.isOfType(Reflect.field(anim, i), Array)) {
+                        var a:Array<Float> = cast Reflect.field(violet.data.NullChecker.animationDefaults, i);
+                        var b:Array<Float> = cast Reflect.field(anim, i);
+                        for (ind=>v in a) {
+                            if (v != b[ind]) equal = false;
+                        }
+                    } else equal = false;
+                    if (Reflect.field(anim, i) == null || Reflect.field(anim, i) == Reflect.field(violet.data.NullChecker.animationDefaults, i) || equal) {
+                        Reflect.deleteField(anim, i);
+                    }
+                }
+            }
+
+            // JsonUtil.stringify();
+            sys.io.File.saveContent(path, ParseUtil.stringifyYaml(data));
         });
     }
     override function update(elapsed:Float) {
