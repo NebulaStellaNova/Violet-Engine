@@ -111,14 +111,21 @@ class CharacterEditorState extends StateBackend {
         cast (menuBar.findElement('saveCharacter'), MenuItem).onClick = save;
         insert(10, menuBar);
 
+
         var characterWindow = ElementUtil.buildFromXML(Paths.xml("data/ui/character-editor/character-window")).root;
         characterWindow.x = FlxG.width - characterWindow.width - 10;
         characterWindow.y = 50;
         characterWindow.camera = lemonCamera;
         insert(10, characterWindow);
 
+        var dropdown = ElementUtil.buildFromXML(Paths.xml("data/ui/character-editor/dropdown-window")).root;
+        dropdown.x = FlxG.width - dropdown.width - 20 - characterWindow.width;
+        dropdown.y = 50;
+        dropdown.camera = lemonCamera;
+        insert(10, dropdown);
+
         animationDropdown = characterWindow.findElement('animationDropdown');
-        characterDropdown = characterWindow.findElement('characterDropdown');
+        characterDropdown = dropdown.findElement('characterDropdown');
         indicesField = characterWindow.findElement('frameIndices');
         assetPathField = characterWindow.findElement('assetPath');
         xOffsetStepper = characterWindow.findElement('xOffset');

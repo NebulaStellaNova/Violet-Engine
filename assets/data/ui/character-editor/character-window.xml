@@ -1,7 +1,24 @@
 <vbox spacing="10" id="box">
     <tabpanel id="panel1" height="275">
-        <tab name="Character" id="tab1">
-            <dropdown id="characterDropdown" x="15" label="Character:" y="15"/>
+        <tab name="Properties" id="tab1">
+            <!-- Row 1 -->
+            <textinput id="name" label="Name:" x="15" y="5" fieldWidth="135"/>
+            <textinput id="assetPath" label="Asset Path:" x="155" y="5" fieldWidth="130"/>
+            <!-- Row 2 -->
+            <textinput id="healthIcon" label="Health Icon:" x="15" y="52" fieldWidth="135"/>
+            <textinput id="deathCharacter" label="Death Character:" x="155" y="52" fieldWidth="130"/>
+            <!-- Row 3 -->
+            <numericstepper id="scale" label="Scale:" x="15" y="99" min="0" step="0.1" decimals="1"/>
+            <numericstepper id="xOffsetGlobal" label="Offset X:" x="107" y="99" min="-1000"/>
+            <numericstepper id="yOffsetGlobal" label="Offset Y:" x="199" y="99" min="-1000"/>
+            <!-- Row 4 -->
+            <numericstepper id="danceEvery" label="Dance Every:" x="15" y="145" />
+            <numericstepper id="cameraX" label="Camera X:" x="107" y="145" min="-1000"/>
+            <numericstepper id="cameraY" label="Camera Y:" x="199" y="145" min="-1000"/>
+            <!-- Row 5 -->
+            <tickbox id="flipX" x="15" y="208" label="Flip X"/>
+            <tickbox id="isPixel" x="102" y="208" label="Is Pixel"/>
+            <numericstepper id="singTime" label="Sing Time:" x="199" y="192"/>
         </tab>
     </tabpanel>
     <tabpanel id="panel2" height="375">
