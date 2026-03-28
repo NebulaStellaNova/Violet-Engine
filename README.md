@@ -7,6 +7,8 @@ This engine serves as a passion project for me and a way to get better at coding
 
 The version you see now is actually V2, I have already coded the engine a lot before but had to stop due to it not being able to compile anymore. So, this is a recode of a recode essentially.
 
+I have a discord server for anyone who wants live updates on the engine: https://discord.gg/A3Hjgsp37r
+
 Here's Bopeebo Erect on the engine:
 https://youtu.be/iwcN0Sr3S3A
 
@@ -25,6 +27,3 @@ Well for one, the engine is being coded on the dev branch.
 
 But please, make PR's to help if you want to :D
 I would greatly appreciate it.
-
-# How to stay updated?
-I have a discord server for anyone who wants live updates on the engine: https://discord.gg/A3Hjgsp37r
