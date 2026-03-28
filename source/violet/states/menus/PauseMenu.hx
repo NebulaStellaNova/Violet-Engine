@@ -36,7 +36,11 @@ class PauseMenu extends EditorListBackend {
             { title: "RESTART SONG", disabled: false, onClick: ()->{
                 var event:EventBase = PlayState.instance.songScripts.event('onRestartSong', new EventBase());
                 // event = subStateScripts.event('restartSong', event);
-                if (!event.cancelled) FlxG.resetState();
+                if (event.cancelled) return;
+                Conductor.stop();
+                Conductor.offset = 0;
+                Conductor.instrumental.time = 0;
+                FlxG.resetState();
             }},
             { title: "CHANGE DIFFICULTY", disabled: true, onClick: ()->{
 
@@ -67,7 +71,7 @@ class PauseMenu extends EditorListBackend {
         showLocks = false;
         super.create();
 
-        pauseMusicSound = FlxG.sound.play(Paths.sound(pauseMusic), 0);
+        pauseMusicSound = FlxG.sound.play(Cache.sound(pauseMusic), 0);
         pauseMusicSound.fadeIn(1, 0, 0.5);
 
         FlxTween.num(0, 0.6, 0.5, { ease: FlxEase.sineOut }, (v)->{ subCamera.bgColor.alphaFloat = v; });

@@ -16,11 +16,12 @@ class ParseUtil {
 	}
 
 	public static function yaml(path:String, directory:String = ''):Dynamic {
+		final options = new ParserOptions(); options.maps = false;
 		try {
-			final options = new ParserOptions(); options.maps = false;
 			return Yaml.parse(FileUtil.getFileContent(Paths.yaml(path, directory)), options);
-		} catch(error:haxe.Exception)
+		} catch(error:haxe.Exception) {
 			return null;
+		}
 	}
 
 	public static function jsonOrYaml(path:String, ?directory:String):Dynamic {
@@ -30,6 +31,17 @@ class ParseUtil {
 			return json(path, directory);
 		}
 		return {};
+	}
+
+	public static function stringifyYaml(data:Dynamic):String {
+		//               We've lost ALL the plot <3
+		var regex:EReg = ~/:[ \t]*\r?\n[ \t]*-[ \t]*(-?\d+(?:\.\d+)?)[ \t]*\r?\n[ \t]*-[ \t]*(-?\d+(?:\.\d+)?)/g;
+		var rawYaml:String = Yaml.render(data, null);
+		return regex.replace(rawYaml, ": [$1, $2]");
+	}
+
+	public static function stringifyJson(data:Dynamic) {
+
 	}
 
 	public static function removeJsonComments(str:String) {
@@ -60,7 +72,7 @@ class ParseUtil {
 	/**
 	 * Correctly formats JSON files for export :D
 	 */
-	public static function stringifyJson(jsonObject:Dynamic) {
+/* 	public static function stringifyJson(jsonObject:Dynamic) {
 		var string = jsonObject is String ? jsonObject : Json.stringify(jsonObject, null, "\t");
 		string = string.trim();
 		string = string.replace("    ", "\t");
@@ -96,7 +108,7 @@ class ParseUtil {
 		finalStr = finalStr.replace("[ {", "[\n{");
 		finalStr = finalStr.replace("}, {", "},\n{");
 		return finalStr;
-	}
+	} */
 }
 
 /**

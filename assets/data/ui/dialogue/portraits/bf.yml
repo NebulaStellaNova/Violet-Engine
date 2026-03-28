@@ -1,0 +1,8 @@
+assetPath: game/dialogue/portaits/bf
+animations:
+  - name: idle
+    prefix: bfPortEnter
+  - name: happy
+    prefix: bfPortHappy
+  - name: sad
+    prefix: bfPortSad

@@ -1,0 +1,10 @@
+<vbox spacing="10" id="box">
+    <tabpanel id="panel0" height="185" width="265">
+        <tab name="New Animation" id="tab1">
+            <textinput id="name"     x="15"  y="15"  label="Name:"   fieldWidth="235"/>
+            <textinput id="prefix"   x="15"  y="70"  label="Prefix:" fieldWidth="235"/>
+            <button    id="cancel" x="0"   y="132" text="Cancel" width="70" height="25"/>
+            <button    id="create" x="195" y="132" text="Create" width="70" height="25"/>
+        </tab>
+    </tabpanel>
+</vbox>

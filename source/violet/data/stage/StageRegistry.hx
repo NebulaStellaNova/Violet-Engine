@@ -1,13 +1,7 @@
 package violet.data.stage;
 
-
 import violet.backend.utils.FileUtil;
 import violet.backend.utils.ParseUtil;
-
-import yaml.Yaml;
-import yaml.Parser.ParserOptions;
-
-using StringTools;
 
 class StageRegistry {
 
@@ -18,17 +12,10 @@ class StageRegistry {
 
         stageDatas.clear();
 
-        var stageFiles = Paths.readFolder("data/stages");
-        for (file in stageFiles) {
-            if (!file.endsWith("yaml")) continue;
-            final filePath = Paths.file('data/stages/$file');
-            final stageID = file.replace(".yaml", "");
-            final options = new ParserOptions();
-            options.maps = false;
-            final fileData:StageData = Yaml.parse(FileUtil.getFileContent(filePath), options);
-
-            stageDatas.set(stageID, fileData);
-
+        for (file in Paths.readFolder("data/stages")) {
+            if (!FileUtil.isDataFile(file)) continue;
+            final stageID = Paths.fileName(file);
+            stageDatas.set(stageID, ParseUtil.jsonOrYaml('data/stages/$stageID'));
             trace('debug:<cyan>Found and registered stage with ID "<magenta>${stageID}<cyan>"');
         }
     }

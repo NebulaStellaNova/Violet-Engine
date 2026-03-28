@@ -1,5 +1,7 @@
 package violet.states.menus;
 
+import flixel.addons.display.FlxRuntimeShader;
+import lemonui.utils.SpriteUtil;
 import flixel.group.FlxSpriteGroup;
 import flixel.math.FlxMath;
 
@@ -7,7 +9,54 @@ import violet.backend.utils.MathUtil;
 import violet.backend.utils.NovaUtils;
 import violet.backend.SubStateBackend;
 
+class ModTag extends FlxSpriteGroup {
+	override public function new(tag:String) {
+		super();
+
+		var label:NovaText = new NovaText(7.5, 5, 0, tag);
+		label.font = Paths.font('vcr.ttf');
+		label.size = 50;
+		label.updateHitbox();
+
+		var bg:NovaSprite = new NovaSprite().makeGraphic(label.width + 15, label.height + 10, FlxColor.BLACK);
+		bg.alpha = 0.5;
+		SpriteUtil.roundSpriteCorners(bg, 10);
+
+		add(bg);
+		add(label);
+	}
+}
+
 class ModMenu extends SubStateBackend {
+
+	public var roundCornerShader:FlxRuntimeShader = new FlxRuntimeShader("
+		#pragma header
+		// Shader by: @NebulaStellaNova
+
+		uniform float radius;
+
+		void main() {
+			vec2 uv = openfl_TextureCoordv;
+			vec2 size = openfl_TextureSize;
+			float aspect = size.x / size.y;
+
+			vec2 aspectUV = uv * vec2(aspect, 1.0);
+			vec2 center = vec2(aspect * 0.5, 0.5);
+
+			float resRadius = clamp(radius, 0.0, 360.0) / 720.0;
+
+			vec2 q = abs(aspectUV - center) - vec2(aspect * 0.5 - resRadius, 0.5 - resRadius);
+			float dist = length(max(q, 0.0)) + min(max(q.x, q.y), 0.0);
+
+			vec4 color = flixel_texture2D(bitmap, uv);
+
+			float smoothing = fwidth(dist);
+			float alpha = 1.0 - smoothstep(resRadius - smoothing, resRadius + smoothing, dist);
+
+			gl_FragColor = color * alpha;
+		}
+	");
+
 	public var statusText:NovaSprite;
 	public var tagImage:NovaSprite;
 
@@ -19,6 +68,7 @@ class ModMenu extends SubStateBackend {
 	public static var curSelected:Int = 0;
 
 	public var tagsText:NovaText;
+	public var description:NovaText;
 	public var modTitleText:NovaText;
 	public var creditsTitle:NovaText;
 	public var descriptionTitle:NovaText;
@@ -28,8 +78,14 @@ class ModMenu extends SubStateBackend {
 	public var selectedMod:ModMeta;
 	public var instant:Bool = true;
 
+	public var tagSprites:Array<ModTag> = [];
+
+	public var bootBools:Array<Bool> = [];
+
 	override public function create() {
 		super.create();
+
+		roundCornerShader.setFloat('radius', 35);
 
 		modInfoBox = new NovaSprite(Paths.image("menus/modmenu/modInfoPanel"));
 		modInfoBox.updateHitbox();
@@ -46,6 +102,7 @@ class ModMenu extends SubStateBackend {
 		add(infoSeperator);
 
 		for (i=>mod in ModdingAPI.availableMods) {
+			bootBools.push(ModdingAPI.checkModEnabled(mod.id));
 			var icon:FlxSpriteGroup = new FlxSpriteGroup();
 			icon.ID = i;
 
@@ -57,6 +114,7 @@ class ModMenu extends SubStateBackend {
 			modIcon.x = 10;
 			modIcon.y = 10;
 			modIcon.updateHitbox();
+			modIcon.shader = roundCornerShader;
 			icon.add(modIcon);
 
 			icon.scrollFactor.set();
@@ -85,14 +143,22 @@ class ModMenu extends SubStateBackend {
 		tagImage.x = tagsText.x + tagsText.width + 10;
 		tagImage.y = tagsText.y;
 		tagImage.scrollFactor.set();
-		add(tagImage);
+		// add(tagImage);
 
 		descriptionTitle = new NovaText(0, 0, modInfoBox.width/4, "", Paths.font("PhantomMuff/empty letters.ttf"));
 		descriptionTitle.size = 75;
 		descriptionTitle.text = 'Description:';
 		descriptionTitle.scrollFactor.set();
 		descriptionTitle.alignment = LEFT;
+		descriptionTitle.updateHitbox();
 		add(descriptionTitle);
+
+		description = new NovaText(0, descriptionTitle.y + descriptionTitle.height, modInfoBox.width/4, "", Paths.font("Tardling v1.1.ttf"));
+		description.size = 60;
+		description.text = 'Test';
+		description.scrollFactor.set();
+		description.alignment = LEFT;
+		add(description);
 
 		creditsTitle = new NovaText(0, 0, modInfoBox.width/2, "", Paths.font("PhantomMuff/empty letters.ttf"));
 		creditsTitle.size = 75;
@@ -138,10 +204,13 @@ class ModMenu extends SubStateBackend {
 		tagsText.x = infoSeperator.x;
 		tagsText.y = infoSeperator.y + 20;
 
-		descriptionTitle.text = "Description:\n" + selectedMod.description;
-		descriptionTitle.updateHitbox();
 		descriptionTitle.x = infoSeperator.x;
 		descriptionTitle.y = infoSeperator.y + 75;
+
+		description.text = selectedMod.description;
+		description.updateHitbox();
+		description.x = descriptionTitle.x;
+		description.y = descriptionTitle.y + descriptionTitle.height + 5;
 
 		creditsTitle.updateHitbox();
 		creditsTitle.x = modInfoBox.x - 65;
@@ -158,10 +227,18 @@ class ModMenu extends SubStateBackend {
 		statusText.x = modInfoBox.x + (modInfoBox.width/2) - (statusText.width/2);
 		statusText.y = (modInfoBox.y + modInfoBox.height) - (statusText.height + 20);
 
+
 		tagsText.updateHitbox();
 		tagImage.updateHitbox();
 		tagImage.x = tagsText.x + tagsText.width + 10;
 		tagImage.y = tagsText.y;
+
+		var xPos = 0.0;
+		for (tag in tagSprites) {
+			tag.x = tagsText.x + tagsText.width + 10 + xPos;
+			tag.y = tagsText.y;
+			xPos += tag.width + 10;
+		}
 
 		selectedMod = ModdingAPI.availableMods[curSelected];
 
@@ -183,6 +260,27 @@ class ModMenu extends SubStateBackend {
 		}
 		for (i in creditsStuff) {
 			creditsStuff.remove(i);
+		}
+
+		for (i in tagSprites) {
+			remove(i);
+			i.destroy();
+		}
+
+		tagSprites = [];
+
+		tagsText.text = selectedMod.tags.length > 1 ? "Tags:" : "Tag:";
+		tagsText.updateHitbox();
+
+		var xPos = 0.0;
+		for (i in selectedMod.tags) {
+			var tag = new ModTag(i);
+			tag.x = tagsText.x + tagsText.width + 10 + xPos;
+			tag.y = tagsText.y;
+			tag.scrollFactor.set();
+			add(tag);
+			tagSprites.push(tag);
+			xPos += tag.width + 10;
 		}
 
 		statusText.loadSprite(Paths.image("menus/modmenu/" + (ModdingAPI.checkModEnabled(selectedMod.id) ? "enabled" : "disabled")));
@@ -207,7 +305,7 @@ class ModMenu extends SubStateBackend {
 
 			var roles = new NovaText(creditsTitle.x, 0, modInfoBox.width/2, "", Paths.font("PhantomMuff/empty letters.ttf"));
 			roles.size = 125;
-			roles.text = "Role: " + i.role;
+			roles.text = i.role;
 			roles.scrollFactor.set();
 			roles.alignment = RIGHT;
 			roles.size = 55;
@@ -222,7 +320,15 @@ class ModMenu extends SubStateBackend {
 	override public function close() {
 		super.close();
 
+		var needsReset:Bool = false;
+
+		for (i => mod in ModdingAPI.availableMods) {
+			if (bootBools[i] != ModdingAPI.checkModEnabled(mod.id)) needsReset = true;
+		}
+
 		FlxG.save.flush();
+
+		if (needsReset) ModdingAPI.reloadRegistries();
 		// state.onCloseSubState();
 	}
 

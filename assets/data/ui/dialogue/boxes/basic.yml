@@ -1,0 +1,9 @@
+assetPath: game/dialogue/boxes/basic
+animations:
+  - name: open
+    prefix: open
+    offsets: [0, 0]
+  - name: idle
+    prefix: idle
+    offsets: [0, 0]
+    looped: true

@@ -1,6 +1,11 @@
 #pragma once
 
 /**
+ * Opens the console if not otherwise open.
+ */
+void WINAPI_AllocConsole();
+
+/**
  * Shows an error message box.
  *
  * @param message The error message to display

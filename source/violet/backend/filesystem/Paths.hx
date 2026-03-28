@@ -13,7 +13,7 @@ typedef AssetType = #if (flixel >= "5.9.0") flixel.system.frontEnds.AssetFrontEn
 #end
 
 class Paths {
-	public static #if release inline #end final ASSETS_FOLDER:String = "resources";
+	public static #if release inline #end final ASSETS_FOLDER:String = #if REDIRECT_ASSETS_FOLDER "../../../../assets" #else "resources" #end;
 
 	private static function notifyIfBlank(foundPath:String, targetPath:String, type:String) {
 		if (foundPath == "" && Path.withoutExtension(Path.withoutDirectory('$targetPath')) != 'null') {
@@ -48,8 +48,11 @@ class Paths {
 	}
 
 	#if release inline #end public static function getFileName(path:String, startFromRoot:Bool = false)
-		return Path.withoutExtension(Path.withoutDirectory(root(path, startFromRoot)));
+		return fileName(root(path, startFromRoot));
 
+	public static function fileName(file:String) {
+		return Path.withoutExtension(Path.withoutDirectory(file));
+	}
 
 	public static function fixPath(path:String) {
 		while (path.contains("//")) {
@@ -61,7 +64,7 @@ class Paths {
 	public static function root(path:String, startFromRoot:Bool = false):String {
 		if (startFromRoot)
 			return path;
-		var rootPaths:Array<String> = [].concat(#if MOD_SUPPORT [for (meta in ModdingAPI.getActiveMods()) 'mods/${meta.folder}'] #else [] #end).concat([ASSETS_FOLDER]);
+		var rootPaths:Array<String> = [].concat(#if MOD_SUPPORT [for (meta in ModdingAPI.getActiveMods()) '${ModdingAPI.MOD_FOLDER}/${meta.folder}'] #else [] #end).concat([ASSETS_FOLDER]);
 		for (root in rootPaths) {
 			if (folderExists(fixPath('$root/$path'), true) || fileExists(fixPath('$root/$path'), true))
 				return Path.normalize('$root/$path');
@@ -70,7 +73,7 @@ class Paths {
 	}
 
 	public static function multiRoot(path:String):Array<String> {
-		var rootPaths:Array<String> = [ASSETS_FOLDER].concat(#if MOD_SUPPORT [for (meta in ModdingAPI.getActiveMods()) 'mods/${meta.folder}'] #else [] #end);
+		var rootPaths:Array<String> = [ASSETS_FOLDER].concat(#if MOD_SUPPORT [for (meta in ModdingAPI.getActiveMods()) '${ModdingAPI.MOD_FOLDER}/${meta.folder}'] #else [] #end);
 		var results:Array<String> = [];
 		for (root in rootPaths)
 			if (folderExists('$root/$path', true) || fileExists('$root/$path', true))
@@ -107,8 +110,9 @@ class Paths {
 	#if release inline #end public static function music(path:String, directory:String = '', ?ext:String = 'ogg'):String
 		return file(path, directory == 'root' ? 'root' : [directory, 'music'].join('/'), ext);
 
-	#if release inline #end public static function yaml(path:String, directory:String = '', ?ext:String = 'yaml'):String
-		return file(path, directory, ext);
+	#if release inline #end public static function yaml(path:String, directory:String = '', ?ext:String = 'yaml'):String {
+		return file(path, directory, ext) != "" ? file(path, directory, ext) : file(path, directory, ext == 'yaml' ? 'yml' : ext);
+	}
 
 	#if release inline #end public static function json(path:String, directory:String = '', ?ext:String = 'json'):String
 		return file(path, directory, ext) != '' ? file(path, directory, ext) : (ext == 'json' ? file(path, directory, ext + 'c') : '');
@@ -133,14 +137,16 @@ class Paths {
 	#if release inline #end public static function folderExists(path:String, startFromRoot:Bool = false):Bool
 		return #if mobile _readFolder(Path.removeTrailingSlashes(root(path, startFromRoot))).length != 0 || #end FileSystem.isDirectory(Path.removeTrailingSlashes(root(path, startFromRoot)));
 
-	public static function readFolder(path:String, startFromRoot:Bool = false):Array<String> {
-		if (startFromRoot)
-			return folderExists(path, startFromRoot) ? _handleDirectories(Path.removeTrailingSlashes(root(path, true))) : [];
+	public static function readFolder(path:String, startFromRoot:Bool = false, ?filter:String->Bool):Array<String> {
+		if (startFromRoot) {
+			var files = folderExists(path, startFromRoot) ? _handleDirectories(Path.removeTrailingSlashes(root(path, true))) : [];
+			return filter != null ? files.filter(filter) : files;
+		}
 		var files:Array<String> = [];
 		for (folder in multiRoot(path))
 			for (file in _handleDirectories(Path.removeTrailingSlashes(folder)))
 				files.push(file);
-		return files;
+		return filter != null ? files.filter(filter) : files;
 	}
 
 	/**

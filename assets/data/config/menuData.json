@@ -1,6 +1,6 @@
 {
 	"directory": "menus/mainmenu",
-	"background": "menuBGdesat",
+	"background": "menuBGdesat-unblur",
 	"items": [
 		{
 			"id": "storymode",

@@ -6,23 +6,63 @@ import haxe.macro.Context;
 import haxe.macro.Expr;
 
 class Macro {
+
+	public static function print(message:String) {
+		Sys.println("\r\x1b[92m" + '[   MACRO   ] -> [  Macro.hx  ]: ' + "\033[0m" + '$message');
+	}
+
+	public static function addMetadata(buildPath:String, classPath:String) {
+		Compiler.addMetadata(buildPath, classPath);
+		print('Built $classPath.');
+	}
+
 	public static function init():Void {
-		Compiler.addMetadata('@:build(violet.backend.Macro.buildFlxBasic())', 'flixel.FlxBasic');
-		Compiler.addMetadata('@:build(violet.backend.Macro.buildFlxObject())', 'flixel.FlxObject');
-		Compiler.addMetadata('@:build(violet.backend.Macro.buildFlxSprite())', 'flixel.FlxSprite');
-		Compiler.addMetadata('@:build(violet.backend.Macro.buildFlxTypedGroup())', 'flixel.group.FlxTypedGroup');
-		Compiler.addMetadata('@:build(violet.backend.Macro.buildFlxSpriteGroup())', 'flixel.group.FlxTypedSpriteGroup');
+		print('Initializing macros...');
+		addMetadata('@:build(violet.backend.Macro.buildFlxBasic())', 'flixel.FlxBasic');
+		addMetadata('@:build(violet.backend.Macro.buildFlxObject())', 'flixel.FlxObject');
+		addMetadata('@:build(violet.backend.Macro.buildFlxSprite())', 'flixel.FlxSprite');
+		addMetadata('@:build(violet.backend.Macro.buildFlxTypedGroup())', 'flixel.group.FlxTypedGroup');
+		addMetadata('@:build(violet.backend.Macro.buildFlxSpriteGroup())', 'flixel.group.FlxTypedSpriteGroup');
+		addMetadata('@:build(violet.backend.Macro.buildFlxCamera())', 'flixel.FlxCamera');
+		addMetadata('@:build(violet.backend.VarTweenMacro.init())', 'flixel.tweens.misc.VarTween');
 		#if SCRIPT_SUPPORT
 		Compiler.include('violet', true);
 		Compiler.include('haxe', true, ['haxe.atomic.*', 'haxe.macro.*']);
 		Compiler.include('flixel', true, ['flixel.addons.editors.spine.*', 'flixel.addons.nape.*', 'flixel.system.macros.*', 'flixel.addons.tile.FlxRayCastTilemap', 'flixel.addons.weapon.*']);
 		#end
 		Compiler.include('moonchart', true, ['moonchart.backend.*']); // force include, no matter what
+		print('Finished building macros.');
+	}
+
+	public static macro function buildFlxCamera():Array<Field> {
+		var classFields:Array<Field> = Context.getBuildFields();
+		var tempClass = macro class TempClass {
+			/**
+			 * Adds a FlxShader as a filter to the camera
+			 * @param shader Shader to add
+			 * @return ShaderFilter
+			 */
+			public function addShader(shader:FlxShader) {
+				var filter:openfl.filters.ShaderFilter = null;
+				if (filters == null) filters = [];
+				filters.push(filter = new openfl.filters.ShaderFilter(shader));
+				return filter;
+			}
+		}
+
+		return classFields.concat(tempClass.fields);
 	}
 
 	public static macro function buildFlxBasic():Array<Field> {
 		var classFields:Array<Field> = Context.getBuildFields();
 		var tempClass = macro class TempClass {
+			/**
+			 * Signal's to help make scripting more convientent... ig
+			 */
+			public var onUpdate = new flixel.util.FlxSignal.FlxTypedSignal<Float->Void>();
+			// Doesn't work tho idk why ??
+
+
 			/**
 			 * Extra data the object can hold.
 			 */
@@ -35,6 +75,19 @@ class Macro {
 			public var z(get, set):Int;
 			function get_z() return zIndex;
 			function set_z(v:Int) return zIndex = v;
+		}
+
+		var updateFunc = classFields.filter(field -> return field.name == 'update')[0];
+		switch (updateFunc.kind) {
+			case FFun(f):
+				var initExpr:Expr = f.expr;
+				f.expr = macro {
+					$initExpr;
+					// trace(onUpdate); // <---- And this traces so idk...
+					onUpdate.dispatch(elapsed); // See I'm even running it
+				}
+				updateFunc.kind = FFun(f);
+			default:
 		}
 
 		return classFields.concat(tempClass.fields);

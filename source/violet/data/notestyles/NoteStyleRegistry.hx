@@ -1,5 +1,6 @@
 package violet.data.notestyles;
 
+import haxe.io.Path;
 import violet.backend.utils.ParseUtil;
 
 class NoteStyleRegistry {
@@ -13,7 +14,7 @@ class NoteStyleRegistry {
         noteStyleDatas.clear();
 
         for (file in Paths.readFolder("data/notestyles")) {
-            final fileName = file.replace(".json", "");
+            final fileName = Path.withoutExtension(file);
             final metaPath = 'data/notestyles/$fileName';
             if (!(Paths.fileExists(Paths.json(metaPath), true) || Paths.fileExists(Paths.yaml(metaPath), true))) {
                 trace('warning:Could not find meta file for note style with ID $file. Skipping registration.');

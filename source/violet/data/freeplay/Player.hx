@@ -9,7 +9,7 @@ class Player {
 
     public function new(id:String) {
         this.id = id;
-        _data = ParseUtil.yaml('data/players/$id');
+        _data = ParseUtil.jsonOrYaml('data/players/$id');
     }
 
 }

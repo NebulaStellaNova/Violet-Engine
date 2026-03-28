@@ -11,6 +11,23 @@
 #include <stdint.h>
 #include <stdio.h>
 
+void WINAPI_AllocConsole()
+{
+
+  if (!AllocConsole()) {
+		ShowWindow(GetConsoleWindow(), SW_SHOW);
+		return;
+  }
+
+	freopen("CONIN$", "r", stdin);
+	freopen("CONOUT$", "w", stdout);
+	freopen("CONOUT$", "w", stderr);
+
+	SetConsoleOutputCP(65001);
+	SetConsoleCP(65001);
+  ShowWindow(GetConsoleWindow(), SW_SHOW);
+}
+
 void WINAPI_ShowError(const char *message, const char *title)
 {
   MessageBox(GetActiveWindow(), message, title, MB_OK | MB_ICONERROR);

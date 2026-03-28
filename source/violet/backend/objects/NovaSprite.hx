@@ -22,11 +22,14 @@ import animate.FlxAnimateController;
 
 typedef AnimationInfo = {
 	var offset:Array<Float>;
+	var byLabel:Bool;
 }
 
 class NovaSprite extends #if ANIMATE_SUPPORT FlxAnimate #else FlxSprite #end {
 
 	public static var cachedFrames:Map<String, FlxAnimateFrames> = [];
+
+	public var allowOnComplete:Bool = true;
 
 	public var filePath:String;
 	public var fileName:String;
@@ -34,6 +37,11 @@ class NovaSprite extends #if ANIMATE_SUPPORT FlxAnimate #else FlxSprite #end {
 	public var animated:Bool = false;
 
 	public var anims:Map<String, AnimationInfo> = new Map<String, AnimationInfo>();
+
+	public var animationIndex:Int = 0;
+
+	public var currentByLabel(get, never):Bool;
+	function get_currentByLabel() { return (anims.get(animation.name)?.byLabel) ?? true; }
 
 	public var animationList(get, never):Array<String>;
 	function get_animationList() return [ for (i in this.anims.keys()) i ];
@@ -46,6 +54,7 @@ class NovaSprite extends #if ANIMATE_SUPPORT FlxAnimate #else FlxSprite #end {
 			this.loadSprite(path);
 
 		this.animation.onFinish.add((name)->{
+			if (!allowOnComplete) return;
 			for (i in ['hold', 'end']) {
 				if (animationList.contains('$name-$i')) {
 					playAnim('$name-$i', true);
@@ -163,6 +172,15 @@ class NovaSprite extends #if ANIMATE_SUPPORT FlxAnimate #else FlxSprite #end {
 		if (this.anim.exists(name)) {
 			this.anim.play(name, forced, reversed, frame);
 		}
+
+		var i = 0;
+		for (key in this.anims.keys()) {
+			if (key == name) {
+				animationIndex = i;
+				break;
+			}
+			i++;
+		}
 		if (this.anims.exists(name)) {
 			// TODO: Rodney, add animation offsets like how you did in your engine! -Rodney
 			final info:AnimationInfo = this.anims.get(name);
@@ -170,7 +188,13 @@ class NovaSprite extends #if ANIMATE_SUPPORT FlxAnimate #else FlxSprite #end {
 		}
 	}
 
-	public function addAnim(name:String, prefix:OneOfTwo<String, Array<Int>>, ?indices:Array<Int>, ?offsets:Array<Float>, fps:Int = 24, looped:Bool = false, label:Bool = true):Void {
+	public function removeAnim(name:String) {
+		this.anim.remove(name);
+		this.anims.remove(name);
+		this.animation.remove(name);
+	}
+
+	public function addAnim(name:String, prefix:OneOfTwo<String, Array<Int>>, ?indices:Array<Int>, ?offsets:Array<Float>, fps:Int = 24, looped:Bool = false, label:Bool = true, flipX:Bool = false, flipY:Bool = false):Void {
 		// trace([name, '$prefix', (indices ?? []).toString(), (offsets ?? []).toString(), '$fps', '$looped', '$label'].join(", "));
 		if (Std.isOfType(prefix, Array)) {
 			this.animation.add(name, prefix, fps, looped);
@@ -179,25 +203,29 @@ class NovaSprite extends #if ANIMATE_SUPPORT FlxAnimate #else FlxSprite #end {
 			// trace(prefix);
 			if (label) {
 				if (indices == null || indices.length == 0)
-					this.anim.addByFrameLabel(name, prefix, fps, looped);
-				else this.anim.addByFrameLabelIndices(name, prefix, indices, fps, looped);
+					this.anim.addByFrameLabel(name, prefix, fps, looped, flipX, flipY);
+				else this.anim.addByFrameLabelIndices(name, prefix, indices, fps, looped, flipX, flipY);
 			} else {
 				if (indices == null || indices.length == 0)
-					this.anim.addBySymbol(name, prefix, fps, looped);
-				else this.anim.addBySymbolIndices(name, prefix, indices, fps, looped);
+					this.anim.addBySymbol(name, prefix, fps, looped, flipX, flipY);
+				else this.anim.addBySymbolIndices(name, prefix, indices, fps, looped, flipX, flipY);
 			}
 			#end
 		} else {
 			prefix += "0";
 			if (indices == null || indices.length == 0)
-				this.animation.addByPrefix(name, prefix, fps, looped);
-			else this.animation.addByIndices(name, prefix, indices, "", fps, looped);
+				this.animation.addByPrefix(name, prefix, fps, looped, flipX, flipY);
+			else this.animation.addByIndices(name, prefix, indices, "", fps, looped, flipX, flipY);
 		}
-		this.anims.set(name, {offset: offsets != null ? [-offsets[0] ?? 0, -offsets[1] ?? 0] : [0, 0]});
+		this.anims.set(name, {offset: offsets != null ? [-offsets[0] ?? 0, -offsets[1] ?? 0] : [0.0, 0.0], byLabel: label});
 	}
 
 	public function addAnimFromData(data:AnimationData):Void {
-		addAnim(data.name, data.prefix, data.frameIndices, data.offsets, data.frameRate, data.looped, data.byLabel);
+		addAnim(data.name, data.prefix, data.frameIndices, data.offsets, data.frameRate, data.looped, data.byLabel, data.flipX, data.flipY);
+	}
+
+	public function addAnimsFromDataArray(data:Array<AnimationData>) {
+		for (i in data) addAnimFromData(i);
 	}
 
 	public function addFrames(path:String):Void {
@@ -239,7 +267,13 @@ class NovaSprite extends #if ANIMATE_SUPPORT FlxAnimate #else FlxSprite #end {
 			flipY = !flipY;
 			scale.y *= -1;
 		}
+
+		// Fuck my fat chud life - Nebula D:
+		if (!currentByLabel) this.x -= (__baseFlipped ? animationOffset.x : -animationOffset.x) ?? 0;
+		if (!currentByLabel) this.y -= (flipY ? -animationOffset.y : animationOffset.y) ?? 0;
 		super.draw();
+		if (!currentByLabel) this.x += (__baseFlipped ? animationOffset.x : -animationOffset.x) ?? 0;
+		if (!currentByLabel) this.y += (flipY ? -animationOffset.y : animationOffset.y) ?? 0;
 		if (xFlip) {
 			__offsetFlipX = false;
 			flipX = !flipX;
@@ -286,6 +320,10 @@ class NovaSprite extends #if ANIMATE_SUPPORT FlxAnimate #else FlxSprite #end {
 	}
 
 	override function drawComplex(camera:FlxCamera):Void {
+		if (!currentByLabel) {
+			super.drawComplex(camera);
+			return;
+		}
 		_frame.prepareMatrix(_matrix, flixel.graphics.frames.FlxFrame.FlxFrameAngle.ANGLE_0, checkFlipX(), checkFlipY());
 		_matrix.translate(-origin.x, -origin.y);
 		_matrix.translate(-animationOffset.x, -animationOffset.y);

@@ -38,7 +38,7 @@ class Project extends HXProject {
 	 * The current engine version.
 	 * Remember to update this when a new engine version releases.
 	 */
-	static final engineVersion:String = '0.0.1';
+	static final engineVersion:String = '0.0.0';
 	/**
 	 * The starting window title.
 	 * Although slightly mananaged by the `FlxWindow` class I'm still having this here.
@@ -148,6 +148,8 @@ class Project extends HXProject {
 			return;
 		}
 
+		if (isDebug() && isWindows() && !hasDefine('action')) redirectAssetsFolder.enable();
+
 		if (isAndroid()) setupAndroid();
 
 		if (FileSystem.exists('./.haxelib'))
@@ -227,9 +229,11 @@ class Project extends HXProject {
 		for (path in sourceCodeDirectories)
 			sources.push(path);
 
-		var excludeList:Array<String> = [''];
-		addAssetPath('./assets', './resources', ['*'], excludeList);
-		if (modSupport.exists()) addAssetPath('./mods', './mods', ['*'], excludeList);
+		if (!redirectAssetsFolder.exists()) {
+			var excludeList:Array<String> = [''];
+			addAssetPath('./assets', './resources', ['*'], excludeList);
+			if (modSupport.exists()) addAssetPath('./mods', './mods', ['*'], excludeList);
+		}
 
 		/* Path Settings */
 

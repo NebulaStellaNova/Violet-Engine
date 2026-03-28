@@ -10,6 +10,8 @@ import violet.backend.utils.NovaUtils;
 import violet.backend.utils.ParseUtil;
 import violet.backend.scripting.events.SelectionEvent;
 
+import thx.semver.Version;
+
 #if debug
 import violet.backend.display.DebugDisplay;
 #end
@@ -43,7 +45,7 @@ typedef MenuData = {
 
 class MainMenu extends StateBackend {
 	public var watermarkTexts = [
-		Constants.ENGINE_TITLE + " v" + Constants.ENGINE_VERSION
+		Constants.ENGINE_TITLE + " v" + Constants.ENGINE_VERSION + (Constants.ENGINE_SUFFIX != '' ? '-${Constants.ENGINE_SUFFIX}' : '')
 	];
 
 	public var curSelectedString:String = "";
@@ -188,7 +190,13 @@ class MainMenu extends StateBackend {
 			// Main.switchState(new ClassData('TitleState')); // Crashes idk why
 		}
 
-		watermarkTexts.sort(function(a, b):Int {
+		var instance = watermarkTexts.copy();
+		for (i in ModdingAPI.getActiveMods()) {
+			instance.push('${i.title} v${i?.mod_version}');
+		}
+
+
+		instance.sort(function(a, b):Int {
 			if(a.length < b.length) return -1;
 			else if(a.length > b.length) return 1;
 			else return 0;
@@ -197,7 +205,7 @@ class MainMenu extends StateBackend {
 		leftWatermark.borderStyle = OUTLINE;
 		leftWatermark.borderColor = FlxColor.BLACK;
 		leftWatermark.borderSize = 3;
-		leftWatermark.text = watermarkTexts.join("\n");
+		leftWatermark.text = instance.join("\n");
 		leftWatermark.updateHitbox();
 		if (canSelect) {
 			leftWatermark.y = FlxG.height - leftWatermark.getHeight() - 5;

@@ -39,8 +39,6 @@ class StoryMenu extends SubStateBackend {
     var weekBG:FlxSprite;
     var bottomBox:FlxSprite;
 
-    var weekBGColorTween:FlxTween;
-
     var canInteract:Bool = false;
 
     var isFlashing:Bool = false;
@@ -152,7 +150,7 @@ class StoryMenu extends SubStateBackend {
         add(trackText);
 
         updateTrackList();
-        weekBG.color = levelList[curSelected]._data.background.toFlxColor();
+        weekBG.color = levelList[curSelected]._data.background;
 
         trackText.x = -trackText.getWidth();
 
@@ -224,6 +222,7 @@ class StoryMenu extends SubStateBackend {
         rightArrow.y = difficultySprites.y + (difficultySprites.height / 2) - (rightArrow.height / 2);
 
         storyCam.scroll.y = MathUtil.lerp(storyCam.scroll.y, (titleGraphics[curSelected].y - (weekBG.y + weekBG.height)) + (titleGraphics[curSelected].height/2) - 135, 0.2);
+        weekBG.color = MathUtil.colorLerp(weekBG.color, levelList[curSelected]._data.background, 0.2);
 
         for (i=>group in charactersSprites.members) {
             group.visible = (i == curSelected);
@@ -251,9 +250,6 @@ class StoryMenu extends SubStateBackend {
         if (!canInteract) return;
         curSelected = FlxMath.wrap(curSelected + direction, 0, levelList.length - 1);
 
-        weekBGColorTween?.cancel();
-        weekBGColorTween = FlxTween.color(weekBG, 0.35, weekBG.color, levelList[curSelected]._data.background.toFlxColor(), {ease: FlxEase.expoOut});
-
         updateTrackList();
         if (playSound)
 		    NovaUtils.playMenuSFX(SCROLL);
@@ -275,10 +271,9 @@ class StoryMenu extends SubStateBackend {
         new FlxTimer().start(1.25, (_)->{
             storyCam.fade(0.25, ()->{
                 PlayState.doFadeOut = true;
-                PlayState.playlist = levelList[curSelected].getSongs();
-                PlayState.playlist.shift(); // Get rid of the song we boutta load
                 PlayState.isStoryMode = true;
-                PlayState.loadSong(levelList[curSelected].getSongs()[0], curDifficultyString);
+                PlayState.playlist = levelList[curSelected].getSongs();
+                PlayState.loadSong(PlayState.playlist.shift(), curDifficultyString);
             });
         });
     }

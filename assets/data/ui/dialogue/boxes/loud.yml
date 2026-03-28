@@ -1,0 +1,9 @@
+assetPath: game/dialogue/boxes/default
+animations:
+  - name: open
+    prefix: speech bubble loud open
+    offsets: [0, 0]
+  - name: idle
+    prefix: AHH speech bubble
+    offsets: [0, 0]
+    looped: true

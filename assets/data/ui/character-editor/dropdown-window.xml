@@ -1,0 +1,7 @@
+<vbox spacing="10" id="box">
+    <tabpanel id="panel0" height="105" width="180">
+        <tab name="Character" id="tab1">
+            <dropdown id="characterDropdown" x="15" label="Character:" y="15"/>
+        </tab>
+    </tabpanel>
+</vbox>

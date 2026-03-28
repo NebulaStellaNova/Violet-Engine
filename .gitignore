@@ -1,5 +1,7 @@
 .haxelib/
 export/
+mods/
+!mods/example/
 
 .DS_Store
 vscode-project.hxml

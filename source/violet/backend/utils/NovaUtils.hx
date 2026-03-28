@@ -1,5 +1,6 @@
 package violet.backend.utils;
 
+import animate.FlxAnimateFrames.FlxAnimateSettings;
 import haxe.io.Path;
 import flixel.FlxCamera;
 import flixel.graphics.frames.FlxAtlasFrames;
@@ -26,7 +27,7 @@ class NovaUtils {
 	public static function addNotification(title:String, body:String, expiryMs:Int = 10000, type:NotificationType = DEFAULT) {
 		var notification = lemonui.controllers.NotificationController.instance.addNotification(title, body, expiryMs/1000);
 		if (type == ERROR) {
-			notification.componentColor = 0xFF591818;
+			notification.elementColor = 0xFF591818;
 		}
 	}
 
@@ -69,6 +70,7 @@ class NovaUtils {
 
 		// Setup Conductor
 		Conductor.resetConductor();
+		// trace(Paths.fileExists('$folder/${musicPath.join('/')}-intro.ogg'));
 		FlxG.sound.playMusic(Cache.music(musicPath.join('/'), '', 'ogg', false, folder), volume);
 		Conductor.initCallbacks();
 		Conductor.initCallbacksSubState();
@@ -98,7 +100,7 @@ class NovaUtils {
 		return FlxAtlasFrames.fromSparrow(Cache.image(path, 'root', null), FileUtil.getFileContent(path.replace(".png", ".xml")));
 	}
 
-	public static function getAtlasFrames(path:String):FlxAtlasFrames {
-		return animate.FlxAnimateFrames.fromAnimate(Path.withoutExtension(path));
+	public static function getAtlasFrames(path:String, ?options:FlxAnimateSettings):FlxAtlasFrames {
+		return animate.FlxAnimateFrames.fromAnimate(Path.withoutExtension(path), null, null, null, null, options);
 	}
 }

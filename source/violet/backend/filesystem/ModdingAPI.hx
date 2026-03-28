@@ -1,5 +1,8 @@
 package violet.backend.filesystem;
+import haxe.io.BytesInput;
+import haxe.io.Path;
 import sys.FileSystem;
+import openfl.Assets;
 import violet.backend.utils.NovaUtils;
 import violet.states.InitialState;
 #if MOD_SUPPORT
@@ -28,7 +31,7 @@ typedef ModMeta = {
 	// Not enforced like V-Slice, it is literally only for backwards compatibility.
 	var ?api_version:Version;
 
-	var mod_version:Version;
+	var mod_version:String; // Version is being weird /shrug
 }
 
 class ModdingAPI {
@@ -37,11 +40,12 @@ class ModdingAPI {
 		sys.FileSystem
 	];
 
+	@:unreflective public static var tempFolders:Array<String> = [];
 
 	public static var availableMods(default, null):Array<ModMeta> = [];
 	public static var activeModsIds(default, null):Array<String> = [];
 
-	public static var MOD_FOLDER:String = 'mods';
+	public static #if release inline #end final MOD_FOLDER:String = #if REDIRECT_ASSETS_FOLDER "../../../../mods" #else "mods" #end;
 	public static var API_VERSION:Version = "0.0.0";
 
 	public static var EXT_ALIASES:Map<String, Array<String>> = [
@@ -56,12 +60,50 @@ class ModdingAPI {
 		trace('debug:<yellow>Initializing Modding System...');
 		FlxG.save.data.registeredModIds ??= [];
 		FlxG.save.data.enabledModIds ??= [];
+
+		reloadModList();
+
+		activeModsIds = FlxG.save.data.enabledModIds;
+
+		// Main.threadCallacks.addOnce(reloadRegistries);
+		reloadRegistries();
+		new HXCHandler();
+		// trace(checkForHXC().join('\n'));
+	}
+
+	public static function reloadModList() {
+		tempFolders = [];
+		for (path in Paths.readFolder(MOD_FOLDER, true)) {
+			if (path.endsWith('.vmod') && !FileSystem.isDirectory('$MOD_FOLDER/$path')) {
+				var folderName:String = path.replace('.vmod', "");
+				trace('debug:Found violet mod with id "$folderName"');
+				var modPath:String = '$MOD_FOLDER/.$folderName';
+				tempFolders.push(modPath);
+				if (FileSystem.exists(modPath)) continue;
+				FileSystem.createDirectory(modPath);
+      			Sys.command("attrib +h " + modPath);
+
+				var bytesInput = new haxe.io.BytesInput(sys.io.File.getBytes('$MOD_FOLDER/$path'));
+				var reader = new haxe.zip.Reader(bytesInput);
+				var entries = reader.read();
+				for(_entry in entries) {
+					var data = haxe.zip.Reader.unzip(_entry);
+					if (data + "" != "") {
+						var location = modPath + "/" + _entry.fileName;
+						if (!FileSystem.exists(Path.directory(location))) FileSystem.createDirectory(Path.directory(location));
+						sys.io.File.saveBytes(location, data);
+					}
+				}
+				bytesInput.close();
+			}
+		}
+
 		@:bypassAccessor availableMods = [
-			for (path in Paths.readFolder('mods', true)) {
+			for (path in Paths.readFolder(MOD_FOLDER, true)) {
 				var meta:ModMeta = ParseUtil.json('$MOD_FOLDER/$path/novamod_meta', 'root');
+				if (meta == null) meta = ParseUtil.yaml('$MOD_FOLDER/$path/novamod_meta', 'root');
 				if (meta == null) continue;
 
-				trace(path);
 				// null check all properties and set defaults
 				meta.folder = path;
 				meta.title ??= meta.folder;
@@ -78,13 +120,6 @@ class ModdingAPI {
 			}
 			trace('debug:<cyan>Found mod "<magenta>${i.title}<cyan>" with id "<magenta>${i.id}<cyan>"');
 		}
-
-		activeModsIds = FlxG.save.data.enabledModIds;
-
-		// Main.threadCallacks.addOnce(reloadRegistries);
-		reloadRegistries();
-		new HXCHandler();
-		trace(checkForHXC().join('\n'));
 	}
 
 	public static function getMod(id:String):ModMeta {
@@ -115,7 +150,7 @@ class ModdingAPI {
 
 	private static var registered:Bool = false;
 	public static function reloadRegistries():Void {
-		trace('debug:<magenta>${registered ? "Reloading" : "Initializing"} Registries...');
+		trace('debug:<yellow>${registered ? "Reloading" : "Initializing"} Registries...');
 		NovaUtils.CURRENT_MUSIC = null;
 		registered = true;
 		violet.data.notestyles.NoteStyleRegistry.registerNoteStyles();
@@ -238,11 +273,33 @@ class ModdingAPI {
 		#end
 	}
 	#end
+
+	@:unreflective public static function powerDown() {
+		for (i in tempFolders) {
+			if (FileSystem.exists(i)) deleteDirectory(i);
+		}
+	}
+
+	@:unreflective static function deleteDirectory(path) {
+		var subObjects = FileSystem.readDirectory(path);
+		for (i in subObjects) {
+			if (!StringTools.contains(i, ".")) {
+				deleteDirectory(path + "/" + i);
+			} else {
+				FileSystem.deleteFile(path + "/" + i);
+			}
+		}
+		FileSystem.deleteDirectory(path);
+	}
 }
 
 class ModIcon extends NovaSprite {
 	override public function new(modId:String) {
-		super(Paths.image('${ModdingAPI.MOD_FOLDER}/$modId/novamod_icon', 'root'));
+		var image = Paths.image('${ModdingAPI.MOD_FOLDER}/$modId/novamod_icon', 'root');
+		if (!Paths.fileExists(image, true)) {
+			image = Paths.image('${ModdingAPI.MOD_FOLDER}/example/novamod_icon', 'root');
+		}
+		super(image);
 	}
 }
 #end

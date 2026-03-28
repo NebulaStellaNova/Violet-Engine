@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TextureAtlas imagePath="portraits.png">
+	<SubTexture name="gfPortEnter00" x="0" y="321" width="365" height="305"/>
+	<SubTexture name="gfPortHappy00" x="0" y="0" width="354" height="316"/>
+</TextureAtlas>

@@ -69,7 +69,7 @@ class Stage extends flixel.group.FlxGroup {
                     add(PlayState.instance.comboGroup);
 
                 case SOLID:
-                    var prop:StageProp = new StageProp(i.position[0], i.position[1], i.color);
+                    var prop:StageProp = new StageProp(i.position[0], i.position[1]);
                     prop.name = i.name;
                     prop.makeGraphic(1, 1, i.color);
                     prop.scale.set(i.width ?? 0, i.height ?? 0);
@@ -115,6 +115,7 @@ class Stage extends flixel.group.FlxGroup {
                             char.visible = i.visible;
                             char.cameraOffsets[0] += i.cameraOffsets[0];
                             char.cameraOffsets[1] += i.cameraOffsets[1];
+                            char.color = i.color;
                             applyProperties(char, i.properties ?? {});
                             add(char);
                         }
