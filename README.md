@@ -9,7 +9,7 @@ The version you see now is actually V2, I have already coded the engine a lot be
 
 I have a discord server for anyone who wants live updates on the engine: https://discord.gg/A3Hjgsp37r
 
-Here's Bopeebo Erect on the engine:
+Here's Fresh Erect on the engine:
 https://youtu.be/iwcN0Sr3S3A
 
 # What I hope to accomplish with this engine:
