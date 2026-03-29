@@ -4,8 +4,8 @@ package violet.backend;
 import haxe.macro.Context;
 import haxe.macro.Expr;
 
-class VarTweenMacro {
 
+class VarTweenMacro {
     public static var macroContext:Array<Field>;
 
     public static var tracePos = macro {
@@ -93,6 +93,6 @@ class VarTweenMacro {
 			default:
         }
     }
-
 }
+
 #end

@@ -57,7 +57,7 @@ class Macro {
 		var classFields:Array<Field> = Context.getBuildFields();
 		var tempClass = macro class TempClass {
 			/**
-			 * Signal's to help make scripting more convenient... ig
+			 * Signal's to help make scripting more convientent... ig
 			 */
 			public var onUpdate = new flixel.util.FlxSignal.FlxTypedSignal<Float->Void>();
 			// Doesn't work tho idk why ??

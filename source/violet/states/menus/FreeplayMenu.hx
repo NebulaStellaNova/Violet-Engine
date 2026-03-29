@@ -228,11 +228,11 @@ class FreeplayMenu extends SubStateBackend {
 
 		if (FlxG.keys.justPressed.TAB) {
 			FlxG.sound.music.fadeOut(0.5);
-			camHUD.fade(FlxColor.BLACK, 0.5, () -> {
+			camHUD.fade(FlxColor.BLACK, 0.5, ()->{
 				/* playableID = playableID == "bf" ? "pico" : "bf";
-					FreeplayMenu.skipTransition = true;
-					FreeplayMenu.curSelectedSong = 0; */
-				FlxG.switchState(CharacterSelectMenu.new /* new FreeplayMenu().build() */);
+				FreeplayMenu.skipTransition = true;
+				FreeplayMenu.curSelectedSong = 0; */
+				FlxG.switchState(CharacterSelectMenu.new/* new FreeplayMenu().build() */);
 			});
 		}
 

@@ -1,7 +1,7 @@
 package violet.states.debug;
 
 import violet.states.editors.CharacterEditorState;
-import violet.states.editors.ChartEditorState;
+import violet.backend.EditorListBackend.EditorListOption;
 import violet.states.editors.StageEditorState;
 import violet.backend.EditorListBackend.EditorListOption;
 
