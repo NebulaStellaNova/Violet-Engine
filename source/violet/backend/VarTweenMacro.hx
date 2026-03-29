@@ -6,6 +6,7 @@ import haxe.macro.Expr;
 
 
 class VarTweenMacro {
+
     public static var macroContext:Array<Field>;
 
     public static var tracePos = macro {
@@ -93,6 +94,6 @@ class VarTweenMacro {
 			default:
         }
     }
-}
 
+}
 #end
