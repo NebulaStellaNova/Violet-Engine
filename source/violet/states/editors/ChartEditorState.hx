@@ -12,7 +12,14 @@ import flixel.addons.display.FlxBackdrop;
 import violet.backend.audio.Conductor;
 import violet.backend.StateBackend;
 
+using violet.backend.utils.ArrayUtil;
+
 class ChartEditorState extends StateBackend {
+
+    public static var songID:String = 'test';
+    public static var difficulty:String = 'normal';
+    public static var variant:Null<String> = null;
+
     public var noteTypeHandlers:Map<String, NoteHitEvent->Void> = [
         "No Animation" => (e) -> {
             e.animCancelled = true;
@@ -24,6 +31,7 @@ class ChartEditorState extends StateBackend {
 
     var grids:Array<FlxBackdrop> = [];
     var notes:Array<NovaSprite> = [];
+    var events:Array<NovaSprite> = [];
 
     var selectionBox:FlxSprite;
     var selectionStart:FlxPoint = new FlxPoint(200, 200);
@@ -32,11 +40,11 @@ class ChartEditorState extends StateBackend {
         super();
 
 
-        chart = ChartRegistry.getChart('test', 'normal', null);
-		meta = SongRegistry.getSongByID('test');
+        chart = ChartRegistry.getChart(songID, difficulty, variant);
+		meta = SongRegistry.getSongByID(songID);
 
         Conductor.stop();
-        Conductor.playSong('test');
+        Conductor.playSong(meta.songName, meta.variant);
 		if (meta.needsVoices) Conductor.addAdditionalTrack(FlxG.sound.load(Cache.sound(Paths.vocal(meta.songName, null, meta.variant), 'root', null, true), FlxG.sound.defaultMusicGroup));
 		else Conductor.addAdditionalTrack(new FlxSound());
         Conductor.pause();
@@ -62,8 +70,12 @@ class ChartEditorState extends StateBackend {
             chartGrid.screenCenter(X);
             chartGrid.x += i * 200;
             chartGrid.x -= size/2;
+            chartGrid.alpha *= line._data.visible ? 1 : 0.75;
             add(chartGrid);
             grids.push(chartGrid);
+
+            if (line.vocalsSuffix != null)
+                Conductor.addAdditionalTrack(FlxG.sound.load(Cache.sound(Paths.vocal(meta.songName, line.vocalsSuffix, meta.variant), 'root', null, true), FlxG.sound.defaultMusicGroup));
 
             for (id => note in line.notes) {
                 var noteSprite = new NovaSprite(Paths.image('game/notes/default/notes'));
@@ -85,6 +97,29 @@ class ChartEditorState extends StateBackend {
             }
         }
 
+        for (i in 0...chart.strumLines.length+1) {
+            var seperator = new FlxSprite().makeGraphic(2, FlxG.height, FlxColor.WHITE);
+            seperator.screenCenter();
+            seperator.alpha = 0.5;
+            seperator.x += i * 200;
+            seperator.x -= size / 2;
+            seperator.x -= 100;
+            add(seperator);
+        }
+
+        for (i in chart.events) {
+            var eventSprite = new NovaSprite(Paths.image('ui/editors/charter/event'));
+            if (!i.global) {
+                eventSprite.x = grids.last().x + grids.last().width;
+            } else {
+                eventSprite.flipX = true;
+                eventSprite.x = grids.first().x - eventSprite.width;
+            }
+            eventSprite.extra.set('eventData', i);
+            add(eventSprite);
+            events.push(eventSprite);
+        }
+
         var line = new FlxSprite().makeGraphic(size + 210, 2, FlxColor.RED);
         line.screenCenter();
         line.alpha = 0.5;
@@ -94,6 +129,7 @@ class ChartEditorState extends StateBackend {
         selectionBox.alpha = 0.5;
         // selectionBox.visible = false;
         add(selectionBox);
+        Conductor.setSongPosition(0);
     }
 
     var numTween:FlxTween;
@@ -109,6 +145,14 @@ class ChartEditorState extends StateBackend {
             grid.y = - Conductor.framePosition;
             grid.y *= 0.5;
             grid.y += FlxG.height/2;
+        }
+
+        for (event in events) {
+            var eventData = event.extra.get('eventData');
+            event.y = eventData.time - Conductor.framePosition;
+            event.y *= 0.5;
+            event.y += FlxG.height/2;
+            event.alpha = eventData.time < Conductor.framePosition ? 0.5 : 1;
         }
 
         for (note in notes) {
@@ -137,7 +181,7 @@ class ChartEditorState extends StateBackend {
         }
 
         if (FlxG.mouse.wheel != 0) {
-            var scrollAmt = (FlxG.mouse.wheel*(FlxG.keys.pressed.SHIFT ? 200 : 50));
+            var scrollAmt = (FlxG.mouse.wheel*(!FlxG.keys.pressed.SHIFT ? 200 : 50));
             Conductor.pause();
             numTween?.cancel();
             numTween = FlxTween.num(Conductor.framePosition, Conductor.framePosition - scrollAmt, 0.25, {ease: FlxEase.circOut}, (value) -> {
@@ -151,8 +195,13 @@ class ChartEditorState extends StateBackend {
 
         }
         if (FlxG.keys.justPressed.SPACE) {
-            if (!Conductor.instrumental.playing) Conductor.play();
-            else Conductor.pause();
+            if (!Conductor.instrumental.playing) {
+                numTween?.cancel();
+                selectionTween?.cancel();
+                Conductor.play();
+            } else {
+                Conductor.pause();
+            }
         }
 
         if (FlxG.mouse.justPressed) {

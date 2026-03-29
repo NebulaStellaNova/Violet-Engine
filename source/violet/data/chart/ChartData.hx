@@ -46,6 +46,8 @@ typedef ChartEvent = {
 	var params:Array<Dynamic>;
 	var ran:Bool; // TODO: make it not use this
 
+	var ?global:Bool; // Used for the chart editor.
+
 	var type:Null<Int>; // DEPRECTATED: please use name.
 }
 

@@ -1,7 +1,8 @@
 package violet.states.debug;
 
+import violet.states.editors.sub.SongSelectScreen;
 import violet.states.editors.CharacterEditorState;
-import violet.backend.EditorListBackend.EditorListOption;
+// import violet.states.editors.ChartEditorState;
 import violet.states.editors.StageEditorState;
 import violet.backend.EditorListBackend.EditorListOption;
 
@@ -9,7 +10,7 @@ class EditorPickerMenu extends violet.backend.EditorListBackend {
 
     public dynamic function openChartEditor() {
         subCamera.fade(FlxColor.BLACK, 0.25, false, ()->{
-            FlxG.switchState(ChartEditorState.new);
+            FlxG.switchState(SongSelectScreen.new);
             FlxG.camera.fade(FlxColor.BLACK, 0.25, true);
         });
     }

@@ -103,4 +103,10 @@ class NovaUtils {
 	public static function getAtlasFrames(path:String, ?options:FlxAnimateSettings):FlxAtlasFrames {
 		return animate.FlxAnimateFrames.fromAnimate(Path.withoutExtension(path), null, null, null, null, options);
 	}
+
+	public static function sortAlphabetically(a:String, b:String):Int {
+		a = a.toUpperCase();
+		b = b.toUpperCase();
+		return a == b ? 0 : a > b ? 1 : -1;
+	}
 }
