@@ -155,7 +155,6 @@ class Alphabet extends flixel.group.FlxGroup {
 
     override function update(e) {
         super.update(e);
-        updatePos();
     }
 
     public function updatePos() {

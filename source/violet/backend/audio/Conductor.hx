@@ -173,7 +173,13 @@ class Conductor {
 				track.pause();
 	}
 
-	public static function playSong(id:String, ?variation:String, threaded:Bool = false):Void {
+	public static function setSongPosition(position:Float):Void {
+		instrumental.time = position;
+		for (track in additionalTracks)
+			track.time = position;
+	}
+
+	public static function playSong(id:String, variation:String = '', threaded:Bool = false):Void {
 		inline function result() {
 			NovaUtils.playMusic('$id/song/Inst${variation == '' ? '' : '-$variation'}', 'songs');
 			final songMetaData = violet.data.song.SongRegistry.getSongByID(id);
