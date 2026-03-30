@@ -157,7 +157,7 @@ class PlayState extends violet.backend.StateBackend {
 		songData = SongRegistry.getSongByID(song);
 		variation = songData.variant;
 
-		Conductor.playSong(song, variation); Conductor.pause();
+		Conductor.playSong(songData.songName, variation); Conductor.pause();
 		Conductor.offset = (countdownLength+1) * Conductor.beatLengthMs;
 		if (SONG.meta.needsVoices) generalVocals = Conductor.addAdditionalTrack(FlxG.sound.load(Cache.sound(Paths.vocal(songData.songName, null, PlayState.variation), 'root', null, true), FlxG.sound.defaultMusicGroup));
 		else generalVocals = Conductor.addAdditionalTrack(new FlxSound());
@@ -616,6 +616,7 @@ class PlayState extends violet.backend.StateBackend {
 		PlayState.song = id;
 		PlayState.difficulty = difficulty;
 		PlayState.variation = variation;
+		trace(variation);
 		FlxG.switchState(() -> new PlayState());
 	}
 

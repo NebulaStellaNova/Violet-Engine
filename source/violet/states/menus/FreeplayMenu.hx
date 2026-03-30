@@ -31,6 +31,21 @@ class FreeplayMenu extends SubStateBackend {
 
 	static var playableID:String = 'bf';
 
+	var difficulties:Array<String> = ["easy", "normal", "hard"];
+	var difficultyAssociations = [
+		"easy" => "",
+		"normal" => "",
+		"hard" => "",
+		"erect" => "erect",
+		"nightmare" => "erect"
+	];
+	var variant(get, never):String;
+	function get_variant() {
+		return difficultyAssociations.get(difficulties[curSelectedDiff]) ?? '';
+	}
+
+	var highscoreTimer:FlxTimer;
+
 	var canSelect:Bool = true;
 	var daCapsules:Array<Capsule> = [];
 	var camHUD:FlxCamera;
@@ -195,7 +210,7 @@ class FreeplayMenu extends SubStateBackend {
 
 		updateScore();
 
-		new FlxTimer().start(FlxG.random.float(12, 50), function(tmr) {
+		highscoreTimer = new FlxTimer().start(FlxG.random.float(12, 50), function(tmr) {
 			trace('Highscore Animation Timer Check');
 			highscoreImg?.playAnim('idle');
 			tmr.time = FlxG.random.float(20, 60);
@@ -268,7 +283,7 @@ class FreeplayMenu extends SubStateBackend {
 		}
 
 		if (Controls.accept && canSelect) {
-			playSong(songs[curSelectedSong].id, songs[curSelectedSong].difficulties[curSelectedDiff]);
+			playSong(songs[curSelectedSong].id, difficulties[curSelectedDiff]);
 		}
 	}
 
@@ -300,10 +315,22 @@ class FreeplayMenu extends SubStateBackend {
 			}
 		}
 
+		var prevDiffList = difficulties.copy();
 		var song:Song = songs[curSelectedSong];
-		var prevDiffList = prevSong.difficulties;
-		var curDiffList = song.difficulties;
-		var newIndex:Int = Math.floor(song.difficulties.length / 2);
+		difficulties = song.difficulties.copy();
+		difficultyAssociations.clear();
+		for (i in difficulties) difficultyAssociations.set(i, '');
+		for (i in song.variants) {
+			if (SongRegistry.songDatas.exists('${song.id}:$i')) {
+				var varientData = SongRegistry.getSongByID('${song.id}:$i');
+				difficulties = difficulties.concat(varientData.difficulties.copy());
+				for (d in varientData.difficulties) {
+					difficultyAssociations.set(d, i);
+				}
+			}
+		}
+		var curDiffList = difficulties;
+		var newIndex:Int = Math.floor(curDiffList.length / 2);
 		if (prevDiffList[curSelectedDiff] == prevDiffList[curSelectedDiff])
 			for (i => diff in curDiffList)
 				if (diff == prevDiffList[curSelectedDiff]) {
@@ -320,7 +347,8 @@ class FreeplayMenu extends SubStateBackend {
 		songs = SongRegistry.getAllSongs().filter(song -> {
 			var conditions:Array<Bool> = [
 				Options.data.developerMode ? true : !song._data?.isDev ?? true,
-				song.playableCharacter == player.id
+				song.playableCharacter == player.id,
+				song.variant == '' || song.variant == null || song.variant == playableID
 			];
 			var conditionsMet:Bool = true;
 			for (i in conditions)
@@ -331,7 +359,7 @@ class FreeplayMenu extends SubStateBackend {
 	}
 
 	function playInst() {
-		var inst = '${songs[curSelectedSong].songName}/song/Inst${songs[curSelectedSong].variant != '' ? '-${songs[curSelectedSong].variant}' : ''}';
+		var inst = '${songs[curSelectedSong].songName}/song/Inst${variant != '' ? '-${variant}' : ''}';
 		instTimer.cancel();
 
 		if (inst == prevInst)
@@ -347,21 +375,29 @@ class FreeplayMenu extends SubStateBackend {
 
 	function changeDiff(amount:Int, pureSelect:Bool = false) {
 		var song:Song = songs[curSelectedSong];
-		curSelectedDiff = FlxMath.wrap(pureSelect ? amount : curSelectedDiff + amount, 0, song.difficulties.length - 1);
-		if (curSelectedDiff >= song.difficulties.length)
+		curSelectedDiff = FlxMath.wrap(pureSelect ? amount : curSelectedDiff + amount, 0, difficulties.length - 1);
+		if (curSelectedDiff >= difficulties.length)
 			curSelectedDiff = 0;
 
 		var direction = amount > 0 ? 1 : -1;
 		var distance = 80;
 
+		playInst();
+
+		for (i=> capsule in daCapsules) {
+			var target = SongRegistry.getSongByID(songs[i].id + (variant != '' ? ':${variant}' : ''));
+			target ??= SongRegistry.getSongByID(songs[i].id);
+			capsule.songNameText.text = target._data.displayName;
+		}
+
 		if (pureSelect) {
-			diffSprite.loadSprite(Paths.image('menus/freeplay/difficulties/${song.difficulties[curSelectedDiff]}'));
+			diffSprite.loadSprite(Paths.image('menus/freeplay/difficulties/${difficulties[curSelectedDiff]}'));
 			if (diffSprite.animated) {
 				diffSprite.addAnim('idle', 'idle', 24, true);
 				diffSprite.playAnim('idle', true);
 			}
 			for (i => capsule in daCapsules)
-				capsule.updateRatingForDiff(songs[i], songs[i].difficulties[FlxMath.wrap(curSelectedDiff, 0, songs[i].difficulties.length - 1)]);
+				capsule.updateRatingForDiff(songs[i], difficulties[FlxMath.wrap(curSelectedDiff, 0, difficulties.length - 1)]);
 			return;
 		}
 
@@ -369,7 +405,7 @@ class FreeplayMenu extends SubStateBackend {
 		FlxTween.tween(diffSprite, {x: diffSprite.x - (distance * amount), alpha: 0}, 0.15, {
 			ease: FlxEase.expoIn,
 			onComplete: (_) -> {
-				diffSprite.loadSprite(Paths.image('menus/freeplay/difficulties/${song.difficulties[curSelectedDiff]}'));
+				diffSprite.loadSprite(Paths.image('menus/freeplay/difficulties/${difficulties[curSelectedDiff]}'));
 				if (diffSprite.animated) {
 					diffSprite.addAnim('idle', 'idle', 24, true);
 					diffSprite.playAnim('idle', true);
@@ -377,11 +413,10 @@ class FreeplayMenu extends SubStateBackend {
 				diffSprite.updateHitbox();
 				diffSprite.x = distance * direction * 2;
 				for (i => capsule in daCapsules)
-					capsule.updateRatingForDiff(songs[i], songs[i].difficulties[FlxMath.wrap(curSelectedDiff, 0, songs[i].difficulties.length - 1)]);
+					capsule.updateRatingForDiff(songs[i], difficulties[FlxMath.wrap(curSelectedDiff, 0, difficulties.length - 1)]);
 				FlxTween.tween(diffSprite, {x: ((selector1.x + selector2.x) / 2) - (diffSprite.width / 2) + 27, alpha: 1}, 0.1, {ease: FlxEase.expoOut});
 			}
 		});
-
 		updateAlbum();
 		updateScore();
 	}
@@ -403,7 +438,7 @@ class FreeplayMenu extends SubStateBackend {
 			camHUD.fade(FlxColor.BLACK, 0.5, false, () -> {
 				FlxTimer.wait(0.5, () -> {
 					PlayState.doFadeOut = true;
-					PlayState.loadSong(id, difficulty);
+					PlayState.loadSong(id + (variant != '' ? ':${variant}' : ''), difficulty, null);
 				});
 			});
 		});
@@ -455,5 +490,10 @@ class FreeplayMenu extends SubStateBackend {
 		new FlxTimer().start(1.2, (_) -> {
 			close();
 		});
+	}
+
+	override function destroy() {
+		highscoreTimer?.cancel();
+		super.destroy();
 	}
 }

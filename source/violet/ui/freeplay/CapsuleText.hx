@@ -61,9 +61,10 @@ class CapsuleText extends FlxSpriteGroup {
 
         blurredText.text = value;
         blurredText.textField.filters = [filters[1]];
+        blurredText.updateHitbox();
         whiteText.text = value;
-        // checkClipWidth();
         whiteText.textField.filters = filters;
+        whiteText.updateHitbox();
 
         return text = value;
     }
