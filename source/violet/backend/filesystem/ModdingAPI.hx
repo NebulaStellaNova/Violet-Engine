@@ -87,7 +87,7 @@ class ModdingAPI {
 				#if debug var startTime = Sys.time(); #end
 				violet.backend.utils.ZipUtil.extractZip('$MOD_FOLDER/$path', modPath);
 				#if debug var delta = (Sys.time() - startTime) * 1000;
-				trace('debug:VMod extraction took ${Math.round(delta*100)/100} milliseconds');
+				trace('debug:VMod extraction took ${Math.round(delta*100)/100} milliseconds'); #end
 			}
 		}
 

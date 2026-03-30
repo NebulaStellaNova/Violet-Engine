@@ -6,8 +6,11 @@ class ZipUtil {
      * Near instantaneous zip extracting via sys commands :D
      */
     public static function extractZip(inputPath:String, outputPath:String):Void {
-        #if windows Sys.command("tar", ["-xf", inputPath, "-C", outputPath]);
-        #else Sys.command("unzip", [inputPath, "-d", outputPath]); #end
+        #if windows
+        var process = new sys.io.Process("tar", ["-xf", inputPath, "-C", outputPath]);
+        #else
+        var process = new sys.io.Process("unzip", [inputPath, "-d", outputPath]);
+        #end
     }
 
     public static function getZipEntries(inputPath:String):Array<String> {
