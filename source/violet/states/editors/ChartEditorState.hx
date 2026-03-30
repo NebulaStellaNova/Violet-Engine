@@ -1,5 +1,9 @@
 package violet.states.editors;
 
+import lemonui.utils.ElementUtil;
+import lemonui.elements.MenuBar;
+import violet.data.icon.HealthIcon;
+import violet.data.character.CharacterRegistry;
 import flixel.math.FlxPoint;
 import violet.backend.scripting.events.NoteHitEvent;
 import violet.backend.scripting.events.EventBase;
@@ -32,13 +36,17 @@ class ChartEditorState extends StateBackend {
     var grids:Array<FlxBackdrop> = [];
     var notes:Array<NovaSprite> = [];
     var events:Array<NovaSprite> = [];
+    var icons:Array<HealthIcon> = [];
 
     var selectionBox:FlxSprite;
     var selectionStart:FlxPoint = new FlxPoint(200, 200);
 
+    var menuBar:MenuBar;
+
     override public function new() {
         super();
 
+        // FlxG.camera.zoom = 0.7; // Looks funny
 
         chart = ChartRegistry.getChart(songID, difficulty, variant);
 		meta = SongRegistry.getSongByID(songID);
@@ -48,6 +56,9 @@ class ChartEditorState extends StateBackend {
 		if (meta.needsVoices) Conductor.addAdditionalTrack(FlxG.sound.load(Cache.sound(Paths.vocal(meta.songName, null, meta.variant), 'root', null, true), FlxG.sound.defaultMusicGroup));
 		else Conductor.addAdditionalTrack(new FlxSound());
         Conductor.pause();
+
+        var barRoot = ElementUtil.buildFromXML(Paths.xml("data/ui/chart-editor/menubar")).root;
+        menuBar = barRoot.findElement('menubar');
 
         var bg = new NovaSprite(Paths.image("menus/mainmenu/menuBGdesat"));
 		bg.setGraphicSize(FlxG.width, FlxG.height);
@@ -73,6 +84,15 @@ class ChartEditorState extends StateBackend {
             chartGrid.alpha *= line._data.visible ? 1 : 0.75;
             add(chartGrid);
             grids.push(chartGrid);
+
+            var characterID = line.characters[0];
+            var characterData = CharacterRegistry.characterDatas.get(characterID);
+            var icon = new HealthIcon(characterData?.healthIcon ?? characterID);
+            icon.x = chartGrid.x + chartGrid.width/2 - icon.width/2;
+            icon.y = chartGrid.y + 200/2 - icon.height/2;
+            icon.globalOffset.x = icon.globalOffset.y = 0;
+            icon.y += 35;
+            icons.push(icon);
 
             if (line.vocalsSuffix != null)
                 Conductor.addAdditionalTrack(FlxG.sound.load(Cache.sound(Paths.vocal(meta.songName, line.vocalsSuffix, meta.variant), 'root', null, true), FlxG.sound.defaultMusicGroup));
@@ -107,6 +127,8 @@ class ChartEditorState extends StateBackend {
             add(seperator);
         }
 
+        for (i in icons) add(i);
+
         for (i in chart.events) {
             var eventSprite = new NovaSprite(Paths.image('ui/editors/charter/event'));
             if (!i.global) {
@@ -130,6 +152,8 @@ class ChartEditorState extends StateBackend {
         // selectionBox.visible = false;
         add(selectionBox);
         Conductor.setSongPosition(0);
+
+        add(barRoot);
     }
 
     var numTween:FlxTween;
@@ -191,8 +215,6 @@ class ChartEditorState extends StateBackend {
             selectionTween = FlxTween.num(selectionStart.y, selectionStart.y + (scrollAmt/2), 0.25, {ease: FlxEase.circOut}, (value) -> {
                 selectionStart.y = value;
             });
-
-
         }
         if (FlxG.keys.justPressed.SPACE) {
             if (!Conductor.instrumental.playing) {
@@ -203,6 +225,8 @@ class ChartEditorState extends StateBackend {
                 Conductor.pause();
             }
         }
+
+        if (ElementUtil.anythingOpened) return;
 
         if (FlxG.mouse.justPressed) {
             selectionStart.x = FlxG.mouse.x;

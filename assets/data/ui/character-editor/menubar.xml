@@ -12,7 +12,7 @@
         <menu-item id="exitToMenu" text="Exit To Menu" shortcutText="Ctrl+Q" />
     </menu>
 
-    <menu text="Animation">
+    <menu text="Animation" width="100">
         <menu-item id="newAnimation" text="New Animation" shortcutText="Ctrl+N" />
     </menu>
 
