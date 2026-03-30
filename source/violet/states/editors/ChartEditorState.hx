@@ -1,5 +1,6 @@
 package violet.states.editors;
 
+import violet.data.character.Character;
 import lemonui.utils.ElementUtil;
 import lemonui.elements.MenuBar;
 import violet.data.icon.HealthIcon;
@@ -40,6 +41,8 @@ class ChartEditorState extends StateBackend {
 
     var selectionBox:FlxSprite;
     var selectionStart:FlxPoint = new FlxPoint(200, 200);
+
+    var charterChud:Character = new Character('charter-chud');
 
     var menuBar:MenuBar;
 
@@ -154,6 +157,10 @@ class ChartEditorState extends StateBackend {
         Conductor.setSongPosition(0);
 
         add(barRoot);
+
+        charterChud.x = 100;
+        charterChud.y = FlxG.height - 200;
+        add(charterChud);
     }
 
     var numTween:FlxTween;
@@ -191,6 +198,7 @@ class ChartEditorState extends StateBackend {
                 note.extra.set('hit', true);
                 if (Conductor.instrumental.playing && !playedThisFrame) {
                     NovaUtils.playSound('charter/hitsound', 0.75);
+                    charterChud.playSingAnim(noteData.id);
                     playedThisFrame = true;
                 }
             }
@@ -203,6 +211,14 @@ class ChartEditorState extends StateBackend {
             note.color = overlay.visible ? FlxColor.interpolate(FlxColor.BLACK, FlxColor.WHITE, 0.5) : FlxColor.WHITE;
 
         }
+
+        charterChud.color = [
+            "idle" =>      0xFFFFFFFF,
+            "singLEFT" =>  0xFFc24b99,
+            "singDOWN" =>  0xFF00FFFF,
+            "singUP" =>    0xFF12fa05,
+            "singRIGHT" => 0xFFf9393f
+        ].get(charterChud.animation.name);
 
         if (FlxG.mouse.wheel != 0) {
             var scrollAmt = (FlxG.mouse.wheel*(!FlxG.keys.pressed.SHIFT ? 200 : 50));
