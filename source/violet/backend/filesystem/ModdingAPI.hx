@@ -1,4 +1,5 @@
 package violet.backend.filesystem;
+import haxe.zip.Entry;
 import haxe.io.BytesInput;
 import haxe.io.Path;
 import sys.FileSystem;
@@ -83,18 +84,7 @@ class ModdingAPI {
 				FileSystem.createDirectory(modPath);
       			Sys.command("attrib +h " + modPath);
 
-				var bytesInput = new haxe.io.BytesInput(sys.io.File.getBytes('$MOD_FOLDER/$path'));
-				var reader = new haxe.zip.Reader(bytesInput);
-				var entries = reader.read();
-				for(_entry in entries) {
-					var data = haxe.zip.Reader.unzip(_entry);
-					if (data + "" != "") {
-						var location = modPath + "/" + _entry.fileName;
-						if (!FileSystem.exists(Path.directory(location))) FileSystem.createDirectory(Path.directory(location));
-						sys.io.File.saveBytes(location, data);
-					}
-				}
-				bytesInput.close();
+				violet.backend.utils.ZipUtil.extractZip('$MOD_FOLDER/$path', modPath);
 			}
 		}
 
