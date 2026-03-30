@@ -278,6 +278,8 @@ class PlayState extends violet.backend.StateBackend {
 		DebugDisplay.registerVariable("Current Variantion", "variation");
 		if (playlist.length != 0) DebugDisplay.registerVariable("Playlist Items", "playlist");
 		#end
+
+        Conductor.setSongPosition(0);
 	}
 
 	var healthLerp:Float = 0.5;

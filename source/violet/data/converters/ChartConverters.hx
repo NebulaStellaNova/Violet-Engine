@@ -66,8 +66,13 @@ class ChartConverters {
             final parsedEvents = Yaml.parse(FileUtil.getFileContent(chartCache.eventsPath), options);
             convertedChart.events ??= [];
             for (i in parsedEvents.events ?? []) {
+                i.global = true;
                 convertedChart.events.push(i);
             }
+        }
+
+        for (i in convertedChart.events) {
+            i.global ??= false;
         }
 
         return convertedChart;

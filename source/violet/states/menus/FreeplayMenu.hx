@@ -18,6 +18,7 @@ import violet.data.song.Song;
 import violet.data.song.SongRegistry;
 import violet.states.PlayState;
 import violet.ui.freeplay.Capsule;
+import violet.backend.utils.MathUtil;
 
 class FreeplayMenu extends SubStateBackend {
 	static var prevInst:String = "";
@@ -51,6 +52,9 @@ class FreeplayMenu extends SubStateBackend {
 	var selector1:GenzuSprite;
 	var selector2:GenzuSprite;
 	var scoreText:FreeplayScore;
+	var lerpScore:Float = 0;
+	var intendedScore:Int = 0;
+	var highscoreImg:GenzuSprite;
 
 	var songs:Array<Song> = [];
 	var album:Album;
@@ -123,26 +127,37 @@ class FreeplayMenu extends SubStateBackend {
 		ostText.x = FlxG.width - ostText.width + 150;
 		ostText.camera = camHUD;
 
+		highscoreImg = new GenzuSprite(0, 5, Paths.image('menus/freeplay/score/highscore'));
+		highscoreImg.addAnim('idle', 'highscore small instance 1', [], null, 24, false);
+		highscoreImg.playAnim('idle');
+		highscoreImg.scale.set(1.25, 1.25);
+		highscoreImg.x = FlxG.width + 190;
+		highscoreImg.camera = camHUD;
+
 		album = new Album('placeholder');
 		album.x = FlxG.width;
 		album.camera = camHUD;
 
 		diffSprite.y = selector2.y;
 
-		// Rodney don't flame gen for this I did it.
-		FlxTween.tween(backingCard, 	{ x: -160 }, 				1.0, 	{ ease: FlxEase.expoOut, startDelay: 0.0 });
-		FlxTween.tween(backingImage, 	{ x: 315 }, 				1.0, 	{ ease: FlxEase.expoOut, startDelay: 0.1 });
-		FlxTween.tween(black, 			{ y: -175 }, 				0.6, 	{ ease: FlxEase.expoOut, startDelay: 0.2 });
-		FlxTween.tween(selector2, 		{ x: 260 }, 				0.6, 	{ ease: FlxEase.expoOut, startDelay: 0.3 });
-		FlxTween.tween(selector1, 		{ x: -130 }, 				0.6, 	{ ease: FlxEase.expoOut, startDelay: 0.4 });
-		FlxTween.tween(diffSprite, { x: ((-130 + 260) / 2) - (diffSprite.width / 2) + 27}, 0.7, { ease: FlxEase.expoOut, startDelay: 0.5 }); // idk mane
-		FlxTween.tween(freeplayText, 	{ y: -78 }, 				0.8, 	{ ease: FlxEase.expoOut, startDelay: 0.6 });
-		FlxTween.tween(ostText, 		{ y: -78 }, 				0.8, 	{ ease: FlxEase.expoOut, startDelay: 0.7 });
-		FlxTween.tween(album, 		    { x: 0 },            		0.8, 	{ ease: FlxEase.expoOut, startDelay: 0.7 });
-
-		scoreText = new FreeplayScore(0, 0);
+		scoreText = new FreeplayScore(0, 30);
 		scoreText.camera = camHUD;
-		add(scoreText);
+		scoreText.x = FlxG.width + 150;
+		// scoreText.x = FlxG.width - scoreText.width + 125;
+
+		// Rodney don't flame gen for this I did it.
+		FlxTween.tween(backingCard, {x: -160}, 1.0, {ease: FlxEase.expoOut, startDelay: 0.0});
+		FlxTween.tween(backingImage, {x: 315}, 1.0, {ease: FlxEase.expoOut, startDelay: 0.1});
+		FlxTween.tween(black, {y: -175}, 0.6, {ease: FlxEase.expoOut, startDelay: 0.2});
+		FlxTween.tween(selector2, {x: 260}, 0.6, {ease: FlxEase.expoOut, startDelay: 0.3});
+		FlxTween.tween(selector1, {x: -130}, 0.6, {ease: FlxEase.expoOut, startDelay: 0.4});
+		FlxTween.tween(diffSprite, {x: ((-130 + 260) / 2) - (diffSprite.width / 2) + 27}, 0.7, {ease: FlxEase.expoOut, startDelay: 0.5}); // idk mane
+		FlxTween.tween(freeplayText, {y: -78}, 0.8, {ease: FlxEase.expoOut, startDelay: 0.6});
+		FlxTween.tween(ostText, {y: -78}, 0.8, {ease: FlxEase.expoOut, startDelay: 0.7});
+		FlxTween.tween(album, {x: 0}, 0.8, {ease: FlxEase.expoOut, startDelay: 0.7});
+		FlxTween.tween(scoreText, {x: FlxG.width - scoreText.width + 125}, 0.8, {ease: FlxEase.expoOut, startDelay: 0.65});
+		FlxTween.tween(highscoreImg, {x: FlxG.width - highscoreImg.width - 50}, 0.8, {ease: FlxEase.expoOut, startDelay: 0.65});
+
 		player = new Player(playableID);
 
 		conditionCheck();
@@ -156,7 +171,6 @@ class FreeplayMenu extends SubStateBackend {
 			add(capsule);
 			daCapsules.push(capsule);
 			capsule.updateBPM(Std.int(song._data.bpm));
-
 		}
 
 		add(black);
@@ -166,6 +180,8 @@ class FreeplayMenu extends SubStateBackend {
 		add(freeplayText);
 		add(ostText);
 		add(album);
+		add(scoreText);
+		add(highscoreImg);
 
 		changeSelection(0);
 		diffSprite.x = -FlxG.width;
@@ -176,6 +192,15 @@ class FreeplayMenu extends SubStateBackend {
 		}
 
 		skipTransition = false;
+
+		updateScore();
+
+		new FlxTimer().start(FlxG.random.float(12, 50), function(tmr) {
+			trace('Highscore Animation Timer Check');
+			highscoreImg?.playAnim('idle');
+			tmr.time = FlxG.random.float(20, 60);
+		}, 0);
+
 	}
 
 	public function build() {
@@ -185,8 +210,21 @@ class FreeplayMenu extends SubStateBackend {
 		return mainMenu;
 	}
 
+	function updateScore() {
+		var newSong:Song = songs[curSelectedSong];
+		// scoreText.updateScore(ScoreUtil.getSongScore(newSong.songName, newSong.difficulties[curSelectedDiff], newSong.variant));
+		intendedScore = ScoreUtil.getSongScore(newSong.songName, newSong.difficulties[curSelectedDiff], newSong.variant);
+	}
+
 	override function update(elapsed) {
 		super.update(elapsed);
+
+		if (lerpScore != intendedScore) {
+			lerpScore = MathUtil.lerp(lerpScore, intendedScore, 0.3);
+			if (Math.abs(lerpScore - intendedScore) < 1)
+				lerpScore = intendedScore;
+			scoreText.updateScore(Std.int(lerpScore));
+		}
 
 		if (FlxG.keys.justPressed.TAB) {
 			FlxG.sound.music.fadeOut(0.5);
@@ -196,7 +234,6 @@ class FreeplayMenu extends SubStateBackend {
 				FreeplayMenu.curSelectedSong = 0; */
 				FlxG.switchState(CharacterSelectMenu.new/* new FreeplayMenu().build() */);
 			});
-
 		}
 
 		if (Controls.back && canSelect)
@@ -286,7 +323,9 @@ class FreeplayMenu extends SubStateBackend {
 				song.playableCharacter == player.id
 			];
 			var conditionsMet:Bool = true;
-			for (i in conditions) if (!i) conditionsMet = false;
+			for (i in conditions)
+				if (!i)
+					conditionsMet = false;
 			return conditionsMet;
 		});
 	}
@@ -347,11 +386,6 @@ class FreeplayMenu extends SubStateBackend {
 		updateScore();
 	}
 
-	function updateScore() {
-		var newSong:Song = songs[curSelectedSong];
-		scoreText.updateScore(ScoreUtil.getSongScore(newSong.songName, newSong.difficulties[curSelectedDiff], newSong.variant));
-	}
-
 	function updateAlbum() {
 		album.setAlbum(songs[curSelectedSong]?._data?.album ?? 'placeholder');
 		ostText.text = album?.ostText;
@@ -391,6 +425,8 @@ class FreeplayMenu extends SubStateBackend {
 		FlxTween.cancelTweensOf(backingImage);
 		FlxTween.cancelTweensOf(backingCard);
 		FlxTween.cancelTweensOf(album);
+		FlxTween.cancelTweensOf(highscoreImg);
+		FlxTween.cancelTweensOf(scoreText);
 
 		FlxTween.tween(ostText, {y: -150}, 0.3, {ease: FlxEase.expoIn});
 		FlxTween.tween(freeplayText, {y: -150}, 0.3, {ease: FlxEase.expoIn, startDelay: 0.1});
@@ -401,6 +437,8 @@ class FreeplayMenu extends SubStateBackend {
 		FlxTween.tween(backingImage, {x: -backingImage.width - 160}, 0.3, {ease: FlxEase.expoIn, startDelay: 0.5});
 		FlxTween.tween(backingCard, {x: -backingCard.width - 160}, 0.3, {ease: FlxEase.expoIn, startDelay: 0.6});
 		FlxTween.tween(album, {x: FlxG.width}, 0.3, {ease: FlxEase.expoIn, startDelay: 0.5});
+		FlxTween.tween(highscoreImg, {x: FlxG.width + 190}, 0.3, {ease: FlxEase.expoIn, startDelay: 0.6});
+		FlxTween.tween(scoreText, {x: FlxG.width + 150}, 0.3, {ease: FlxEase.expoIn, startDelay: 0.55});
 
 		FlxTween.tween(cast(_parentState, MainMenu).bg, {x: 0}, 0.3 * 2, {ease: FlxEase.quadInOut, startDelay: 0.7});
 

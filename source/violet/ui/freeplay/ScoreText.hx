@@ -21,10 +21,10 @@ class FreeplayScore extends FlxTypedSpriteGroup<ScoreNumber> {
         return val;
     }
 
-    public function new(x:Float, y:Float, ?digiCount:Int = 7, ?score:Int = 100) {
+    public function new(x:Float, y:Float, ?digiCount:Int = 7, ?score:Int = 0) {
         super(0, y);
         for (i in 0...digiCount) {
-            add(new ScoreNumber(x + (45 * i), y, 0));
+            add(new ScoreNumber(x + (60 * i), y, 0));
         }
         this.setScore = score;
     }
@@ -60,7 +60,7 @@ class ScoreNumber extends GenzuSprite {
             addAnim(stringNum, '$stringNum DIGITAL', [], null, 24, false);
         }
         this.digit = initDigit ?? 0;
-        scale.set(0.5, 0.5);
+        scale.set(0.51, 0.51);
         playAnim(numToString[initDigit], true);
         updateHitbox();
     }

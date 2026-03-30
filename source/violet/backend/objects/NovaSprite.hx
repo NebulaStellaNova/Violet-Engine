@@ -347,12 +347,14 @@ class NovaSprite extends #if ANIMATE_SUPPORT FlxAnimate #else FlxSprite #end {
 		camera.drawPixels(_frame, framePixels, _matrix, colorTransform, blend, antialiasing, shader);
 	}
 
-	// for now
-	/* override public function clone():NovaSprite {
-		var returner = new NovaSprite();
-		returner.loadSprite(this.filePath);
+	override public function clone() {
+		var returner = super.clone();
+		returner.scale.set(this.scale.x, this.scale.y);
+		returner.x = this.x;
+		returner.y = this.y;
+		returner.updateHitbox();
 		return returner;
-	} */
+	}
 
 	override public function destroy() {
 		globalOffset.put();

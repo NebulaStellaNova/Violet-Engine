@@ -1,5 +1,6 @@
 package violet.states.editors;
 
+import violet.backend.utils.NovaUtils;
 import lemonui.elements.MenuBar;
 import violet.states.editors.sub.*;
 import violet.backend.utils.JsonUtil;
@@ -48,11 +49,7 @@ class CharacterEditorState extends StateBackend {
     public var characterList(get, never):Array<String>;
     function get_characterList() {
         var out = [for (i in CharacterRegistry.characterDatas.keys()) i];
-        out.sort(function(a:String, b:String) {
-            a = a.toUpperCase();
-            b = b.toUpperCase();
-            return a == b ? 0 : a > b ? 1 : -1;
-        });
+        out.sort(NovaUtils.sortAlphabetically);
         return out;
     }
 
