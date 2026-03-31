@@ -367,7 +367,8 @@ class FreeplayMenu extends SubStateBackend {
 
 		instTimer = new FlxTimer().start(0.8, (_) -> {
 			prevInst = inst;
-			Conductor.playSong(songs[curSelectedSong].songName, songs[curSelectedSong].variant, true);
+			var tv = songs[curSelectedSong].variant;
+			Conductor.playSong(songs[curSelectedSong].songName, tv != null && tv != '' ? tv : variant, true);
 			Conductor.instrumental.volume = 0.8;
 			Conductor.instrumental.looped = true;
 		});
