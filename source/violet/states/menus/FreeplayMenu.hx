@@ -163,7 +163,6 @@ class FreeplayMenu extends SubStateBackend {
 		scoreText.x = FlxG.width + 150;
 		// scoreText.x = FlxG.width - scoreText.width + 125;
 
-		// Rodney don't flame gen for this I did it.
 		FlxTween.tween(backingCard, {x: -160}, 1.0, {ease: FlxEase.expoOut, startDelay: 0.0});
 		FlxTween.tween(backingImage, {x: 315}, 1.0, {ease: FlxEase.expoOut, startDelay: 0.1});
 		FlxTween.tween(black, {y: -175}, 0.6, {ease: FlxEase.expoOut, startDelay: 0.2});
@@ -201,7 +200,7 @@ class FreeplayMenu extends SubStateBackend {
 		add(scoreText);
 		add(highscoreImg);
 
-		var x = 0;
+		var x = 2;
 		var y = selector2.y + 113;
 		var additive = 39;
 		for (diff in ["easy", "normal", "hard", "erect", "nightmare"]) {
@@ -243,6 +242,11 @@ class FreeplayMenu extends SubStateBackend {
 					}
 				}
 			}
+		}
+
+		for (i in difficultyDots) {
+			FlxTween.tween(i, {x: i.x }, 0.7, {ease: FlxEase.expoOut, startDelay: 0.56});
+			i.x -= 400;
 		}
 
 		changeSelection(0);
@@ -518,6 +522,11 @@ class FreeplayMenu extends SubStateBackend {
 		FlxTween.cancelTweensOf(highscoreImg);
 		FlxTween.cancelTweensOf(scoreText);
 
+		for (i in difficultyDots) {
+			FlxTween.cancelTweensOf(i);
+			FlxTween.tween(i, {x: -FlxG.width}, 0.3, {ease: FlxEase.expoIn, startDelay: 0.25});
+		}
+		FlxTween.tween(diffSprite, {x: -FlxG.width}, 0.3, {ease: FlxEase.expoIn, startDelay: 0.2});
 		FlxTween.tween(ostText, {y: -150}, 0.3, {ease: FlxEase.expoIn});
 		FlxTween.tween(freeplayText, {y: -150}, 0.3, {ease: FlxEase.expoIn, startDelay: 0.1});
 		FlxTween.tween(diffSprite, {x: -FlxG.width}, 0.3, {ease: FlxEase.expoIn, startDelay: 0.2});
