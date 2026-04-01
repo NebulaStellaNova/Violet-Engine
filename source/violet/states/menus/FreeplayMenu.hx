@@ -1,5 +1,6 @@
 package violet.states.menus;
 
+import violet.ui.freeplay.DifficultyDot;
 import violet.backend.utils.ScoreUtil;
 import violet.ui.freeplay.ScoreText;
 import violet.data.chart.ChartRegistry;
@@ -30,6 +31,8 @@ class FreeplayMenu extends SubStateBackend {
 	static var lastSong:Int = -1;
 
 	static var playableID:String = 'bf';
+
+	var difficultyDots:Map<String, DifficultyDot> = new Map();
 
 	var difficulties:Array<String> = ["easy", "normal", "hard"];
 	var difficultyAssociations = [
@@ -197,6 +200,50 @@ class FreeplayMenu extends SubStateBackend {
 		add(album);
 		add(scoreText);
 		add(highscoreImg);
+
+		var x = 0;
+		var y = selector2.y + 113;
+		var additive = 39;
+		for (diff in ["easy", "normal", "hard", "erect", "nightmare"]) {
+			var dot = new DifficultyDot(diff);
+			dot.x = x;
+			dot.y = y;
+			dot.setSelected(false);
+			dot.camera = camHUD;
+			add(dot);
+			difficultyDots.set(diff, dot);
+			x += additive;
+		}
+		for (song in songs) {
+			for (diff in song.difficulties) {
+				if (!difficultyDots.exists(diff.toLowerCase())) {
+					var dot = new DifficultyDot(diff.toLowerCase());
+					dot.x = x;
+					dot.y = y;
+					dot.setSelected(false);
+					dot.camera = camHUD;
+					add(dot);
+					difficultyDots.set(diff.toLowerCase(), dot);
+					x += additive;
+				}
+			}
+			for (varient in song.variants) {
+				var target = SongRegistry.getSongByID('${song.id}:$varient');
+				if (target == null) continue;
+				for (diff in target.difficulties) {
+					if (!difficultyDots.exists(diff.toLowerCase())) {
+						var dot = new DifficultyDot(diff.toLowerCase());
+						dot.x = x;
+						dot.y = y;
+						dot.setSelected(false);
+						dot.camera = camHUD;
+						add(dot);
+						difficultyDots.set(diff.toLowerCase(), dot);
+						x += additive;
+					}
+				}
+			}
+		}
 
 		changeSelection(0);
 		diffSprite.x = -FlxG.width;
@@ -389,6 +436,13 @@ class FreeplayMenu extends SubStateBackend {
 			var target = SongRegistry.getSongByID(songs[i].id + (variant != '' ? ':${variant}' : ''));
 			target ??= SongRegistry.getSongByID(songs[i].id);
 			capsule.songNameText.text = target._data.displayName;
+		}
+
+		for (i in difficultyDots.keys()) {
+			var dot = difficultyDots.get(i);
+			var diffListLower = [for (i in difficulties) i.toLowerCase()];
+			dot.alpha = diffListLower.contains(i) ? 1 : 0.5;
+			dot.setSelected(difficulties[curSelectedDiff].toLowerCase() == i);
 		}
 
 		if (pureSelect) {
