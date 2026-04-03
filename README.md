@@ -27,3 +27,8 @@ Well for one, the engine is being coded on the dev branch.
 
 But please, make PR's to help if you want to :D
 I would greatly appreciate it.
+
+# Compilation
+
+You MUST run `setup.bat` before compiling or it will not work
+Once you run that simply open the console in this folder and type `lime test windows`
