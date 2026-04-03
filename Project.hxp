@@ -304,6 +304,10 @@ class Project extends HXProject {
 			asset.library = setAsset.library ?? 'default';
 			assets.push(asset);
 		}
+
+		setHaxedef('COMMIT_INDEX', new sys.io.Process('git rev-list --count HEAD').stdout.readLine());
+		setHaxedef('COMMIT_HASH', new sys.io.Process('git rev-parse --short HEAD').stdout.readLine());
+		setHaxedef('GITHUB_BRANCH', new sys.io.Process('git branch --show-current').stdout.readLine());
 	}
 
 	inline public function setupAndroid() {
