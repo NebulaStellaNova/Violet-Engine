@@ -24,6 +24,19 @@ class NovaUtils {
 
 	public static var NOTIFICATION_CAMERA:FlxCamera;
 
+	public static function platformCheck(platformID:String) {
+		if (platformID == 'desktop') { #if !desktop  return false; #end }
+		if (platformID == 'windows') { #if !windows  return false; #end }
+		if (platformID == 'mac')     { #if !mac      return false; #end }
+		if (platformID == 'macos')   { #if !mac      return false; #end }
+		if (platformID == 'linux')   { #if !linux    return false; #end }
+
+		if (platformID == 'mobile')  { #if !mobile   return false; #end }
+		if (platformID == 'android') { #if !android  return false; #end }
+		if (platformID == 'ios')     { #if !android  return false; #end }
+		return true;
+	}
+
 	public static function addNotification(title:String, body:String, expiryMs:Int = 10000, type:NotificationType = DEFAULT) {
 		var notification = lemonui.controllers.NotificationController.instance.addNotification(title, body, expiryMs/1000);
 		if (type == ERROR) {

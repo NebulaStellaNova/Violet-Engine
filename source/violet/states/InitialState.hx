@@ -29,8 +29,6 @@ class InitialState extends StateBackend { // for now
 		FlxG.cameras.useBufferLocking = true;
 		super.create();
 
-		GlobalPack.init();
-
 		#if CHECK_FOR_UPDATES
 		// write this
 		#end
@@ -105,6 +103,7 @@ class InitialState extends StateBackend { // for now
 			#if MOD_SUPPORT
 			ModdingAPI.init();
 			#end
+			GlobalPack.init();
 		});
 		// FlxG.camera.visible = false;
 	}

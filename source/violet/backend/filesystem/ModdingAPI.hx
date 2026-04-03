@@ -75,6 +75,7 @@ class ModdingAPI {
 
 	public static function reloadModList() {
 		tempFolders = [];
+		#if !mobile
 		for (path in Paths.readFolder(MOD_FOLDER, true)) {
 			if (path.endsWith('.vmod') && !FileSystem.isDirectory('$MOD_FOLDER/$path')) {
 				var folderName:String = path.replace('.vmod', "");
@@ -91,6 +92,7 @@ class ModdingAPI {
 				trace('debug:VMod extraction took ${Math.round(delta*100)/100} milliseconds'); #end
 			}
 		}
+		#end
 
 		@:bypassAccessor availableMods = [
 			for (path in Paths.readFolder(MOD_FOLDER, true)) {

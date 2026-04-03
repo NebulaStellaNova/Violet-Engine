@@ -113,10 +113,12 @@ menus:
   - name: Mouse Controls
     description: Allows you to navigate menus via your mouse.
     saveID: mouseControls
+    platform: desktop
     type: bool
   - name: Force Scroll Navigation
     description: FORCES scroll wheel to function in menus if mouse controls is disabled.
     saveID: forceMouseScrolling
+    platform: desktop
     type: bool
   - name: Debug Display on Start
     description: Shows the debug display when you start the game.

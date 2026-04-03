@@ -59,6 +59,8 @@ class MainMenu extends StateBackend {
 
 	public var menuItems:Array<NovaSprite> = [];
 
+	public var enableMobileControls:Bool = #if mobile true #else false #end;
+
 	public var leftWatermark:NovaText;
 
 	public var canSelect:Bool = true;
@@ -82,7 +84,7 @@ class MainMenu extends StateBackend {
 
 		#if mobile
 		for (i in menuData.items) {
-			if (id == mods) menuData.items.remove(id);
+			if (i.id == 'mods') menuData.items.remove(i);
 		}
 		#end
 
@@ -214,6 +216,17 @@ class MainMenu extends StateBackend {
 		if (FlxG.keys.justPressed.SEVEN) {
 			substateTrans = false;
 			openSubState(new violet.states.debug.EditorPickerMenu());
+		}
+
+		if (!enableMobileControls) return;
+		for (i => item in menuItems) {
+			if (FlxG.mouse.overlaps(item) && FlxG.mouse.justPressed) {
+				if (curSelected == i) {
+					pickSelection();
+				} else {
+					changeSelection(i-curSelected);
+				}
+			}
 		}
 	}
 

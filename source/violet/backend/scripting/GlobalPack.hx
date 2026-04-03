@@ -1,6 +1,6 @@
 package violet.backend.scripting;
 
-class GlobalPack extends ScriptPack {
+class GlobalPack #if SCRIPT_SUPPORT extends ScriptPack #end {
 
     public static var instance:GlobalPack;
 
@@ -10,6 +10,7 @@ class GlobalPack extends ScriptPack {
     }
 
     public static function init() {
+        #if SCRIPT_SUPPORT
         if (instance != null) {
             instance.clear();
         }
@@ -52,10 +53,13 @@ class GlobalPack extends ScriptPack {
 
         FlxG.signals.preStateCreate.add((state)->pack.call('preStateCreate', [state]));
         FlxG.signals.preStateCreate.add((state)->pack.call('onPreStateCreate', [state]));
+        #end
     }
 
+    #if SCRIPT_SUPPORT
     override public function addScript(script) {
         super.addScript(script);
         script.set('global', true);
     }
+    #end
 }

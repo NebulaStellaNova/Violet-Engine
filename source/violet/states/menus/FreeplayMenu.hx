@@ -32,6 +32,8 @@ class FreeplayMenu extends SubStateBackend {
 
 	static var playableID:String = 'bf';
 
+	public var enableMobileControls:Bool = #if mobile true #else false #end;
+
 	var difficultyDots:Map<String, DifficultyDot> = new Map();
 
 	var difficulties:Array<String> = ["easy", "normal", "hard"];
@@ -282,6 +284,8 @@ class FreeplayMenu extends SubStateBackend {
 		intendedScore = ScoreUtil.getSongScore(newSong.songName, newSong.difficulties[curSelectedDiff], newSong.variant);
 	}
 
+	var scroll = 0;
+
 	override function update(elapsed) {
 		super.update(elapsed);
 
@@ -335,6 +339,71 @@ class FreeplayMenu extends SubStateBackend {
 
 		if (Controls.accept && canSelect) {
 			playSong(songs[curSelectedSong].id, difficulties[curSelectedDiff]);
+		}
+
+
+		if (!enableMobileControls) return;
+
+		var change = Math.abs(FlxG.mouse.deltaY) + Math.abs(FlxG.mouse.deltaX);
+		if (Math.abs(FlxG.mouse.deltaY) > 15 && FlxG.mouse.pressed) {
+			var positive = FlxG.mouse.deltaY >= 0;
+			var target = (positive ? 1 : -1);
+			if (target != 0 && scroll % 3 == 0) {
+				NovaUtils.playMenuSFX(SCROLL);
+				changeSelection(-target);
+			}
+			scroll++;
+			return;
+		} else {
+			scroll = 0;
+		}
+
+
+		var offset = 150;
+
+		selector1.x += offset;
+		selector1.y += 37;
+		if (FlxG.mouse.overlaps(selector1)) {
+			if (FlxG.mouse.justPressed) {
+				changeDiff(-1);
+				selector1.x -= 10;
+				FlxTween.cancelTweensOf(selector1);
+				FlxTween.tween(selector1, {x: -130}, 0.5, {ease: FlxEase.expoOut});
+			}
+			selector1.x -= offset;
+			selector1.y -= 37;
+			return;
+		}
+		selector1.x -= offset;
+		selector1.y -= 37;
+
+		offset = 75;
+
+		selector2.x += offset;
+		selector2.y += offset/2;
+		if (FlxG.mouse.overlaps(selector2)) {
+			if (FlxG.mouse.justPressed) {
+				changeDiff(1);
+				selector2.x += 10;
+				FlxTween.cancelTweensOf(selector2);
+				FlxTween.tween(selector2, {x: 260}, 0.5, {ease: FlxEase.expoOut});
+			}
+			selector2.x -= offset;
+			selector2.y -= offset/2;
+			return;
+		}
+		selector2.x -= offset;
+		selector2.y -= offset/2;
+
+		for (i => capsule in daCapsules) {
+			if (FlxG.mouse.overlaps(capsule) && FlxG.mouse.justPressed) {
+				if (i == FreeplayMenu.curSelectedSong) {
+					playSong(songs[FreeplayMenu.curSelectedSong].id, difficulties[FreeplayMenu.curSelectedDiff]);
+				} else {
+					NovaUtils.playMenuSFX(SCROLL);
+					changeSelection(i - FreeplayMenu.curSelectedSong);
+				}
+			}
 		}
 	}
 

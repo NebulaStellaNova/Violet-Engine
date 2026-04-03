@@ -94,14 +94,14 @@ class Controls {
 	 */
 	public static var uiDown(get, never):Bool;
 	inline static function get_uiDown():Bool {
-		return pressed('ui_down') || (FlxG.mouse.wheel < 0 && (Options.data.mouseControls || Options.data.forceMouseScrolling));
+		return pressed('ui_down') || (FlxG.mouse.wheel < 0 #if !mobile && (Options.data.mouseControls || Options.data.forceMouseScrolling) #end);
 	}
 	/**
 	 * When you press up to move through ui elements
 	 */
 	public static var uiUp(get, never):Bool;
 	inline static function get_uiUp():Bool {
-		return pressed('ui_up') || (FlxG.mouse.wheel > 0 && (Options.data.mouseControls || Options.data.forceMouseScrolling));
+		return pressed('ui_up') || (FlxG.mouse.wheel > 0 #if !mobile && (Options.data.mouseControls || Options.data.forceMouseScrolling) #end);
 	}
 	/**
 	 * When you press right to move through ui elements
@@ -165,7 +165,7 @@ class Controls {
 	 */
 	public static var accept(get, never):Bool;
 	inline static function get_accept():Bool {
-		return pressed('accept') || (FlxG.mouse.justPressed && Options.data.mouseControls);
+		return pressed('accept') #if !mobile || (FlxG.mouse.justPressed && Options.data.mouseControls) #end;
 	}
 	/**
 	 * When "back" is pressed.

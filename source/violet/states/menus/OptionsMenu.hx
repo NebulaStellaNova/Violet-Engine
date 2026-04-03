@@ -36,6 +36,7 @@ typedef OptionsMenuOption = {
     var ?description:String;
     var saveID:String;
     var type:OptionsType;
+    var ?platform:String; // Used to have platform specific settings
     // for number option
     var ?min:Float;
     var ?max:Float;
@@ -68,6 +69,14 @@ class OptionsMenu extends SubStateBackend {
         super.create();
 
         instance = this;
+        for (menu in optionsData.menus) {
+            for (optionData in menu.options) {
+                var platformTargets = optionData.platform.replace(' ', '').split(',');
+                for (platform in platformTargets) {
+                    if (!NovaUtils.platformCheck(platform)) menu.options.remove(optionData);
+                }
+            }
+        }
 
         camera = new FlxCamera();
         camera.bgColor = FlxColor.TRANSPARENT;
@@ -147,6 +156,7 @@ class OptionsMenu extends SubStateBackend {
 
     function generateOptions() {
         for (i=>optionData in optionsData.menus[menuCurSelected].options) {
+
             switch (optionData.type) {
                 case SECTION:
                     var option:BaseOption = new BaseOption('${optionData.name}', optionData.description);

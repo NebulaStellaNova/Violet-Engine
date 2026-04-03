@@ -79,12 +79,12 @@ class NovaSprite extends #if ANIMATE_SUPPORT FlxAnimate #else FlxSprite #end {
 		var atlasPath = path.endsWith('Animation.json') ? path : '${haxe.io.Path.withoutExtension(path)}/Animation.json';
 		if (path.startsWith("https://"))
 			fromWeb(path);
-		else if (Paths.fileExists(atlasPath, true)) {
-			// trace(framesPath);
+		else if (@:privateAccess Paths._checkExists(atlasPath) || openfl.utils.Assets.exists(atlasPath)) {
 			#if ANIMATE_SUPPORT
 			this.animation = this.anim = new FlxAnimateController(this);
 			this.filePath = atlasPath;
 			this.fileName = Paths.getFileName(path, true);
+			trace(fileName);
 			this.animated = true;
 			var frames = NovaUtils.getAtlasFrames(framesPath);
 			// cachedFrames.set(framesPath, frames);
@@ -230,7 +230,7 @@ class NovaSprite extends #if ANIMATE_SUPPORT FlxAnimate #else FlxSprite #end {
 
 	public function addFrames(path:String):Void {
 		var newFrames:FlxAtlasFrames = null;
-		if (Paths.fileExists('${haxe.io.Path.withoutExtension(path)}/Animation.json', true)) {
+		if (@:privateAccess Paths._checkExists('${haxe.io.Path.withoutExtension(path)}/Animation.json')) {
 			#if ANIMATE_SUPPORT
 			newFrames = NovaUtils.getAtlasFrames(path);
 			#else
