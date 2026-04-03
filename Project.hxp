@@ -305,9 +305,15 @@ class Project extends HXProject {
 			assets.push(asset);
 		}
 
-		setHaxedef('COMMIT_INDEX', new sys.io.Process('git rev-list --count HEAD').stdout.readLine());
+
 		setHaxedef('COMMIT_HASH', new sys.io.Process('git rev-parse --short HEAD').stdout.readLine());
-		setHaxedef('GITHUB_BRANCH', new sys.io.Process('git branch --show-current').stdout.readLine());
+		setHaxedef('COMMIT_INDEX', new sys.io.Process('git rev-list --count ${getHaxedef('COMMIT_HASH')}').stdout.readLine());
+		var prc = new sys.io.Process('git branch -a --contains ${getHaxedef('COMMIT_HASH')}');
+		var printed = prc.stdout.readLine().split('\n')[0];
+		var printedSplit = printed.split('');
+		printedSplit.shift();
+		printedSplit.shift();
+		setHaxedef('GITHUB_BRANCH', printedSplit.join(''));
 	}
 
 	inline public function setupAndroid() {
