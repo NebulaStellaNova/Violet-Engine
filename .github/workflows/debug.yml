@@ -18,6 +18,7 @@ jobs:
       - name: Checking Latest Commit
         uses: actions/checkout@main
         with:
+          fetch-depth: 0
           submodules: true
 
       - name: Setup Haxe
@@ -88,83 +89,84 @@ jobs:
             export/debug/windows/obj/
           restore-keys: windows-debug-cache
 
-  android:
-    permissions: write-all
-    runs-on: android-latest
+  # android:
+  #   permissions: write-all
+  #   runs-on: android-latest
 
-    steps:
-      - name: Checking Latest Commit
-        uses: actions/checkout@main
-        with:
-          submodules: true
+  #   steps:
+  #     - name: Checking Latest Commit
+  #       uses: actions/checkout@main
+  #       fetch-depth: 0
+  #       with:
+  #         submodules: true
 
-      - name: Setup Haxe
-        uses: krdlab/setup-haxe@master
-        with:
-          haxe-version: 4.3.7
+  #     - name: Setup Haxe
+  #       uses: krdlab/setup-haxe@master
+  #       with:
+  #         haxe-version: 4.3.7
 
-      - name: Run Cache
-        uses: actions/cache@v4.3.0
-        with:
-          # not caching the bin folder to prevent asset duplication and stuff like that
-          key: android-debug-cache
-          path: |
-            .haxelib/
-            export/debug/android/haxe/
-            export/debug/android/obj/
-          restore-keys: android-debug-cache
+  #     - name: Run Cache
+  #       uses: actions/cache@v4.3.0
+  #       with:
+  #         # not caching the bin folder to prevent asset duplication and stuff like that
+  #         key: android-debug-cache
+  #         path: |
+  #           .haxelib/
+  #           export/debug/android/haxe/
+  #           export/debug/android/obj/
+  #         restore-keys: android-debug-cache
 
-      - name: Install Libraries
-        run: .\"install-libraries.bat"
+  #     - name: Install Libraries
+  #       run: .\"install-libraries.bat"
 
-      - name: Building HXCPP
-        run: |
-          cd ./.haxelib/hxcpp/git/tools/hxcpp
-          haxe compile.hxml
-          cd ../../../../../
+  #     - name: Building HXCPP
+  #       run: |
+  #         cd ./.haxelib/hxcpp/git/tools/hxcpp
+  #         haxe compile.hxml
+  #         cd ../../../../../
 
-      - name: Compile Engine
-        run: haxelib run lime build android -debug
+  #     - name: Compile Engine
+  #       run: haxelib run lime build android -debug
 
-      - name: Upload Artifact
-        uses: actions/upload-artifact@main
-        with:
-          name: Violet Android Build
-          path: export/debug/android/bin/app/build/outputs/apk/debug/Violet Engine-debug.apk
-          overwrite: true
-          include-hidden-files: true
-          if-no-files-found: error
+  #     - name: Upload Artifact
+  #       uses: actions/upload-artifact@main
+  #       with:
+  #         name: Violet Android Build
+  #         path: export/debug/android/bin/app/build/outputs/apk/debug/Violet Engine-debug.apk
+  #         overwrite: true
+  #         include-hidden-files: true
+  #         if-no-files-found: error
 
-      - name: Clearing Cache
-        uses: actions/github-script@v6
-        with:
-          script: |
-            const caches = await github.rest.actions.getActionsCacheList({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-            })
-            for (const cache of caches.data.actions_caches) {
-              if (cache.key == 'android-debug-cache') {
-                console.log('Clearing ' + cache.key + '...')
-                await github.rest.actions.deleteActionsCacheById({
-                  owner: context.repo.owner,
-                  repo: context.repo.repo,
-                  cache_id: cache.id,
-                })
-                console.log('Cache cleared.')
-              }
-            }
+  #     - name: Clearing Cache
+  #       uses: actions/github-script@v6
+  #       with:
+  #         script: |
+  #           const caches = await github.rest.actions.getActionsCacheList({
+  #             owner: context.repo.owner,
+  #             repo: context.repo.repo,
+  #           })
+  #           for (const cache of caches.data.actions_caches) {
+  #             if (cache.key == 'android-debug-cache') {
+  #               console.log('Clearing ' + cache.key + '...')
+  #               await github.rest.actions.deleteActionsCacheById({
+  #                 owner: context.repo.owner,
+  #                 repo: context.repo.repo,
+  #                 cache_id: cache.id,
+  #               })
+  #               console.log('Cache cleared.')
+  #             }
+  #           }
 
-      - name: Run New Cache
-        uses: actions/cache@v4.3.0
-        with:
-          # not caching the bin folder to prevent asset duplication and stuff like that
-          key: android-debug-cache
-          path: |
-            .haxelib/
-            export/debug/android/haxe/
-            export/debug/android/obj/
-          restore-keys: android-debug-cache
+  #     - name: Run New Cache
+  #       uses: actions/cache@v4.3.0
+  #       with:
+  #         # not caching the bin folder to prevent asset duplication and stuff like that
+  #         key: android-debug-cache
+  #         path: |
+  #           .haxelib/
+  #           export/debug/android/haxe/
+  #           export/debug/android/obj/
+  #         restore-keys: android-debug-cache
 
   # mac:
   #   permissions: write-all
