@@ -26,6 +26,18 @@ class EngineAsset {
 	}
 }
 
+class Lib {
+	public var id:String;
+	public var url:String;
+	public var flags:Array<String>;
+
+	public function new(id, ?url, ?flags:Array<String>) {
+		this.id = id;
+		this.url = url;
+		this.flags = flags ?? [];
+	}
+}
+
 /**
  * This project instead used a hxp file instead of a xml!
  * This makes it easier to organize everything imo.
@@ -33,6 +45,32 @@ class EngineAsset {
  * Note: Based from base games hxp file.
  */
 class Project extends HXProject {
+
+	static final libs:Array<Lib> = [
+		// -- HaxeLib Libs -- \\
+		new Lib('flixel'),
+		new Lib('flixel-addons', ['--skip-dependencies']),
+		new Lib('hxdiscord_rpc', ['--skip-dependencies']),
+		new Lib('hxvlc', ['--skip-dependencies']),
+		new Lib('hxWindowColorMode'),
+		new Lib('moonchart'),
+		new Lib('thx.core'),
+		new Lib('thx.semver'),
+		new Lib('yaml'),
+
+		// -- Git Libs -- \\
+		new Lib('flxrhythmconductor', 'https://github.com/PurSnake/FlxRhythmConductor', ['--skip-dependencies']),
+		new Lib('hxcpp', 'https://github.com/FunkinCrew/hxcpp'),
+		new Lib('lemon-ui', 'https://github.com/NebulaStellaNova/LemonUI', ['--skip-dependencies']),
+		new Lib('hxcpp-debug-server', 'https://github.com/FunkinCrew/hxcpp-debugger'),
+		new Lib('hxhardware', 'https://github.com/Vortex2Oblivion/hxhardware'),
+		new Lib('linc_luajit', 'https://github.com/superpowers04/linc_luajit'),
+		new Lib('lscript', 'https://github.com/SrtHero278/lscript'),
+		new Lib('rulescript', 'https://github.com/Kriptel/RuleScript', ['dev']),
+		new Lib('flixel-animate', 'https://github.com/NebulaStellaNova/flixel-animate', ['bullshity-fix', "--skip-dependencies"]),
+		new Lib('hython', 'https://github.com/Paopun20/hython.git', ['dev'])
+	];
+
 	// Basic variables.
 	/**
 	 * The current engine version.
@@ -132,6 +170,20 @@ class Project extends HXProject {
 
 	override public function new() {
 		super();
+
+		bug('Checking For Libraries...');
+		for (i in libs) {
+			if (haxelibExists(i.id, i.url != null ? 'git' : null)) {
+				bug('Library "${i.id}" exists!');
+			} else {
+				bug('Library "${i.id}" does not exist. Installing...');
+				if (i.url != null)
+					new sys.io.Process('haxelib', ['git', i.id, i.url].concat(i.flags));
+				else
+					new sys.io.Process('haxelib', ['install', i.id].concat(i.flags));
+				bug('Library "${i.id}" is now installed.');
+			}
+		}
 
 		CompilerFlag.init(this);
 
@@ -309,7 +361,6 @@ class Project extends HXProject {
 		setHaxedef('COMMIT_HASH', new sys.io.Process('git rev-parse --short HEAD').stdout.readLine());
 		setHaxedef('COMMIT_INDEX', new sys.io.Process('git rev-list --count ${getHaxedef('COMMIT_HASH')}').stdout.readLine());
 		setHaxedef('GITHUB_BRANCH', new sys.io.Process('git rev-parse --abbrev-ref HEAD').stdout.readLine());
-		trace(new sys.io.Process('git log --all --graph').stdout.readLine());
 	}
 
 	inline public function setupAndroid() {
@@ -462,14 +513,18 @@ class Project extends HXProject {
 	 * @param version The version of the library to add. Optional.
 	 */
 	inline public function addHaxelib(name:String, ?version:LibraryVersion):Void {
-		var addLib:Bool = !FileSystem.exists('./.haxelib');
-		if (!addLib)
-			if (version != null) addLib = FileSystem.exists('./.haxelib/${name.replace('.', ',')}/$version');
-			else addLib = FileSystem.exists('./.haxelib/${name.replace('.', ',')}');
-		if (addLib) {
+		if (haxelibExists(name, version)) {
 			info('Added library "$name"${version == null ? '' : ' version "$version"'}.');
 			haxelibs.push(new Haxelib(name, version));
 		}
+	}
+
+	inline public function haxelibExists(name:String, ?version:LibraryVersion):Bool {
+		var exists:Bool = !FileSystem.exists('./.haxelib');
+		if (!exists)
+			if (version != null) exists = FileSystem.exists('./.haxelib/${name.replace('.', ',')}/$version');
+			else exists = FileSystem.exists('./.haxelib/${name.replace('.', ',')}');
+		return exists;
 	}
 
 	/**
@@ -597,6 +652,10 @@ class Project extends HXProject {
 	inline public function info(message:String):Void
 		if (command != 'display')
 			Log.info("\x1b[94m" + '[    SYS    ] -> [  Project.hxp  ]: ' + "\033[0m" + '$message');
+
+	inline public function bug(message:String):Void
+		if (command != 'display')
+			Log.info("\x1b[32m" + '[   DEBUG   ] -> [  Project.hxp  ]: ' + "\033[0m" + '$message');
 }
 
 abstract LibraryVersion(String) from String to String {
