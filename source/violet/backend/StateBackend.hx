@@ -5,6 +5,7 @@ import flixel.FlxBasic;
 import violet.backend.audio.Conductor;
 import violet.backend.objects.IsBopper;
 import violet.backend.scripting.events.EventBase;
+import violet.backend.scripting.GlobalPack;
 import violet.backend.utils.NovaUtils;
 import violet.backend.options.Options;
 
@@ -88,6 +89,7 @@ class StateBackend extends flixel.FlxState {
 	}
 
 	public function callInScripts<T>(funcName:String, ?args:Array<Dynamic>, ?def:T):T {
+		#if SCRIPT_SUPPORT if (GlobalPack.instance != null && !funcName.toLowerCase().contains('create')) GlobalPack.instance.call(funcName, args); #end
 		return #if SCRIPT_SUPPORT stateScripts.call(funcName, args, def) ?? #end def;
 	}
 
