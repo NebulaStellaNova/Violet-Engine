@@ -309,6 +309,7 @@ class Project extends HXProject {
 		setHaxedef('COMMIT_HASH', new sys.io.Process('git rev-parse --short HEAD').stdout.readLine());
 		setHaxedef('COMMIT_INDEX', new sys.io.Process('git rev-list --count ${getHaxedef('COMMIT_HASH')}').stdout.readLine());
 		setHaxedef('GITHUB_BRANCH', new sys.io.Process('git rev-parse --abbrev-ref HEAD').stdout.readLine());
+		trace(new sys.io.Process('git log --all --graph').stdout.readLine());
 	}
 
 	inline public function setupAndroid() {
