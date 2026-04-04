@@ -3,4 +3,3 @@ haxelib --global update haxelib
 haxelib fixrepo
 haxelib install hxp
 haxelib install lime
-haxelib run lime setup

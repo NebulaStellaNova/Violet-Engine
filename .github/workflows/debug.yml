@@ -37,7 +37,7 @@ jobs:
             export/debug/windows/obj/
           restore-keys: windows-debug-cache
 
-      - name: Install Libraries
+      - name: Run Setup
         run: .\"setup.bat"
 
       - name: Building HXCPP
@@ -116,7 +116,7 @@ jobs:
   #           export/debug/android/obj/
   #         restore-keys: android-debug-cache
 
-  #     - name: Install Libraries
+  #     - name: Run Setup
   #       run: .\"install-libraries.bat"
 
   #     - name: Building HXCPP
@@ -194,7 +194,7 @@ jobs:
   #           export/debug/mac/obj/
   #         restore-keys: mac-debug-cache
 
-  #     - name: Install Libraries
+  #     - name: Run Setup
   #       run: .\"install-libraries.bat"
 
   #     - name: Building HXCPP
@@ -275,7 +275,7 @@ jobs:
   #     - name: Installing Dependencies
   #       run: sudo apt-get update && sudo apt-get upgrade && sudo apt-get install libvlc-dev libvlccore-dev vlc-bin vlc libxrandr-dev
 
-  #     - name: Install Libraries
+  #     - name: Run Setup
   #       run: .\"install-libraries.sh"
 
   #     - name: Building HXCPP
