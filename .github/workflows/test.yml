@@ -36,8 +36,8 @@ jobs:
             export/build/windows/obj/
           restore-keys: windows-build-cache
 
-      - name: Install Libraries
-        run: .\"install-libraries.bat"
+      - name: Run Setup
+        run: .\"setup.bat"
 
       - name: Building HXCPP
         run: |
@@ -46,7 +46,7 @@ jobs:
           cd ../../../../../
 
       - name: Compile Engine
-        run: haxelib run lime build windows -final -action
+        run: haxelib run lime build windows -final -Daction -Dbranch-main
 
       - name: Upload Artifact
         uses: actions/upload-artifact@main
@@ -114,8 +114,8 @@ jobs:
   #           export/build/mac/obj/
   #         restore-keys: mac-build-cache
 
-  #     - name: Install Libraries
-  #       run: .\"install-libraries.bat"
+  #     - name: Run Setup
+  #       run: .\"setup.bat"
 
   #     - name: Building HXCPP
   #       run: |
@@ -195,8 +195,8 @@ jobs:
   #     - name: Installing Dependencies
   #       run: sudo apt-get update && sudo apt-get upgrade && sudo apt-get install libvlc-dev libvlccore-dev vlc-bin vlc libxrandr-dev
 
-  #     - name: Install Libraries
-  #       run: .\"install-libraries.sh"
+  #     - name: Run Setup
+  #       run: .\"setup.sh"
 
   #     - name: Building HXCPP
   #       run: |

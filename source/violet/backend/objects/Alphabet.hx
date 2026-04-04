@@ -128,10 +128,9 @@ class Alphabet extends flixel.group.FlxGroup {
                 continue;
             }
             var animationName:String = 'character-' + ((useAlt && xmlNamesAlt.exists(i)) ? xmlNamesAlt.get(i) : xmlNames.get(i)) + (xmlNamesAlt.exists(i) ? "0" : "");
-            var letter = new FlxSprite(xPos + x, y);
-            letter.frames = NovaUtils.getSparrowFrames(Paths.image('alphabet/english-${bold ? 'bold' : 'regular'}'));
-            letter.animation.addByPrefix(i, '${animationName}0', 24, true);
-            letter.animation.play(i);
+            var letter = new NovaSprite(xPos + x, y, Paths.image('alphabet/english-${bold ? 'bold' : 'regular'}'));
+            letter.addAnim(i, 'Latin/Characters/$animationName', 24, true, false);
+            letter.playAnim(i, true);
             var off = (bold ? boldCharacterOffsets.get(i) : characterOffsets.get(i)) ?? [0, 0];
             letter.offset.x = -off[0];
             letter.offset.y = -off[1];
@@ -155,7 +154,6 @@ class Alphabet extends flixel.group.FlxGroup {
 
     override function update(e) {
         super.update(e);
-        updatePos();
     }
 
     public function updatePos() {

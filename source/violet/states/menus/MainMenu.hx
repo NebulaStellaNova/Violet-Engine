@@ -48,6 +48,11 @@ class MainMenu extends StateBackend {
 		Constants.ENGINE_TITLE + " v" + Constants.ENGINE_VERSION + (Constants.ENGINE_SUFFIX != '' ? '-${Constants.ENGINE_SUFFIX}' : '')
 	];
 
+	public var debugTexts = [
+		'Commit: ${Constants.COMMIT_INDEX} (${Constants.COMMIT_HASH})',
+		'Branch: ${Constants.GITHUB_BRANCH}'
+	];
+
 	public var curSelectedString:String = "";
 	public var bgColorString:String = "";
 
@@ -59,7 +64,10 @@ class MainMenu extends StateBackend {
 
 	public var menuItems:Array<NovaSprite> = [];
 
+	public var enableMobileControls:Bool = #if mobile true #else false #end;
+
 	public var leftWatermark:NovaText;
+	public var debugWatermark:NovaText;
 
 	public var canSelect:Bool = true;
 
@@ -67,6 +75,7 @@ class MainMenu extends StateBackend {
 
 	public var menuAlignment:String = "left";
 	public var watermarkAlignment:String = "right";
+
 
 	override public function create()
 	{
@@ -82,7 +91,7 @@ class MainMenu extends StateBackend {
 
 		#if mobile
 		for (i in menuData.items) {
-			if (id == mods) menuData.items.remove(id);
+			if (i.id == 'mods') menuData.items.remove(i);
 		}
 		#end
 
@@ -126,6 +135,19 @@ class MainMenu extends StateBackend {
 		}
 		//leftWatermark.setFormat(Paths.font("Tardling v1.1.ttf"), 20);
 		add(leftWatermark);
+
+		debugWatermark = new NovaText(10, 10, debugTexts.join('\n'), 20);
+		debugWatermark.setFormat(Paths.font("vcr.ttf"), 40);
+		debugWatermark.scrollFactor.set();
+		debugWatermark.alignment = watermarkAlignment;
+		switch (watermarkAlignment) {
+			case "right":
+				debugWatermark.x = FlxG.width - debugWatermark.getWidth();
+			default:
+				debugWatermark.x = 10;
+		}
+		//leftWatermark.setFormat(Paths.font("Tardling v1.1.ttf"), 20);
+		add(debugWatermark);
 
 
 		#if FLX_DEBUG
@@ -182,6 +204,14 @@ class MainMenu extends StateBackend {
 				leftWatermark.x = 10;
 		}
 
+		debugWatermark.updateHitbox();
+		switch (watermarkAlignment) {
+			case "right":
+				debugWatermark.x = FlxG.width - debugWatermark.getWidth() - 5;
+			default:
+				debugWatermark.x = 10;
+		}
+
 		if (Controls.accept) {
 			pickSelection();
 		}
@@ -195,12 +225,12 @@ class MainMenu extends StateBackend {
 			instance.push('${i.title} v${i?.mod_version}');
 		}
 
-
 		instance.sort(function(a, b):Int {
 			if(a.length < b.length) return -1;
 			else if(a.length > b.length) return 1;
 			else return 0;
 		});
+
 
 		leftWatermark.borderStyle = OUTLINE;
 		leftWatermark.borderColor = FlxColor.BLACK;
@@ -211,9 +241,28 @@ class MainMenu extends StateBackend {
 			leftWatermark.y = FlxG.height - leftWatermark.getHeight() - 5;
 		}
 
+		debugWatermark.borderStyle = OUTLINE;
+		debugWatermark.borderColor = FlxColor.BLACK;
+		debugWatermark.borderSize = 3;
+		debugWatermark.updateHitbox();
+		if (canSelect) {
+			debugWatermark.y = 10;
+		}
+
 		if (FlxG.keys.justPressed.SEVEN) {
 			substateTrans = false;
 			openSubState(new violet.states.debug.EditorPickerMenu());
+		}
+
+		if (!enableMobileControls) return;
+		for (i => item in menuItems) {
+			if (FlxG.mouse.overlaps(item) && FlxG.mouse.justPressed) {
+				if (curSelected == i) {
+					pickSelection();
+				} else {
+					changeSelection(i-curSelected);
+				}
+			}
 		}
 	}
 
@@ -274,6 +323,7 @@ class MainMenu extends StateBackend {
 				FlxTween.tween(i, { x: i.x - FlxG.width }, 0.5, { ease: FlxEase.smootherStepIn });
 			}
 			FlxTween.tween(leftWatermark, { y: FlxG.height }, 0.5, { ease: FlxEase.backIn });
+			FlxTween.tween(debugWatermark, { y: -debugWatermark.getHeight() }, 0.5, { ease: FlxEase.backIn });
 		}
 
 		new FlxTimer().start(0.5, (t)->{
@@ -311,5 +361,6 @@ class MainMenu extends StateBackend {
 			i.x = prev;
 		}
 		FlxTween.tween(leftWatermark, { y: FlxG.height - leftWatermark.getHeight() - 5 }, 0.5, { ease: FlxEase.backOut });
+		FlxTween.tween(debugWatermark, { y: 10 }, 0.5, { ease: FlxEase.backOut });
 	}
 }

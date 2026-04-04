@@ -8,7 +8,7 @@ import flixel.util.FlxSave;
     public var downscroll:Bool = false;
     public var coloredHealthBar:Bool = true;
     public var developerMode:Bool = false;
-    public var mouseControls:Bool = true;
+    public var mouseControls:Bool = #if mobile false #else true #end;
     public var forceMouseScrolling:Bool = true;
     public var debugDisplayOnStart:Bool = false;
     public var personalScrollSpeed:Float = 0;

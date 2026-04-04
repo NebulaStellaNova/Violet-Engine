@@ -18,6 +18,7 @@ jobs:
       - name: Checking Latest Commit
         uses: actions/checkout@main
         with:
+          fetch-depth: 0
           submodules: true
 
       - name: Setup Haxe
@@ -36,8 +37,8 @@ jobs:
             export/debug/windows/obj/
           restore-keys: windows-debug-cache
 
-      - name: Install Libraries
-        run: .\"install-libraries.bat"
+      - name: Run Setup
+        run: .\"setup.bat"
 
       - name: Building HXCPP
         run: |
@@ -46,7 +47,7 @@ jobs:
           cd ../../../../../
 
       - name: Compile Engine
-        run: haxelib run lime build windows -debug -action
+        run: haxelib run lime build windows -debug -Daction -Dbranch-dev
 
       - name: Upload Artifact
         uses: actions/upload-artifact@main
@@ -95,6 +96,7 @@ jobs:
   #   steps:
   #     - name: Checking Latest Commit
   #       uses: actions/checkout@main
+  #       fetch-depth: 0
   #       with:
   #         submodules: true
 
@@ -114,7 +116,7 @@ jobs:
   #           export/debug/android/obj/
   #         restore-keys: android-debug-cache
 
-  #     - name: Install Libraries
+  #     - name: Run Setup
   #       run: .\"install-libraries.bat"
 
   #     - name: Building HXCPP
@@ -192,7 +194,7 @@ jobs:
   #           export/debug/mac/obj/
   #         restore-keys: mac-debug-cache
 
-  #     - name: Install Libraries
+  #     - name: Run Setup
   #       run: .\"install-libraries.bat"
 
   #     - name: Building HXCPP
@@ -273,7 +275,7 @@ jobs:
   #     - name: Installing Dependencies
   #       run: sudo apt-get update && sudo apt-get upgrade && sudo apt-get install libvlc-dev libvlccore-dev vlc-bin vlc libxrandr-dev
 
-  #     - name: Install Libraries
+  #     - name: Run Setup
   #       run: .\"install-libraries.sh"
 
   #     - name: Building HXCPP

@@ -1,4 +1,5 @@
 package violet.backend.filesystem;
+import haxe.zip.Entry;
 import haxe.io.BytesInput;
 import haxe.io.Path;
 import sys.FileSystem;
@@ -62,6 +63,7 @@ class ModdingAPI {
 		FlxG.save.data.enabledModIds ??= [];
 
 		reloadModList();
+		FlxTimer.wait(0.01, ()->reloadModList()); // To fix vmod's not showing. I think
 
 		activeModsIds = FlxG.save.data.enabledModIds;
 
@@ -73,6 +75,7 @@ class ModdingAPI {
 
 	public static function reloadModList() {
 		tempFolders = [];
+		#if !mobile
 		for (path in Paths.readFolder(MOD_FOLDER, true)) {
 			if (path.endsWith('.vmod') && !FileSystem.isDirectory('$MOD_FOLDER/$path')) {
 				var folderName:String = path.replace('.vmod', "");
@@ -83,20 +86,13 @@ class ModdingAPI {
 				FileSystem.createDirectory(modPath);
       			Sys.command("attrib +h " + modPath);
 
-				var bytesInput = new haxe.io.BytesInput(sys.io.File.getBytes('$MOD_FOLDER/$path'));
-				var reader = new haxe.zip.Reader(bytesInput);
-				var entries = reader.read();
-				for(_entry in entries) {
-					var data = haxe.zip.Reader.unzip(_entry);
-					if (data + "" != "") {
-						var location = modPath + "/" + _entry.fileName;
-						if (!FileSystem.exists(Path.directory(location))) FileSystem.createDirectory(Path.directory(location));
-						sys.io.File.saveBytes(location, data);
-					}
-				}
-				bytesInput.close();
+				#if debug var startTime = Sys.time(); #end
+				violet.backend.utils.ZipUtil.extractZip('$MOD_FOLDER/$path', modPath);
+				#if debug var delta = (Sys.time() - startTime) * 1000;
+				trace('debug:VMod extraction took ${Math.round(delta*100)/100} milliseconds'); #end
 			}
 		}
+		#end
 
 		@:bypassAccessor availableMods = [
 			for (path in Paths.readFolder(MOD_FOLDER, true)) {

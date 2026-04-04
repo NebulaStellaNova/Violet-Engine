@@ -1,0 +1,26 @@
+animations: 
+  - prefix: Idle
+    name: idle
+  - prefix: Left
+    offsets: [22, 0]
+    name: singLEFT
+  - prefix: Down
+    offsets: [-5, -14]
+    name: singDOWN
+  - prefix: Up
+    offsets: [-1, 23]
+    name: singUP
+  - prefix: Right
+    offsets: [-17, -1]
+    name: singRIGHT
+assetPath: "characters/charter-chud"
+offsets: [0, 0]
+cameraOffsets: [0, 0]
+healthIcon: face
+flipX: false
+danceEvery: 2
+singTime: 8
+name: Charter Chud
+isPixel: false
+scale: 0.7
+version: 1.0.0

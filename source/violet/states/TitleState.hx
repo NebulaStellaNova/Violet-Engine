@@ -70,12 +70,16 @@ class TitleState extends StateBackend {
 		FlxG.sound.music.fadeIn(1, 0, 0.7);
 	}
 
+	public function accept() {
+		return (NovaUtils.platformCheck('mobile') && FlxG.mouse.justPressed) || Controls.accept;
+	}
+
 	override public function update(elapsed:Float) {
 		super.update(elapsed);
 
-		if (Controls.accept && allowSwitch)
+		if (accept() && allowSwitch)
 			FlxG.switchState(MainMenu.new);
-		if (Controls.accept && skippedIntro) {
+		if (accept() && skippedIntro) {
 			titleEnter.playAnim("pressed", true);
 			FlxG.sound.play(Cache.sound('menu/confirm'));
 			allowSwitch = true;
@@ -86,7 +90,7 @@ class TitleState extends StateBackend {
 					FlxG.switchState(MainMenu.new);
 				}});
 			});
-		} else if (!skippedIntro && Controls.accept) {
+		} else if (!skippedIntro && accept()) {
 			forEachAlive((a) -> FlxTween.cancelTweensOf(a));
 			skippedIntro = true;
 			logoFull.visible = true;

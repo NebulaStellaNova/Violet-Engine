@@ -1,6 +1,6 @@
 # About
-A brand new fnf engine coded entirely from the ground up, NO it's not a fork of Psych Engine.
-And if you think Psych forks are engines you should be ashamed, they are FORKS...
+A brand new fnf engine coded entirely from the ground up, NO it's not a fork of Psych Engine.<br>
+And if you think Psych forks are engines you should be ashamed, they are FORKS...<br>
 This is NOT a fork of ANYTHING.
 
 This engine serves as a passion project for me and a way to get better at coding, so don't expect it to be perfect or anything.
@@ -25,5 +25,10 @@ https://youtu.be/iwcN0Sr3S3A
 # How to contribute?
 Well for one, the engine is being coded on the dev branch.
 
-But please, make PR's to help if you want to :D
+But please, make PR's to help if you want to :D<br>
 I would greatly appreciate it.
+
+# Compilation
+
+You MUST run `setup.bat` before compiling or it will not work<br>
+Once you run that simply open the console in this folder and type `lime test windows`

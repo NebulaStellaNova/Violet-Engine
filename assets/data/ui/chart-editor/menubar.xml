@@ -1,0 +1,70 @@
+<menubar id="menubar">
+
+    <menu text="File">
+        <!-- <menu-separator /> -->
+        <menu-item id="saveChart" text="Save" shortcutText="Ctrl+S" />
+        <menu-item id="saveChartAs" text="Save As" shortcutText="Ctrl+Shift+S" />
+        <menu-separator />
+        <menu-item id="saveGlobalEvents" text="Save Global Events" shortcutText="Ctrl+S" />
+        <menu-item id="saveGlobalEventsAs" text="Save Global Events As" shortcutText="Ctrl+Shift+S" />
+        <menu-item id="saveLocalEvents" text="Save Local Events" shortcutText="Ctrl+S" />
+        <menu-item id="saveLocalEventsAs" text="Save Local Events As" shortcutText="Ctrl+Shift+S" />
+        <menu-separator />
+        <menu-item id="saveMeta" text="Save Meta" shortcutText="Ctrl+S" />
+        <menu-item id="saveMetaAs" text="Save Meta As" shortcutText="Ctrl+Shift+S" />
+        <menu-separator />
+        <menu-item id="exportForVSlice" text="Export for V-Slice" shortcutText="Ctrl+S" />
+        <menu-item id="exportForPsych" text="Export for Psych Engine" shortcutText="Ctrl+S" />
+        <menu-item id="exportForTroll" text="Export for Troll Engine" shortcutText="Ctrl+S" />
+        <menu-item id="exportForCNE" text="Export for Codename Engine" shortcutText="Ctrl+S" />
+        <!-- <menu-item id="saveFilePsych" text="Save for Psych Engine" disabled="true" /> -->
+        <!-- <menu-item id="saveFileCNE" text="Save for Codename Engine" disabled="true" /> -->
+        <!-- <menu-separator /> -->
+        <!-- <menu-item id="deleteCharacter" text="Delete Character" style="color: indianred"/>
+        <menu-separator /> -->
+        <menu-separator />
+        <menu-item id="exitToMenu" text="Exit To Menu" shortcutText="Ctrl+Q" />
+    </menu>
+
+    <menu text="Audio">
+        <menu-item text="" height="75">
+            <text text="Instrumental - 100%" x="5" y="5"/>
+            <slider defaultValue="1" x="25" y="20" trackWidth="250"/>
+        </menu-item>
+        <menu-separator />
+        <menu-item text="" height="75">
+            <text text="Vocals - 100%" x="5" y="5"/>
+            <slider defaultValue="1" x="25" y="20" trackWidth="250"/>
+        </menu-item>
+        <menu-separator />
+        <menu-item text="" height="75">
+            <text text="Hitsounds - 100%" x="5" y="5"/>
+            <slider defaultValue="1" x="25" y="20" trackWidth="250"/>
+        </menu-item>
+    </menu>
+
+    <!-- <menu text="Animation">
+        <menu-item id="newAnimation" text="New Animation" shortcutText="Ctrl+N" />
+    </menu> -->
+
+    <text text="Violet Engine Chart Editor" x="1080" y="4"/>
+    <button text="Powered By LemonUI" width="150" y="680" height="40" onClick="https://github.com/NebulaStellaNova/LemonUI"/>
+
+    <!-- <menu text="Edit">
+        <menu-item id="editHealthIcon" text="Edit Health Icon" />
+        <menu-item id="editCopyOffests" text="Copy Offsets" shortcutText="Ctrl+C" />
+        <menu-item id="editPasteOffsets" text="Paste Offsets" shortcutText="Ctrl+V" />
+        <menu-item id="editClearOffsets" text="Clear Offsets" />
+        <!- <menu-separator /> ->
+        <menu-item id="editNewAnimation" text="New Animation" shortcutText="Ctrl+Shift+N" />
+        <menu-item id="editDeleteAnimation" text="Delete Animation" shortcutText="Ctrl+Del" />
+        <menu-item id="editDuplicateAnimation" text="Duplicate Animation" shortcutText="Ctrl+D" />
+        <!- <menu-separator /> ->
+        <menu-item id="editClearAllOffsets" text="Clear All Animation Offsets"
+            shortcutText="Ctrl+Shift+Del" />
+    </menu>
+
+    <menu text="View">
+        <menu-item id="viewResetZoom" text="Reset Zoom" shortcutText="Ctrl+R" />
+    </menu> -->
+</menubar>

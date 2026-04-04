@@ -1,5 +1,6 @@
 package violet.states;
 
+import violet.backend.scripting.GlobalPack;
 import lemonui.utils.MathUtil;
 import violet.states.menus.OptionsMenu;
 import violet.backend.StateBackend;
@@ -26,7 +27,6 @@ class InitialState extends StateBackend { // for now
 		FlxG.fixedTimestep = false;
 		FlxSprite.defaultAntialiasing = true; // this ain't a pixel game... yeah ik week 6 exists!
 		FlxG.cameras.useBufferLocking = true;
-
 		super.create();
 
 		#if CHECK_FOR_UPDATES
@@ -82,6 +82,7 @@ class InitialState extends StateBackend { // for now
 				Conductor.pause();
 				ModdingAPI.reloadModList();
 				ModdingAPI.reloadRegistries();
+				GlobalPack.init();
 				FlxG.resetState();
 			}
 			if (Controls.resetState)
@@ -102,6 +103,7 @@ class InitialState extends StateBackend { // for now
 			#if MOD_SUPPORT
 			ModdingAPI.init();
 			#end
+			GlobalPack.init();
 		});
 		// FlxG.camera.visible = false;
 	}

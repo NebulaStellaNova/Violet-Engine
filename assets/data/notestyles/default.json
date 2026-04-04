@@ -31,24 +31,28 @@
 			{
 				"id": 0,
 				"mania": 4,
+				"offsets": [-3, -2],
 				"name": "press",
 				"prefix": "left press"
 			},
 			{
 				"id": 1,
 				"mania": 4,
+				"offsets": [-2, -2],
 				"name": "press",
 				"prefix": "down press"
 			},
 			{
 				"id": 2,
 				"mania": 4,
+				"offsets": [-3, -2],
 				"name": "press",
 				"prefix": "up press"
 			},
 			{
 				"id": 3,
 				"mania": 4,
+				"offsets": [-3, 0],
 				"name": "press",
 				"prefix": "right press"
 			},
