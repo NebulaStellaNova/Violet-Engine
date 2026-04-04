@@ -98,4 +98,15 @@ class CharacterSelectMenu extends StateBackend {
         // FlxG.camera.scroll.y -= FlxG.height/2;
 
     }
+
+    override function update(elapsed:Float) {
+        super.update(elapsed);
+
+        if (violet.backend.Controls.back) {
+            FlxG.sound.music.fadeOut(0.5);
+			camera.fade(FlxColor.BLACK, 0.5, ()->{
+				FlxG.switchState(new FreeplayMenu().build());
+			});
+        }
+    }
 }

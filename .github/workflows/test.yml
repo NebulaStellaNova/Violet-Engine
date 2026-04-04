@@ -46,7 +46,7 @@ jobs:
           cd ../../../../../
 
       - name: Compile Engine
-        run: haxelib run lime build windows -final -Daction
+        run: haxelib run lime build windows -final -Daction -Dbranch-main
 
       - name: Upload Artifact
         uses: actions/upload-artifact@main

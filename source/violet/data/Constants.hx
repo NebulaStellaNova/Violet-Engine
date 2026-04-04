@@ -8,7 +8,7 @@ class Constants {
 
 	public static var COMMIT_HASH(default, never):String = Compiler.getDefine('COMMIT_HASH');
 	public static var COMMIT_INDEX(default, never):Int = Std.parseInt(Compiler.getDefine("COMMIT_INDEX"));
-	public static var GITHUB_BRANCH(default, never):String = Compiler.getDefine('GITHUB_BRANCH');
+	public static var GITHUB_BRANCH(default, never):String = Compiler.getDefine('GITHUB_BRANCH').toUpperCase();
 
     /**
 	 * The current version of the engine.
