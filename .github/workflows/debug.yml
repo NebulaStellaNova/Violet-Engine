@@ -38,7 +38,7 @@ jobs:
           restore-keys: windows-debug-cache
 
       - name: Install Libraries
-        run: .\"install-libraries.bat"
+        run: .\"setup.bat"
 
       - name: Building HXCPP
         run: |
