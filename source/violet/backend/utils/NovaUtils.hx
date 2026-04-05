@@ -52,7 +52,7 @@ class NovaUtils {
 
 	public static function playMenuMusic():Void {
 		if (CURRENT_MUSIC != Constants.MENU_MUSIC) {
-			playMusic(Constants.MENU_MUSIC).volume = 0.5;
+			playMusic(Constants.MENU_MUSIC).volume = 1;
 		}
 	}
 
@@ -83,8 +83,17 @@ class NovaUtils {
 
 		// Setup Conductor
 		Conductor.resetConductor();
-		// trace(Paths.fileExists('$folder/${musicPath.join('/')}-intro.ogg'));
-		FlxG.sound.playMusic(Cache.music(musicPath.join('/'), '', 'ogg', false, folder), volume);
+		if (Paths.fileExists('$folder/${musicPath.join('/')}-intro.ogg')) {
+			Cache.music(musicPath.join('/'));
+			FlxG.sound.playMusic(Cache.music(musicPath.join('/') + '-intro', '', 'ogg', false, folder), volume);
+			FlxG.sound.music.onComplete = ()->{
+				if (CURRENT_MUSIC == path) {
+					FlxG.sound.playMusic(Cache.music(musicPath.join('/'), '', 'ogg', false, folder), volume);
+				}
+			}
+		} else {
+			FlxG.sound.playMusic(Cache.music(musicPath.join('/'), '', 'ogg', false, folder), volume);
+		}
 		Conductor.initCallbacks();
 		Conductor.initCallbacksSubState();
 		if (metaData != null && metaData.bpm != null && metaData.signature != null) Conductor.setInitialBPM(metaData.bpm, metaData.signature[0], metaData.signature[1]);
