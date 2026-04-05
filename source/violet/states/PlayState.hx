@@ -64,6 +64,8 @@ class PlayState extends violet.backend.StateBackend {
 	public static var doFadeOut:Bool = false;
 	public static var hasSeenCutscene:Bool = false;
 	public static var isStoryMode:Bool = false;
+	public static var curStoryLevel:String;
+	public static var storyScore:Int = 0;
 
 	public var countdownEase:Float->Float = FlxEase.linear;
 
@@ -143,6 +145,8 @@ class PlayState extends violet.backend.StateBackend {
 		ModdingAPI.checkForScripts('data/scripts/songs', songScripts);
 		ModdingAPI.checkForScripts('songs/$song/scripts', songScripts);
 		ModdingAPI.checkForScripts('songs/$song/scripts/$difficulty', songScripts);
+		songScripts.parent = this;
+		songScripts.call('onLoaded');
 
 		// Start Dialogue
 		var sD:Array<ConverstationPiece> = ParseUtil.jsonOrYaml('songs/$song/start-dialogue');
@@ -153,7 +157,6 @@ class PlayState extends violet.backend.StateBackend {
 		dialogueHandler.y += 150;
 		add(dialogueHandler);
 
-		songScripts.parent = this;
 
 		strumLines = new FlxTypedGroup<StrumLine>();
 
@@ -300,6 +303,7 @@ class PlayState extends violet.backend.StateBackend {
 
 		if (Controls.accept && !FlxG.mouse.justPressed) {
 			var event:EventBase = songScripts.event("onPause", new EventBase());
+			event = stage.stageScripts.event("onPause", event);
 			if (!event.cancelled) {
 				countdownTimer.active = false;
 
@@ -575,7 +579,9 @@ class PlayState extends violet.backend.StateBackend {
 	function endSong():Void {
 		songEnded = true;
 		ScoreUtil.saveSongScore(songData.songName, difficulty, songData.variant, score);
+		storyScore += score;
 		if (playlist.length == 0 || !isStoryMode) {
+			ScoreUtil.saveLevelScore(curStoryLevel, difficulty, storyScore);
 			FlxG.switchState(MainMenu.new);
 			FlxG.switchState(new FreeplayMenu().build());
 		} else {
