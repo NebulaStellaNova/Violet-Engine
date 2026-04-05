@@ -54,6 +54,8 @@ class InitialState extends StateBackend { // for now
 				PlayState.hasSeenCutscene = false;
 				PlayState.isStoryMode = false;
 				PlayState.playlist = [];
+				PlayState.storyScore = 0;
+				PlayState.curStoryLevel = null;
 			}
 		});
 
@@ -141,7 +143,6 @@ class InitialState extends StateBackend { // for now
 
 	function refreshRedirects() {
 		for (i in ModdingAPI.getActiveMods()) {
-			trace('${ModdingAPI.MOD_FOLDER}/${i.folder}/data/config/stateRedirects');
 			var thisOne:Array<RedirectPiece> = ParseUtil.jsonOrYaml('${ModdingAPI.MOD_FOLDER}/${i.folder}/data/config/stateRedirects', 'root', 'null');
 			if (thisOne != null) {
 				stateRedirects = stateRedirects.concat(thisOne);
