@@ -24,6 +24,7 @@ class Macro {
 		addMetadata('@:build(violet.backend.Macro.buildFlxTypedGroup())', 'flixel.group.FlxTypedGroup');
 		addMetadata('@:build(violet.backend.Macro.buildFlxSpriteGroup())', 'flixel.group.FlxTypedSpriteGroup');
 		addMetadata('@:build(violet.backend.Macro.buildFlxCamera())', 'flixel.FlxCamera');
+		addMetadata('@:build(violet.backend.Macro.buildFlxBaseKeyList())', 'flixel.input.FlxBaseKeyList');
 		addMetadata('@:build(violet.backend.VarTweenMacro.init())', 'flixel.tweens.misc.VarTween');
 		#if SCRIPT_SUPPORT
 		Compiler.include('violet', true);
@@ -51,6 +52,21 @@ class Macro {
 		}
 
 		return classFields.concat(tempClass.fields);
+	}
+
+
+	public static macro function buildFlxBaseKeyList():Array<Field> {
+		var classFields:Array<Field> = Context.getBuildFields();
+
+		var checkFunc = classFields.filter(field -> return field.name == 'check')[0];
+		switch (checkFunc.kind) {
+			case FFun(f):
+				checkFunc.access.remove(AInline);
+				checkFunc.access.push(ADynamic);
+			default:
+		}
+
+		return classFields;
 	}
 
 	public static macro function buildFlxBasic():Array<Field> {

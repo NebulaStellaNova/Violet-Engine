@@ -1,5 +1,6 @@
 package violet.states;
 
+import violet.backend.replay.ReplaySystem;
 import violet.backend.utils.ParseUtil;
 import flixel.FlxCamera;
 import flixel.group.FlxGroup;
@@ -53,6 +54,9 @@ class CameraOffset {
 }
 
 class PlayState extends violet.backend.StateBackend {
+
+	public var recordingMode:Bool = false;
+	public var playbackMode:Bool = false;
 
 	public static var instance:PlayState;
 	public static var SONG:Chart;
@@ -574,6 +578,18 @@ class PlayState extends violet.backend.StateBackend {
 	function startSong(startDelay:Int = 0):Void {
 		songStarted = true;
 		Conductor.play(true, -Conductor.beatLengthMs * Math.abs(startDelay));
+		ReplaySystem.includedKeys = [
+			Options.data.controls.get('note_left')[0],
+			Options.data.controls.get('note_left')[1],
+			Options.data.controls.get('note_down')[0],
+			Options.data.controls.get('note_down')[1],
+			Options.data.controls.get('note_up')[0],
+			Options.data.controls.get('note_up')[1],
+			Options.data.controls.get('note_right')[0],
+			Options.data.controls.get('note_right')[1]
+		];
+		if (playbackMode) ReplaySystem.playReplay(SONG.id);
+		if (recordingMode) ReplaySystem.startRecording();
 	}
 
 	function endSong():Void {
@@ -636,6 +652,9 @@ class PlayState extends violet.backend.StateBackend {
 	}
 
 	override public function destroy():Void {
+		if (recordingMode) ReplaySystem.stopRecording();
+		if (recordingMode) ReplaySystem.saveRecording(SONG.id);
+		if (playbackMode) ReplaySystem.stopReplay();
 		instance = null;
 		Conductor.offset = 0;
 		super.destroy();
