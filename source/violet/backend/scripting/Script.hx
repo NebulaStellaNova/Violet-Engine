@@ -1,5 +1,6 @@
 package violet.backend.scripting;
 
+import violet.backend.objects.ModShader;
 import violet.backend.objects.special_thanks.GenzuSprite;
 import violet.backend.objects.special_thanks.JamSprite;
 import violet.backend.utils.NovaUtils;
@@ -53,6 +54,8 @@ class Script implements IFlxDestroyable {
 		'FlxSprite' => NovaSprite,
 		'NovaSprite' => NovaSprite,
 		'FunkinSprite' => NovaSprite,
+		'FunkinShader' => ModShader,
+		'ModShader' => ModShader,
 
 		// Shaders
 		'AngleMask' => violet.backend.shaders.AngleMask,

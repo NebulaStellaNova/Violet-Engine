@@ -105,10 +105,9 @@ class InitialState extends StateBackend { // for now
 				ModdingAPI.reloadRegistries();
 				GlobalPack.init();
 				refreshRedirects();
-				FlxG.resetState();
+				resetState();
 			}
-			if (Controls.resetState)
-				FlxG.resetState();
+			if (Controls.resetState) resetState();
 			if (Controls.shortcutState)
 				FlxG.switchState(() -> new violet.states.menus.MainMenu());
 		});
@@ -129,6 +128,15 @@ class InitialState extends StateBackend { // for now
 			GlobalPack.init();
 		});
 		// FlxG.camera.visible = false;
+	}
+
+	function resetState() {
+		if (Std.isOfType(FlxG.state, ModState)) {
+			var state:ModState = cast FlxG.state;
+			FlxG.switchState(new ModState(state.id));
+		} else {
+			FlxG.resetState();
+		}
 	}
 
 	function refreshRedirects() {
