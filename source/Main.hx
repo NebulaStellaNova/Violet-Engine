@@ -9,6 +9,7 @@ import violet.backend.options.Options;
 import violet.backend.utils.ParseUtil;
 import violet.boot.DiscordRPC;
 import violet.data.Constants;
+import hxvlc.flixel.FlxVideoSprite;
 
 typedef StupidSignalMember = {
 	var callback:Void->Void;

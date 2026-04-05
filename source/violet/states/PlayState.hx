@@ -306,18 +306,7 @@ class PlayState extends violet.backend.StateBackend {
 		for (i in cameraOffsets) camGame.zoom += i.zoom;
 
 		if (Controls.accept && !FlxG.mouse.justPressed) {
-			var event:EventBase = songScripts.event("onPause", new EventBase());
-			event = stage.stageScripts.event("onPause", event);
-			if (!event.cancelled) {
-				countdownTimer.active = false;
-
-				FlxTween.globalManager.forEach((tween:FlxTween)->{
-					tween.active = false;
-				});
-
-				var pauseMenu:PauseMenu = new PauseMenu();
-				openSubState(pauseMenu);
-			}
+			pause();
 		}
 
 		scoreLerp = MathUtil.lerp(scoreLerp, score, 0.25);
@@ -593,15 +582,34 @@ class PlayState extends violet.backend.StateBackend {
 	}
 
 	function endSong():Void {
+		var event:EventBase = songScripts.event("endSong", new EventBase());
+		event = songScripts.event("onSongEnd", event);
+		event = songScripts.event("onEndSong", event);
+		if (event.cancelled) return;
 		songEnded = true;
 		ScoreUtil.saveSongScore(songData.songName, difficulty, songData.variant, score);
 		storyScore += score;
+		if (isStoryMode && playlist.length == 0) ScoreUtil.saveLevelScore(curStoryLevel, difficulty, storyScore);
 		if (playlist.length == 0 || !isStoryMode) {
-			ScoreUtil.saveLevelScore(curStoryLevel, difficulty, storyScore);
 			FlxG.switchState(MainMenu.new);
 			FlxG.switchState(new FreeplayMenu().build());
 		} else {
 			loadSong(playlist.shift(), difficulty, variation);
+		}
+	}
+
+	public function pause() {
+		var event:EventBase = songScripts.event("onPause", new EventBase());
+		event = stage.stageScripts.event("onPause", event);
+		if (!event.cancelled) {
+			countdownTimer.active = false;
+
+			FlxTween.globalManager.forEach((tween:FlxTween)->{
+				tween.active = false;
+			});
+
+			var pauseMenu:PauseMenu = new PauseMenu();
+			openSubState(pauseMenu);
 		}
 	}
 

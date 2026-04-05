@@ -232,8 +232,8 @@ class Project extends HXProject {
 		}
 		if (isDesktop())
 			discordRPC.enable();
-		// if (isDesktop() || isMobile())
-		// 	allowVideos.enable();
+		if (isDesktop() || isMobile())
+			allowVideos.enable();
 
 		if (discordRPC.exists())
 			setHaxedef('DISCORD_DISABLE_IO_THREAD');
