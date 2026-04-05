@@ -48,6 +48,7 @@ function onResume() {
 
 function onSkipCutscene() {
     subState.close();
+    finishCutscene();
 }
 
 function finishCutscene() {
