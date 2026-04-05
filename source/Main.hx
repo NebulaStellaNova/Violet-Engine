@@ -162,21 +162,4 @@ class Main extends openfl.display.Sprite {
 		violet.external.windows.WinAPI.setDarkMode(violet.external.windows.WinAPI.isSystemDarkMode());
 		#end
 	}
-
-	public static function switchState(targetClass:Dynamic) {
-		if (targetClass is flixel.FlxState)
-			FlxG.switchState(targetClass);
-		var redirects:Array<Dynamic> = ParseUtil.json("stateRedirects", "data/config");
-		var className = FlxStringUtil.getClassName(targetClass, true);
-		var switched = false;
-		for (i in redirects) {
-			if (i.state == className) {
-				trace('debug:Redirecting State "$className" to "${FlxStringUtil.getClassName(new ClassData(i.target).target, true)}"');
-				FlxG.switchState(new ClassData(i.target).target);
-				switched = true;
-			}
-		}
-		if (!switched)
-			FlxG.switchState(targetClass);
-	}
 }

@@ -42,8 +42,7 @@ class ClassData {
 					trace('error:Unknown State "${string.split(":")[1]}" returning to the Main Menu');
 			}
 		} else if (this.type == "mod") {
-			trace('error:Modded States are not implemented, returning to the Main Menu');
-			//this.target = new ModState(string.split(":")[1]);
+			this.target = new ModState(string.split(":")[1]);
 		}
 	}
 }

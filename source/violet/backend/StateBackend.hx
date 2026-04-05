@@ -58,14 +58,18 @@ class StateBackend extends flixel.FlxState {
 		#if SCRIPT_SUPPORT
 		stateScripts.parent = this;
 		for (path in #if MOD_SUPPORT ModdingAPI.STATE_PATHS #else ['data/scripts/states'] #end) {
-			ModdingAPI.checkForScript([Paths.ASSETS_FOLDER, path].join("/") + '/${Main.stateClassName}', stateScripts);
+			ModdingAPI.checkForScript([Paths.ASSETS_FOLDER, path].join("/") + '/${getScriptName()}', stateScripts);
 			#if MOD_SUPPORT
 			for (mod in ModdingAPI.getActiveMods())
-				ModdingAPI.checkForScript([ModdingAPI.MOD_FOLDER, mod.folder, path].join("/") + '/${Main.stateClassName}', stateScripts);
+				ModdingAPI.checkForScript([ModdingAPI.MOD_FOLDER, mod.folder, path].join("/") + '/${getScriptName()}', stateScripts);
 			#end
 		}
 		#end
 		callInScripts('create');
+	}
+
+	public function getScriptName():String {
+		return Main.stateClassName;
 	}
 
 	override public function update(elapsed:Float) {

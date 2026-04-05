@@ -1,16 +1,26 @@
 package violet.states;
 
+import flixel.util.FlxStringUtil;
+import violet.backend.utils.ParseUtil;
 import violet.backend.scripting.GlobalPack;
 import lemonui.utils.MathUtil;
 import violet.states.menus.OptionsMenu;
 import violet.backend.StateBackend;
 import violet.backend.audio.Conductor;
 import openfl.system.Capabilities;
+import violet.backend.objects.ClassData;
+
+typedef RedirectPiece = {
+	var state:String;
+	var target:String;
+}
 
 class InitialState extends StateBackend { // for now
 
 	var logo:NovaSprite = new NovaSprite(Paths.image("icons/dad"));
 	var loadingBar:NovaSprite;
+
+	var stateRedirects:Array<RedirectPiece> = [];
 
 	public static var fullscreen:Bool = false;
 
@@ -29,6 +39,7 @@ class InitialState extends StateBackend { // for now
 		FlxG.cameras.useBufferLocking = true;
 		super.create();
 
+
 		#if CHECK_FOR_UPDATES
 		// write this
 		#end
@@ -43,6 +54,16 @@ class InitialState extends StateBackend { // for now
 				PlayState.hasSeenCutscene = false;
 				PlayState.isStoryMode = false;
 				PlayState.playlist = [];
+			}
+		});
+
+		FlxG.signals.preStateSwitch.add(()->{
+			var nextStateID = FlxStringUtil.getClassName(Type.getClass(@:privateAccess FlxG.game._nextState.createInstance()), true);
+			for (data in stateRedirects) {
+				if (data.state == nextStateID) {
+					@:privateAccess FlxG.game._nextState = new ClassData(data.target).target;
+					break;
+				}
 			}
 		});
 
@@ -83,6 +104,7 @@ class InitialState extends StateBackend { // for now
 				ModdingAPI.reloadModList();
 				ModdingAPI.reloadRegistries();
 				GlobalPack.init();
+				refreshRedirects();
 				FlxG.resetState();
 			}
 			if (Controls.resetState)
@@ -102,10 +124,21 @@ class InitialState extends StateBackend { // for now
 		FlxTimer.wait(0.05, ()->{
 			#if MOD_SUPPORT
 			ModdingAPI.init();
+			refreshRedirects();
 			#end
 			GlobalPack.init();
 		});
 		// FlxG.camera.visible = false;
+	}
+
+	function refreshRedirects() {
+		for (i in ModdingAPI.getActiveMods()) {
+			trace('${ModdingAPI.MOD_FOLDER}/${i.folder}/data/config/stateRedirects');
+			var thisOne:Array<RedirectPiece> = ParseUtil.jsonOrYaml('${ModdingAPI.MOD_FOLDER}/${i.folder}/data/config/stateRedirects', 'root', 'null');
+			if (thisOne != null) {
+				stateRedirects = stateRedirects.concat(thisOne);
+			}
+		}
 	}
 
 	override function update(elapsed:Float) {
