@@ -1,5 +1,7 @@
 package violet.states;
 
+import violet.backend.utils.NovaUtils;
+
 class SplashState extends violet.backend.StateBackend {
 
     var haxeLogo:NovaSprite;
@@ -25,6 +27,7 @@ class SplashState extends violet.backend.StateBackend {
         haxeLogo = new NovaSprite(225, 30, Paths.image('boot'));
         haxeLogo.animation.addByPrefix('intro', 'flixel', 24, false);
         haxeLogo.animation.play('intro', true);
+        haxeLogo.antialiasing = false;
         haxeLogo.updateHitbox();
         haxeLogo.screenCenter();
         haxeLogo.animation.onFinish.addOnce((n)->{
@@ -39,7 +42,7 @@ class SplashState extends violet.backend.StateBackend {
         // `animation` is nullable.
         if (haxeLogo.animation?.curAnim?.curFrame >= 1 && !playedSound) {
             playedSound = true;
-            FlxG.sound.play(Paths.sound('flixel'));
+            NovaUtils.playSound('flixel');
         }
 
         if (Controls.accept) {

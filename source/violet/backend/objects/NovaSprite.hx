@@ -84,7 +84,7 @@ class NovaSprite extends #if ANIMATE_SUPPORT FlxAnimate #else FlxSprite #end {
 			this.animation = this.anim = new FlxAnimateController(this);
 			this.filePath = atlasPath;
 			this.fileName = Paths.getFileName(path, true);
-			trace(fileName);
+			// trace(fileName);
 			this.animated = true;
 			var frames = NovaUtils.getAtlasFrames(framesPath);
 			// cachedFrames.set(framesPath, frames);
