@@ -60,7 +60,6 @@ class Project extends HXProject {
 
 		// -- Git Libs -- \\
 		new Lib('flxrhythmconductor', 'https://github.com/PurSnake/FlxRhythmConductor', ['--skip-dependencies']),
-		new Lib('hxcpp', 'https://github.com/FunkinCrew/hxcpp'),
 		new Lib('lemon-ui', 'https://github.com/NebulaStellaNova/LemonUI', ['--skip-dependencies']),
 		new Lib('hxcpp-debug-server', 'https://github.com/FunkinCrew/hxcpp-debugger'),
 		new Lib('hxhardware', 'https://github.com/Vortex2Oblivion/hxhardware'),
