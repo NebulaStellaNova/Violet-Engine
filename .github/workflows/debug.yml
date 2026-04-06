@@ -2,9 +2,9 @@ name: Debug Builds
 
 on:
   push:
-    branches: [main]
+    branches: [main, dev]
   pull_request:
-    branches: [main]
+    branches: [main, dev]
 
   workflow_dispatch:
 
@@ -117,7 +117,7 @@ jobs:
   #         restore-keys: android-debug-cache
 
   #     - name: Run Setup
-  #       run: .\"install-libraries.bat"
+  #       run: .\"setup.bat"
 
   #     - name: Building HXCPP
   #       run: |
@@ -195,7 +195,7 @@ jobs:
   #         restore-keys: mac-debug-cache
 
   #     - name: Run Setup
-  #       run: .\"install-libraries.bat"
+  #       run: .\"setup.bat"
 
   #     - name: Building HXCPP
   #       run: |
@@ -276,7 +276,7 @@ jobs:
   #       run: sudo apt-get update && sudo apt-get upgrade && sudo apt-get install libvlc-dev libvlccore-dev vlc-bin vlc libxrandr-dev
 
   #     - name: Run Setup
-  #       run: .\"install-libraries.sh"
+  #       run: .\"setup.sh"
 
   #     - name: Building HXCPP
   #       run: |
