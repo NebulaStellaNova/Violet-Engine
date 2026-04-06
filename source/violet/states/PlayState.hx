@@ -367,12 +367,12 @@ class PlayState extends violet.backend.StateBackend {
 
 		if (note.parent.isPlayer) {
 			final judgement:Judgement = Scoring.judgeNoteHit(note.time - Conductor.framePosition);
-			if (judgement.splash && event.spawnSplash != false) note.parentStrum.spawnSplash();
+			if (judgement.splash && event.spawnSplash != false) note.parentStrum.spawnSplash(note);
 			score += Math.round(judgement.score);
 			health += Constants.DEFAULT_HEALTH_GAIN;
 			comboGroup.popupRating(judgement.rating, 0);
 		} else if (event.spawnSplash == true) // on purpose ***do not touch***
-			note.parentStrum.spawnSplash();
+			note.parentStrum.spawnSplash(note);
 
 		if (event.spawnHoldCover)
 			note.parentStrum.spawnHoldCover();
@@ -594,6 +594,7 @@ class PlayState extends violet.backend.StateBackend {
 			FlxG.switchState(MainMenu.new);
 			FlxG.switchState(new FreeplayMenu().build());
 		} else {
+			hasSeenCutscene = false;
 			loadSong(playlist.shift(), difficulty, variation);
 		}
 	}

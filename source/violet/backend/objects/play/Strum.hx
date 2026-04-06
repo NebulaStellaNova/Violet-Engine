@@ -110,22 +110,28 @@ class Strum extends NovaSprite {
 		}
 	}
 
-	public function spawnSplash():Void {
-		final splash:StrumElement = new StrumElement(this, styleMeta.getSplashAssetPath());
-		for (data in styleMeta.getSplashAnimations(ID, parent.keyCount))
+	public function spawnSplash(?note:Note):Void {
+		var finalMeta;
+		if (note?.style != null) {
+			finalMeta = NoteStyleRegistry.getNoteStyleByID(note.style);
+		} else {
+			finalMeta = styleMeta;
+		}
+		final splash:StrumElement = new StrumElement(this, finalMeta.getSplashAssetPath());
+		for (data in finalMeta.getSplashAnimations(ID, parent.keyCount))
 			splash.addAnimFromData(data);
 
 		splash.playAnim(FlxG.random.getObject(splash.animationList), true);
-		splash.setScale(styleMeta.splashProperties.scale);
+		splash.setScale(finalMeta.splashProperties.scale);
 		splash.animation.onFinish.add(name -> {
 			this.splashes.remove(splash);
 			splash.destroy();
 		});
-		final partOffsets:Array<Float> = styleMeta.getSplashOffsets();
+		final partOffsets:Array<Float> = finalMeta.getSplashOffsets();
 		splash.setPosition(this.x - (splash.width/2) + partOffsets[0], this.y - (splash.height/2) + partOffsets[1]);
-		splash.antialiasing = styleMeta.isSplashPixel();
-		splash.alpha = styleMeta.splashProperties.alpha;
-		splash.blend = styleMeta.splashProperties.blendMode;
+		splash.antialiasing = finalMeta.isSplashPixel();
+		splash.alpha = finalMeta.splashProperties.alpha;
+		splash.blend = finalMeta.splashProperties.blendMode;
 		this.splashes.push(splash);
 		this.parent.add(splash);
 	}

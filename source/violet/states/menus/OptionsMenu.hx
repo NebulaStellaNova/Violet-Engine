@@ -220,7 +220,7 @@ class OptionsMenu extends SubStateBackend {
             FlxTween.tween(alphabet, { x: alphabet.x+FlxG.width }, 0.5, { ease: FlxEase.quadIn });
         }
         new FlxTimer().start(0.5, (_)->close());
-		FlxTween.tween(cast(_parentState, MainMenu).bg, {x: 0 }, 0.5*2, { ease: FlxEase.quadInOut });
+		if (Std.isOfType(_parentState, MainMenu)) FlxTween.tween(cast(_parentState, MainMenu).bg, {x: 0 }, 0.5*2, { ease: FlxEase.quadInOut });
     }
 
     function menuScroll(amt) {

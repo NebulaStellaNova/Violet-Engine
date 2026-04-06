@@ -20,7 +20,7 @@ class InitialState extends StateBackend { // for now
 	var logo:NovaSprite = new NovaSprite(Paths.image("icons/dad"));
 	var loadingBar:NovaSprite;
 
-	var stateRedirects:Array<RedirectPiece> = [];
+	static var stateRedirects:Array<RedirectPiece> = [];
 
 	public static var fullscreen:Bool = false;
 
@@ -132,16 +132,17 @@ class InitialState extends StateBackend { // for now
 		// FlxG.camera.visible = false;
 	}
 
-	function resetState() {
+	public function resetState() {
 		if (Std.isOfType(FlxG.state, ModState)) {
 			var state:ModState = cast FlxG.state;
-			FlxG.switchState(new ModState(state.id));
+			FlxG.switchState(new ModState(state.id, state.args));
 		} else {
 			FlxG.resetState();
 		}
 	}
 
-	function refreshRedirects() {
+	public static function refreshRedirects() {
+		stateRedirects = [];
 		for (i in ModdingAPI.getActiveMods()) {
 			var thisOne:Array<RedirectPiece> = ParseUtil.jsonOrYaml('${ModdingAPI.MOD_FOLDER}/${i.folder}/data/config/stateRedirects', 'root', 'null');
 			if (thisOne != null) {

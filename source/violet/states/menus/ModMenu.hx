@@ -1,5 +1,8 @@
 package violet.states.menus;
 
+import violet.backend.audio.Conductor;
+import violet.data.Constants;
+import violet.backend.scripting.GlobalPack;
 import flixel.addons.display.FlxRuntimeShader;
 import lemonui.utils.SpriteUtil;
 import flixel.group.FlxSpriteGroup;
@@ -328,7 +331,14 @@ class ModMenu extends SubStateBackend {
 
 		FlxG.save.flush();
 
-		if (needsReset) ModdingAPI.reloadRegistries();
+		if (needsReset) {
+			Conductor.stop();
+			Constants.MENU_MUSIC = 'mainMenuTheme';
+			ModdingAPI.reloadRegistries();
+			GlobalPack.init();
+			InitialState.refreshRedirects();
+			FlxG.switchState(new MainMenu());
+		}
 		// state.onCloseSubState();
 	}
 
@@ -337,7 +347,9 @@ class ModMenu extends SubStateBackend {
 
 		FlxTween.tween(modInfoBox, {x: FlxG.width + 200 }, 0.5, { ease: FlxEase.smootherStepIn });
 
-		FlxTween.tween(cast(_parentState, MainMenu).bg, {x: 0 }, 0.5*2, { ease: FlxEase.quadInOut });
+		if (Std.isOfType(_parentState, MainMenu)) {
+			FlxTween.tween(cast(_parentState, MainMenu).bg, {x: 0 }, 0.5*2, { ease: FlxEase.quadInOut });
+		}
 
 		new FlxTimer().start(0.5, (_)->{
 			close();
