@@ -9,6 +9,8 @@ class HealthIcon extends Bopper {
 	public var id:String;
 	public var _data:HealthIconData;
 	public var isOpponent:Bool = false;
+	public var canDance:Bool = true;
+	public var bopAmount:Float = 1;
 
 	public function new(id:String) {
 		this.id = id;
@@ -76,12 +78,13 @@ class HealthIcon extends Bopper {
 		return sillyBop = value;
 	}
 	override function dance(force:Bool = false) {
+		if (!canDance) return;
 		if (sillyBop) {
 			alternator = !alternator;
 			var alt:Bool = alternator;
 			if (isOpponent) alt = !alt;
 			this.angle = alt ? 20 : -20;
 		}
-		this.scale.x = this.scale.y = this._data.scale * 1.2;
+		this.scale.x = this.scale.y = this._data.scale * (1.2 * bopAmount);
 	}
 }

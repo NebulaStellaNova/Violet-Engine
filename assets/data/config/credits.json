@@ -1,28 +1,44 @@
-{
-    "credits": [
-        {
-            "title": "Violet Engine | Main Team",
-            "contributors": [
-                {
-                    "name": "Nebula S. Nova",
-                    "role": "Main Coder, Menu Theme",
-                    "icon": "nebula"
-                },
-                {
-                    "name": "Rodney Furball <3",
-                    "role": "Coder"
-                }
-            ]
-        },
-        {
-            "title": "Violet Engine | Github Contributors",
-            "contributors": [
-                {
-                    "name": "Macohi / Sphis",
-                    "role": "Credits Menu",
-                    "icon": "macohi"
-                }
-            ]
-        }
-    ]
-}
+[
+    {
+        "title": "Violet Engine Crew",
+        "contributors": [
+            {
+                "name": "Nebula S. Nova",
+                "role": "Main Coder",
+                "icon": "nebula"
+            },
+            {
+                "name": "Rodney Furball <3",
+                "role": "Secondary Coder",
+                "icon": "rodney"
+            },
+            {
+                "name": "ADA_Funni",
+                "role": "Secondary Coder"
+            },
+            {
+                "name": "GENZU",
+                "role": "Coded The Freeplay Menu",
+                "icon": "genzu"
+            },
+            {
+                "name": "jake_official0",
+                "role": "Violet Engine Theme"
+            }
+        ]
+    },
+    {
+        "title": "Lemon UI",
+        "contributors": [
+            {
+                "name": "Nebula S. Nova",
+                "role": "Main Coder",
+                "icon": "nebula"
+            },
+            {
+                "name": "viisafyre",
+                "role": "Main Coder"
+            }
+        ]
+    }
+]

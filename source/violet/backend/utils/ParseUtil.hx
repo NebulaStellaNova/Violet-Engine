@@ -15,22 +15,28 @@ class ParseUtil {
 				return null;
 	}
 
-	public static function yaml(path:String, directory:String = ''):Dynamic {
+	public static function yaml(path:String, directory:String = '', ext:String = 'yaml'):Dynamic {
 		final options = new ParserOptions(); options.maps = false;
 		try {
-			return Yaml.parse(FileUtil.getFileContent(Paths.yaml(path, directory)), options);
+			return Yaml.parse(FileUtil.getFileContent(Paths.yaml(path, directory, ext)), options);
 		} catch(error:haxe.Exception) {
 			return null;
 		}
 	}
 
-	public static function jsonOrYaml(path:String, ?directory:String):Dynamic {
-		if (Paths.yaml(path, directory) != "") {
+	public static function jsonOrYaml(path:String, ?directory:String, ?def:Dynamic):Dynamic {
+		var yamlExists = @:privateAccess Paths._checkExists(Paths.yaml(path, directory));
+		var ymlExists = @:privateAccess Paths._checkExists(Paths.yaml(path, directory, 'yml'));
+		var jsonExists = @:privateAccess Paths._checkExists(Paths.json(path, directory));
+		if (yamlExists) {
 			return yaml(path, directory);
-		} else if (Paths.json(path, directory) != "") {
+		} else if (ymlExists) {
+			return yaml(path, directory, 'yml');
+		} else if (jsonExists) {
 			return json(path, directory);
 		}
-		return {};
+		if (def == "null") return null;
+		return def ?? {};
 	}
 
 	public static function stringifyYaml(data:Dynamic):String {

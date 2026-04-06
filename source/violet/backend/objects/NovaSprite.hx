@@ -48,6 +48,8 @@ class NovaSprite extends #if ANIMATE_SUPPORT FlxAnimate #else FlxSprite #end {
 
 	public var globalOffset:FlxPoint = FlxPoint.get();
 
+	public var globalIsAtlas:Bool = false;
+
 	public function new(x:Float = 0.0, y:Float = 0.0, ?path:String) {
 		super(x, y);
 		if (path != null)
@@ -84,11 +86,12 @@ class NovaSprite extends #if ANIMATE_SUPPORT FlxAnimate #else FlxSprite #end {
 			this.animation = this.anim = new FlxAnimateController(this);
 			this.filePath = atlasPath;
 			this.fileName = Paths.getFileName(path, true);
-			trace(fileName);
+			// trace(fileName);
 			this.animated = true;
 			var frames = NovaUtils.getAtlasFrames(framesPath);
 			// cachedFrames.set(framesPath, frames);
 			this.frames = frames;
+			this.globalIsAtlas = true;
 			this.onLoaded();
 			#else
 			trace('warning:Atlas\'s aren\'t supported in this build of Violet Engine.');

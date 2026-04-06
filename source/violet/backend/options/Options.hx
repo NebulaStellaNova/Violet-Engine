@@ -48,6 +48,11 @@ import flixel.util.FlxSave;
     ];
 
     public var savedScores:Map<String, Int> = [];
+    public var savedAccuracies:Map<String, Int> = [];
+
+    public var savedLevelScores:Map<String, Int> = [];
+    public var savedLevelAccuracies:Map<String, Int> = [];
+
 }
 
 class Options {
@@ -117,9 +122,22 @@ class Options {
     }
 
     private static function saveSongScore(id:String, difficulty:String, ?variation:String, score:Int, force:Bool = false) {
-        if (score > getSongScore(id, difficulty, variation)) {
+        if (score > getSongScore(id, difficulty, variation) || force) {
             var saveID:String = [ id, variation != '' && variation != null ? ':$variation' : '', ':$difficulty' ].join('');
             data.savedScores.set(saveID, score);
+            flush();
+        }
+    }
+
+    private static function getLevelScore(id:String, difficulty:String) {
+        var saveID:String = [ id, ':$difficulty' ].join('');
+        return data.savedLevelScores.get(saveID) ?? 0;
+    }
+
+    private static function saveLevelScore(id:String, difficulty:String, score:Int, force:Bool = false) {
+        if (score > getLevelScore(id, difficulty) || force) {
+            var saveID:String = [ id, ':$difficulty' ].join('');
+            data.savedLevelScores.set(saveID, score);
             flush();
         }
     }

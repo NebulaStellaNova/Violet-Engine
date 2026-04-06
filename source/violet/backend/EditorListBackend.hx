@@ -12,6 +12,8 @@ typedef EditorListOption = {
     var ?description:String;
     var ?onClick:Void->Void;
     var ?disabled:Bool;
+    var ?skip:Bool; // functions the same as disabled but without the visual change
+    var ?bold:Bool; // default is true
 }
 
 class EditorListBackend extends violet.backend.SubStateBackend {
@@ -51,8 +53,9 @@ class EditorListBackend extends violet.backend.SubStateBackend {
         var needsFailSafe = true;
         for (i in options) {
             if (!i.disabled) needsFailSafe = false;
+            if (!i.disabled && !i.skip) needsFailSafe = false;
         }
-        if (needsFailSafe) options.push({ title: "Uh Oh!", description: "All options are disabled so in order to not cause recursion this option was created."});
+        if (needsFailSafe) options.push({ title: "Uh Oh!", description: "All options are disabled or skippable so in order to not cause recursion this option was created."});
 
         subCamera = new FlxCamera();
         subCamera.bgColor = FlxColor.TRANSPARENT;
@@ -75,7 +78,7 @@ class EditorListBackend extends violet.backend.SubStateBackend {
         }
 
         for (i=>data in options) {
-            var option:Alphabet = new Alphabet(data.title, bold);
+            var option:Alphabet = new Alphabet(data.title, data.bold ?? bold);
             option.camera = subCamera;
             option.screenCenter();
             option.y += i * 100;
@@ -136,14 +139,14 @@ class EditorListBackend extends violet.backend.SubStateBackend {
     function scroll(amt:Int) {
         var prevSelected = debugCurSelected;
         debugCurSelected = FlxMath.wrap(debugCurSelected + amt, 0, options.length-1);
-        while (options[debugCurSelected].disabled) {
+        while (options[debugCurSelected].disabled || options[debugCurSelected].skip) {
 			debugCurSelected = FlxMath.wrap(debugCurSelected + (amt != 0 ? amt : 1), 0, options.length-1);
 		}
         if (debugCurSelected != prevSelected/*  && !event.soundCancelled */) {
 		    NovaUtils.playMenuSFX(SCROLL);
 		}
 
-        for (i=>item in items) item.alpha = i == debugCurSelected ? 1 : 0.5;
+        for (i=>item in items) item.alpha =  !options[i].skip ? (i == debugCurSelected ? 1 : 0.5) : 1;
         var targetItem:Alphabet = items[debugCurSelected];
         if (amt == 0) subCamera.scroll.y = targetItem.y - (FlxG.height/2) + (targetItem.height/2);
 

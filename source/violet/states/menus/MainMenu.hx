@@ -331,7 +331,7 @@ class MainMenu extends StateBackend {
 				openSubState(classData.target);
 				persistentUpdate = true;
 			} else {
-				Main.switchState(classData.target);
+				FlxG.switchState(classData.target);
 			}
 			// canSelect = true;
 		});

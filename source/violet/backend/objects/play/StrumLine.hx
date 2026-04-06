@@ -168,10 +168,7 @@ class StrumLine extends FlxGroup {
 		var stackedNoteCount:Int = 0;
 		for (data in chartData.notes) {
 			if (data.time < time ?? Math.NEGATIVE_INFINITY) continue;
-			var note:Note = new Note(this, data.id, data.time, data.sLen);
-			if (PlayState.SONG._data.noteTypes[data.type-1] != null) {
-				note.noteType = PlayState.SONG._data.noteTypes[data.type-1];
-			}
+			var note:Note = new Note(this, data.id, data.time, data.sLen, PlayState.SONG._data.noteTypes[data.type-1]);
 			var exists = false;
 			for (i in notes) {
 				if (i.time == data.time && i.id == data.id) exists = true;

@@ -9,6 +9,7 @@ import violet.backend.options.Options;
 import violet.backend.utils.ParseUtil;
 import violet.boot.DiscordRPC;
 import violet.data.Constants;
+import hxvlc.flixel.FlxVideoSprite;
 
 typedef StupidSignalMember = {
 	var callback:Void->Void;
@@ -129,8 +130,12 @@ class Main extends openfl.display.Sprite {
 
 		hxhardware.CPU.init();
 
+
+		var gameWidth = 1280; // Mobile Width = 1600;
+		var gameHeight = 720;
+
 		var startFPS:Int = Application.current.window.displayMode.refreshRate;
-		new flixel.FlxGame(1280, 720, violet.states.InitialState, startFPS, startFPS, true);
+		new flixel.FlxGame(gameWidth, gameHeight, violet.states.InitialState, startFPS, startFPS, true);
 		FlxG.sound.volume = FlxG.save.data.volume ?? 0.4;
 		@:privateAccess FlxG.game._customSoundTray = violet.backend.display.VioletSoundTray;
 		addChild(FlxG.game);
@@ -157,22 +162,5 @@ class Main extends openfl.display.Sprite {
 		#if windows
 		violet.external.windows.WinAPI.setDarkMode(violet.external.windows.WinAPI.isSystemDarkMode());
 		#end
-	}
-
-	public static function switchState(targetClass:Dynamic) {
-		if (targetClass is flixel.FlxState)
-			FlxG.switchState(targetClass);
-		var redirects:Array<Dynamic> = ParseUtil.json("stateRedirects", "data/config");
-		var className = FlxStringUtil.getClassName(targetClass, true);
-		var switched = false;
-		for (i in redirects) {
-			if (i.state == className) {
-				trace('debug:Redirecting State "$className" to "${FlxStringUtil.getClassName(new ClassData(i.target).target, true)}"');
-				FlxG.switchState(new ClassData(i.target).target);
-				switched = true;
-			}
-		}
-		if (!switched)
-			FlxG.switchState(targetClass);
 	}
 }

@@ -26,8 +26,8 @@
             <tickbox id="isGhost" x="180" y="26" label="isGhost"/>
             <textinput id="prefixField" label="Prefix:" x="15" y="55"/>
             <numericstepper id="fpsStepper" label="FPS:" x="180" y="55"/>
-            <numericstepper id="xOffset" label="Offset X:" x="15" y="105" min="-1000"/>
-            <numericstepper id="yOffset" label="Offset Y:" x="120" y="105" min="-1000"/>
+            <numericstepper id="xOffset" label="Offset X:" x="15" y="105" min="-10000" max="10000"/>
+            <numericstepper id="yOffset" label="Offset Y:" x="120" y="105" min="-10000" max="10000"/>
             <tickbox id="isLooped" x="15" y="160" label="Looping"/>
             <tickbox id="byLabel" x="115" y="160 " label="By Label* (Atlases)" tooltip="Test"/>
             <tickbox id="animFlipX" x="15" y="190" label="Flip X"/>

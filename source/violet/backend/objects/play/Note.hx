@@ -118,11 +118,12 @@ class Note extends NovaSprite {
 	@:allow(violet.backend.objects.play.StrumLine)
 	var _beingRendered:Bool = false;
 
-	public function new(parent:StrumLine, id:Int, time:Float, tailLength:Float) {
+	public function new(parent:StrumLine, id:Int, time:Float, tailLength:Float, noteType:String) {
 		super(-10000, -10000);
 		this.parent = parent;
 		this.id = id;
 		this.time = time;
+		this.noteType = noteType;
 		style = null;
 		preventAutoStyleSet = false;
 
@@ -134,7 +135,9 @@ class Note extends NovaSprite {
 			tail.sort(sortTail);
 		}
 
-		reloadStyle(true);
+		if (NoteStyleRegistry.doesNoteStyleExist(noteType) && noteType != null) style = noteType;
+
+		reloadStyle(style, true);
 		updateHitbox();
 	}
 

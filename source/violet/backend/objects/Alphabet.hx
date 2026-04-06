@@ -6,9 +6,7 @@ import flixel.math.FlxPoint;
 
 class Alphabet extends flixel.group.FlxGroup {
 
-    public static var characterOffsets:Map<String, Array<Float>> = [
-        "." => [0, 38]
-    ];
+    public static var characterOffsets:Map<String, Array<Float>> = [];
     public static var boldCharacterOffsets:Map<String, Array<Float>> = [
         "." => [0, 43],
         ":" => [0, 10]
@@ -92,6 +90,19 @@ class Alphabet extends flixel.group.FlxGroup {
         return value;
     }
 
+    public var offsetX(default, set):Float = 0;
+    public var offsetY(default, set):Float = 0;
+    function set_offsetX(value:Float) {
+        offsetX = value;
+        updatePos();
+        return value;
+    }
+    function set_offsetY(value:Float) {
+        offsetY = value;
+        updatePos();
+        return value;
+    }
+
     public var letters:Array</* NovaSprite */FlxSprite> = [];
 
     public var text(default, set):String;
@@ -129,7 +140,10 @@ class Alphabet extends flixel.group.FlxGroup {
             }
             var animationName:String = 'character-' + ((useAlt && xmlNamesAlt.exists(i)) ? xmlNamesAlt.get(i) : xmlNames.get(i)) + (xmlNamesAlt.exists(i) ? "0" : "");
             var letter = new NovaSprite(xPos + x, y, Paths.image('alphabet/english-${bold ? 'bold' : 'regular'}'));
-            letter.addAnim(i, 'Latin/Characters/$animationName', 24, true, false);
+            if ('abcdefghijklmnopqrstuvwxyz'.contains(i) && !bold) {
+                animationName += '-' + (!isLowerCase ? 'capital' : 'lowercase');
+            }
+            letter.addAnim(i, (letter.globalIsAtlas ? 'Latin/Characters/' : '') + animationName, 24, true, false);
             letter.playAnim(i, true);
             var off = (bold ? boldCharacterOffsets.get(i) : characterOffsets.get(i)) ?? [0, 0];
             letter.offset.x = -off[0];
@@ -140,7 +154,7 @@ class Alphabet extends flixel.group.FlxGroup {
             letter.antialiasing = true;
             letter.scale.set(scaleX, scaleY);
             letter.updateHitbox();
-            if (isLowerCase) {
+            if (isLowerCase && bold) {
                 letter.scale.x *= 0.9;
                 letter.scale.y *= 0.9;
                 letter.y += (letter.height / 0.9) - letter.height;
@@ -172,10 +186,13 @@ class Alphabet extends flixel.group.FlxGroup {
             var i = letters[id - offset];
             i.x = xPos + x + off[0];
             i.y = y + off[1];
-            if (isLowerCase) {
+            if (!bold) i.y += 60-i.height;
+            if (isLowerCase && bold) {
                 i.y += (i.height / 0.9) - i.height;
                 i.updateHitbox();
             }
+            i.x += offsetX;
+            i.y += offsetY;
             xPos += i.width;
         }
     }
