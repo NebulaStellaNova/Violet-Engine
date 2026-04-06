@@ -59,6 +59,8 @@ class Script implements IFlxDestroyable {
 		'ModShader' => ModShader,
 		'ModState' => ModState,
 
+		'CameraOffset' => import violet.states.PlayState.CameraOffset,
+
 		// Shaders
 		'AngleMask' => violet.backend.shaders.AngleMask,
 		'GaussianBlurShader' => violet.backend.shaders.GaussianBlurShader,

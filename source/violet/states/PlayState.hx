@@ -1,5 +1,7 @@
 package violet.states;
 
+import flixel.FlxObject;
+import flixel.math.FlxPoint;
 import violet.backend.replay.ReplaySystem;
 import violet.backend.utils.ParseUtil;
 import flixel.FlxCamera;
@@ -47,6 +49,8 @@ import violet.backend.display.DebugDisplay;
 
 class CameraOffset {
 	public var zoom:Float;
+	public var x:Float = 0;
+	public var y:Float = 0;
 
 	public function new(initialZoom:Float) {
 		zoom = initialZoom;
@@ -111,6 +115,9 @@ class PlayState extends violet.backend.StateBackend {
 	public var cameraOffsets:Array<CameraOffset> = [];
 	public var camGameBase:CameraOffset = new CameraOffset(1);
 	public var camGameOffset:CameraOffset = new CameraOffset(0);
+
+	public var strumlineTarget:Int = 0;
+	public var camFollowPoint:FlxPoint = new FlxPoint(0, 0);
 
 	public var camBopInterval:Int = 4;
 	public var camBopOffset:Int = 0;
@@ -291,10 +298,22 @@ class PlayState extends violet.backend.StateBackend {
 		#end
 
         Conductor.setSongPosition(0);
+
+
+        camFollowPoint.x = stage._data.cameraPosition[0];
+        camFollowPoint.y = stage._data.cameraPosition[1];
+		camGame.followLerp = 0.075;
+		snapCamera();
 	}
 
 	var healthLerp:Float = 0.5;
 	var scoreLerp:Float = 0;
+
+	var prevLerp:Float = 0;
+	function snapCamera() {
+		prevLerp = camGame.followLerp;
+		camGame.followLerp = 0;
+	}
 
 	override public function update(elapsed:Float):Void {
 		super.update(elapsed);
@@ -302,8 +321,22 @@ class PlayState extends violet.backend.StateBackend {
 		callSongScripts("update", [elapsed]);
 		callSongScripts("onUpdate", [elapsed]);
 
+		var camTargetX:Float = camFollowPoint.x - (FlxG.width/2);
+		var camTargetY:Float = camFollowPoint.y - (FlxG.height/2);
+
 		camGame.zoom = camGameBase.zoom + camGameOffset.zoom;
-		for (i in cameraOffsets) camGame.zoom += i.zoom;
+		for (i in cameraOffsets) {
+			camGame.zoom += i.zoom;
+			camTargetX += i.x ?? 0;
+			camTargetY += i.y ?? 0;
+		}
+
+		camGame.scroll.x = camGame.followLerp == 0 ? camTargetX : lerp(camGame.scroll.x, camTargetX, camGame.followLerp);
+		camGame.scroll.y = camGame.followLerp == 0 ? camTargetY : lerp(camGame.scroll.y, camTargetY, camGame.followLerp);
+
+		if (camGame.followLerp == 0) {
+			camGame.followLerp = prevLerp;
+		}
 
 		if (Controls.accept && !FlxG.mouse.justPressed) {
 			pause();
@@ -519,15 +552,16 @@ class PlayState extends violet.backend.StateBackend {
 				var ease:String = scriptEvent.params[4];
 				var direction:String = scriptEvent.params[5] ?? 'Out';
 				var targetEase = NovaUtils.easeFromString(ease, direction);
-				scrollTween = FlxTween.tween(camGame.scroll, { x: x, y: y }, (Conductor.stepLengthMs / 1000) * duration, { ease: targetEase });
+				scrollTween = FlxTween.tween(camFollowPoint, { x: x, y: y }, (Conductor.stepLengthMs / 1000) * duration, { ease: targetEase, onUpdate: _->{
+					FlxG.camera.snapToTarget();
+				}});
 
 			case "Camera Movement":
 				scrollTween?.cancel();
 				var targetCharacter:Character = strumLines.members[scriptEvent.params[0]].characters[0];
-				scrollTween = FlxTween.tween(camGame.scroll, {
-					x: targetCharacter.x + (targetCharacter.cameraOffsets ?? [0, 0])[0],
-					y: targetCharacter.y + (targetCharacter.cameraOffsets ?? [0, 0])[1]
-				}, (Conductor.stepLengthMs / 1000) * 16, { ease: FlxEase.expoOut });
+				strumlineTarget = scriptEvent.params[0];
+				camFollowPoint.x = targetCharacter.getMidpoint().x + (targetCharacter.cameraOffsets ?? [0, 0])[0];
+				camFollowPoint.y = targetCharacter.getMidpoint().y + (targetCharacter.cameraOffsets ?? [0, 0])[1];
 
 			case "Camera Zoom":
 				if (scriptEvent.params[0]) {
