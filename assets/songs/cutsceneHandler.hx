@@ -1,5 +1,4 @@
 import violet.states.PlayState;
-import violet.backend.objects.VideoSprite;
 import lime.media.openal.AL;
 import hxvlc.flixel.FlxVideoSprite;
 
@@ -7,8 +6,8 @@ var video:FlxVideoSprite;
 
 function onStartCountdown(event) {
     if (!PlayState.hasSeenCutscene && PlayState.isStoryMode && Paths.fileExists('songs/${PlayState.songData.songName}/start-cutscene.mp4')) {
-        camGame.visible = false;
-        camHUD.visible = false;
+        camGame.alpha = 0;
+        camHUD.alpha = 0;
         event.cancel();
         inCutscene = true;
 
@@ -24,6 +23,8 @@ function onStartCountdown(event) {
                 video.setGraphicSize(video.bitmap.bitmapData.width * scale, video.bitmap.bitmapData.height * scale);
                 video.updateHitbox();
                 video.screenCenter();
+                camGame.alpha = 1;
+                camHUD.alpha = 1;
             }
         });
 
@@ -31,9 +32,6 @@ function onStartCountdown(event) {
 
         FlxTimer.wait(0.0001, ()->{
             video.play();
-
-            camGame.visible = true;
-            camHUD.visible = true;
         });
         add(video);
     }
