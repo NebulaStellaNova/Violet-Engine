@@ -1,5 +1,7 @@
 package violet.backend.filesystem;
 
+import violet.states.PlayState;
+import violet.data.character.Character;
 import flixel.graphics.FlxGraphic;
 import openfl.display.BitmapData;
 import openfl.media.Sound;
@@ -90,5 +92,22 @@ class Cache {
 		}
 		cache.set(audioPath, sound);
 		return sound;
+	}
+
+
+	// -- In Prep for Change Character Event -- \\
+
+	public static var cachedCharacters:Map<String, Character> = [];
+
+	public static function getCharacter(id:String) {
+		return cachedCharacters.get(id);
+	}
+
+	public static function character(id:String) {
+		if (cachedCharacters.exists(id)) return;
+		cachedCharacters.set(id, new Character(id));
+		if (Std.isOfType(FlxG.state, PlayState)) {
+			PlayState.instance.characters.push(id);
+		}
 	}
 }
