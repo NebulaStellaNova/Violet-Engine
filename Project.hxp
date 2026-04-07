@@ -281,6 +281,7 @@ class Project extends HXProject {
 		else if (isRelease() && !isDebug()) buildFolder = 'release';
 		else if (isRelease() && isDebug()) buildFolder = 'test';
 		app.path = './export/$buildFolder';
+		trace(app.path);
 
 		for (path in sourceCodeDirectories)
 			sources.push(path);
