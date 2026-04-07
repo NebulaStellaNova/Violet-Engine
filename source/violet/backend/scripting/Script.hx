@@ -60,6 +60,8 @@ class Script implements IFlxDestroyable {
 		'ModShader' => ModShader,
 		'ModState' => ModState,
 
+		'Cache' => Cache,
+
 		'CameraOffset' => violet.states.PlayState.CameraOffset,
 
 		// Shaders

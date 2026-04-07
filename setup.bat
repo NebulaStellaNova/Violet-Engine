@@ -4,10 +4,3 @@ haxelib fixrepo
 haxelib install hxp
 haxelib install lime
 haxelib install openfl
-haxelib git hxcpp https://github.com/FunkinCrew/hxcpp
-haxelib git hxcpp-debug-server https://github.com/FunkinCrew/hxcpp-debugger
-
-haxelib remove lime
-haxelib install lime
-haxelib run lime setup
-haxelib run openfl setup
