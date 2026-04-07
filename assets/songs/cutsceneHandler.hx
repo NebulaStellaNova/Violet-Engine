@@ -1,13 +1,19 @@
+import flixel.FlxCamera;
 import violet.states.PlayState;
 import lime.media.openal.AL;
 import hxvlc.flixel.FlxVideoSprite;
 
+public var cutsceneCamera:FlxCamera;
+
 var video:FlxVideoSprite;
+
+function postCreate() {
+    cutsceneCamera = new FlxCamera();
+    FlxG.cameras.add(cutsceneCamera, false);
+}
 
 function onStartCountdown(event) {
     if (!PlayState.hasSeenCutscene && PlayState.isStoryMode && Paths.fileExists('songs/${PlayState.songData.songName}/start-cutscene.mp4')) {
-        camGame.alpha = 0;
-        camHUD.alpha = 0;
         event.cancel();
         inCutscene = true;
 
@@ -19,12 +25,10 @@ function onStartCountdown(event) {
             {
                 final scale:Float = Math.min(FlxG.width / video.bitmap.bitmapData.width, FlxG.height / video.bitmap.bitmapData.height);
 
-                video.camera = camHUD;
+                video.camera = cutsceneCamera;
                 video.setGraphicSize(video.bitmap.bitmapData.width * scale, video.bitmap.bitmapData.height * scale);
                 video.updateHitbox();
                 video.screenCenter();
-                camGame.alpha = 1;
-                camHUD.alpha = 1;
             }
         });
 
@@ -57,7 +61,6 @@ function finishCutscene() {
     startCountdown();
 }
 
-/*
-function pauseAudio() {
-    FlxG.sound.pause();
-} */
+function update(elapsed:Float) {
+    if (!inCutscene) cutsceneCamera.alpha = 0;
+}
