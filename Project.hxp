@@ -276,7 +276,7 @@ class Project extends HXProject {
 		// if (isDesktop())
 		// 	addAsset('./extras/alsoft.txt', './${isMac() ? 'Resources/' : ''}plugins/alsoft.${isWindows() ? 'ini' : 'conf'}');
 
-		var buildFolder:String = 'build';
+		var buildFolder:String = '';
 		if (!isRelease() && isDebug()) buildFolder = 'debug';
 		else if (isRelease() && !isDebug()) buildFolder = 'release';
 		else if (isRelease() && isDebug()) buildFolder = 'test';
