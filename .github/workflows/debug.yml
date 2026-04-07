@@ -48,7 +48,7 @@ jobs:
 
       - name: Compile Engine
         run: |
-          haxelib run lime build windows -Daction -Dbranch-dev -debug
+          haxelib run lime build windows -debug
           type "./export"
           type "./export/debug"
           type "./export/build"
