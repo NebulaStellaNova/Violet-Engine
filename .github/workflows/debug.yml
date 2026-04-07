@@ -43,6 +43,7 @@ jobs:
       - name: Building HXCPP
         run: |
           cd ./.haxelib/hxcpp/git/tools/hxcpp
+          type "./compile.hxml"
           haxe compile.hxml
           cd ../../../../../
 
