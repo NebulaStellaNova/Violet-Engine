@@ -52,11 +52,9 @@ jobs:
           haxelib run lime build windows -debug
           dir "./export"
           dir "./export/debug"
-          dir "./export/build"
           dir "./export/test"
-          dir "./export/debug/haxe"
-          dir "./export/build/haxe"
-          dir "./export/test/haxe"
+          dir "./export/debug/windows"
+          dir "./export/debug/windows/haxe"
 
       - name: Upload Artifact
         uses: actions/upload-artifact@main
