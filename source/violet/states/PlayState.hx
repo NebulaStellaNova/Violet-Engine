@@ -126,7 +126,7 @@ class PlayState extends violet.backend.StateBackend {
 	/**
 	 * The amount of beats the countdown lasts for.
 	 */
-	public var countdownLength(default, set):Int = 4;
+	public var countdownLength(default, set):Int = 5;
 	inline function set_countdownLength(value:Int):Int
 		return countdownLength = Std.int(Math.max(value, 1));
 	/**
@@ -176,7 +176,7 @@ class PlayState extends violet.backend.StateBackend {
 		variation = songData.variant;
 
 		Conductor.playSong(songData.songName, variation); Conductor.pause();
-		Conductor.offset = (countdownLength+1) * Conductor.beatLengthMs;
+		Conductor.offset = (countdownLength) * Conductor.beatLengthMs;
 		if (SONG.meta.needsVoices) generalVocals = Conductor.addAdditionalTrack(FlxG.sound.load(Cache.sound(Paths.vocal(songData.songName, null, PlayState.variation), 'root', null, true), FlxG.sound.defaultMusicGroup));
 		else generalVocals = Conductor.addAdditionalTrack(new FlxSound());
 
@@ -202,6 +202,7 @@ class PlayState extends violet.backend.StateBackend {
 				}
 				strumLine.characters.push(char);
 				characters.push(char);
+				songScripts.set(char.id.replace('-', '_').replace(' ', '_ '), char);
 				// add(char);
 			}
 
@@ -493,14 +494,14 @@ class PlayState extends violet.backend.StateBackend {
 		if (event.cancelled) return;
 		countdownStarted = true;
 		tickCountdown();
-		FlxTween.num(0, Conductor.offset, ((countdownLength+1) * Conductor.beatLengthMs)/1000, { ease: countdownEase }, (v)->{
-			Conductor.offset = ((countdownLength+1) * Conductor.beatLengthMs) - v;
+		FlxTween.num(0, Conductor.offset, ((countdownLength) * Conductor.beatLengthMs)/1000, { ease: countdownEase }, (v)->{
+			Conductor.offset = ((countdownLength) * Conductor.beatLengthMs) - v;
 		});
 	}
 
 	function tickCountdown() {
 		countdownTimer.cancel();
-		if (countdownTick == countdownLength) {
+		if (countdownTick == countdownLength-1) {
 			countdownTimer = new FlxTimer().start(Conductor.beatLengthMs / 1000, _ -> startSong());
 			return;
 		}
@@ -599,6 +600,14 @@ class PlayState extends violet.backend.StateBackend {
 	}
 
 	function startSong(startDelay:Int = 0):Void {
+
+		var event = songScripts.event('onStartSong', new EventBase());
+		event = songScripts.event('onSongStart', event);
+		event = songScripts.event('startSong', event);
+		event = songScripts.event('songStart', event);
+
+		if (event.cancelled) return;
+
 		songStarted = true;
 		Conductor.play(true, -Conductor.beatLengthMs * Math.abs(startDelay));
 		ReplaySystem.includedKeys = [
