@@ -53,12 +53,12 @@ class Project extends HXProject {
 		new Lib('hxdiscord_rpc', ['--skip-dependencies']),
 		new Lib('hxvlc', ['--skip-dependencies']),
 		new Lib('hxWindowColorMode'),
-		new Lib('moonchart'),
 		new Lib('thx.core'),
 		new Lib('thx.semver'),
 		new Lib('yaml'),
 
 		// -- Git Libs -- \\
+		new Lib('moonchart', 'https://github.com/MaybeMaru/moonchart.git'),
 		new Lib('flxrhythmconductor', 'https://github.com/PurSnake/FlxRhythmConductor', ['--skip-dependencies']),
 		new Lib('lemon-ui', 'https://github.com/NebulaStellaNova/LemonUI', ['--skip-dependencies']),
 		new Lib('hxcpp-debug-server', 'https://github.com/FunkinCrew/hxcpp-debugger'),

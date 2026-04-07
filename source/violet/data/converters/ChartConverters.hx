@@ -1,5 +1,6 @@
 package violet.data.converters;
 
+import moonchart.formats.fnf.FNFKade;
 import moonchart.formats.fnf.legacy.FNFPsych;
 import moonchart.formats.fnf.FNFVSlice;
 import yaml.Renderer.RenderOptions;
@@ -28,6 +29,7 @@ enum ChartFormat {
     LEGACY;
     VSLICE;
     VIOLET;
+    KADE;
     IMAGINATIVE;
 }
 
@@ -57,6 +59,8 @@ class ChartConverters {
                 convertedChart = fromVSlice(chartCache.filePath, chartCache.difficulty);
             case PSYCH:
                 convertedChart = fromPsych(chartCache.filePath);
+            case KADE:
+                convertedChart = fromKade(chartCache.filePath, chartCache.difficulty);
             default:
                 convertedChart = blankChart;
         }
@@ -96,6 +100,12 @@ class ChartConverters {
 
     public static function fromPsych(chartPath:String):ChartData {
         return cast new FNFCodename().fromFormat(new FNFPsych().fromFile(chartPath)).data;
+    }
+
+    public static function fromKade(chartPath:String, difficulty:String):ChartData {
+        var parsed = Json.parse(FileUtil.getFileContent(chartPath));
+        parsed.song.eventObjects ??= [];
+        return cast new FNFCodename().fromFormat(new FNFKade().fromJson(Json.stringify(parsed))).data;
     }
 
     // public static function fromImaginative(chartPath:String) {

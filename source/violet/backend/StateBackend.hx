@@ -80,7 +80,7 @@ class StateBackend extends flixel.FlxState {
 
 		Conductor.update();
 
-		callInScripts('update');
+		callInScripts('update', [elapsed]);
 	}
 
 	override public function add(objORcall:FlxBasic) {

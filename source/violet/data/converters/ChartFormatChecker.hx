@@ -31,10 +31,24 @@ import Reflect;
     var stage:String;
 }
 
+@:structInit @:publicFields class KadeEngineChart {
+    var song:String;
+    var notes:Array<Dynamic>;
+    var bpm:Float;
+    var needsVoices:Bool;
+    var speed:Float;
+
+    var player1:String;
+    var player2:String;
+    var gfVersion:String;
+    var stage:String;
+}
+
 enum abstract ChartFileFormat(String) {
     var CODENAME = "codename";
     var VSLICE = "vslice";
     var PSYCH = "psych";
+    var KADE = "kade";
     var UNKNOWN = "unknown";
 }
 
@@ -44,6 +58,7 @@ class ChartFormatChecker {
         var isVSlice:Bool = true;
         var isCNE:Bool = true;
         var isPE:Bool = true;
+        var isKE:Bool = true;
 
         for (i in Type.getInstanceFields(PsychEngineChart)) {
             if (Reflect.hasField(parsedChartObject, 'song')) {
@@ -51,6 +66,13 @@ class ChartFormatChecker {
             } else isPE = false;
         }
         if (isPE) return PSYCH;
+
+        for (i in Type.getInstanceFields(KadeEngineChart)) {
+            if (Reflect.hasField(parsedChartObject, 'song')) {
+                if (!Reflect.hasField(Reflect.field(parsedChartObject, 'song'), i)) isKE = false;
+            } else isKE = false;
+        }
+        if (isKE) return KADE;
 
         for (i in Type.getInstanceFields(CodenameEngineChart)) {
             if (!Reflect.hasField(parsedChartObject, i)) isCNE = false;
