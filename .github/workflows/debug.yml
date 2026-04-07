@@ -45,17 +45,18 @@ jobs:
           cd ./.haxelib/hxcpp/git/tools/hxcpp
           haxe compile.hxml
           cd ../../../../../
+          dir
 
       - name: Compile Engine
         run: |
           haxelib run lime build windows -debug
-          type "./export"
-          type "./export/debug"
-          type "./export/build"
-          type "./export/test"
-          type "./export/debug/haxe"
-          type "./export/build/haxe"
-          type "./export/test/haxe"
+          dir "./export"
+          dir "./export/debug"
+          dir "./export/build"
+          dir "./export/test"
+          dir "./export/debug/haxe"
+          dir "./export/build/haxe"
+          dir "./export/test/haxe"
 
       - name: Upload Artifact
         uses: actions/upload-artifact@main
