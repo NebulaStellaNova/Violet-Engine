@@ -37,6 +37,7 @@ class FunkinScript extends Script {
 
 	public function new(path:String, isCode:Bool = false, isHXC:Bool = false):Void {
 		super(path, isCode);
+		this.fullPath = path;
 		internalScript = new RuleScript();
 		internalScript.scriptName = '$folderName/$fileName';
 		initVars();

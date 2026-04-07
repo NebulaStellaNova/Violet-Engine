@@ -38,6 +38,7 @@ class LuaScript extends Script {
 
 	public function new(path:String, preset:Bool = true) {
 		super(path);
+		this.fullPath = path;
 		// scriptCode += '\n' + FileUtil.getFileContent("assets/data/scripts/import.lua");
 		for (i in violet.backend.filesystem.ModdingAPI.getActiveMods()) {
 			if (Paths.fileExists('${ModdingAPI.MOD_FOLDER}/${i.folder}/data/scripts/import.lua', true))

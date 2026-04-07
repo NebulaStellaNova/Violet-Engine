@@ -27,6 +27,7 @@ class Script implements IFlxDestroyable {
 	public var hasBlacklisted:Bool = false;
 
 	public var fileName:String;
+	public var fullPath:String;
 	public var folderName:String;
 
 	public var autoImports:Map<String, Dynamic> = [

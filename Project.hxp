@@ -139,6 +139,10 @@ class Project extends HXProject {
 	 */
 	static final canLuaScript:CompilerFlag = 'CAN_LUA_SCRIPT';
 	/**
+	 * States if the engine has python scripting support.
+	 */
+	static final canPythonScript:CompilerFlag = 'CAN_PYTHON_SCRIPT';
+	/**
 	 * States if the engine can do scripted states.
 	 */
 	static final scriptedStates:CompilerFlag = 'SCRIPTED_STATES';
@@ -221,6 +225,7 @@ class Project extends HXProject {
 		// script related
 		if (scriptSupport.exists()) {
 			canHaxeScript.enable();
+			canPythonScript.enable();
 			if (!isMobile()) canLuaScript.enable();
 
 			scriptedStates.enable();
@@ -322,9 +327,9 @@ class Project extends HXProject {
 			addHaxelib('lscript', 'git');
 			addHaxelib('linc_luajit', 'git');
 		}
-		// if (canPythonScript.exists()) {
+		if (canPythonScript.exists()) {
 			addHaxelib('hython');
-		// }
+		}
 		if (discordRPC.exists()) addHaxelib('hxdiscord_rpc');
 		if (allowVideos.exists()) addHaxelib('hxvlc');
 		addHaxelib('thx.semver');

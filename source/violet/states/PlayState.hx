@@ -75,6 +75,8 @@ class PlayState extends violet.backend.StateBackend {
 	public static var curStoryLevel:String;
 	public static var storyScore:Int = 0;
 
+	public var staticAccess = PlayState;
+
 	public var countdownEase:Float->Float = FlxEase.linear;
 
 	public var inCutscene = false;
@@ -490,7 +492,6 @@ class PlayState extends violet.backend.StateBackend {
 	function startCountdown():Void {
 		countdownTick = 0;
 		var event:EventBase = songScripts.event("startCountdown", new EventBase());
-		event = songScripts.event("onStartCountdown", event);
 		if (event.cancelled) return;
 		countdownStarted = true;
 		tickCountdown();
@@ -601,9 +602,9 @@ class PlayState extends violet.backend.StateBackend {
 
 	function startSong(startDelay:Int = 0):Void {
 
-		var event = songScripts.event('onStartSong', new EventBase());
-		event = songScripts.event('onSongStart', event);
-		event = songScripts.event('startSong', event);
+		if (songStarted) return;
+
+		var event = songScripts.event('startSong', new EventBase());
 		event = songScripts.event('songStart', event);
 
 		if (event.cancelled) return;
@@ -626,8 +627,7 @@ class PlayState extends violet.backend.StateBackend {
 
 	function endSong():Void {
 		var event:EventBase = songScripts.event("endSong", new EventBase());
-		event = songScripts.event("onSongEnd", event);
-		event = songScripts.event("onEndSong", event);
+		event = songScripts.event("songEnd", event);
 		if (event.cancelled) return;
 		songEnded = true;
 		ScoreUtil.saveSongScore(songData.songName, difficulty, songData.variant, score);
@@ -643,8 +643,8 @@ class PlayState extends violet.backend.StateBackend {
 	}
 
 	public function pause() {
-		var event:EventBase = songScripts.event("onPause", new EventBase());
-		event = stage.stageScripts.event("onPause", event);
+		var event:EventBase = songScripts.event("pause", new EventBase());
+		event = stage.stageScripts.event("pause", event);
 		if (!event.cancelled) {
 			countdownTimer.active = false;
 

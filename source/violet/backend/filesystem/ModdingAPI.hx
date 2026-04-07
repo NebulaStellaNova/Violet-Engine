@@ -200,6 +200,16 @@ class ModdingAPI {
 				}
 			}
 			#end
+
+			#if CAN_PYTHON_SCRIPT
+			for (ext in ModdingAPI.EXT_ALIASES.get("py")) {
+				if (file.endsWith('.$ext')) {
+					if (!FileUtil.getFileContent(file).contains("scriptDisabled = True")) {
+						pack.addScript(new violet.backend.scripting.PythonScript(file));
+					}
+				}
+			}
+			#end
 		}
 	}
 

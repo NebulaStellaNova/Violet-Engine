@@ -18,6 +18,11 @@ class ScriptPack {
 		for (script in scripts) {
 			if (script == null) continue;
 			script.parent = value;
+			if (script is PythonScript) {
+				for (i in Reflect.fields(value)) {
+					script.set(i, Reflect.field(value, i));
+				}
+			}
 		}
 		return parent = value;
 	}

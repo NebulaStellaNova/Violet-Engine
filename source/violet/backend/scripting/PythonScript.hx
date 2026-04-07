@@ -1,5 +1,5 @@
 package violet.backend.scripting;
-#if CAN_HAXE_SCRIPT
+#if CAN_PYTHON_SCRIPT
 
 
 import paopao.hython.Interp;
@@ -12,6 +12,10 @@ import violet.backend.utils.NovaUtils;
 using violet.backend.utils.ArrayUtil;
 using violet.backend.utils.StringUtil;
 
+class Random {
+	public static var randint = FlxG.random.int;
+}
+
 class PythonScript extends Script {
 
     var interp = new Interp();
@@ -19,6 +23,7 @@ class PythonScript extends Script {
 
 	public function new(path:String) {
 		var filePath = path.split("/");
+		this.fullPath = path;
 		this.fileName = filePath.pop();
 		if (filePath.getFirstOf() == "mods") this.folderName = filePath[1];
 		else this.folderName = filePath.getFirstOf();
@@ -35,6 +40,7 @@ class PythonScript extends Script {
 
 	public function initVars():Void {
 		for (key in autoImports.keys()) set(key, autoImports.get(key));
+		set('random', Random);
 		set('print', (value) ->{
 			var lineNumber = 0;
 			for (ln => i in scriptCode.split('\n')) {
@@ -47,7 +53,7 @@ class PythonScript extends Script {
 			Logs.traceCallback(value, {methodName: "??", lineNumber: lineNumber, fileName: fileName, className: ""});
 		});
         set('NovaSprite', violet.backend.objects.NovaSprite.new);
-		set('add', FlxG.state.add);
+		// set('add', FlxG.state.add);
 	}
 
     override public function set(variable:String, value:Dynamic) {
