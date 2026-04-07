@@ -38,7 +38,7 @@ jobs:
           restore-keys: windows-debug-cache
 
       - name: Run Setup
-        run: .\"setup.bat"
+        run: .\".github\libs.bat"
 
       - name: Building HXCPP
         run: |
