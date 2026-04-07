@@ -40,7 +40,6 @@ class Cache {
 		for (key=>i in cache) {
 			if (i is FlxGraphic) {
 				var graphic:FlxGraphic = cast i;
-				trace(graphic.useCount);
 				FlxG.bitmap.removeByKey(key);
 			}
 		}
