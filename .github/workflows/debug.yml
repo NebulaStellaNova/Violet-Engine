@@ -40,6 +40,12 @@ jobs:
       - name: Run Setup
         run: .\"setup.bat"
 
+      - name: Setup Lime
+        run: |
+          haxelib run lime setup
+          haxelib run lime setup windows
+
+
       - name: Building HXCPP
         run: |
           cd ./.haxelib/hxcpp/git/tools/hxcpp
@@ -50,9 +56,11 @@ jobs:
       - name: Compile Engine
         run: |
           haxelib run lime build windows -debug
-          dir "./export"
-          dir "./export/debug"
-          dir "./export/debug/windows"
+          dir "./export/debug/windows/haxe"
+          dir "./export/debug/windows/haxe"
+          dir "./export/debug/windows/haxe"
+          dir "./export/debug/windows/haxe"
+          dir "./export/debug/windows/haxe"
           dir "./export/debug/windows/haxe"
 
       - name: Upload Artifact
