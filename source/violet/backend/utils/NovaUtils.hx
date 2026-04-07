@@ -1,5 +1,7 @@
 package violet.backend.utils;
 
+import flixel.graphics.FlxGraphic;
+import openfl.display.BitmapData;
 import animate.FlxAnimateFrames.FlxAnimateSettings;
 import haxe.io.Path;
 import flixel.FlxCamera;
@@ -119,6 +121,11 @@ class NovaUtils {
 
 
 	public static function getSparrowFrames(path:String):FlxAtlasFrames {
+		/* var bitmap = BitmapData.fromFile(path); // No Cache
+		var graphic = FlxGraphic.fromBitmapData(bitmap, path, false);
+		var xmlData = FileUtil.getFileContent(path.replace(".png", ".xml"));
+		return FlxAtlasFrames.fromSparrow(graphic, xmlData); */
+
 		return FlxAtlasFrames.fromSparrow(Cache.image(path, 'root', null), FileUtil.getFileContent(path.replace(".png", ".xml")));
 	}
 

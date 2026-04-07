@@ -24,9 +24,28 @@ class Cache {
 				trace('debug:<cyan>Cached sound asset "<magenta>${Paths.sound(jointPath)#if REDIRECT_ASSETS_FOLDER .replace('../../../../', '') #end}<cyan>"');
 			}
 		}
+
+		FlxG.signals.preStateCreate.add(_->clear());
+
 	}
 
 	static final cache:Map<String, Dynamic> = new Map<String, Dynamic>();
+
+	/* public static function xml(path:String):String {
+		if (cache.exists(path))
+	} */
+
+
+	public static function clear() {
+		for (key=>i in cache) {
+			if (i is FlxGraphic) {
+				var graphic:FlxGraphic = cast i;
+				trace(graphic.useCount);
+				FlxG.bitmap.removeByKey(key);
+			}
+		}
+		cache.clear();
+	}
 
 	public static function image(path:String, directory:String = '', ?ext:String = 'png'):FlxGraphic {
 		var imagePath:String = Paths.image(path, directory, ext);
