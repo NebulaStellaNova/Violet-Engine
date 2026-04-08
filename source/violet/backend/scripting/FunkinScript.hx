@@ -41,8 +41,10 @@ class FunkinScript extends Script {
 	override function setPublicVars(vars:Map<String, Dynamic>):Void
 		internalScript.context.publicVariables = vars ?? [];
 
+	public var isHXC:Bool = false;
 	public function new(path:String, isCode:Bool = false, isHXC:Bool = false):Void {
 		super(path, isCode);
+		this.isHXC = isHXC;
 		this.fullPath = path;
 		internalScript = new RuleScript(new rulescript.Context());
 		internalScript.scriptName = '$folderName/$fileName';
@@ -90,8 +92,13 @@ class FunkinScript extends Script {
 	override public function get<T>(variable:String, ?def:T):T
 		return internalScript.access.getVariable(variable) ?? def;
 
+
+	/**
+	 * Implement: https://github.com/Kriptel/RuleScript/blob/master/test/src/Main.hx#L339
+	 */
 	public function executeScript():Void {
 		if (executed) return;
+		if (isHXC) internalScript.getParser(HxParser).mode = MODULE;
 		internalScript.getParser(HxParser).allowAll();
 		internalScript.tryExecute(scriptCode, (exception:haxe.Exception) -> {
 			var data:Array<String> = exception.message.split(":");

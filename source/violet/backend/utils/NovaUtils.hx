@@ -43,6 +43,7 @@ class NovaUtils {
 		var notification = lemonui.controllers.NotificationController.instance.addNotification(title, body, expiryMs/1000);
 		if (type == ERROR) {
 			notification.elementColor = 0xFF591818;
+			trace('error:${body}');
 		}
 	}
 

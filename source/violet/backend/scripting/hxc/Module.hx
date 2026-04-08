@@ -11,6 +11,7 @@ typedef ModuleParams = {
 
 class ScriptedModule extends Module implements rulescript.scriptedClass.RuleScriptedClass {}
 
+@:strictScriptedConstructor
 class Module {
 	/**
 	 * Whether the module is currently active.

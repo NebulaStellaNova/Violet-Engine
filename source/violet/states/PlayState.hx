@@ -1,5 +1,6 @@
 package violet.states;
 
+import violet.backend.filesystem.HXCHandler;
 import flixel.FlxObject;
 import flixel.math.FlxPoint;
 import violet.backend.replay.ReplaySystem;
@@ -159,7 +160,7 @@ class PlayState extends violet.backend.StateBackend {
 		ModdingAPI.checkForScripts('songs/$song/scripts', songScripts);
 		ModdingAPI.checkForScripts('songs/$song/scripts/$difficulty', songScripts);
 		songScripts.parent = this;
-		songScripts.call('onLoaded');
+		callSongScripts('onLoaded');
 
 		// Start Dialogue
 		var sD:Array<ConverstationPiece> = ParseUtil.jsonOrYaml('songs/$song/start-dialogue');
@@ -491,7 +492,7 @@ class PlayState extends violet.backend.StateBackend {
 
 	function startCountdown():Void {
 		countdownTick = 0;
-		var event:EventBase = songScripts.event("startCountdown", new EventBase());
+		var event:EventBase = runSongEvent("startCountdown", new EventBase());
 		if (event.cancelled) return;
 		countdownStarted = true;
 		tickCountdown();
@@ -604,8 +605,8 @@ class PlayState extends violet.backend.StateBackend {
 
 		if (songStarted) return;
 
-		var event = songScripts.event('startSong', new EventBase());
-		event = songScripts.event('songStart', event);
+		var event = runSongEvent('startSong', new EventBase());
+		event = runSongEvent('songStart', event);
 
 		if (event.cancelled) return;
 
@@ -626,8 +627,8 @@ class PlayState extends violet.backend.StateBackend {
 	}
 
 	function endSong():Void {
-		var event:EventBase = songScripts.event("endSong", new EventBase());
-		event = songScripts.event("songEnd", event);
+		var event:EventBase = runSongEvent("endSong", new EventBase());
+		event = runSongEvent("songEnd", event);
 		if (event.cancelled) return;
 		songEnded = true;
 		ScoreUtil.saveSongScore(songData.songName, difficulty, songData.variant, score);
@@ -643,7 +644,7 @@ class PlayState extends violet.backend.StateBackend {
 	}
 
 	public function pause() {
-		var event:EventBase = songScripts.event("pause", new EventBase());
+		var event:EventBase = runSongEvent("pause", new EventBase());
 		event = stage.stageScripts.event("pause", event);
 		if (!event.cancelled) {
 			countdownTimer.active = false;
@@ -658,11 +659,13 @@ class PlayState extends violet.backend.StateBackend {
 	}
 
 	public function callSongScripts(func:String, ?params:Array<Dynamic>):Void {
+		HXCHandler.instance.hxcScripts.call(func, params);
 		songScripts.call(func, params);
 		stage.stageScripts.call(func, params);
 	}
 
 	public function runSongEvent<T:violet.backend.scripting.events.EventBase>(func:String, event:T):T {
+		HXCHandler.instance.hxcScripts.event(func, event);
 		songScripts.event(func, event);
 		return stage.stageScripts.event(func, event);
 	}

@@ -105,6 +105,7 @@ class InitialState extends StateBackend { // for now
 				Conductor.pause();
 				ModdingAPI.reloadModList();
 				ModdingAPI.reloadRegistries();
+				ModdingAPI.checkForHXC();
 				GlobalPack.init();
 				refreshRedirects();
 				resetState();
