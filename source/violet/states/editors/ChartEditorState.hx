@@ -206,17 +206,11 @@ class ChartEditorState extends StateBackend {
             noteToAdd.playAnim(noteToPlace.animation.name);
             noteToAdd.setGraphicSize(50, 50);
             noteToAdd.updateHitbox();
-            var thing = (noteToPlace.y - (FlxG.height/2));
-            /**
-             *
-             *
-             * This Code | Rodney please I need this, my editor kinda placeless
-             *           v
-             *
-             */
-            thing *= Conductor.stepLengthMs;
-            thing /= 4;
-            thing /= 25;
+            var thing = (noteToPlace.y);
+            thing -= FlxG.height/2;
+            thing /= 0.5;
+            thing /= 25 * 4;
+            thing *=  Conductor.stepLengthMs;
             thing += Conductor.framePosition;
             noteToAdd.extra.set('noteData', {
                 id: Std.parseInt(noteToPlace.animation.name),
