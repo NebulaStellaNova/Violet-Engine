@@ -190,7 +190,11 @@ class ChartEditorState extends StateBackend {
         noteToPlace.x = grids[0].x + Math.round((delta-25)/50)*50;
         noteToPlace.y = grids[0].y % 50;
         var gridDelta = grids[0].y % 50;
-        noteToPlace.y += Math.round((FlxG.mouse.gameY-(gridDelta+25))/50)*50;
+        if (FlxG.keys.pressed.SHIFT) {
+            noteToPlace.y += FlxG.mouse.gameY - 25;
+        } else {
+            noteToPlace.y += Math.round((FlxG.mouse.gameY-(gridDelta+25))/50)*50;
+        }
         noteToPlace.playAnim('${Math.round((delta-25)/50) % 4}', true);
         var strumlineToPlaceOn = Math.floor(Math.round((delta-25)/50)/4);
         // noteToPlace.extra.set('strumLine', strumlineToPlaceOn);
