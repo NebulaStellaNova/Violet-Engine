@@ -173,14 +173,19 @@ class ChartEditorState extends StateBackend {
         playedThisFrame = false;
 
         for (grid in grids) {
-            grid.y = - Conductor.framePosition;
+            grid.y = (-Conductor.framePosition / Conductor.stepLengthMs) * 25 * 4;
             grid.y *= 0.5;
             grid.y += FlxG.height/2;
         }
 
+        for (i in icons) {
+            i.canDance = Conductor.instrumental.playing;
+        }
+
         for (event in events) {
             var eventData = event.extra.get('eventData');
-            event.y = eventData.time - Conductor.framePosition;
+            var time = eventData.time - Conductor.framePosition;
+            event.y = (time / Conductor.stepLengthMs) * 25 * 4;
             event.y *= 0.5;
             event.y += FlxG.height/2;
             event.alpha = eventData.time < Conductor.framePosition ? 0.5 : 1;
@@ -188,7 +193,8 @@ class ChartEditorState extends StateBackend {
 
         for (note in notes) {
             var noteData = note.extra.get('noteData');
-            note.y = noteData.time - Conductor.framePosition;
+            var time = noteData.time - Conductor.framePosition;
+            note.y = (time / Conductor.stepLengthMs) * 25 * 4;
             note.y *= 0.5;
             note.y += FlxG.height/2;
             note.alpha = noteData.time < Conductor.framePosition ? 0.5 : 1;
