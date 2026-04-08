@@ -20,6 +20,7 @@ import violet.backend.objects.NovaSprite;
 import violet.backend.utils.FileUtil;
 import violet.backend.console.Logs;
 import violet.backend.utils.NovaUtils;
+import haxe.io.Path;
 
 using StringTools;
 using violet.backend.utils.ArrayUtil;
@@ -42,10 +43,14 @@ class FunkinScript extends Script {
 		internalScript.context.publicVariables = vars ?? [];
 
 	public var isHXC:Bool = false;
-	public function new(path:String, isCode:Bool = false, isHXC:Bool = false):Void {
+	public function new(path:String, isCode:Bool = false, isHXC:Bool = false, ?extraPath:String):Void {
 		super(path, isCode);
 		this.isHXC = isHXC;
 		this.fullPath = path;
+		if (extraPath != null) {
+			this.fullPath = extraPath;
+			this.fileName = Path.withoutDirectory(extraPath);
+		}
 		internalScript = new RuleScript(new rulescript.Context());
 		internalScript.scriptName = '$folderName/$fileName';
 		initVars();
