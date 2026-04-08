@@ -116,12 +116,12 @@ props:
 - id: opponent
   type: Character
   position: [230.5, 996]
-  cameraOffsets: [-220, -250]
+  cameraOffsets: [220, -200]
 
 - id: player
   type: Character
   position: [1050, 985]
-  cameraOffsets: [-600, -250]
+  cameraOffsets: [-200, -150]
 
 - name: tankmanAudience0
   assetPath: tank0

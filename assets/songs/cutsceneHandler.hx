@@ -62,5 +62,5 @@ function finishCutscene() {
 }
 
 function update(elapsed:Float) {
-    if (!inCutscene) cutsceneCamera.alpha = 0;
+    if (!inCutscene || video == null) cutsceneCamera.alpha = 0;
 }
