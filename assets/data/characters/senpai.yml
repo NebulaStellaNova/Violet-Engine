@@ -5,7 +5,7 @@ singTime: 8
 isPixel: true
 scale: 6
 offsets: [100, 0]
-cameraOffsets: [100, 300]
+cameraOffsets: [100, 0]
 healthIcon: senpai
 animations:
   - name: idle
