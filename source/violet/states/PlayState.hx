@@ -717,7 +717,6 @@ class PlayState extends violet.backend.StateBackend {
 		PlayState.song = id;
 		PlayState.difficulty = difficulty;
 		PlayState.variation = variation;
-		trace(variation);
 		FlxG.switchState(() -> new PlayState());
 	}
 

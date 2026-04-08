@@ -1,9 +1,11 @@
 package violet.backend.scripting;
 
+import flixel.FlxBasic;
 import flixel.util.FlxStringUtil;
 import violet.backend.scripting.events.EventBase;
 
 class ScriptPack {
+
 	public var scripts:Array<Script> = [];
 
 	public function clear() {
@@ -13,23 +15,26 @@ class ScriptPack {
 		}
 	}
 
+	inline static function setScriptPublicVars(script:Script, object:Dynamic):Void {
+		var vars:Map<String, Dynamic> = [];
+		if (object != null && object is FlxBasic) {
+			var data = Reflect.getProperty(object, 'extra');
+			if (data != null) vars = cast data;
+		}
+		script.setPublicVars(vars);
+	}
+
 	public var parent(default, set):Dynamic;
 	inline function set_parent(value:Dynamic):Dynamic {
 		for (script in scripts) {
 			if (script == null) continue;
 			script.parent = value;
-			if (script is PythonScript) {
-				for (i in Reflect.fields(value)) {
-					script.set(i, Reflect.field(value, i));
-				}
-			}
+			setScriptPublicVars(script, value);
 		}
 		return parent = value;
 	}
 
-	public function new() {
-
-	}
+	public function new() {}
 
 	public function addScript(script:Script) {
 		if (script.hasBlacklisted) {
@@ -39,6 +44,7 @@ class ScriptPack {
 		var scriptClass = FlxStringUtil.getClassName(script, true);
 		trace('debug:Added script "${script.fileName}" to "$this"');
 		script.parent = parent;
+		setScriptPublicVars(script, parent);
 		scripts.push(script);
 	}
 
@@ -67,4 +73,5 @@ class ScriptPack {
 		call('upon$eventNameCapitalized', [event]);
 		return event;
 	}
+
 }

@@ -70,7 +70,7 @@ class ModdingAPI {
 		// Main.threadCallacks.addOnce(reloadRegistries);
 		reloadRegistries();
 		new HXCHandler();
-		// trace(checkForHXC().join('\n'));
+		trace(checkForHXC().join('\n'));
 	}
 
 	public static function reloadModList() {
@@ -214,7 +214,8 @@ class ModdingAPI {
 	}
 
 	public static var allFolders(get, never):Array<String>;
-	static function get_allFolders() return checkFolder('');
+	inline static function get_allFolders():Array<String>
+		return checkFolder('') #if REDIRECT_ASSETS_FOLDER .concat(checkFolder(Paths.ASSETS_FOLDER)).concat(checkFolder(MOD_FOLDER)) #end;
 
 	public static function checkFolder(string:String) {
 		var out:Array<String> = [];

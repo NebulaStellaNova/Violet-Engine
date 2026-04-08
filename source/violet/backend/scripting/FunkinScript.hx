@@ -18,16 +18,19 @@ import rulescript.parsers.HxParser;
 import violet.backend.filesystem.Paths;
 import violet.backend.objects.NovaSprite;
 import violet.backend.utils.FileUtil;
+import violet.backend.console.Logs;
 import violet.backend.utils.NovaUtils;
 
 using StringTools;
 using violet.backend.utils.ArrayUtil;
 using violet.backend.utils.MathUtil;
+
 /**
  * @author @Zyflx (mostly)
  * @modified @NebulaStellaNova
  */
 class FunkinScript extends Script {
+
 	var internalScript:RuleScript;
 
 	override function set_parent(value:Dynamic):Dynamic
@@ -35,10 +38,13 @@ class FunkinScript extends Script {
 	override function get_parent():Dynamic
 		return internalScript.superInstance;
 
+	override function setPublicVars(vars:Map<String, Dynamic>):Void
+		internalScript.context.publicVariables = vars ?? [];
+
 	public function new(path:String, isCode:Bool = false, isHXC:Bool = false):Void {
 		super(path, isCode);
 		this.fullPath = path;
-		internalScript = new RuleScript();
+		internalScript = new RuleScript(new rulescript.Context());
 		internalScript.scriptName = '$folderName/$fileName';
 		initVars();
 		if (!isHXC) for (i in violet.backend.filesystem.ModdingAPI.getActiveMods()) {
@@ -49,69 +55,21 @@ class FunkinScript extends Script {
 		executeScript();
 	}
 
-	function initVars():Void {
-		for (key in autoImports.keys()) {
-			set(key, autoImports.get(key));
-		}
-		/* // Flixel
-		set('FlxG', FlxG);
-		set('FlxAngle', FlxAngle);
-		set('FlxBasic', FlxBasic);
-		set('FlxObject', FlxObject);
-		set('FlxSprite', FlxSprite);
-		set('FlxCamera', FlxCamera);
-		set('FlxText', FlxText);
-		set('FlxTween', FlxTween);
-		set('FlxTimer', FlxTimer);
-		set('FlxMath', FlxMath);
-		set('FlxTypedGroup', FlxTypedGroup);
-		set('FlxSpriteGroup', FlxSpriteGroup);
-		set('FlxSound', FlxSound);
-		set('FlxColor', {
-			TRANSPARENT: FlxColor.TRANSPARENT,
-			WHITE: FlxColor.WHITE,
-			GRAY: FlxColor.GRAY,
-			BLACK: FlxColor.BLACK,
-			GREEN: FlxColor.GREEN,
-			LIME: FlxColor.LIME,
-			YELLOW: FlxColor.YELLOW,
-			ORANGE: FlxColor.ORANGE,
-			RED: FlxColor.RED,
-			PURPLE: FlxColor.PURPLE,
-			BLUE: FlxColor.BLUE,
-			BROWN: FlxColor.BROWN,
-			PINK: FlxColor.PINK,
-			MAGENTA: FlxColor.MAGENTA,
-			CYAN: FlxColor.CYAN
-		});
-		set('FlxAxes', {
-			X: FlxAxes.X,
-			Y: FlxAxes.Y,
-			XY: FlxAxes.XY
-		});
+	override function initVars():Void {
+		super.initVars();
 
-		// Engine
-		set('FunkinSprite', NovaSprite);
-		set('NovaSprite', NovaSprite);
-		set('Paths', Paths);
-		// set('WindowColorMode', WindowColorMode);
+		set('log', (value:Dynamic, type:LogType = LogMessage) ->
+			Logs.log(value, type, internalScript.access.posInfos())
+		);
+		set('trace', Reflect.makeVarArgs(args ->
+			Logs.traceCallback([for (arg in args) Std.string(arg)].join(', '), internalScript.access.posInfos())
+		));
 
-		// Custom
-		set('add', (object:FlxBasic) -> return FlxG.state.add(object));
-		set('remove', (object:FlxBasic) -> return FlxG.state.remove(object));
-		set('insert', (pos:Int, object:FlxBasic) -> return FlxG.state.insert(pos, object)); */
-
-		set('trace', (value) -> violet.backend.console.Logs.traceCallback(value, internalScript.getInterp(rulescript.interps.RuleScriptInterp).posInfos()));
-		// set('log', (value:Dynamic, type:violet.backend.console.Logs.LogType = LogMessage) -> violet.backend.console.Logs.log(value, type, internalScript.interp.posInfos()));
-
-        // set('lerp', MathUtil.lerp);
-
-		/* set("debugPrint", function(text:Dynamic = '', color:String = 'WHITE') {
-            cast (FlxG.state, MusicBeatState).debugPrint(text, color);
-        }); */
+		internalScript.context.staticVariables = Script.staticVars;
 	}
 
 	override public function call<T>(funcName:String, ?args:Array<Dynamic>, ?def:T):T {
+		if (!internalScript.access.variableExists(funcName)) return def;
 		try {
 			var func = this.get(funcName);
 			if (func != null && Reflect.isFunction(func))
@@ -124,13 +82,13 @@ class FunkinScript extends Script {
 			var errorMsg = data.join(':');
 			NovaUtils.addNotification('Novamod Script Exception!', 'Error executing "$fileName":${errorMsg}\nOn Line #${lineNum}', ERROR);
 		}
-		return null;
+		return def;
 	}
 
 	override public function set(variable:String, value:Dynamic):Void
-		internalScript.variables.set(variable, value);
+		internalScript.access.setVariable(variable, value);
 	override public function get<T>(variable:String, ?def:T):T
-		return internalScript.variables.get(variable) ?? def;
+		return internalScript.access.getVariable(variable) ?? def;
 
 	public function executeScript():Void {
 		if (executed) return;
@@ -145,6 +103,6 @@ class FunkinScript extends Script {
 		});
 		executed = true;
 	}
-}
 
+}
 #end
