@@ -63,7 +63,7 @@ class ModdingAPI {
 		FlxG.save.data.enabledModIds ??= [];
 
 		reloadModList();
-		FlxTimer.wait(0.01, ()->reloadModList()); // To fix vmod's not showing. I think
+		// FlxTimer.wait(0.01, ()->reloadModList()); // To fix vmod's not showing. I think
 
 		activeModsIds = FlxG.save.data.enabledModIds;
 
