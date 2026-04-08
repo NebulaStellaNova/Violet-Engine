@@ -57,12 +57,12 @@ props:
   - id: opponent
     type: Character
     position: [40, 985]
-    cameraOffsets: [-300, -250]
+    cameraOffsets: [200, -250]
 
   - id: player
     type: Character
     position: [977.5, 1005]
-    cameraOffsets: [-550, -300]
+    cameraOffsets: [-150, -150]
 
   - name: lights
     assetPath: lights
