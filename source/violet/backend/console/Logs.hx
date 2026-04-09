@@ -4,8 +4,6 @@ import haxe.Log;
 import haxe.PosInfos;
 
 enum abstract ConsoleColors(String) from String to String {
-	public static final colorList = flixel.system.macros.FlxMacroUtil.buildMap('violet.backend.console.ConsoleColors');
-
 	var RESET =         "\033[0m";
 
 	var BLACK =         "\x1b[30m";
@@ -26,6 +24,20 @@ enum abstract ConsoleColors(String) from String to String {
 	var MAGENTA =       "\x1b[95m";
 	var CYAN =          "\x1b[96m";
 	var WHITE =         "\x1b[97m";
+
+	public static final colorList = flixel.system.macros.FlxMacroUtil.buildMap('violet.backend.console.ConsoleColors');
+
+	public static function formatString(string:String):String {
+		string = string.replace("lua:0", "lua:?");
+		for (name => color in colorList) {
+			for (name in [name, name.toLowerCase()]) {
+				string = string.replace('#$name', color);
+				string = string.replace("$" + name, color);
+				string = string.replace('<$name>', color);
+			}
+		}
+		return string;
+	}
 }
 
 enum abstract LogType(String) from String to String {
@@ -102,18 +114,6 @@ class Logs {
 			default:
 				finalOut +=     '${LOG_COLOR}[    LOG    ] -> $dataString:${ConsoleColors.RESET} $value';
 		}
-		Sys.println(formatString(finalOut) + ConsoleColors.RESET);
-	}
-
-	public static function formatString(string:String):String {
-		string = string.replace("lua:0", "lua:?");
-		for (name => color in ConsoleColors.colorList) {
-			for (name in [name, name.toLowerCase()]) {
-				string = string.replace('#$name', color);
-				string = string.replace("$" + name, color);
-				string = string.replace('<$name>', color);
-			}
-		}
-		return string;
+		Sys.println(ConsoleColors.formatString(finalOut) + ConsoleColors.RESET);
 	}
 }
