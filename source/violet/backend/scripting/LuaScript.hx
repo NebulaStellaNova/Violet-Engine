@@ -43,13 +43,6 @@ class LuaScript extends Script {
 			violet.backend.console.Logs.traceCallback(s, info);
 		}
 		initVars();
-		set('curStep', 0);
-		set('curBeat', 0);
-		if (Std.isOfType(FlxG.state, violet.states.PlayState)) {
-			for (i in violet.states.PlayState.instance.characterIDs) {
-				set(i.replace('-', '_').replace(' ', '_ '), new violet.data.character.Character(i));
-			}
-		}
 		internalScript.execute();
 	}
 
