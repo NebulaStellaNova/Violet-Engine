@@ -112,7 +112,7 @@ class ModMenu extends SubStateBackend {
 			var iconBox = new NovaSprite(Paths.image("menus/modmenu/iconBox"));
 			icon.add(iconBox);
 
-			var modIcon:ModIcon = new ModIcon(mod.id);
+			var modIcon:ModIcon = new ModIcon(mod.folder);
 			modIcon.setGraphicSize(iconBox.width - 20, iconBox.height - 20);
 			modIcon.x = 10;
 			modIcon.y = 10;
