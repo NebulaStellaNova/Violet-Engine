@@ -36,6 +36,7 @@ import violet.data.song.Song;
 import violet.data.song.SongRegistry;
 import violet.data.stage.Stage;
 import violet.states.menus.FreeplayMenu;
+import violet.states.menus.StoryMenu;
 import violet.states.menus.MainMenu;
 import violet.states.menus.PauseMenu;
 import violet.backend.objects.play.DialogueHandler;
@@ -307,6 +308,7 @@ class PlayState extends violet.backend.StateBackend {
 		DebugDisplay.registerVariable("Current Song", "song");
 		DebugDisplay.registerVariable("Current Difficulty", "difficulty");
 		DebugDisplay.registerVariable("Current Variantion", "variation");
+		DebugDisplay.registerVariable("Is Story Mode", "isStoryMode");
 		if (playlist.length != 0) DebugDisplay.registerVariable("Playlist Items", "playlist");
 		#end
 
@@ -655,14 +657,13 @@ class PlayState extends violet.backend.StateBackend {
 		songEnded = true;
 		ScoreUtil.saveSongScore(songData.songName, difficulty, songData.variant, score);
 		storyScore += score;
-		if (isStoryMode && playlist.length == 0) ScoreUtil.saveLevelScore(curStoryLevel, difficulty, storyScore);
 		if (playlist.length == 0 || !isStoryMode) {
-			FlxG.switchState(MainMenu.new);
-			FlxG.switchState(new FreeplayMenu().build());
+			exitToMenu();
 		} else {
 			hasSeenCutscene = false;
 			loadSong(playlist.shift(), difficulty, variation);
 		}
+		if (isStoryMode && playlist.length == 0) ScoreUtil.saveLevelScore(curStoryLevel, difficulty, storyScore);
 	}
 
 	public function pause() {
@@ -704,6 +705,8 @@ class PlayState extends violet.backend.StateBackend {
 	var camHUDTween:FlxTween;
 	var camGameTween:FlxTween;
 
+
+
 	override function beatHit(curBeat:Int) {
 		super.beatHit(curBeat);
 
@@ -743,6 +746,14 @@ class PlayState extends violet.backend.StateBackend {
 		PlayState.difficulty = difficulty;
 		PlayState.variation = variation;
 		FlxG.switchState(() -> new PlayState());
+	}
+
+	public dynamic function exitToMenu() {
+		FlxG.switchState(MainMenu.new);
+		if (isStoryMode)
+			FlxG.switchState(new StoryMenu().build());
+		else
+			FlxG.switchState(new FreeplayMenu().build());
 	}
 
 }

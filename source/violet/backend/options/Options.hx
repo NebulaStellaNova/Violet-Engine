@@ -125,8 +125,8 @@ class Options {
         if (score > getSongScore(id, difficulty, variation) || force) {
             var saveID:String = [ id, variation != '' && variation != null ? ':$variation' : '', ':$difficulty' ].join('');
             data.savedScores.set(saveID, score);
-            flush();
         }
+        flush();
     }
 
     private static function getLevelScore(id:String, difficulty:String) {
@@ -138,7 +138,7 @@ class Options {
         if (score > getLevelScore(id, difficulty) || force) {
             var saveID:String = [ id, ':$difficulty' ].join('');
             data.savedLevelScores.set(saveID, score);
-            flush();
         }
+        flush();
     }
 }

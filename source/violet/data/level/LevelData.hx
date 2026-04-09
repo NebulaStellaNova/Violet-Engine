@@ -40,6 +40,11 @@ typedef LevelData = {
 	 * The background for the level behind the props.
 	 */
 	var ?background:ParseColor;
+
+	/**
+	 * The color the title graphic should flash when pressing accept in the story menu.
+	 */
+	var ?flashColor:ParseColor;
 }
 
 /**

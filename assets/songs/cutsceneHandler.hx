@@ -42,10 +42,10 @@ function onStartCountdown(event) {
 }
 
 function onPause(event) {
-    if (inCutscene) video?.pause();
+    if (inCutscene && video != null) video.pause();
 }
 function onResume() {
-    if (inCutscene) video?.resume();
+    if (inCutscene && video != null) video.resume();
 }
 
 function onSkipCutscene() {
@@ -56,8 +56,8 @@ function onSkipCutscene() {
 function finishCutscene() {
     inCutscene = false;
     PlayState.hasSeenCutscene = true;
-    video.destroy();
-    video = null;
+    if (video != null) video.destroy();
+    if (video != null) video = null;
     startCountdown();
 }
 

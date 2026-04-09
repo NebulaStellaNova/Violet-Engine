@@ -1,5 +1,6 @@
 package violet.backend;
 
+import lemonui.utils.MathUtil;
 import flixel.FlxBasic;
 import violet.backend.audio.Conductor;
 import violet.backend.objects.IsBopper;
@@ -14,6 +15,11 @@ class SubStateBackend extends flixel.FlxSubState {
 	#if SCRIPT_SUPPORT
 	public var subStateScripts:ScriptPack = new ScriptPack();
 	#end
+
+	/**
+	 * Alias for `MathUtil.lerp`
+	 */
+	public function lerp(a:Float, b:Float, ratio:Float, fpsSensitive:Bool = true) return MathUtil.lerp(a, b, ratio, fpsSensitive);
 
 	public var curBeat(get, never):Int;
 	function get_curBeat() return Conductor.curBeat;

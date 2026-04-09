@@ -55,7 +55,7 @@ class PauseMenu extends EditorListBackend {
                 var event:EventBase = PlayState.instance.songScripts.event('onExitToMenu', new EventBase());
                 // event = subStateScripts.event('exitToMenu', event);
                 if (!event.cancelled) subCamera.fade(0.25, () -> {
-                    FlxG.switchState(new FreeplayMenu().build());
+                    PlayState.instance.exitToMenu();
                 });
             }}
         ];
