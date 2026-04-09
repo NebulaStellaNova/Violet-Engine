@@ -198,26 +198,28 @@ class Project extends HXProject {
 		if (FileSystem.exists('./.haxelib'))
 			setenv('HAXEPATH', './');
 
-		bug('Checking For Libraries...');
-		for (i in libs) {
-			if (haxelibExists(i.id, i.url != null ? 'git' : null)) {
-				bug('Library "${i.id}" exists!');
-			} else {
-				bug('Library "${i.id}" does not exist. Installing...');
-				if (i.url != null)
-					Sys.command('haxelib git ${i.id} ${i.url} ${i.flags.join(' ')}');
-				else
-					Sys.command('haxelib install ${i.id} ${i.flags.join(' ')}');
-				if (i.dev) {
-					final curName:String = './.haxelib/${i.id.replace('.', ',')}/.current';
-					if (!FileSystem.exists(curName)) {
-						bug('Could not find version folder for library "${i.id}", dev setup failed, but is installed.');
-						continue;
+		if (!hasDefine('action')) {
+			bug('Checking For Libraries...');
+			for (i in libs) {
+				if (haxelibExists(i.id, i.url != null ? 'git' : null)) {
+					bug('Library "${i.id}" exists!');
+				} else {
+					bug('Library "${i.id}" does not exist. Installing...');
+					if (i.url != null)
+						Sys.command('haxelib git ${i.id} ${i.url} ${i.flags.join(' ')}');
+					else
+						Sys.command('haxelib install ${i.id} ${i.flags.join(' ')}');
+					if (i.dev) {
+						final curName:String = './.haxelib/${i.id.replace('.', ',')}/.current';
+						if (!FileSystem.exists(curName)) {
+							bug('Could not find version folder for library "${i.id}", dev setup failed, but is installed.');
+							continue;
+						}
+						Sys.command('haxelib dev ${i.id} .haxelib/${i.id.replace('.', ',')}/${sys.io.File.getContent(curName).trim().replace('.', ',')}/${i.id.replace('.', ',')}');
+						// bug('Library "${i.id}" has been set as dev.');
 					}
-					Sys.command('haxelib dev ${i.id} .haxelib/${i.id.replace('.', ',')}/${sys.io.File.getContent(curName).trim().replace('.', ',')}/${i.id.replace('.', ',')}');
-					// bug('Library "${i.id}" has been set as dev.');
+					bug('Library "${i.id}" is now installed.');
 				}
-				bug('Library "${i.id}" is now installed.');
 			}
 		}
 
