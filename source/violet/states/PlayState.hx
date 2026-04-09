@@ -681,9 +681,9 @@ class PlayState extends violet.backend.StateBackend {
 	}
 
 	public function callSongScripts(func:String, ?params:Array<Dynamic>):Void {
-		HXCHandler.instance.hxcScripts.call(func, params);
-		songScripts.call(func, params);
-		if (stage != null) stage.stageScripts.call(func, params);
+		HXCHandler.instance.hxcScripts.callVarients(func, params);
+		songScripts.callVarients(func, params);
+		if (stage != null) stage.stageScripts.callVarients(func, params);
 	}
 
 	public function runSongEvent<T:violet.backend.scripting.events.EventBase>(func:String, event:T):T {

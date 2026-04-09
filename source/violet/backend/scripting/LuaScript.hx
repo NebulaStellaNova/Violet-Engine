@@ -88,9 +88,7 @@ class LuaScript extends Script {
 		internalScript.setVar(variable, value);
 
 	override public function get<T>(variable:String, ?def:T):T {
-		trace('get $variable');
 		var res:T =  internalScript.getVar(variable) ?? def;
-		trace('after get $variable');
 		return res;
 	}
 
