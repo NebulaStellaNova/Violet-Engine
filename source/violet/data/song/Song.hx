@@ -46,7 +46,7 @@ class Song {
 
     public var variants(get, never):Array<String>;
     function get_variants():Array<String> {
-        return [for (diff in _data?.varients ?? []) diff.toLowerCase()];
+        return [for (diff in _data?.variants ?? []) diff.toLowerCase()];
     }
 
     public var customValues(get, never):Dynamic;

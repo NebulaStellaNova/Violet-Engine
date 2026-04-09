@@ -18,5 +18,3 @@ needsVoices: false
 beatsPerMeasure: 4
 bpm: 176
 playableCharacter: pico
-varients:
-  - bf

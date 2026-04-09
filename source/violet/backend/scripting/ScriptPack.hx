@@ -66,20 +66,20 @@ class ScriptPack {
 		return returner ?? def;
 	}
 
-	public function callVarients<T>(func:String, ?args:Array<Dynamic>, ?def:T):T {
+	public function callVariants<T>(func:String, ?args:Array<Dynamic>, ?def:T):T {
 		var funcy = func.charAt(0).toUpperCase() + func.substr(1);
-		var varient1 = call(func, args);
-		var varient2 = call('on$funcy', args);
-		var varient3 = call('upon$funcy', args);
+		var variant1 = call(func, args);
+		var variant2 = call('on$funcy', args);
+		var variant3 = call('upon$funcy', args);
 		var out:T = def;
-		for (i in [varient1, varient2, varient3]) {
+		for (i in [variant1, variant2, variant3]) {
 			if (i != def) out = i;
 		}
 		return out;
 	}
 
 	public function event<T:EventBase>(func:String, event:T):T {
-		callVarients(func, [event]);
+		callVariants(func, [event]);
 		return event;
 	}
 

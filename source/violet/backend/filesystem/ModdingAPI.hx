@@ -50,9 +50,9 @@ class ModdingAPI {
 	public static var API_VERSION:Version = "0.0.0";
 
 	public static var EXT_ALIASES:Map<String, Array<String>> = [
-		'lua' => ['lua', 'luac', 'luas'],
+		'lua' => ['lua', 'luac', 'luas', 'lscript'],
 		'hx' => ['hx', /* 'hxc',  */'hxs', 'hscript'],
-		'py' => ['py', 'pyc', 'pys']
+		'py' => ['py', 'pyc', 'pys', 'pscript']
 	];
 
 	public static var STATE_PATHS = ['data/scripts/states'];

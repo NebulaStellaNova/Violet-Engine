@@ -94,7 +94,7 @@ class Logs {
 		trace( "system:System Message (alt)    (tag = 'system:' )");
 		trace(  "debug:Debug Message           (tag = 'debug:'  )");
 		trace(    "log:Log Message (default)   (tag = 'log:'    )");
-		Sys.println(  "-----------------------------------------------------------------------------\n");
+		Sys.println("-----------------------------------------------------------------------------\n");
 	}
 
 	public static function log(value:Dynamic, type:LogType = LogMessage, ?infos:PosInfos) {

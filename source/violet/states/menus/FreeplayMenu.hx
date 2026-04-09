@@ -228,8 +228,8 @@ class FreeplayMenu extends SubStateBackend {
 					x += additive;
 				}
 			}
-			for (varient in song.variants) {
-				var target = SongRegistry.getSongByID('${song.id}:$varient');
+			for (variant in song.variants) {
+				var target = SongRegistry.getSongByID('${song.id}:$variant');
 				if (target == null) continue;
 				for (diff in target.difficulties) {
 					if (!difficultyDots.exists(diff.toLowerCase())) {
@@ -443,9 +443,9 @@ class FreeplayMenu extends SubStateBackend {
 		for (i in difficulties) difficultyAssociations.set(i, '');
 		for (i in song.variants) {
 			if (SongRegistry.songDatas.exists('${song.id}:$i')) {
-				var varientData = SongRegistry.getSongByID('${song.id}:$i');
-				difficulties = difficulties.concat(varientData.difficulties.copy());
-				for (d in varientData.difficulties) {
+				var variantData = SongRegistry.getSongByID('${song.id}:$i');
+				difficulties = difficulties.concat(variantData.difficulties.copy());
+				for (d in variantData.difficulties) {
 					difficultyAssociations.set(d, i);
 				}
 			}

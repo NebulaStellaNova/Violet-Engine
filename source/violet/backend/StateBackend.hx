@@ -72,8 +72,8 @@ class StateBackend extends flixel.FlxState {
 	}
 
 	public function callInScripts<T>(funcName:String, ?args:Array<Dynamic>, ?def:T):T {
-		#if SCRIPT_SUPPORT if (GlobalPack.instance != null && !funcName.toLowerCase().contains('create')) GlobalPack.instance.callVarients(funcName, args); #end
-		return #if SCRIPT_SUPPORT stateScripts.callVarients(funcName, args, def) ?? #end def;
+		#if SCRIPT_SUPPORT if (GlobalPack.instance != null && !funcName.toLowerCase().contains('create')) GlobalPack.instance.callVariants(funcName, args); #end
+		return #if SCRIPT_SUPPORT stateScripts.callVariants(funcName, args, def) ?? #end def;
 	}
 
 	public function runEvent<T:EventBase>(func:String, event:T):T {

@@ -7,9 +7,6 @@ difficulties:
   - easy
   - normal
   - hard
-variants:
-  - erect
-  - bf
 needsVoices: false
 displayName: Darnell
 icon: darnell
@@ -19,7 +16,7 @@ customValues:
   stickerPack: bonus-weekend1
   album: volume4
 
-varients:
+variants:
   - erect
   - bf
 
