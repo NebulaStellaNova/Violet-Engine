@@ -53,7 +53,7 @@ class Character extends violet.backend.objects.Bopper {
 		super(x, y, Paths.image(this._data.assetPath)); // did this for atlases
 
 		if (CharacterRegistry.characterDatas.get(id) == null) {
-			NovaUtils.addNotification('Character not found!', 'Could not find character with ID "$id" using default character "bf."', ERROR);
+			NovaUtils.addNotification('Character not found!', 'Could not find character with ID "$id" using default character "bf".', ERROR);
         }
 
 		__refresh();

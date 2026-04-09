@@ -39,11 +39,11 @@ class NovaUtils {
 		return true;
 	}
 
-	public static function addNotification(title:String, body:String, expiryMs:Int = 10000, type:NotificationType = DEFAULT) {
+	public static function addNotification(title:String, body:String, expiryMs:Int = 10000, type:NotificationType = DEFAULT, ?infos:haxe.PosInfos) {
 		var notification = lemonui.controllers.NotificationController.instance.addNotification(title, body, expiryMs/1000);
 		if (type == ERROR) {
 			notification.elementColor = 0xFF591818;
-			trace('error:${body}');
+			violet.backend.console.Logs.log(body, ErrorMessage, infos);
 		}
 	}
 

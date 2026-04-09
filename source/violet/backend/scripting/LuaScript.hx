@@ -4,6 +4,7 @@ package violet.backend.scripting;
 import haxe.PosInfos;
 import lscript.LScript;
 import violet.backend.utils.FileUtil;
+import violet.backend.utils.NovaUtils;
 
 using StringTools;
 using violet.backend.utils.ArrayUtil;
@@ -62,8 +63,19 @@ class LuaScript extends Script {
 		violet.backend.scripting.psych.LuaCallbacks.applyPsychCallbacksToScript(this);
 	}
 
-	override public function call<T>(funcName:String, ?args:Array<Dynamic>, ?def:T):T
-		return internalScript.callFunc(funcName, args ?? []) ?? def;
+	override public function call<T>(funcName:String, ?args:Array<Dynamic>, ?def:T):T {
+		try {
+			return internalScript.callFunc(funcName, args ?? []) ?? def;
+		} catch(e) {
+			var data:Array<String> = e.message.split(":");
+			var scriptString = data.shift();
+			var lineNum = data.shift();
+			var errorMsg = data.join(':');
+			NovaUtils.addNotification('Novamod Script Exception!', 'Error executing "$fileName:$lineNum":$errorMsg', ERROR);
+		}
+		return def;
+	}
+
 
 	override public function set(variable:String, value:Dynamic)
 		internalScript.setVar(variable, value);
