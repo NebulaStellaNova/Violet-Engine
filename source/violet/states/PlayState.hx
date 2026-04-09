@@ -474,8 +474,8 @@ class PlayState extends violet.backend.StateBackend {
 	function onSustainMissed(sustain:Sustain) {
 		if (!Conductor.instrumental.playing && sustain.parent.isComputer) return;
 		if (sustain.wasMissed) return;
-		final event:NoteHitEvent = runSongEvent("sustainMissed", new NoteHitEvent(note));
-		if (event.cancelled) return;
+		// final event:NoteHitEvent = runSongEvent("sustainMissed", new NoteHitEvent(sustain));
+		// if (event.cancelled) return;
 
 		sustain.wasMissed = true; sustain.alpha *= 0.6;
 		generalVocals.pause(); sustain.parent.vocals.pause();
