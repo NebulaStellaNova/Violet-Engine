@@ -1,5 +1,7 @@
 package violet.backend;
 
+import violet.backend.scripting.GlobalPack;
+import lemonui.utils.MathUtil;
 import flixel.FlxBasic;
 import violet.backend.audio.Conductor;
 import violet.backend.objects.IsBopper;
@@ -14,6 +16,11 @@ class SubStateBackend extends flixel.FlxSubState {
 	#if SCRIPT_SUPPORT
 	public var subStateScripts:ScriptPack = new ScriptPack();
 	#end
+
+	/**
+	 * Alias for `MathUtil.lerp`
+	 */
+	public function lerp(a:Float, b:Float, ratio:Float, fpsSensitive:Bool = true) return MathUtil.lerp(a, b, ratio, fpsSensitive);
 
 	public var curBeat(get, never):Int;
 	function get_curBeat() return Conductor.curBeat;
@@ -33,10 +40,6 @@ class SubStateBackend extends flixel.FlxSubState {
 	public var measure(get, never):Int;
 	function get_measure() return Conductor.curMeasure;
 
-
-	public var usesLoadingScreen = false;
-	public var stuffToLoad:Array<FlxBasic> = [];
-
 	public static var instance:SubStateBackend;
 
 	override public function create() {
@@ -46,49 +49,15 @@ class SubStateBackend extends flixel.FlxSubState {
 
 		#if SCRIPT_SUPPORT
 		subStateScripts.parent = this;
-		for (path in #if MOD_SUPPORT ModdingAPI.STATE_PATHS #else ['data/scripts/states'] #end) {
-			checkForScripts([Paths.ASSETS_FOLDER, path].join("/") + '/${Main.subStateClassName}');
-			#if MOD_SUPPORT
-			for (mod in ModdingAPI.getActiveMods())
-				checkForScripts([ModdingAPI.MOD_FOLDER, mod.folder, path].join("/") + '/${Main.subStateClassName}');
-			#end
-		}
+		for (path in #if MOD_SUPPORT ModdingAPI.STATE_PATHS #else ['data/scripts/states'] #end)
+			ModdingAPI.checkForScripts(path, getScriptName(), subStateScripts);
 		#end
 		callInScripts('create');
 	}
 
-	#if SCRIPT_SUPPORT
-	public function checkForScripts(string:String, ?pack:ScriptPack) {
-		pack ??= subStateScripts;
-
-		#if CAN_LUA_SCRIPT
-		for (ext in ModdingAPI.EXT_ALIASES.get("lua")) {
-			if (Paths.fileExists('$string.$ext', true)) {
-				var script = new violet.backend.scripting.LuaScript('$string.$ext');
-				pack.addScript(script);
-			}
-		}
-		#end
-
-		#if CAN_HAXE_SCRIPT
-		for (ext in ModdingAPI.EXT_ALIASES.get("hx")) {
-			if (Paths.fileExists('$string.$ext', true)) {
-				var script = new violet.backend.scripting.FunkinScript('$string.$ext');
-				pack.addScript(script);
-			}
-		}
-		#end
-
-		#if CAN_HAXE_SCRIPT
-		for (ext in ModdingAPI.EXT_ALIASES.get("py")) {
-			if (Paths.fileExists('$string.$ext', true)) {
-				var script = new violet.backend.scripting.PythonScript('$string.$ext');
-				pack.addScript(script);
-			}
-		}
-		#end
+	public function getScriptName():String {
+		return Main.subStateClassName;
 	}
-	#end
 
 	override public function update(elapsed:Float) {
 		super.update(elapsed);
@@ -96,17 +65,9 @@ class SubStateBackend extends flixel.FlxSubState {
 		callInScripts('update');
 	}
 
-	override public function add(objORcall:flixel.FlxBasic) {
-		if (usesLoadingScreen) {
-			stuffToLoad.push(objORcall);
-		} else {
-			super.add(objORcall);
-		}
-		return objORcall;
-	}
-
 	public function callInScripts<T>(funcName:String, ?args:Array<Dynamic>, ?def:T):T {
-		return #if SCRIPT_SUPPORT subStateScripts.call(funcName, args, def) ?? #end def;
+		#if SCRIPT_SUPPORT if (GlobalPack.instance != null && !funcName.toLowerCase().contains('create')) GlobalPack.instance.callVarients(funcName, args); #end
+		return #if SCRIPT_SUPPORT subStateScripts.callVarients(funcName, args, def) ?? #end def;
 	}
 
 	public function runEvent<T:EventBase>(func:String, event:T):T {
@@ -116,24 +77,6 @@ class SubStateBackend extends flixel.FlxSubState {
 		#else
 		return event;
 		#end
-	}
-
-	public function debugPrint(text:String, color:String = "WHITE") {
-		/* var txt:FlxText = new FlxText(10, 0, 0, text, 20);
-		txt.color = FlxColor.fromString(color);
-		txt.scrollFactor.set(0, 0);
-		txt.cameras = [FlxG.cameras.list.getLastOf()];
-		txt.y = (debugTexts.members.length * 30)+10;
-		txt.borderStyle = OUTLINE;
-		txt.borderSize = 2;
-		FlxTween.tween(txt, {alpha: 0}, 2, {startDelay: 3});
-		debugTexts.add(txt);
-		violet.backend.console.Logs.log(text, {
-			fileName: 'DebugPrint',//'$folderName:$fileName:$finalLine',
-			lineNumber: 0,
-			className: "",
-			methodName: ""
-		}); */
 	}
 
 	public function stepHit(curStep:Int) {

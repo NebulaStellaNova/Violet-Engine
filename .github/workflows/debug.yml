@@ -38,7 +38,7 @@ jobs:
           restore-keys: windows-debug-cache
 
       - name: Run Setup
-        run: .\"setup.bat"
+        run: .\".github\libs.bat"
 
       - name: Building HXCPP
         run: |
@@ -117,7 +117,7 @@ jobs:
   #         restore-keys: android-debug-cache
 
   #     - name: Run Setup
-  #       run: .\"setup.bat"
+  #       run: .\"install-libraries.bat"
 
   #     - name: Building HXCPP
   #       run: |
@@ -195,7 +195,7 @@ jobs:
   #         restore-keys: mac-debug-cache
 
   #     - name: Run Setup
-  #       run: .\"setup.bat"
+  #       run: .\"install-libraries.bat"
 
   #     - name: Building HXCPP
   #       run: |
@@ -276,7 +276,7 @@ jobs:
   #       run: sudo apt-get update && sudo apt-get upgrade && sudo apt-get install libvlc-dev libvlccore-dev vlc-bin vlc libxrandr-dev
 
   #     - name: Run Setup
-  #       run: .\"setup.sh"
+  #       run: .\"install-libraries.sh"
 
   #     - name: Building HXCPP
   #       run: |

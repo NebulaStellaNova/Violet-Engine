@@ -57,21 +57,6 @@ class Main extends openfl.display.Sprite {
 	public static var threadCallacks:StupidSignal = new StupidSignal();
 
 	/**
-	 * The current version of the engine.
-	 */
-	public static var engineVersion(default, null):Version;
-	/**
-	 * The latest version of the engine.
-	 */
-	public static var latestVersion(default, null):Version;
-	#if CHECK_FOR_UPDATES
-	/**
-	 * If true a new update was released for the engine!
-	 */
-	public static var updateAvailable(default, null):Bool = false;
-	#end
-
-	/**
 	 * Name of the current state's class.
 	 */
 	public static var stateClassName(get, never):String;

@@ -4,13 +4,15 @@ import violet.backend.scripting.events.CountdownTickEvent;
 import violet.backend.scripting.events.SongEvent;
 import violet.backend.scripting.events.NoteHitEvent;
 import violet.backend.scripting.events.EventBase;
-import rulescript.scriptedClass.RuleScriptedClass;
 
 typedef ModuleParams = {
 	?state:Class<Dynamic>
 }
 
-class Module /* implements RuleScriptedClass */ {
+class ScriptedModule extends Module implements rulescript.scriptedClass.RuleScriptedClass {}
+
+@:strictScriptedConstructor
+class Module {
 	/**
 	 * Whether the module is currently active.
 	 */

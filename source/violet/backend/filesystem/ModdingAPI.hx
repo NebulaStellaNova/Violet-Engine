@@ -63,14 +63,14 @@ class ModdingAPI {
 		FlxG.save.data.enabledModIds ??= [];
 
 		reloadModList();
-		FlxTimer.wait(0.01, ()->reloadModList()); // To fix vmod's not showing. I think
+		// FlxTimer.wait(0.01, ()->reloadModList()); // To fix vmod's not showing. I think
 
 		activeModsIds = FlxG.save.data.enabledModIds;
 
 		// Main.threadCallacks.addOnce(reloadRegistries);
 		reloadRegistries();
 		new HXCHandler();
-		// trace(checkForHXC().join('\n'));
+		trace(checkForHXC().join('\n'));
 	}
 
 	public static function reloadModList() {
@@ -200,11 +200,22 @@ class ModdingAPI {
 				}
 			}
 			#end
+
+			#if CAN_PYTHON_SCRIPT
+			for (ext in ModdingAPI.EXT_ALIASES.get("py")) {
+				if (file.endsWith('.$ext')) {
+					if (!FileUtil.getFileContent(file).contains("scriptDisabled = True")) {
+						pack.addScript(new violet.backend.scripting.PythonScript(file));
+					}
+				}
+			}
+			#end
 		}
 	}
 
 	public static var allFolders(get, never):Array<String>;
-	static function get_allFolders() return checkFolder('');
+	inline static function get_allFolders():Array<String>
+		return checkFolder('') #if REDIRECT_ASSETS_FOLDER .concat(checkFolder(Paths.ASSETS_FOLDER)).concat(checkFolder(MOD_FOLDER)) #end;
 
 	public static function checkFolder(string:String) {
 		var out:Array<String> = [];
@@ -237,36 +248,6 @@ class ModdingAPI {
 		}
 
 		return out;
-	}
-
-	public static function checkForScript(string:String, pack:ScriptPack) {
-
-		#if CAN_LUA_SCRIPT
-		for (ext in ModdingAPI.EXT_ALIASES.get("lua")) {
-			if (Paths.fileExists('$string.$ext', true)) {
-				var script = new violet.backend.scripting.LuaScript('$string.$ext');
-				pack.addScript(script);
-			}
-		}
-		#end
-
-		#if CAN_HAXE_SCRIPT
-		for (ext in ModdingAPI.EXT_ALIASES.get("hx")) {
-			if (Paths.fileExists('$string.$ext', true)) {
-				var script = new violet.backend.scripting.FunkinScript('$string.$ext');
-				pack.addScript(script);
-			}
-		}
-		#end
-
-		#if CAN_HAXE_SCRIPT
-		for (ext in ModdingAPI.EXT_ALIASES.get("py")) {
-			if (Paths.fileExists('$string.$ext', true)) {
-				var script = new violet.backend.scripting.PythonScript('$string.$ext');
-				pack.addScript(script);
-			}
-		}
-		#end
 	}
 	#end
 

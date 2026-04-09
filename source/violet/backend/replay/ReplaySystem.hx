@@ -131,7 +131,7 @@ class ReplaySystem extends FlxBasic {
             i.justPressed = false;
             i.justReleased = false;
         }
-        for (i in currentReplayData) {
+        for (i in currentReplayData ?? []) {
             if (i.time <= Conductor.framePosition && !i.hit) {
                 i.hit = true;
                 var key = playBackKeys.get(i.key);

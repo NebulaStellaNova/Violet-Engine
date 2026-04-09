@@ -17,6 +17,5 @@ import violet.backend.objects.NovaSprite;
 import violet.backend.objects.NovaText;
 import flixel.group.FlxSpriteGroup;
 
-
 using StringTools;
 #end

@@ -1,5 +1,6 @@
 package violet.states;
 
+import violet.states.menus.PauseMenu;
 import violet.data.character.Character;
 import violet.backend.audio.Conductor;
 import violet.backend.utils.NovaUtils;
@@ -46,6 +47,9 @@ class GameOverState extends StateBackend {
         _ = gameOverChar.getMidpoint();
         // FlxTween.tween(camera.scroll, { x: _.x, y: _.y }, 1, { ease: FlxEase.expoOut });
 
+        Cache.music('gameOver');
+        Cache.sound('game/gameover/fnf_loss_end');
+
         var sound:FlxSound = NovaUtils.playSound("game/gameover/fnf_loss_sfx");
         sounds.push(sound);
         sound.onComplete = ()->{
@@ -62,6 +66,7 @@ class GameOverState extends StateBackend {
             PlayState.doFadeOut = true;
             if (!pressedConfirm) {
                 stopAllSounds();
+                FlxG.sound.music.stop();
                 sounds.push(NovaUtils.playSound("game/gameover/fnf_loss_end"));
                 gameOverChar.playAnim('deathConfirm', true);
                 FlxG.camera.fade(FlxColor.BLACK, 5, ()->FlxG.switchState(new PlayState()));
@@ -70,6 +75,9 @@ class GameOverState extends StateBackend {
                 stopAllSounds();
                 FlxG.switchState(new PlayState());
             }
+        }
+        if (Controls.back) {
+            PlayState.instance.exitToMenu();
         }
 
         if (Controls.resetState || Controls.reloadGame) {

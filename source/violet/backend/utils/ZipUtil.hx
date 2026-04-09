@@ -7,9 +7,9 @@ class ZipUtil {
      */
     public static function extractZip(inputPath:String, outputPath:String):Void {
         #if windows
-        var process = new sys.io.Process("tar", ["-xf", inputPath, "-C", outputPath]);
+        var process = Sys.command("tar", ["-xf", inputPath, "-C", outputPath]);
         #else
-        var process = new sys.io.Process("unzip", [inputPath, "-d", outputPath]);
+        var process = Sys.command("unzip", [inputPath, "-d", outputPath]);
         #end
     }
 

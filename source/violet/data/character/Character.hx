@@ -33,6 +33,11 @@ class Character extends violet.backend.objects.Bopper {
 	public var singTimer:Float = 4;
 	public var isSinging:Bool = false;
 
+	/**
+	 * If disabled all sing animations won't play.
+	 */
+	public var canSing:Bool = true;
+
 	private var faceLeftCache:Bool = false;
 	private var initialFlipX:Bool = false;
 
@@ -48,7 +53,7 @@ class Character extends violet.backend.objects.Bopper {
 		super(x, y, Paths.image(this._data.assetPath)); // did this for atlases
 
 		if (CharacterRegistry.characterDatas.get(id) == null) {
-			NovaUtils.addNotification('Character not found!', 'Could not find character with ID "$id" using default character "bf."', ERROR);
+			NovaUtils.addNotification('Character not found!', 'Could not find character with ID "$id" using default character "bf".', ERROR);
         }
 
 		__refresh();
@@ -94,7 +99,7 @@ class Character extends violet.backend.objects.Bopper {
 
 	public static var singAnimations:Array<String> = ['singLEFT', 'singDOWN', 'singUP', 'singRIGHT'];
 	public function playSingAnim(direction:Int, isMiss:Bool = false, ?suffix:String) {
-		this.playAnim('${singAnimations[direction % singAnimations.length]}${isMiss ? 'miss' : ''}${suffix != null ? '-$suffix' : ''}', true);
+		if (canSing) this.playAnim('${singAnimations[direction % singAnimations.length]}${isMiss ? 'miss' : ''}${suffix != null ? '-$suffix' : ''}', true);
 		this.lastHit = Conductor.songPosition;
 		this.isSinging = true;
 	}

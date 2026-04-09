@@ -102,31 +102,46 @@ class NoteStyle {
 	}
 
 	public function getStrumAssetPath():String {
-		var path:String = Paths.image('game/notes/$id/${_data.strums?.assetPath ?? _data?.assetPath ?? 'strums'}');
+		final nullCheck:String = _data.strums?.assetPath ?? _data?.assetPath ?? 'strums';
+		var path:String = Paths.image(nullCheck);
+		if (!Paths.fileExists(path, true))
+			path = Paths.image('game/notes/$id/$nullCheck');
 		if (!Paths.fileExists(path, true) && fallback != null)
 			return fallback.getStrumAssetPath();
 		return path;
 	}
 	public function getNoteAssetPath():String {
-		var path:String = Paths.image('game/notes/$id/${_data.notes?.assetPath ?? _data?.assetPath ?? 'notes'}');
+		final nullCheck:String = _data.notes?.assetPath ?? _data?.assetPath ?? 'notes';
+		var path:String = Paths.image(nullCheck);
+		if (!Paths.fileExists(path, true))
+			path = Paths.image('game/notes/$id/$nullCheck');
 		if (!Paths.fileExists(path, true) && fallback != null)
 			return fallback.getNoteAssetPath();
 		return path;
 	}
 	public function getSustainAssetPath():String {
-		var path:String = Paths.image('game/notes/$id/${_data.sustains?.assetPath ?? _data?.assetPath ?? 'sustains'}');
+		final nullCheck:String = _data.sustains?.assetPath ?? _data?.assetPath ?? 'sustains';
+		var path:String = Paths.image(nullCheck);
+		if (!Paths.fileExists(path, true))
+			path = Paths.image('game/notes/$id/$nullCheck');
 		if (!Paths.fileExists(path, true) && fallback != null)
 			return fallback.getSustainAssetPath();
 		return path;
 	}
 	public function getSplashAssetPath():String {
-		var path:String = Paths.image('game/notes/$id/${_data?.splashes?.assetPath ?? _data?.assetPath ?? 'splashes'}');
+		final nullCheck:String = _data?.splashes?.assetPath ?? _data?.assetPath ?? 'splashes';
+		var path:String = Paths.image(nullCheck);
+		if (!Paths.fileExists(path, true))
+			path = Paths.image('game/notes/$id/$nullCheck');
 		if (!Paths.fileExists(path, true) && fallback != null)
 			return fallback.getSplashAssetPath();
 		return path;
 	}
 	public function getHoldCoverAssetPath():String {
-		var path:String = Paths.image('game/notes/$id/${_data?.holdcovers?.assetPath ?? _data?.assetPath ?? 'holdcovers'}');
+		final nullCheck:String = _data?.holdcovers?.assetPath ?? _data?.assetPath ?? 'holdcovers';
+		var path:String = Paths.image(nullCheck);
+		if (!Paths.fileExists(path, true))
+			path = Paths.image('game/notes/$id/$nullCheck');
 		if (!Paths.fileExists(path, true) && fallback != null)
 			return fallback.getHoldCoverAssetPath();
 		return path;

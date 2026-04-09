@@ -42,10 +42,6 @@ class StateBackend extends flixel.FlxState {
 	public var measure(get, never):Int;
 	function get_measure() return Conductor.curMeasure;
 
-
-	public var usesLoadingScreen:Bool = false;
-	public var stuffToLoad:Array<FlxBasic> = [];
-
 	public static var instance:StateBackend;
 
 	override public function create() {
@@ -57,13 +53,8 @@ class StateBackend extends flixel.FlxState {
 
 		#if SCRIPT_SUPPORT
 		stateScripts.parent = this;
-		for (path in #if MOD_SUPPORT ModdingAPI.STATE_PATHS #else ['data/scripts/states'] #end) {
-			ModdingAPI.checkForScript([Paths.ASSETS_FOLDER, path].join("/") + '/${getScriptName()}', stateScripts);
-			#if MOD_SUPPORT
-			for (mod in ModdingAPI.getActiveMods())
-				ModdingAPI.checkForScript([ModdingAPI.MOD_FOLDER, mod.folder, path].join("/") + '/${getScriptName()}', stateScripts);
-			#end
-		}
+		for (path in #if MOD_SUPPORT ModdingAPI.STATE_PATHS #else ['data/scripts/states'] #end)
+			ModdingAPI.checkForScripts(path, getScriptName(), stateScripts);
 		#end
 		callInScripts('create');
 	}
@@ -75,26 +66,14 @@ class StateBackend extends flixel.FlxState {
 	override public function update(elapsed:Float) {
 		super.update(elapsed);
 
-		/* if (FlxG.keys.justPressed.TAB && Options.data.developerMode)
-			violet.states.PlayState.loadSong('test'); */
-
 		Conductor.update();
 
-		callInScripts('update');
-	}
-
-	override public function add(objORcall:FlxBasic) {
-		if (usesLoadingScreen) {
-			stuffToLoad.push(objORcall);
-		} else {
-			super.add(objORcall);
-		}
-		return objORcall;
+		callInScripts('update', [elapsed]);
 	}
 
 	public function callInScripts<T>(funcName:String, ?args:Array<Dynamic>, ?def:T):T {
-		#if SCRIPT_SUPPORT if (GlobalPack.instance != null && !funcName.toLowerCase().contains('create')) GlobalPack.instance.call(funcName, args); #end
-		return #if SCRIPT_SUPPORT stateScripts.call(funcName, args, def) ?? #end def;
+		#if SCRIPT_SUPPORT if (GlobalPack.instance != null && !funcName.toLowerCase().contains('create')) GlobalPack.instance.callVarients(funcName, args); #end
+		return #if SCRIPT_SUPPORT stateScripts.callVarients(funcName, args, def) ?? #end def;
 	}
 
 	public function runEvent<T:EventBase>(func:String, event:T):T {
@@ -104,24 +83,6 @@ class StateBackend extends flixel.FlxState {
 		#else
 		return event;
 		#end
-	}
-
-	public function debugPrint(text:String, color:String = "WHITE") {
-		/* var txt:FlxText = new FlxText(10, 0, 0, text, 20);
-		txt.color = FlxColor.fromString(color);
-		txt.scrollFactor.set(0, 0);
-		txt.cameras = [FlxG.cameras.list.getLastOf()];
-		txt.y = (debugTexts.members.length * 30)+10;
-		txt.borderStyle = OUTLINE;
-		txt.borderSize = 2;
-		FlxTween.tween(txt, {alpha: 0}, 2, {startDelay: 3});
-		debugTexts.add(txt);
-		violet.backend.console.Logs.log(text, {
-			fileName: 'DebugPrint',//'$folderName:$fileName:$finalLine',
-			lineNumber: 0,
-			className: "",
-			methodName: ""
-		}); */
 	}
 
 	public function stepHit(curStep:Int) {

@@ -25,6 +25,8 @@ class ChartEditorState extends StateBackend {
     public static var difficulty:String = 'normal';
     public static var variant:Null<String> = null;
 
+    public var noteToPlace:NovaSprite;
+
     public var noteTypeHandlers:Map<String, NoteHitEvent->Void> = [
         "No Animation" => (e) -> {
             e.animCancelled = true;
@@ -109,6 +111,7 @@ class ChartEditorState extends StateBackend {
                 noteSprite.x = chartGrid.x + (50 * note.id);
                 noteSprite.y = note.time;
                 noteSprite.extra.set('noteData', note);
+                noteSprite.extra.set('strumLine', i);
                 notes.push(noteSprite);
                 add(noteSprite);
 
@@ -161,6 +164,15 @@ class ChartEditorState extends StateBackend {
         charterChud.x = 100;
         charterChud.y = FlxG.height - 200;
         add(charterChud);
+
+        noteToPlace = new NovaSprite(Paths.image('game/notes/default/notes'));
+        for (i in 0...5) {
+            noteToPlace.addAnim('$i', 'note' + ['Left', 'Down', 'Up', 'Right'][i]);
+        }
+        noteToPlace.playAnim('0');
+        noteToPlace.setGraphicSize(50, 50);
+        noteToPlace.updateHitbox();
+        add(noteToPlace);
     }
 
     var numTween:FlxTween;
@@ -172,15 +184,68 @@ class ChartEditorState extends StateBackend {
         super.update(e);
         playedThisFrame = false;
 
+        var yOffset = grids[0].y % 50;
+        yOffset /= 2;
+        var delta = FlxG.mouse.gameX - grids[0].x;
+        noteToPlace.x = grids[0].x + Math.round((delta-25)/50)*50;
+        noteToPlace.y = grids[0].y % 50;
+        var gridDelta = grids[0].y % 50;
+        if (FlxG.keys.pressed.SHIFT) {
+            noteToPlace.y += FlxG.mouse.gameY - 25;
+        } else {
+            noteToPlace.y += Math.round((FlxG.mouse.gameY-(gridDelta+25))/50)*50;
+        }
+        noteToPlace.playAnim('${Math.round((delta-25)/50) % 4}', true);
+        var strumlineToPlaceOn = Math.floor(Math.round((delta-25)/50)/4);
+        // noteToPlace.extra.set('strumLine', strumlineToPlaceOn);
+
+        noteToPlace.visible = !(delta < 0 || delta > 200 * grids.length);
+
+        var placeOffset = (FlxG.height/2) - noteToPlace.y;
+
+        if (FlxG.mouse.justPressed && noteToPlace.visible) {
+            var noteToAdd = new NovaSprite(Paths.image('game/notes/default/notes'));
+            for (i in 0...5) {
+                noteToAdd.addAnim('$i', 'note' + ['Left', 'Down', 'Up', 'Right'][i]);
+            }
+            noteToAdd.playAnim(noteToPlace.animation.name);
+            noteToAdd.setGraphicSize(50, 50);
+            noteToAdd.updateHitbox();
+            var thing = (noteToPlace.y);
+            thing -= FlxG.height/2;
+            thing /= 0.5;
+            thing /= 25 * 4;
+            thing *=  Conductor.stepLengthMs;
+            thing += Conductor.framePosition;
+            noteToAdd.extra.set('noteData', {
+                id: Std.parseInt(noteToPlace.animation.name),
+                time:thing
+            });
+            noteToAdd.extra.set('strumLine', strumlineToPlaceOn);
+            notes.push(noteToAdd);
+            add(noteToAdd);
+
+            var overlay = noteToAdd.clone();
+            overlay.visible = false;
+            overlay.blend = ADD;
+            noteToAdd.extra.set('overlay', overlay);
+            add(overlay);
+        }
+
         for (grid in grids) {
-            grid.y = - Conductor.framePosition;
+            grid.y = (-Conductor.framePosition / Conductor.stepLengthMs) * 25 * 4;
             grid.y *= 0.5;
             grid.y += FlxG.height/2;
         }
 
+        for (i in icons) {
+            i.canDance = Conductor.instrumental.playing;
+        }
+
         for (event in events) {
             var eventData = event.extra.get('eventData');
-            event.y = eventData.time - Conductor.framePosition;
+            var time = eventData.time - Conductor.framePosition;
+            event.y = (time / Conductor.stepLengthMs) * 25 * 4;
             event.y *= 0.5;
             event.y += FlxG.height/2;
             event.alpha = eventData.time < Conductor.framePosition ? 0.5 : 1;
@@ -188,10 +253,12 @@ class ChartEditorState extends StateBackend {
 
         for (note in notes) {
             var noteData = note.extra.get('noteData');
-            note.y = noteData.time - Conductor.framePosition;
+            var time = noteData.time - Conductor.framePosition;
+            note.y = (time / Conductor.stepLengthMs) * 25 * 4;
             note.y *= 0.5;
             note.y += FlxG.height/2;
             note.alpha = noteData.time < Conductor.framePosition ? 0.5 : 1;
+            note.x = grids[note.extra.get('strumLine')].x + (50 * noteData.id);
 
             if (note.alpha == 1) note.extra.set('hit', false);
             else if (note.alpha == 0.5 && !note.extra.get('hit')) {
@@ -204,6 +271,7 @@ class ChartEditorState extends StateBackend {
             }
 
             var overlay = note.extra.get('overlay');
+            overlay.x = note.x;
             overlay.y = note.y;
             overlay.alpha = note.alpha;
             overlay.visible = FlxG.mouse.overlaps(note);
@@ -221,7 +289,8 @@ class ChartEditorState extends StateBackend {
         ].get(charterChud.animation.name);
 
         if (FlxG.mouse.wheel != 0) {
-            var scrollAmt = (FlxG.mouse.wheel*(!FlxG.keys.pressed.SHIFT ? 200 : 50));
+            var scrollAmt = Conductor.stepLengthMs;
+            if (FlxG.mouse.wheel < 0) scrollAmt *= -1;
             Conductor.pause();
             numTween?.cancel();
             numTween = FlxTween.num(Conductor.framePosition, Conductor.framePosition - scrollAmt, 0.25, {ease: FlxEase.circOut}, (value) -> {

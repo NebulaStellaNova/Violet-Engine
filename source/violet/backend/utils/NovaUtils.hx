@@ -1,5 +1,7 @@
 package violet.backend.utils;
 
+import flixel.graphics.FlxGraphic;
+import openfl.display.BitmapData;
 import animate.FlxAnimateFrames.FlxAnimateSettings;
 import haxe.io.Path;
 import flixel.FlxCamera;
@@ -37,10 +39,11 @@ class NovaUtils {
 		return true;
 	}
 
-	public static function addNotification(title:String, body:String, expiryMs:Int = 10000, type:NotificationType = DEFAULT) {
+	public static function addNotification(title:String, body:String, expiryMs:Int = 10000, type:NotificationType = DEFAULT, ?infos:haxe.PosInfos) {
 		var notification = lemonui.controllers.NotificationController.instance.addNotification(title, body, expiryMs/1000);
 		if (type == ERROR) {
 			notification.elementColor = 0xFF591818;
+			violet.backend.console.Logs.log(body, ErrorMessage, infos);
 		}
 	}
 
@@ -119,6 +122,11 @@ class NovaUtils {
 
 
 	public static function getSparrowFrames(path:String):FlxAtlasFrames {
+		/* var bitmap = BitmapData.fromFile(path); // No Cache
+		var graphic = FlxGraphic.fromBitmapData(bitmap, path, false);
+		var xmlData = FileUtil.getFileContent(path.replace(".png", ".xml"));
+		return FlxAtlasFrames.fromSparrow(graphic, xmlData); */
+
 		return FlxAtlasFrames.fromSparrow(Cache.image(path, 'root', null), FileUtil.getFileContent(path.replace(".png", ".xml")));
 	}
 

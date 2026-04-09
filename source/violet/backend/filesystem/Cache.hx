@@ -1,5 +1,7 @@
 package violet.backend.filesystem;
 
+import violet.states.PlayState;
+import violet.data.character.Character;
 import flixel.graphics.FlxGraphic;
 import openfl.display.BitmapData;
 import openfl.media.Sound;
@@ -24,9 +26,27 @@ class Cache {
 				trace('debug:<cyan>Cached sound asset "<magenta>${Paths.sound(jointPath)#if REDIRECT_ASSETS_FOLDER .replace('../../../../', '') #end}<cyan>"');
 			}
 		}
+
+		FlxG.signals.preStateCreate.add(_->clear());
+
 	}
 
 	static final cache:Map<String, Dynamic> = new Map<String, Dynamic>();
+
+	/* public static function xml(path:String):String {
+		if (cache.exists(path))
+	} */
+
+
+	public static function clear() {
+		for (key=>i in cache) {
+			if (i is FlxGraphic) {
+				var graphic:FlxGraphic = cast i;
+				FlxG.bitmap.removeByKey(key);
+			}
+		}
+		cache.clear();
+	}
 
 	public static function image(path:String, directory:String = '', ?ext:String = 'png'):FlxGraphic {
 		var imagePath:String = Paths.image(path, directory, ext);
@@ -72,5 +92,22 @@ class Cache {
 		}
 		cache.set(audioPath, sound);
 		return sound;
+	}
+
+
+	// -- In Prep for Change Character Event -- \\
+
+	public static var cachedCharacters:Map<String, Character> = [];
+
+	public static function getCharacter(id:String) {
+		return cachedCharacters.get(id);
+	}
+
+	public static function character(id:String) {
+		if (cachedCharacters.exists(id)) return;
+		cachedCharacters.set(id, new Character(id));
+		if (Std.isOfType(FlxG.state, PlayState)) {
+			PlayState.instance.characters.push(cachedCharacters.get('id'));
+		}
 	}
 }

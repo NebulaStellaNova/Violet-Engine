@@ -19,9 +19,9 @@ props:
 - id: opponent
   type: Character
   position: [300, 885]
-  cameraOffsets: [-290, -200]
+  cameraOffsets: [190, -200]
 
 - id: player
   type: Character
   position: [1550, 885]
-  cameraOffsets: [-500, -200]
+  cameraOffsets: [-300, -120]

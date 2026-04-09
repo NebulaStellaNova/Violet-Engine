@@ -48,10 +48,9 @@ import flixel.util.FlxSave;
     ];
 
     public var savedScores:Map<String, Int> = [];
-    public var savedAccuracies:Map<String, Int> = [];
+    public var savedAccuracies:Map<String, Float> = [];
 
     public var savedLevelScores:Map<String, Int> = [];
-    public var savedLevelAccuracies:Map<String, Int> = [];
 
 }
 
@@ -83,6 +82,7 @@ class Options {
      */
     private static function load() {
         for (field in Reflect.fields(save.data)) {
+            if (!Reflect.hasField(data, field)) continue;
             var value = Reflect.getProperty(save.data, field);
 
             if (value == null) {
@@ -116,6 +116,19 @@ class Options {
         }
     }
 
+    private static function getSongAccuracy(id:String, difficulty:String, ?variation:String) {
+        var saveID:String = [ id, variation != '' && variation != null ? ':$variation' : '', ':$difficulty' ].join('');
+        return data.savedAccuracies.get(saveID) ?? 0;
+    }
+
+    private static function saveSongAccuracy(id:String, difficulty:String, ?variation:String, accuracy:Float, force:Bool = false) {
+        if (accuracy > getSongAccuracy(id, difficulty, variation) || force) {
+            var saveID:String = [ id, variation != '' && variation != null ? ':$variation' : '', ':$difficulty' ].join('');
+            data.savedAccuracies.set(saveID, accuracy);
+        }
+        flush();
+    }
+
     private static function getSongScore(id:String, difficulty:String, ?variation:String) {
         var saveID:String = [ id, variation != '' && variation != null ? ':$variation' : '', ':$difficulty' ].join('');
         return data.savedScores.get(saveID) ?? 0;
@@ -125,8 +138,8 @@ class Options {
         if (score > getSongScore(id, difficulty, variation) || force) {
             var saveID:String = [ id, variation != '' && variation != null ? ':$variation' : '', ':$difficulty' ].join('');
             data.savedScores.set(saveID, score);
-            flush();
         }
+        flush();
     }
 
     private static function getLevelScore(id:String, difficulty:String) {
@@ -138,7 +151,7 @@ class Options {
         if (score > getLevelScore(id, difficulty) || force) {
             var saveID:String = [ id, ':$difficulty' ].join('');
             data.savedLevelScores.set(saveID, score);
-            flush();
         }
+        flush();
     }
 }

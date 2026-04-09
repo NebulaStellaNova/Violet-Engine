@@ -1,17 +1,14 @@
 package violet.backend.scripting;
 
-import violet.states.ModState;
-import violet.backend.objects.ModShader;
 import violet.backend.objects.special_thanks.GenzuSprite;
 import violet.backend.objects.special_thanks.JamSprite;
 import violet.backend.utils.NovaUtils;
-import flixel.group.FlxGroup.FlxTypedGroup;
+import flixel.group.FlxGroup;
 import flixel.util.FlxAxes;
 import violet.backend.utils.MathUtil;
 import flixel.FlxBasic;
 import flixel.util.FlxStringUtil;
-import flixel.util.FlxDestroyUtil.IFlxDestroyable;
-import openfl.filters.GlowFilter;
+import flixel.util.FlxDestroyUtil;
 
 import violet.backend.utils.FileUtil;
 import violet.backend.filesystem.Paths;
@@ -23,27 +20,30 @@ class Script implements IFlxDestroyable {
 	var scriptCode:String;
 	var executed:Bool = false;
 
-	@:unreflective
-	public var hasBlacklisted:Bool = false;
+	@:unreflective public var hasBlacklisted:Bool = false;
 
 	public var fileName:String;
+	public var fullPath:String;
 	public var folderName:String;
+
+	public static var staticVars:Map<String, Dynamic> = [];
 
 	public var autoImports:Map<String, Dynamic> = [
 		// Flixel
-		'FlxG' => flixel.FlxG,
-		'FlxBasic' => flixel.FlxBasic,
+		'FlxG' => FlxG,
+		'FlxBasic' => FlxBasic,
 		'FlxObject' => flixel.FlxObject,
 		'FlxCamera' => flixel.FlxCamera,
+		'FlxGroup' => FlxGroup,
 		'FlxTypedGroup' => FlxTypedGroup,
 		'FlxMath' => flixel.math.FlxMath,
 		'FlxAngle' => flixel.math.FlxAngle,
-		'FlxEase' => flixel.tweens.FlxEase,
-		'FlxTimer' => flixel.util.FlxTimer,
-		'FlxSound' => flixel.sound.FlxSound,
-		'FlxTween' => flixel.tweens.FlxTween,
-		'FlxSpriteGroup' => flixel.group.FlxSpriteGroup,
-		'FlxTypedSpriteGroup' => flixel.group.FlxSpriteGroup.FlxTypedSpriteGroup,
+		'FlxEase' => FlxEase,
+		'FlxTimer' => FlxTimer,
+		'FlxSound' => FlxSound,
+		'FlxTween' => FlxTween,
+		'FlxSpriteGroup' => FlxSpriteGroup,
+		'FlxTypedSpriteGroup' => FlxTypedSpriteGroup,
 
 		// Engine
 		'Paths' => Paths,
@@ -55,9 +55,11 @@ class Script implements IFlxDestroyable {
 		'FlxSprite' => NovaSprite,
 		'NovaSprite' => NovaSprite,
 		'FunkinSprite' => NovaSprite,
-		'FunkinShader' => ModShader,
-		'ModShader' => ModShader,
-		'ModState' => ModState,
+		'FunkinShader' => violet.backend.objects.ModShader,
+		'ModShader' => violet.backend.objects.ModShader,
+		'ModState' => violet.states.ModState,
+
+		'Cache' => Cache,
 
 		'CameraOffset' => violet.states.PlayState.CameraOffset,
 
@@ -65,20 +67,9 @@ class Script implements IFlxDestroyable {
 		'AngleMask' => violet.backend.shaders.AngleMask,
 		'GaussianBlurShader' => violet.backend.shaders.GaussianBlurShader,
 
-		// Secial Thanks
+		// Special Thanks
 		'GenzuSprite' => GenzuSprite,
 		'JamSprite' => JamSprite,
-
-		// Callbacks
-		'add' => (object:FlxBasic) -> {
-			if (FlxG.state.subState != null)
-				return FlxG.state.subState.add(object);
-			else
-				return FlxG.state.add(object);
-		},
-		'remove' => (object:FlxBasic) -> return FlxG.state.remove(object),
-		'insert' => (pos:Int, object:FlxBasic) -> return FlxG.state.insert(pos, object),
-		'lerp' => MathUtil.lerp,
 
 		// Objects
 		'X' => FlxAxes.X,
@@ -104,15 +95,23 @@ class Script implements IFlxDestroyable {
 			BROWN: FlxColor.BROWN,
 			PINK: FlxColor.PINK,
 			MAGENTA: FlxColor.MAGENTA,
-			CYAN: FlxColor.CYAN
+			CYAN: FlxColor.CYAN,
+			fromRGB: FlxColor.fromRGB,
+			fromString: FlxColor.fromString
 		}
 	];
 
+	// run this function in their sub-classes
+	function initVars():Void {
+		for (key => value in autoImports)
+			set(key, value);
+	}
+
 	public var parent(get, set):Dynamic;
-	function set_parent(value:Dynamic):Dynamic
-		return null;
-	function get_parent():Dynamic
-		return null;
+	function set_parent(value:Dynamic):Dynamic return null;
+	function get_parent():Dynamic return null;
+
+	public function setPublicVars(vars:Map<String, Dynamic>) {}
 
 	public function new(path:String, isCode:Bool = false) {
 		var code:String = !isCode ? FileUtil.getFileContent(path) : path;
@@ -138,7 +137,7 @@ class Script implements IFlxDestroyable {
 		//
 	}
 
-	inline private function checkIfBlacklisted(code:String, importString:String) {
+	inline function checkIfBlacklisted(code:String, importString:String) {
 		var importsIncluded = [];
 		var variations = [
 			'import $importString;',
