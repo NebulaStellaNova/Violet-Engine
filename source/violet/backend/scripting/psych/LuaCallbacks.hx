@@ -141,7 +141,7 @@ class LuaCallbacks {
 		});
 
 		script.set("debugPrint", function(text:Dynamic = '', color:String = 'WHITE') {
-			cast (FlxG.state, violet.backend.StateBackend).debugPrint(text, color);
+			// cast (FlxG.state, violet.backend.StateBackend).debugPrint(text, color);
 		});
 	}
 
