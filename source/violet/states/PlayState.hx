@@ -328,6 +328,8 @@ class PlayState extends violet.backend.StateBackend {
 		camGame.followLerp = 0;
 	}
 
+	var camXLerp:Float = 0;
+	var camYLerp:Float = 0;
 	override public function update(elapsed:Float):Void {
 		super.update(elapsed);
 
@@ -336,16 +338,21 @@ class PlayState extends violet.backend.StateBackend {
 
 		var camTargetX:Float = camFollowPoint.x - (FlxG.width/2);
 		var camTargetY:Float = camFollowPoint.y - (FlxG.height/2);
+		var camOffsetX:Float = 0;
+		var camOffsetY:Float = 0;
 
 		camGame.zoom = camGameBase.zoom + camGameOffset.zoom;
 		for (i in cameraOffsets) {
 			camGame.zoom += i.zoom;
-			camTargetX += i.x ?? 0;
-			camTargetY += i.y ?? 0;
+			camOffsetX += i.x ?? 0;
+			camOffsetY += i.y ?? 0;
 		}
 
-		camGame.scroll.x = camGame.followLerp == 0 ? camTargetX : lerp(camGame.scroll.x, camTargetX, camGame.followLerp);
-		camGame.scroll.y = camGame.followLerp == 0 ? camTargetY : lerp(camGame.scroll.y, camTargetY, camGame.followLerp);
+		camXLerp = camGame.followLerp == 0 ? camTargetX : lerp(camXLerp, camTargetX, camGame.followLerp);
+		camYLerp = camGame.followLerp == 0 ? camTargetY : lerp(camYLerp, camTargetY, camGame.followLerp);
+
+		camGame.scroll.x = camXLerp + camOffsetX;
+		camGame.scroll.y = camYLerp + camOffsetY;
 
 		if (camGame.followLerp == 0) {
 			camGame.followLerp = prevLerp;
