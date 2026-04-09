@@ -82,6 +82,7 @@ class Options {
      */
     private static function load() {
         for (field in Reflect.fields(save.data)) {
+            if (!Reflect.hasField(data, field)) continue;
             var value = Reflect.getProperty(save.data, field);
 
             if (value == null) {

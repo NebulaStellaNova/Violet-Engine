@@ -249,36 +249,6 @@ class ModdingAPI {
 
 		return out;
 	}
-
-	public static function checkForScript(string:String, pack:ScriptPack) {
-
-		#if CAN_LUA_SCRIPT
-		for (ext in ModdingAPI.EXT_ALIASES.get("lua")) {
-			if (Paths.fileExists('$string.$ext', true)) {
-				var script = new violet.backend.scripting.LuaScript('$string.$ext');
-				pack.addScript(script);
-			}
-		}
-		#end
-
-		#if CAN_HAXE_SCRIPT
-		for (ext in ModdingAPI.EXT_ALIASES.get("hx")) {
-			if (Paths.fileExists('$string.$ext', true)) {
-				var script = new violet.backend.scripting.FunkinScript('$string.$ext');
-				pack.addScript(script);
-			}
-		}
-		#end
-
-		#if CAN_HAXE_SCRIPT
-		for (ext in ModdingAPI.EXT_ALIASES.get("py")) {
-			if (Paths.fileExists('$string.$ext', true)) {
-				var script = new violet.backend.scripting.PythonScript('$string.$ext');
-				pack.addScript(script);
-			}
-		}
-		#end
-	}
 	#end
 
 	@:unreflective public static function powerDown() {
