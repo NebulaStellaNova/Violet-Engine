@@ -51,6 +51,7 @@ class StoryMenu extends SubStateBackend {
 
     public function build() {
 		var mainMenu:MainMenu = new MainMenu();
+        mainMenu.canSelect = false;
 		StoryMenu.skipTransition = true;
 		mainMenu.openSubState(this);
 		return mainMenu;

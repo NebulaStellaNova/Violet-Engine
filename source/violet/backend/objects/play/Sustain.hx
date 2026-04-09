@@ -61,14 +61,14 @@ class Sustain extends NovaSprite {
 	 */
 	public var canHit(get, never):Bool;
 	inline function get_canHit():Bool {
-		return (time + parentNote.time) > Conductor.framePosition - (Scoring.maxWindow * parentNote.earlyWindow) && (time + parentNote.time) < Conductor.framePosition + (Scoring.maxWindow * parentNote.lateWindow);
+		return (time + parentNote.time) > Conductor.framePosition - (Scoring.missThreshold * parentNote.earlyWindow) && (time + parentNote.time) < Conductor.framePosition + (Scoring.missThreshold * parentNote.lateWindow);
 	}
 	/**
 	 * If true it's too late to hit the sustain.
 	 */
 	public var tooLate(get, never):Bool;
 	inline function get_tooLate():Bool {
-		return (time + parentNote.time) < Conductor.framePosition - (Scoring.maxWindow * parentNote.earlyWindow) && !wasHit;
+		return (time + parentNote.time) < Conductor.framePosition - (Scoring.missThreshold * parentNote.earlyWindow) && !wasHit;
 	}
 	/**
 	 * If true this sustain has been hit.

@@ -100,6 +100,16 @@ class PlayState extends violet.backend.StateBackend {
 	public var defaultCamZoom:Float = 0.7;
 
 	public var misses:Int = 0;
+	private var accuracies:Array<Float> = [];
+	public var accuracy(get, never):Float;
+	function get_accuracy():Float {
+		var out = 100.0;
+		for (i in accuracies) {
+			out += i;
+		}
+		out /= accuracies.length + 1;
+		return Math.round(out * 100) / 100;
+	}
 
 	public var score:Int = 0;
 	public var healthBar:HealthBar;
@@ -309,6 +319,9 @@ class PlayState extends violet.backend.StateBackend {
 		DebugDisplay.registerVariable("Current Difficulty", "difficulty");
 		DebugDisplay.registerVariable("Current Variantion", "variation");
 		DebugDisplay.registerVariable("Is Story Mode", "isStoryMode");
+		DebugDisplay.registerVariable("Misses", "misses");
+		DebugDisplay.registerVariable("Score", "score");
+		DebugDisplay.registerVariable("Accuracy", "accuracy");
 		if (playlist.length != 0) DebugDisplay.registerVariable("Playlist Items", "playlist");
 		#end
 
@@ -426,6 +439,13 @@ class PlayState extends violet.backend.StateBackend {
 			score += Math.round(judgement.score);
 			health += Constants.DEFAULT_HEALTH_GAIN;
 			comboGroup.popupRating(judgement.rating, 0);
+
+			var noteHitDelta = note.time - Conductor.framePosition;
+			// trace(Math.abs(noteHitDelta) + ', ' + Scoring.missThreshold);
+			var rawAcc = Math.abs(noteHitDelta) / Scoring.missThreshold;
+			var roundedAcc = Math.round(rawAcc*10000)/10000;
+			var acc = 100 - (roundedAcc * 100);
+			accuracies.push(acc);
 		} else if (event.spawnSplash == true) // on purpose ***do not touch***
 			note.parentStrum.spawnSplash(note);
 
@@ -656,6 +676,7 @@ class PlayState extends violet.backend.StateBackend {
 		if (event.cancelled) return;
 		songEnded = true;
 		ScoreUtil.saveSongScore(songData.songName, difficulty, songData.variant, score);
+		ScoreUtil.saveSongAccuracy(songData.songName, difficulty, songData.variant, accuracy);
 		storyScore += score;
 		if (playlist.length == 0 || !isStoryMode) {
 			exitToMenu();

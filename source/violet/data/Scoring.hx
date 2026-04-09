@@ -13,8 +13,6 @@ class Scoring {
     //        TODO: Add other input windows
     // -- Default is P-Bot 1 input from V-Slice -- \\
 
-    public static var maxWindow:Float = 200;
-
     public static var killerWindow:Float = 12.5;
     public static var sickWindow:Float = 45;
     public static var goodWindow:Float = 90;

@@ -273,6 +273,7 @@ class FreeplayMenu extends SubStateBackend {
 
 	public function build() {
 		var mainMenu:MainMenu = new MainMenu();
+        mainMenu.canSelect = false;
 		FreeplayMenu.skipTransition = true;
 		mainMenu.openSubState(this);
 		return mainMenu;
