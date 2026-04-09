@@ -97,6 +97,8 @@ class PlayState extends violet.backend.StateBackend {
 
 	public var defaultCamZoom:Float = 0.7;
 
+	public var misses:Int = 0;
+
 	public var score:Int = 0;
 	public var healthBar:HealthBar;
 	public var health:Float;
@@ -342,7 +344,7 @@ class PlayState extends violet.backend.StateBackend {
 			camGame.followLerp = prevLerp;
 		}
 
-		if (Controls.accept && !FlxG.mouse.justPressed) {
+		if (Controls.pause && !FlxG.mouse.justPressed) {
 			pause();
 		}
 
@@ -420,6 +422,10 @@ class PlayState extends violet.backend.StateBackend {
 	function onNoteMissed(note:Note) {
 		if (!Conductor.instrumental.playing && note.parent.isComputer) return;
 		if (note.wasMissed) return;
+		final event:NoteHitEvent = runSongEvent("noteMissed", new NoteHitEvent(note));
+		if (event.cancelled) return;
+
+		misses++;
 
 		note.wasMissed = true; note.alpha *= 0.6;
 		generalVocals.pause(); note.parent.vocals.pause();
@@ -468,6 +474,8 @@ class PlayState extends violet.backend.StateBackend {
 	function onSustainMissed(sustain:Sustain) {
 		if (!Conductor.instrumental.playing && sustain.parent.isComputer) return;
 		if (sustain.wasMissed) return;
+		final event:NoteHitEvent = runSongEvent("sustainMissed", new NoteHitEvent(note));
+		if (event.cancelled) return;
 
 		sustain.wasMissed = true; sustain.alpha *= 0.6;
 		generalVocals.pause(); sustain.parent.vocals.pause();
