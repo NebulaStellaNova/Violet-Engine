@@ -43,6 +43,13 @@ class LuaScript extends Script {
 			violet.backend.console.Logs.traceCallback(s, info);
 		}
 		initVars();
+		set('curStep', 0);
+		set('curBeat', 0);
+		if (Std.isOfType(FlxG.state, violet.states.PlayState)) {
+			for (i in violet.states.PlayState.instance.characterIDs) {
+				set(i.replace('-', '_').replace(' ', '_ '), new violet.data.character.Character(i));
+			}
+		}
 		internalScript.execute();
 	}
 
@@ -64,8 +71,9 @@ class LuaScript extends Script {
 	}
 
 	override public function call<T>(funcName:String, ?args:Array<Dynamic>, ?def:T):T {
+		var result:T = def;
 		try {
-			return internalScript.callFunc(funcName, args ?? []) ?? def;
+			result = internalScript.callFunc(funcName, args ?? []) ?? def;
 		} catch(e) {
 			var data:Array<String> = e.message.split(":");
 			var scriptString = data.shift();
@@ -73,21 +81,25 @@ class LuaScript extends Script {
 			var errorMsg = data.join(':');
 			NovaUtils.addNotification('Novamod Script Exception!', 'Error executing "$fileName:$lineNum":$errorMsg', ERROR);
 		}
-		return def;
+		return result;
 	}
-
 
 	override public function set(variable:String, value:Dynamic)
 		internalScript.setVar(variable, value);
-	override public function get<T>(variable:String, ?def:T):T
-		return internalScript.getVar(variable) ?? def;
+
+	override public function get<T>(variable:String, ?def:T):T {
+		trace('get $variable');
+		var res:T =  internalScript.getVar(variable) ?? def;
+		trace('after get $variable');
+		return res;
+	}
 
 }
 #else
 class LuaScript extends Script {
 	public function new(path:String, preset:Bool = true) {
 		super('', true);
-		trace('warning:Lua scripting is not available for the time being, crashes on execute. (path: "$path")');
+		trace('warning:Lua scripting is not available for this version of the engine');
 	}
 }
 #end

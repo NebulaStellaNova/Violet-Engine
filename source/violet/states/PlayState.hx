@@ -91,6 +91,7 @@ class PlayState extends violet.backend.StateBackend {
 
 	public var stage:Stage;
 	public var characters:Array<Character> = [];
+	public var characterIDs:Array<String> = [];
 
 	public var strumLines:FlxTypedGroup<StrumLine>;
 	public var generalVocals:FlxSound;
@@ -157,6 +158,15 @@ class PlayState extends violet.backend.StateBackend {
 		camHUD.bgColor = FlxColor.TRANSPARENT;
 		FlxG.cameras.add(camHUD, false);
 
+		SONG = ChartRegistry.getChart(song, difficulty, variation);
+		songData = SongRegistry.getSongByID(song);
+		variation = songData.variant;
+
+		for (i => data in SONG.strumLines) {
+			if (data == null) continue;
+			for(charName in data.characters) if (charName != null) characterIDs.push(charName);
+		}
+
 		ModdingAPI.checkForScripts('songs', songScripts);
 		ModdingAPI.checkForScripts('data/scripts/songs', songScripts);
 		ModdingAPI.checkForScripts('songs/$song/scripts', songScripts);
@@ -176,10 +186,6 @@ class PlayState extends violet.backend.StateBackend {
 
 		strumLines = new FlxTypedGroup<StrumLine>();
 
-		SONG = ChartRegistry.getChart(song, difficulty, variation);
-		songData = SongRegistry.getSongByID(song);
-		variation = songData.variant;
-
 		Conductor.playSong(songData.songName, variation); Conductor.pause();
 		Conductor.offset = (countdownLength) * Conductor.beatLengthMs;
 		if (SONG.meta.needsVoices) generalVocals = Conductor.addAdditionalTrack(FlxG.sound.load(Cache.sound(Paths.vocal(songData.songName, null, PlayState.variation), 'root', null, true), FlxG.sound.defaultMusicGroup));
@@ -196,6 +202,7 @@ class PlayState extends violet.backend.StateBackend {
 			strumLines.add(strumLine);
 
 			for(i=>charName in data.characters) {
+				if (charName == null) continue;
 				var char = new Character(i * 50, 0, charName, i == 1);
 				char.alpha = 0.5;
 				char.stagePosition = data.charStagePosition;

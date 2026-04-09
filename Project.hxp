@@ -239,8 +239,8 @@ class Project extends HXProject {
 		if (scriptSupport.exists()) {
 			canHaxeScript.enable();
 			canPythonScript.enable();
-			// is just crashing on script execute, no lua for now
-			// if (!isMobile()) canLuaScript.enable();
+			if (!isMobile()) canLuaScript.enable();
+
 
 			scriptedStates.enable();
 			if (canHaxeScript.exists())
