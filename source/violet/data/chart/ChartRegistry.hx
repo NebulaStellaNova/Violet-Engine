@@ -29,8 +29,9 @@ class ChartRegistry {
 				final yamlPath = Paths.yaml('songs/${song.songName}/charts$sub/$diff');
 				final jsonPath = Paths.json('songs/${song.songName}/charts$sub/$diff');
 				final eventsYamlPath = song.variant != '' ? Paths.yaml('songs/${song.songName}/events-${song.variant}') : Paths.yaml('songs/${song.songName}/events');
+				final eventsJsonPath = song.variant != '' ? Paths.json('songs/${song.songName}/events-${song.variant}') : Paths.json('songs/${song.songName}/events');
 
-				if (yamlPath != "" || jsonPath != "") registerChart(song, diff, { difficulty: diff, filePath: yamlPath != "" ? yamlPath : jsonPath, fileExt: yamlPath != "" ? "yaml" : "json", eventsPath: eventsYamlPath })
+				if (yamlPath != "" || jsonPath != "") registerChart(song, diff, { difficulty: diff, filePath: yamlPath != "" ? yamlPath : jsonPath, fileExt: yamlPath != "" ? "yaml" : "json", eventsPath: eventsYamlPath != "" ? eventsYamlPath : eventsJsonPath })
 				else trace('warning:<red>Could not find chart for song "${song.songName}" for difficulty "$diff"');
 			}
 		}

@@ -1,5 +1,6 @@
 package violet.data.converters;
 
+import haxe.io.Path;
 import moonchart.formats.fnf.FNFKade;
 import moonchart.formats.fnf.legacy.FNFPsych;
 import moonchart.formats.fnf.FNFVSlice;
@@ -66,8 +67,7 @@ class ChartConverters {
         }
 
         if (chartCache.eventsPath != "") {
-            final options = new ParserOptions(); options.maps = false;
-            final parsedEvents = Yaml.parse(FileUtil.getFileContent(chartCache.eventsPath), options);
+            final parsedEvents = ParseUtil.jsonOrYaml(Path.withoutExtension(chartCache.eventsPath), 'root');
             convertedChart.events ??= [];
             for (i in parsedEvents.events ?? []) {
                 i.global = true;
