@@ -183,6 +183,7 @@ class PlayState extends violet.backend.StateBackend {
 		ModdingAPI.checkForScripts('songs/$song/scripts', songScripts);
 		ModdingAPI.checkForScripts('songs/$song/scripts/$difficulty', songScripts);
 		songScripts.parent = this;
+		songScripts.execute();
 		callSongScripts('onLoaded');
 
 		// Start Dialogue

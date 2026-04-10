@@ -55,7 +55,7 @@ import flixel.util.FlxSave;
 }
 
 class Options {
-    public static var data:OptionsData = {};
+    public static var data:OptionsData = {}
     public static var save:FlxSave;
 
     public static function init() {
@@ -74,7 +74,7 @@ class Options {
     }
 
     public static function get(what:String):Dynamic {
-        return  Reflect.getProperty(data, what) ?? null;
+        return Reflect.getProperty(data, what);
     }
 
     /**
@@ -82,7 +82,7 @@ class Options {
      */
     private static function load() {
         for (field in Reflect.fields(save.data)) {
-            if (!Reflect.hasField(data, field)) continue;
+            if (Reflect.hasField(data, field)) continue;
             var value = Reflect.getProperty(save.data, field);
 
             if (value == null) {

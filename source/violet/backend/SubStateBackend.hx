@@ -51,6 +51,7 @@ class SubStateBackend extends flixel.FlxSubState {
 		subStateScripts.parent = this;
 		for (path in #if MOD_SUPPORT ModdingAPI.STATE_PATHS #else ['data/scripts/states'] #end)
 			ModdingAPI.checkForScripts(path, getScriptName(), subStateScripts);
+		subStateScripts.execute();
 		#end
 		callInScripts('create');
 	}

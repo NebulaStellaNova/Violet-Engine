@@ -34,6 +34,8 @@ class Stage extends flixel.group.FlxGroup {
         if (StageRegistry.stageDatas.get(id) == null) {
             NovaUtils.addNotification('Stage not found!', 'Could not find stage with ID "$id" using default stage "theVoid".', ERROR);
         }
+
+        stageScripts.execute();
     }
 
     public function load(characters:Array<Character>) {

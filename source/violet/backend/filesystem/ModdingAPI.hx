@@ -58,6 +58,50 @@ class ModdingAPI {
 	public static var STATE_PATHS = ['data/scripts/states'];
 
 	public static function init():Void {
+		#if CAN_HAXE_SCRIPT
+		#if (neko || eval || display)
+		for (tag => value in haxe.macro.Context.getDefines())
+			if (!rulescript.parsers.HxParser.defaultPreprocesorValues.exists(tag))
+				rulescript.parsers.HxParser.defaultPreprocesorValues.set(tag, value);
+		#end
+		var rootImport = violet.backend.scripting.Script.autoImports.copy();
+		var jic:Map<String, Dynamic> = [
+			'Float' => Float,
+			'Int' => Int,
+			'Bool' => Bool,
+			'String' => String,
+			'Array' => Array
+		];
+		for (key => value in jic)
+			rootImport.set(key, value);
+		for (key => value in rootImport)
+			rulescript.RuleScript.defaultImports.get('').set(key, value);
+
+		inline function getModulePath(name:String):String {
+			// taken from rulescript test folder since what I was doing just didn't want to work
+			var path:Array<String> = name.split('.');
+			var pack:Array<String> = [];
+			while (path[0].charAt(0) == path[0].charAt(0).toLowerCase()) pack.push(path.shift());
+			var moduleName:String = null;
+			if (path.length > 1) moduleName = path.shift();
+			return pack.length >= 1 ? pack.join('.') + '.' + (moduleName ?? path[0]) : path[0];
+		}
+		rulescript.types.ScriptedTypeUtil.resolveModule = (name:String) -> {
+			var scriptPath:String = null;
+			for (ext in ModdingAPI.EXT_ALIASES.get('hx'))
+				if (Paths.fileExists(scriptPath = Paths.file('source/${getModulePath(name).replace('.', '/')}', '', ext), true))
+					break;
+			if (!Paths.fileExists(scriptPath, true))
+				return null;
+			final content = FileUtil.getFileContent(scriptPath);
+			if (content.contains("scriptDisabled = true")) return null;
+			final parser = new rulescript.parsers.HxParser();
+			parser.mode = MODULE;
+			parser.allowAll();
+			return parser.parseModule(content);
+		}
+		#end
+
 		trace('debug:<yellow>Initializing Modding System...');
 		FlxG.save.data.registeredModIds ??= [];
 		FlxG.save.data.enabledModIds ??= [];
@@ -68,13 +112,12 @@ class ModdingAPI {
 		activeModsIds = FlxG.save.data.enabledModIds;
 
 		// Main.threadCallacks.addOnce(reloadRegistries);
-		reloadRegistries();
 		new HXCHandler();
-		trace(checkForHXC().join('\n'));
+		reloadRegistries();
 	}
 
 	public static function reloadModList() {
-		tempFolders = [];
+		tempFolders.resize(0);
 		#if !mobile
 		for (path in Paths.readFolder(MOD_FOLDER, true)) {
 			if (path.endsWith('.vmod') && !FileSystem.isDirectory('$MOD_FOLDER/$path')) {
@@ -143,7 +186,6 @@ class ModdingAPI {
 	inline public static function getActiveMods():Array<ModMeta>
 		return [for (id in activeModsIds) getMod(id)].filter((meta)->{return meta.id != "null";});
 
-
 	private static var registered:Bool = false;
 	public static function reloadRegistries():Void {
 		trace('debug:<yellow>${registered ? "Reloading" : "Initializing"} Registries...');
@@ -163,10 +205,13 @@ class ModdingAPI {
 		InitialState.loadingPercent += 1/7;
 		violet.data.chart.ChartRegistry.registerCharts();
 		InitialState.loadingPercent += 1/7;
+
+		final foundHXC:Array<String> = checkForHXC();
+		if (foundHXC.length == 0) trace('debug:<cyan>No HXC scripts found.');
+		else trace(['debug:<cyan>Found HXC scripts: "<magenta>', foundHXC.join('<cyan>", "<magenta>'), '<cyan>"'].join(''));
 	}
 
 	#if SCRIPT_SUPPORT
-
 	public static function checkForScripts(path:String, ?fileName:String = null, pack:ScriptPack) {
 		var scriptList = [for (file in Paths.readFolder('${Paths.ASSETS_FOLDER}/$path', true)) '${Paths.ASSETS_FOLDER}/$path/$file' ];
 		for (mod in getActiveMods()) {
@@ -220,8 +265,14 @@ class ModdingAPI {
 	public static function checkFolder(string:String) {
 		var out:Array<String> = [];
 		var files = FileSystem.isDirectory(string) || string == '' ? FileSystem.readDirectory(string) : [];
-		if (string == '') files = files.filter((v) -> {
-			return [Paths.ASSETS_FOLDER, MOD_FOLDER].contains(v);
+		// NOTE: DOESN'T FUCKING WORK
+		files = files.filter((v) -> {
+			if ([Paths.ASSETS_FOLDER, MOD_FOLDER].contains(v))
+				return true;
+			for (mod in getActiveMods())
+				if (['$MOD_FOLDER/${mod.folder}'].contains(v))
+					return true;
+			return false;
 		});
 		for (i in files) {
 			var path = string == '' ? i : [string, i].join('/');
@@ -246,6 +297,7 @@ class ModdingAPI {
 			if (FileUtil.getFileContent(i).contains("scriptDisabled = true")) continue;
 			HXCHandler.instance.addScript(i);
 		}
+		HXCHandler.instance.hxcScripts.execute();
 
 		return out;
 	}

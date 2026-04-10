@@ -28,7 +28,7 @@
 	"editor.tabSize": 4,
 
 	"files.associations": {
-		"*.{hxc,hxs,hscript}": "haxe",
+		"*.{hxc,hxs,hscript,hxp}": "haxe",
 		"*.{luac,luas,lscript}": "lua",
 		"*.{pyc,pys,pscript}": "python",
 		"*.json": "jsonc"

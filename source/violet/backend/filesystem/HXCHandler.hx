@@ -35,8 +35,4 @@ class HXCHandler extends flixel.FlxBasic {
 		clear = hxcScripts.clear;
 		instance = this;
 	}
-
-	override function update(elapsed:Float) {
-		super.update(elapsed);
-	}
 }

@@ -13,7 +13,7 @@ class SongRegistry {
     public static function registerSongs() {
         trace('debug:<yellow>Registering songs...');
         // Implementation for registering songs goes here
-        songs = [];
+        songs.resize(0);
         songDatas.clear();
         var songList:Array<String> = [];
         for (level in LevelRegistry.getAllLevels()) {

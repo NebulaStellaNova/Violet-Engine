@@ -55,6 +55,7 @@ class StateBackend extends flixel.FlxState {
 		stateScripts.parent = this;
 		for (path in #if MOD_SUPPORT ModdingAPI.STATE_PATHS #else ['data/scripts/states'] #end)
 			ModdingAPI.checkForScripts(path, getScriptName(), stateScripts);
+		stateScripts.execute();
 		#end
 		callInScripts('create');
 	}

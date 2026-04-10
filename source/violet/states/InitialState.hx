@@ -53,7 +53,7 @@ class InitialState extends StateBackend { // for now
 			if (!Std.isOfType(FlxG.state, PlayState)) {
 				PlayState.hasSeenCutscene = false;
 				PlayState.isStoryMode = false;
-				PlayState.playlist = [];
+				PlayState.playlist.resize(0);
 				PlayState.storyScore = 0;
 				PlayState.curStoryLevel = null;
 			}
@@ -105,7 +105,6 @@ class InitialState extends StateBackend { // for now
 				Conductor.pause();
 				ModdingAPI.reloadModList();
 				ModdingAPI.reloadRegistries();
-				ModdingAPI.checkForHXC();
 				GlobalPack.init();
 				refreshRedirects();
 				resetState();
@@ -143,7 +142,7 @@ class InitialState extends StateBackend { // for now
 	}
 
 	public static function refreshRedirects() {
-		stateRedirects = [];
+		stateRedirects.resize(0);
 		for (i in ModdingAPI.getActiveMods()) {
 			var thisOne:Array<RedirectPiece> = ParseUtil.jsonOrYaml('${ModdingAPI.MOD_FOLDER}/${i.folder}/data/config/stateRedirects', 'root', 'null');
 			if (thisOne != null) {

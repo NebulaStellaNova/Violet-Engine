@@ -127,7 +127,7 @@ class Alphabet extends flixel.group.FlxGroup {
     }
 
     public function refresh() {
-        letters = [];
+        letters.resize(0);
         for (i in members) remove(i);
         var textSplit:Array<String> = this.text.split("");
         var xPos:Float = 0;

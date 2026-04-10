@@ -413,7 +413,7 @@ class CharacterEditorState extends StateBackend {
         var pGA = ghostAnim;
 
         if (doArray) {
-            animationList = [];
+            animationList.resize(0);
             for (i in character._data.animations) {
                 animationDropdown.addOption(i.name);
                 animationList.push({

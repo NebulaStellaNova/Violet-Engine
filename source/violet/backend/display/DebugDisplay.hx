@@ -23,8 +23,7 @@ class DebugDisplay extends Sprite {
 
 	public var shown:Bool = false;
 
-	@:unreflective
-	public static var extraInfo:Array<{label:String, value:Dynamic}> = [];
+	@:unreflective public static var extraInfo:Array<{label:String, value:Dynamic}> = [];
 
 	public function new() {
 		super();
@@ -56,7 +55,7 @@ class DebugDisplay extends Sprite {
 
 		flixel.FlxG.signals.preStateSwitch.add(() -> {
 			maxMemory = maxCpu = 0;
-			extraInfo = [];
+			extraInfo.resize(0);
 		});
 
 		addEventListener(Event.ENTER_FRAME, onEnterFrame);

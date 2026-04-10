@@ -270,7 +270,7 @@ class ModMenu extends SubStateBackend {
 			i.destroy();
 		}
 
-		tagSprites = [];
+		tagSprites.resize(0);
 
 		tagsText.text = selectedMod.tags.length > 1 ? "Tags:" : "Tag:";
 		tagsText.updateHitbox();

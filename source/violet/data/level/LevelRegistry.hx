@@ -8,7 +8,7 @@ class LevelRegistry {
 
     public static function registerLevels() {
         trace('debug:<yellow>Registering levels...');
-        levels = [];
+        levels.resize(0);
         levelDatas.clear();
         var levelFiles = Paths.readFolder("data/levels");
         for (levelFile in levelFiles) {

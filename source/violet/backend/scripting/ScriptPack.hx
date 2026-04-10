@@ -18,8 +18,8 @@ class ScriptPack {
 	inline static function setScriptPublicVars(script:Script, object:Dynamic):Void {
 		var vars:Map<String, Dynamic> = [];
 		if (object != null && object is FlxBasic) {
-			var data = Reflect.getProperty(object, 'extra');
-			if (data != null) vars = cast data;
+			var basic:FlxBasic = cast object;
+			vars = basic.extra;
 		}
 		script.setPublicVars(vars);
 	}
@@ -64,6 +64,13 @@ class ScriptPack {
 				returner = caller;
 		}
 		return returner ?? def;
+	}
+
+	public function execute() {
+		for (script in scripts) {
+			if (script == null) continue;
+			script.execute();
+		}
 	}
 
 	public function callVariants<T>(func:String, ?args:Array<Dynamic>, ?def:T):T {

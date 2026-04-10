@@ -25,7 +25,13 @@ enum abstract ConsoleColors(String) from String to String {
 	var CYAN =          "\x1b[96m";
 	var WHITE =         "\x1b[97m";
 
-	public static final colorList = flixel.system.macros.FlxMacroUtil.buildMap('violet.backend.console.ConsoleColors');
+	public static final colorList = {
+		var lol = flixel.system.macros.FlxMacroUtil.buildMap('violet.backend.console.ConsoleColors');
+		for (variable in Type.getClassFields(Logs))
+			if (variable.endsWith('_COLOR'))
+				lol.set(variable.split('_')[0], Reflect.getProperty(Logs, variable));
+		lol;
+	}
 
 	public static function formatString(string:String):String {
 		string = string.replace("lua:0", "lua:?");

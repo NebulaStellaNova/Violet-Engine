@@ -10,7 +10,7 @@ class NoteStyleRegistry {
 
     public static function registerNoteStyles() {
         trace('debug:<yellow>Registering note styles...');
-        noteStyles = [];
+        noteStyles.resize(0);
         noteStyleDatas.clear();
 
         for (file in Paths.readFolder("data/notestyles")) {

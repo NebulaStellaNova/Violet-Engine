@@ -17,6 +17,7 @@ class GlobalPack #if SCRIPT_SUPPORT extends ScriptPack #end {
         var pack = new GlobalPack();
 		ModdingAPI.checkForScripts('data/scripts/global', pack);
 		ModdingAPI.checkForScripts('data', 'global', pack);
+        pack.execute();
 
         pack.call('create');
         pack.call('postCreate');

@@ -40,7 +40,7 @@ class FunkinScript extends Script {
 		return internalScript.superInstance;
 
 	override function setPublicVars(vars:Map<String, Dynamic>):Void
-		internalScript.context.publicVariables = vars ?? [];
+		internalScript.context.publicVariables = vars;
 
 	public var isHXC:Bool = false;
 	public function new(path:String, isCode:Bool = false, isHXC:Bool = false, ?extraPath:String):Void {
@@ -59,11 +59,10 @@ class FunkinScript extends Script {
 				scriptCode += '\n' + FileUtil.getFileContent('${ModdingAPI.MOD_FOLDER}/${i.folder}/data/scripts/import.hx');
 		}
 		checkForBlacklistedImports();
-		executeScript();
 	}
 
 	override function initVars():Void {
-		super.initVars();
+		// super.initVars();
 
 		set('log', (value:Dynamic, type:LogType = LogMessage) ->
 			Logs.log(value, type, internalScript.access.posInfos())
@@ -101,7 +100,7 @@ class FunkinScript extends Script {
 	/**
 	 * Implement: https://github.com/Kriptel/RuleScript/blob/master/test/src/Main.hx#L339
 	 */
-	public function executeScript():Void {
+	override public function execute():Void {
 		if (executed) return;
 		if (isHXC) internalScript.getParser(HxParser).mode = MODULE;
 		internalScript.getParser(HxParser).allowAll();
@@ -113,6 +112,7 @@ class FunkinScript extends Script {
 			NovaUtils.addNotification('Novamod Script Exception!', 'Error executing "$fileName":${errorMsg}\nOn Line #${lineNum}', ERROR);
 			return exception;
 		});
+		call('new');
 		executed = true;
 	}
 

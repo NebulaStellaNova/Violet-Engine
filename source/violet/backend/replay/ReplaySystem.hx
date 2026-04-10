@@ -23,7 +23,7 @@ class ReplaySystem extends FlxBasic {
     public static function startRecording() {
         instance = new ReplaySystem();
         FlxG.state.add(instance);
-        currentInputs = [];
+        currentInputs.resize(0);
         instance._startRecording();
     }
 
@@ -55,7 +55,7 @@ class ReplaySystem extends FlxBasic {
         if (FlxG.keys.anyJustPressed([ANY])) {
             var baseFields:Array<String> = Reflect.fields(Type.createEmptyInstance(FlxBaseKeyList));
             var fields:Array<String> = Reflect.fields(FlxG.keys.justPressed).filter((v)->return !baseFields.contains(v));
-            if (includedKeys != []) fields = fields.filter((v)->return includedKeys.contains(v));
+            if (includedKeys.length != 0) fields = fields.filter((v)->return includedKeys.contains(v));
             trace(fields);
             for (i in fields) {
                 if (FlxG.keys.anyJustPressed([FlxKey.fromString(i)])) {
@@ -71,7 +71,7 @@ class ReplaySystem extends FlxBasic {
         if (FlxG.keys.anyJustReleased([ANY])) {
             var baseFields:Array<String> = Reflect.fields(Type.createEmptyInstance(FlxBaseKeyList));
             var fields:Array<String> = Reflect.fields(FlxG.keys.justReleased).filter((v)->return !baseFields.contains(v));
-            if (includedKeys != []) fields = fields.filter((v)->return includedKeys.contains(v));
+            if (includedKeys.length != 0) fields = fields.filter((v)->return includedKeys.contains(v));
             for (i in fields) {
                 if (FlxG.keys.anyJustReleased([FlxKey.fromString(i)])) {
                     currentInputs.push({
