@@ -15,6 +15,8 @@ class PauseMenu extends EditorListBackend {
 
     public var pauseMusicSound:FlxSound;
 
+    public var optionBg:NovaSprite;
+
     public var pauseInfo:Array<String> = [ // Variable named by @ShamrockDeveloper
         PlayState.SONG.meta.displayName,
         PlayState.songData._data?.composer != null ? 'Composer: ${PlayState.songData._data?.composer}' : null,
@@ -25,8 +27,10 @@ class PauseMenu extends EditorListBackend {
 
     public var pauseMenuOptions:Array<EditorListOption>;
 
-    override public function new() {
+    override public function new()
+    {
         pauseInfo = pauseInfo.filter((v)->{ return v != null; });
+
         pauseMenuOptions = [
             { title: "RESUME", disabled: false, onClick: ()->{
                 var event:EventBase = PlayState.instance.songScripts.event('onResume', new EventBase());
@@ -45,11 +49,16 @@ class PauseMenu extends EditorListBackend {
             { title: "CHANGE DIFFICULTY", disabled: true, onClick: ()->{
 
             }},
-            { title: "CHANGE OPTIONS", disabled: true, onClick: ()->{
-
-            }},
             { title: "ENABLE PRACTICE MODE", disabled: true, onClick: ()->{
 
+            }},
+            { title: "OPTIONS", disabled: false, onClick: ()->{
+                var event:EventBase = PlayState.instance.songScripts.event('onOpenOptions', new EventBase());
+                // event = subStateScripts.event('openOptions', event);
+                if (!event.cancelled) {
+                    FlxTween.tween(optionBg, { alpha: 0.7 }, 0.5, { ease: FlxEase.expoOut });
+                    openSubState(new OptionsMenu());
+                }
             }},
             { title: "EXIT TO MENU", disabled: false, onClick: ()->{
                 var event:EventBase = PlayState.instance.songScripts.event('onExitToMenu', new EventBase());
@@ -59,10 +68,12 @@ class PauseMenu extends EditorListBackend {
                 });
             }}
         ];
+
         if (PlayState.instance.inCutscene) {
             pauseMenuOptions[1].title = pauseMenuOptions[1].title.replace("SONG", "CUTSCENE");
             pauseMenuOptions.insert(1, { title: "SKIP CUTSCENE", disabled: false, onClick: ()->PlayState.instance.callSongScripts("onSkipCutscene")});
         }
+
         super(pauseMenuOptions);
     }
 
@@ -98,6 +109,12 @@ class PauseMenu extends EditorListBackend {
 
             FlxTween.tween(infoText, { alpha: 1, y: (i * 35) + 20 }, 1, { ease: FlxEase.expoOut, startDelay: i * 0.1 });
         }
+
+        optionBg = new NovaSprite().makeGraphic(FlxG.width, FlxG.height, FlxColor.WHITE);
+        optionBg.alpha = 0;
+        optionBg.scrollFactor.set();
+        optionBg.camera = subCamera;
+        add(optionBg);
     }
 
     override function pickOption(option:{title:String, onClick:() -> Void}) {
@@ -127,6 +144,12 @@ class PauseMenu extends EditorListBackend {
         for (i=>item in items) {
             if (amt == 0) item.x = 80 + ((i-debugCurSelected)*20);
         }
+    }
+
+    override public function closeSubState()
+    {
+        FlxTween.tween(optionBg, { alpha: 0 }, 0.5, { ease: FlxEase.expoOut });
+        super.closeSubState();
     }
 
     override function destroy() {

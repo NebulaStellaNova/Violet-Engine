@@ -771,11 +771,9 @@ class PlayState extends violet.backend.StateBackend {
 	}
 
 	public dynamic function exitToMenu() {
-		FlxG.switchState(MainMenu.new);
 		if (isStoryMode)
 			FlxG.switchState(new StoryMenu().build());
 		else
 			FlxG.switchState(new FreeplayMenu().build());
 	}
-
 }

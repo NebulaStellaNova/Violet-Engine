@@ -129,9 +129,12 @@ class OptionsMenu extends SubStateBackend {
             option.updatePosition();
         }
 
-        if (Controls.accept && enableInput) selectMenu();
+        if (Controls.accept && enableInput) {
+            selectMenu();
+        }
 
         if (Controls.back && enableInput) {
+            enableInput = false;
             if (options.length != 0) {
                 FlxTween.tween(this, { optionsListOffset: FlxG.width + 200 }, 0.5, { ease: FlxEase.expoIn, onComplete: (_)->closeOptions() });
                 updateDesc({});
@@ -147,6 +150,7 @@ class OptionsMenu extends SubStateBackend {
     function selectMenu() {
         if (!canSelectMenu) return;
         canSelectMenu = false;
+        enableInput = false;
         for (i in menus) {
             FlxTween.tween(i, { y: i.y+FlxG.width }, 0.5, { ease: FlxEase.expoIn });
         }
@@ -199,6 +203,7 @@ class OptionsMenu extends SubStateBackend {
             }
         }
         optionsScroll(0);
+        enableInput = true;
         FlxTween.tween(this, { optionsListOffset: 0 }, 0.5, { ease: FlxEase.expoOut });
     }
 
@@ -208,6 +213,7 @@ class OptionsMenu extends SubStateBackend {
             i.destroy();
         }
         canSelectMenu = true;
+        enableInput = true;
         options.resize(0);
 
         for (i in menus) {

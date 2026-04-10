@@ -276,6 +276,7 @@ class FreeplayMenu extends SubStateBackend {
         mainMenu.canSelect = false;
 		FreeplayMenu.skipTransition = true;
 		mainMenu.openSubState(this);
+		mainMenu.persistentUpdate = true;
 		return mainMenu;
 	}
 

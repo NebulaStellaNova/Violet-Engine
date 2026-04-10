@@ -201,7 +201,6 @@ class MainMenu extends StateBackend {
 
 	override public function update(elapsed:Float)
 	{
-
 		super.update(elapsed);
 		// trace(Main.stateClassName);
 		// trace(Main.subStateClassName);
@@ -343,7 +342,6 @@ class MainMenu extends StateBackend {
 		canSelect = false;
 
 		var classData = new ClassData(menuData.items[curSelected].state);
-
 
 		if (classData.isSubState) {
 			FlxTween.tween(bg, {x: FlxG.width - bg.width }, 0.5*2, { ease: FlxEase.smootherStepInOut });

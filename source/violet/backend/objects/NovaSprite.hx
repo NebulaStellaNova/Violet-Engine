@@ -13,6 +13,7 @@ import openfl.net.URLLoaderDataFormat;
 import openfl.net.URLRequest;
 import violet.backend.utils.NovaUtils;
 import violet.data.animation.AnimationData;
+import violet.backend.options.Options;
 
 #if ANIMATE_SUPPORT
 import animate.FlxAnimate;
@@ -55,6 +56,7 @@ class NovaSprite extends #if ANIMATE_SUPPORT FlxAnimate #else FlxSprite #end {
 		if (path != null)
 			this.loadSprite(path);
 
+		this.antialiasing = Options.data.antialiasTextures;
 		this.animation.onFinish.add((name)->{
 			if (!allowOnComplete) return;
 			for (i in ['hold', 'end']) {

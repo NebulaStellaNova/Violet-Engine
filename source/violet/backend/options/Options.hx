@@ -1,6 +1,14 @@
 package violet.backend.options;
 
 import flixel.util.FlxSave;
+import flixel.FlxG;
+import flixel.FlxSprite;
+import flixel.text.FlxText;
+import flixel.group.FlxGroup;
+import flixel.FlxBasic;
+import flixel.FlxState;
+import lime.app.Application;
+import Std;
 
 @:structInit class OptionsData {
     public var fps:Int = 60;
@@ -15,6 +23,8 @@ import flixel.util.FlxSave;
     public var disableScoreLerping:Bool = false;
     public var playAsOpponent:Bool = false;
     public var gpuCaching:Bool = false;
+    public var antialiasTextures:Bool = true;
+    public var vsync:Bool = #if linux false #else true #end;
     public var controls:Map<String, Array<String>> = [
         'note_left' => ['A', 'LEFT'],
         'note_down' => ['S', 'DOWN'],
@@ -68,8 +78,57 @@ class Options {
     public static function set(what:String, value:Dynamic) {
         if (Reflect.fields(data).contains(what)) {
             Reflect.setProperty(data, what, value);
+            setterCallback(what);
         } else {
             trace('warning:Could not find option data for value $what');
+        }
+    }
+
+    public static function setterCallback(what:String)
+    {
+        switch (what) {
+            case 'antialiasTextures':
+                applyAntialiasingToState();
+            case 'fps', 'vsync':
+                var newFps = if (data.vsync) Application.current.window.displayMode.refreshRate else data.fps;
+                if (data.vsync && data.fps == Application.current.window.displayMode.refreshRate) return;
+                if(data.fps > FlxG.drawFramerate)
+                {
+                    FlxG.updateFramerate = newFps;
+                    FlxG.drawFramerate = newFps;
+                }
+                else
+                {
+                    FlxG.drawFramerate = newFps;
+                    FlxG.updateFramerate = newFps;
+                }
+        }
+    }
+
+    public static function applyAntialiasingToState()
+    {
+        try {
+            if (FlxG.state == null)
+                return;
+            applyAntialiasingToMembers((cast FlxG.state:FlxState).members);
+        } catch(e:Dynamic) {
+            trace('Error applying antialiasing to members: $e');
+        }
+    }
+
+    private static function applyAntialiasingToMembers(members:Array<Dynamic>)
+    {
+        if (members == null)
+            return;
+        for (m in members) {
+            if (m == null)
+                continue;
+            if (Std.isOfType(m, FlxSprite) && !Std.isOfType(m, FlxText)) {
+                (cast m:FlxSprite).antialiasing = data.antialiasTextures;
+            }
+            if (Std.isOfType(m, FlxGroup)) {
+                applyAntialiasingToMembers((cast m:FlxGroup).members);
+            }
         }
     }
 

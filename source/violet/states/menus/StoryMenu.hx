@@ -54,6 +54,7 @@ class StoryMenu extends SubStateBackend {
         mainMenu.canSelect = false;
 		StoryMenu.skipTransition = true;
 		mainMenu.openSubState(this);
+        mainMenu.persistentUpdate = true;
 		return mainMenu;
 	}
 

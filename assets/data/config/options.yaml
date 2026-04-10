@@ -104,6 +104,25 @@ menus:
     saveID: disableScoreLerping
     type: bool
 
+- title: Graphics
+  options:
+  - name: Framerate
+    description: Sets the target framerate for the game.
+    saveID: fps
+    type: number
+    min: 30
+    max: 240
+    step: 1
+  - name: VSync
+    description: If enabled, the game will use the display's refresh rate instead of the Framerate value.
+    saveID: vsync
+    type: bool
+    platform: windows
+  - name: Texture Antialiasing
+    description: Enables linear filtering on textures for smoother visuals.
+    saveID: antialiasTextures
+    type: bool
+
 - title: Miscellaneous
   options:
   - name: Developer Mode
@@ -125,6 +144,6 @@ menus:
     saveID: debugDisplayOnStart
     type: bool
   - name: GPU Caching
-    description: < Insert Description >
+    description: Allows the GPU to store textures and keeps them cached, reducing RAM usage. (beefy GPU recommanded for this)
     saveID: gpuCaching
     type: bool

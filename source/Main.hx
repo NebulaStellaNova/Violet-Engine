@@ -120,10 +120,11 @@ class Main extends openfl.display.Sprite {
 		var gameHeight = 720;
 
 		#if !linux
-		var startFPS:Int = Application.current.window.displayMode.refreshRate;
+		var defaultRefresh:Int = Application.current.window.displayMode.refreshRate;
 		#else
-		var startFPS:Int = 60;
+		var defaultRefresh:Int = 60;
 		#end
+		var startFPS:Int = if (Options.data.vsync) defaultRefresh else Std.int(Options.data.fps);
 		new flixel.FlxGame(gameWidth, gameHeight, violet.states.InitialState, startFPS, startFPS, true);
 		FlxG.sound.volume = FlxG.save.data.volume ?? 0.4;
 		@:privateAccess FlxG.game._customSoundTray = violet.backend.display.VioletSoundTray;
