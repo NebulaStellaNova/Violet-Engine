@@ -43,7 +43,7 @@ class NovaUtils {
 		var notification = lemonui.controllers.NotificationController.instance.addNotification(title, body, expiryMs/1000);
 		if (type == ERROR) {
 			notification.elementColor = 0xFF591818;
-			violet.backend.console.Logs.log(body, ErrorMessage, infos);
+			violet.backend.console.Logs.log(body.replace('\n', ' '), ErrorMessage, infos);
 		}
 	}
 
