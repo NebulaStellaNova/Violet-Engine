@@ -66,5 +66,9 @@ class CreditsMenu extends EditorListBackend {
 				icon.alpha = item.alpha;
 			}
 		}
+
+		if (Controls.back) {
+			if (Std.isOfType(_parentState, MainMenu)) FlxTween.tween(cast(_parentState, MainMenu).bg, {x: 0 }, 0.5, { ease: FlxEase.quadInOut });
+		}
 	}
 }

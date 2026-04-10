@@ -119,7 +119,11 @@ class Main extends openfl.display.Sprite {
 		var gameWidth = 1280; // Mobile Width = 1600;
 		var gameHeight = 720;
 
+		#if !linux
 		var startFPS:Int = Application.current.window.displayMode.refreshRate;
+		#else
+		var startFPS:Int = 60;
+		#end
 		new flixel.FlxGame(gameWidth, gameHeight, violet.states.InitialState, startFPS, startFPS, true);
 		FlxG.sound.volume = FlxG.save.data.volume ?? 0.4;
 		@:privateAccess FlxG.game._customSoundTray = violet.backend.display.VioletSoundTray;

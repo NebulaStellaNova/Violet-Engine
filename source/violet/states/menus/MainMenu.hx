@@ -64,6 +64,10 @@ class MainMenu extends StateBackend {
 
 	public var menuItems:Array<NovaSprite> = [];
 
+	public var baseYs:Array<Float> = [];
+	public var floatOffsets:Array<Float> = [];
+	public var menuTime:Float = 0;
+
 	public var enableMobileControls:Bool = #if mobile true #else false #end;
 
 	public var leftWatermark:NovaText;
@@ -73,7 +77,7 @@ class MainMenu extends StateBackend {
 
 	public var substateTrans:Bool = true;
 
-	public var menuAlignment:String = "left";
+	public var menuAlignment:String = "center";
 	public var watermarkAlignment:String = "right";
 
 
@@ -107,8 +111,16 @@ class MainMenu extends StateBackend {
 		bg.x = 0;
 		add(bg);
 
+		var overlay:NovaSprite = new NovaSprite(0, 0);
+		overlay.setGraphicSize(FlxG.width, FlxG.height);
+		overlay.color = FlxColor.BLACK;
+		overlay.alpha = 0.25;
+		overlay.scrollFactor.set();
+		add(overlay);
+
 		for (i=>daItem in menuData.items) {
-			var item = new NovaSprite(0, (175*i)+90, Paths.image(menuData.directory + "/" + daItem.item));
+			var startY = (175*i)+90;
+			var item = new NovaSprite(FlxG.width/2, startY, Paths.image(menuData.directory + "/" + daItem.item));
 			item.addAnim("selected", daItem.item + " " + daItem.animations.selected, [], daItem.animations?.offsets?.selected ?? [0, 0], 24, true);
 			item.addAnim("static", daItem.item + " " + daItem.animations.idle, [], daItem.animations?.offsets?.idle ?? [0, 0], 24, true);
 			item.playAnim("static");
@@ -116,6 +128,8 @@ class MainMenu extends StateBackend {
 			item.updateHitbox();
 			item.centerOrigin();
 			item.centerOffsets();
+			baseYs.push(startY);
+			floatOffsets.push(Math.random() * Math.PI * 2);
 			if (daItem.disabled) item.color = FlxColor.interpolate(item.color, FlxColor.BLACK, 0.25);
 			//item.screenCenter(X);
 			menuItems.push(item);
@@ -191,7 +205,7 @@ class MainMenu extends StateBackend {
 		super.update(elapsed);
 		// trace(Main.stateClassName);
 		// trace(Main.subStateClassName);
-		if (Controls.uiUp || Controls.uiDown)
+		if (canSelect && (Controls.uiUp || Controls.uiDown))
 			changeSelection(uiCheck());
 		bg.color = MathUtil.colorLerp(bg.color, menuData.items[curSelected].color, 0.16);
 		bgColorString = ParseColor.fromInt(bg.color);
@@ -214,6 +228,16 @@ class MainMenu extends StateBackend {
 
 		if (Controls.accept) {
 			pickSelection();
+		}
+
+		menuTime += elapsed;
+		for (i => item in menuItems) {
+			var bob = Math.sin(menuTime * 1.6 + floatOffsets[i]) * 6;
+			item.y = baseYs[i] + bob;
+			var configured = menuData.items[i].scale ?? 1;
+			var target = (i == curSelected) ? configured * 1.12 : configured;
+			item.scale.x = FlxMath.lerp(item.scale.x, target, 0.12);
+			item.scale.y = item.scale.x;
 		}
 
 		if (Controls.back) {
@@ -255,12 +279,14 @@ class MainMenu extends StateBackend {
 		}
 
 		if (!enableMobileControls) return;
-		for (i => item in menuItems) {
-			if (FlxG.mouse.overlaps(item) && FlxG.mouse.justPressed) {
-				if (curSelected == i) {
-					pickSelection();
-				} else {
-					changeSelection(i-curSelected);
+		if (canSelect) {
+			for (i => item in menuItems) {
+				if (FlxG.mouse.overlaps(item) && FlxG.mouse.justPressed) {
+					if (curSelected == i) {
+						pickSelection();
+					} else {
+						changeSelection(i-curSelected);
+					}
 				}
 			}
 		}
@@ -290,18 +316,20 @@ class MainMenu extends StateBackend {
 			}
 			item.playAnim(i == curSelected ? "selected" : "static");
 			item.updateHitbox();
+			if (menuAlignment != "center") { // looked weird with the offset animations, so might as well not apply them for centered menus
+				item.offset.x = item.anims.get(i == curSelected ? "selected" : "static").offset[0];
+				item.offset.y = item.anims.get(i == curSelected ? "selected" : "static").offset[1];
+			}
 			if (canSelect) {
 				switch (menuAlignment) {
 					case "center":
 						item.screenCenter(X);
 					case "left":
-						item.x = 20;
+						item.x = 50;
 					case "right":
-						item.x = FlxG.width - item.width - 20;
+						item.x = FlxG.width - item.width - 50;
 				}
 			}
-			item.offset.x = item.anims.get(i == curSelected ? "selected" : "static").offset[0];
-			item.offset.y =  item.anims.get(i == curSelected ? "selected" : "static").offset[1];
 		}
 		curSelectedString = menuData.items[curSelected].item;
 	}
@@ -353,9 +381,9 @@ class MainMenu extends StateBackend {
 				case "center":
 					i.screenCenter(X);
 				case "left":
-					i.x = 20;
+					i.x = 50;
 				case "right":
-					i.x = FlxG.width - i.width - 20;
+					i.x = FlxG.width - i.width - 50;
 			}
 			FlxTween.tween(i, { x: i.x }, 0.5, { ease: FlxEase.smootherStepOut, onComplete: (_)-> canSelect = true });
 			i.x = prev;
