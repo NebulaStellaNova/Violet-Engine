@@ -7,25 +7,25 @@ import haxe.macro.Expr;
 
 class Macro {
 
-	public static function print(message:String) {
+	inline public static function print(message:String) {
 		Sys.println('\r\x1b[92m[   MACRO   ] -> [  Macro.hx  ]: \033[0m$message');
 	}
 
-	public static function addMetadata(buildPath:String, classPath:String) {
-		Compiler.addMetadata(buildPath, classPath);
+	inline public static function addMetadata(buildPath:String, classPath:String) {
+		Compiler.addMetadata('@:build($buildPath)', classPath);
 		print('Built $classPath.');
 	}
 
 	public static function init():Void {
 		print('Initializing macros...');
-		addMetadata('@:build(violet.backend.Macro.buildFlxBasic())', 'flixel.FlxBasic');
-		addMetadata('@:build(violet.backend.Macro.buildFlxObject())', 'flixel.FlxObject');
-		addMetadata('@:build(violet.backend.Macro.buildFlxSprite())', 'flixel.FlxSprite');
-		addMetadata('@:build(violet.backend.Macro.buildFlxTypedGroup())', 'flixel.group.FlxTypedGroup');
-		addMetadata('@:build(violet.backend.Macro.buildFlxSpriteGroup())', 'flixel.group.FlxTypedSpriteGroup');
-		addMetadata('@:build(violet.backend.Macro.buildFlxCamera())', 'flixel.FlxCamera');
-		addMetadata('@:build(violet.backend.Macro.buildFlxBaseKeyList())', 'flixel.input.FlxBaseKeyList');
-		addMetadata('@:build(violet.backend.VarTweenMacro.init())', 'flixel.tweens.misc.VarTween');
+		addMetadata('violet.backend.Macro.buildFlxBasic()', 'flixel.FlxBasic');
+		addMetadata('violet.backend.Macro.buildFlxObject()', 'flixel.FlxObject');
+		addMetadata('violet.backend.Macro.buildFlxSprite()', 'flixel.FlxSprite');
+		addMetadata('violet.backend.Macro.buildFlxTypedGroup()', 'flixel.group.FlxTypedGroup');
+		addMetadata('violet.backend.Macro.buildFlxSpriteGroup()', 'flixel.group.FlxTypedSpriteGroup');
+		addMetadata('violet.backend.Macro.buildFlxCamera()', 'flixel.FlxCamera');
+		addMetadata('violet.backend.Macro.buildFlxBaseKeyList()', 'flixel.input.FlxBaseKeyList');
+		addMetadata('violet.backend.VarTweenMacro.init()', 'flixel.tweens.misc.VarTween');
 		#if SCRIPT_SUPPORT
 		Compiler.include('violet', true);
 		Compiler.include('haxe', true, ['haxe.atomic.*', 'haxe.macro.*']);
@@ -165,6 +165,20 @@ class Macro {
 	 */
 	public static macro function buildFlxSprite():Array<Field> {
 		var classFields = Context.getBuildFields();
+
+		var setAntialiasingFunc = classFields.filter(field -> return field.name == 'set_antialiasing')[0];
+		switch (setAntialiasingFunc.kind) {
+			case FFun(f):
+				var initExpr:Expr = f.expr;
+				f.expr = macro {
+					// prevents it from being set to true
+					if (!violet.backend.options.Options.data.antialiasTextures)
+						return antialiasing = false;
+					$initExpr;
+				}
+				setAntialiasingFunc.kind = FFun(f);
+			default:
+		}
 
 		// I hate that I hate to do this twice.
 		var onScreenFunc = classFields.filter(field -> return field.name == 'isOnScreen')[0];
