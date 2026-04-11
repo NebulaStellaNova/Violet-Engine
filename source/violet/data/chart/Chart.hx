@@ -5,6 +5,7 @@ import violet.data.song.Song;
 import violet.data.song.SongRegistry;
 
 class Chart {
+
 	public var id:String;
 	public var _data:ChartData;
 
@@ -48,9 +49,11 @@ class Chart {
 			strumLines.push(new _ChartStrumLine(data));
 		}
 	}
+
 }
 
 class _ChartStrumLine {
+
 	public var _data:ChartStrumLine;
 
 	public final type:ChartStrumLineType;
@@ -118,4 +121,5 @@ class _ChartStrumLine {
 		vocalsSuffix = _data.vocalsSuffix;
 		inline get_strumPosition(); // running here so it sets "strumPosIsPure"
 	}
+
 }

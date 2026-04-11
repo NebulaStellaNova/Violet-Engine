@@ -4,16 +4,17 @@ import violet.backend.SubStateBackend;
 
 class ModSubState extends SubStateBackend {
 
-    public var id:String;
-    public var args:Dynamic;
+	public var id:String;
+	public var args:Dynamic;
 
-    override public function new(id:String, ?args:Dynamic) {
-        this.id = id;
-        this.args = args;
-        super();
-    }
+	override public function new(id:String, ?args:Dynamic) {
+		this.id = id;
+		this.args = args;
+		super();
+	}
 
-    override function getScriptName():String {
-        return id;
-    }
+	override function getScriptName():String {
+		return id;
+	}
+
 }

@@ -108,4 +108,5 @@ class SubStateBackend extends flixel.FlxSubState {
 		instance = null;
 		super.destroy();
 	}
+
 }

@@ -4,9 +4,10 @@ import violet.states.*;
 import violet.states.menus.*;
 
 class ClassData {
+
 	public var type:String;
 	public var name:String;
-	public var target:Dynamic;
+	public var target:flixel.FlxSubState;
 	public var isSubState:Bool = false;
 
 	public function new(string:String) {
@@ -45,4 +46,5 @@ class ClassData {
 			this.target = new ModState(string.split(":")[1]);
 		}
 	}
+
 }

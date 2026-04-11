@@ -13,6 +13,7 @@ class ScriptedModule extends Module implements rulescript.scriptedClass.RuleScri
 
 @:strictScriptedConstructor
 class Module {
+
 	/**
 	 * Whether the module is currently active.
 	 */
@@ -240,4 +241,5 @@ class Module {
 	 * Called when a character has been confirmed.
 	 */
 	// public function onCharacterConfirm(event:CharacterSelectScriptEvent):Void {}
+
 }

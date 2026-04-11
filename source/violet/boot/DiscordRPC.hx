@@ -5,6 +5,7 @@ import hxdiscord_rpc.Discord;
 import hxdiscord_rpc.Types;
 
 class DiscordRPC {
+
 	public static function init() {
 		final handlers:DiscordEventHandlers = new DiscordEventHandlers();
 		handlers.ready = cpp.Function.fromStaticFunction(onReady);
@@ -45,5 +46,6 @@ class DiscordRPC {
 
 	private static function onError(errorCode:Int, message:cpp.ConstCharStar)
 		trace('sys:Discord: Error ($errorCode:$message)');
+
 }
 #end

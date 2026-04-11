@@ -17,7 +17,7 @@ typedef RedirectPiece = {
 
 class InitialState extends StateBackend { // for now
 
-	var logo:NovaSprite = new NovaSprite(Paths.image("icons/dad"));
+	var logo:NovaSprite = new NovaSprite(Paths.image('icons/dad'));
 	var loadingBar:NovaSprite;
 
 	static var stateRedirects:Array<RedirectPiece> = [];
@@ -166,4 +166,5 @@ class InitialState extends StateBackend { // for now
 			FlxG.camera.visible = true;
 		}
 	}
+
 }

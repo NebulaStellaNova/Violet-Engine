@@ -13,12 +13,13 @@ typedef ChartCache = {
 }
 
 class ChartRegistry {
+
 	public static var charts:Array<Chart> = [];
 	public static var chartCache:Map<String, ChartCache> = new Map<String, ChartCache>();
 	public static var chartDatas:Map<String, ChartData> = new Map<String, ChartData>();
 
 	public static function registerCharts() {
-        trace('debug:<yellow>Registering charts...');
+		trace('debug:<yellow>Registering charts...');
 		charts.resize(0);
 		chartDatas.clear();
 		chartCache.clear();
@@ -31,7 +32,7 @@ class ChartRegistry {
 				final eventsYamlPath = song.variant != '' ? Paths.yaml('songs/${song.songName}/events-${song.variant}') : Paths.yaml('songs/${song.songName}/events');
 				final eventsJsonPath = song.variant != '' ? Paths.json('songs/${song.songName}/events-${song.variant}') : Paths.json('songs/${song.songName}/events');
 
-				if (yamlPath != "" || jsonPath != "") registerChart(song, diff, { difficulty: diff, filePath: yamlPath != "" ? yamlPath : jsonPath, fileExt: yamlPath != "" ? "yaml" : "json", eventsPath: eventsYamlPath != "" ? eventsYamlPath : eventsJsonPath })
+				if (yamlPath != '' || jsonPath != '') registerChart(song, diff, { difficulty: diff, filePath: yamlPath != '' ? yamlPath : jsonPath, fileExt: yamlPath != '' ? 'yaml' : 'json', eventsPath: eventsYamlPath != '' ? eventsYamlPath : eventsJsonPath })
 				else trace('warning:<red>Could not find chart for song "${song.songName}" for difficulty "$diff"');
 			}
 		}
@@ -40,7 +41,7 @@ class ChartRegistry {
 	public static function registerChart(song:Song, diff:String, cache:ChartCache) {
 		chartCache.set('${song.id}:$diff', cache);
 		// fetchChart('${song.id}:$diff', true); // Uncomment if you want to enable chart preloading for whatever reason.
-		trace('debug:<cyan>Found and registered chart for song with ID "<magenta>${song.songName}<cyan>" for difficulty "<magenta>$diff<cyan>"' + (song.variant != '' ? ' for variant "<magenta>${song.variant}<cyan>"' : ""));
+		trace('debug:<cyan>Found and registered chart for song with ID "<magenta>${song.songName}<cyan>" for difficulty "<magenta>$diff<cyan>"' + (song.variant != '' ? ' for variant "<magenta>${song.variant}<cyan>"' : ''));
 	}
 
 	public static function fetchChart(id:String, force:Bool = false):ChartData {
@@ -48,7 +49,7 @@ class ChartRegistry {
 		if (chartDatas.exists(id) && !force) return chartDatas.get(id);
 
 		var data = ChartConverters.convertChart(chartCache.get(id));
-		data.stage ??= "default"; // Prevent bug where if no stage is assigned it will load all stage's scripts.
+		data.stage ??= 'default'; // Prevent bug where if no stage is assigned it will load all stage's scripts.
 		chartDatas.set(id, data);
 		return data;
 	}
@@ -56,4 +57,5 @@ class ChartRegistry {
 	public static function getChart(songID:String, diff:String, ?variant:String):Chart {
 		return new Chart(songID, diff, null);
 	}
+
 }

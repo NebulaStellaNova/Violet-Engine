@@ -134,19 +134,19 @@ class NovaSprite extends #if ANIMATE_SUPPORT FlxAnimate #else FlxSprite #end {
 			return this;
 		}
 		final loader = new URLLoader();
-        loader.dataFormat = URLLoaderDataFormat.BINARY;
-        loader.addEventListener("complete", (_:Dynamic) -> {
+		loader.dataFormat = URLLoaderDataFormat.BINARY;
+		loader.addEventListener("complete", (_:Dynamic) -> {
 			this.filePath = prevUrl;
-            final bitmap:BitmapData = BitmapData.fromBytes(loader.data);
+			final bitmap:BitmapData = BitmapData.fromBytes(loader.data);
 			var graphic:FlxGraphic = FlxGraphic.fromBitmapData(bitmap, prevUrl, false);
 			graphic.destroyOnNoUse = false;
 			graphic.persist = true;
 			Cache.cache.set(prevUrl, graphic);
-            this.loadGraphic(graphic);
-            this.updateHitbox();
+			this.loadGraphic(graphic);
+			this.updateHitbox();
 			this.onLoaded();
-        });
-        loader.load(new URLRequest(url));
+		});
+		loader.load(new URLRequest(url));
 		return this;
 	}
 
@@ -367,9 +367,11 @@ class NovaSprite extends #if ANIMATE_SUPPORT FlxAnimate #else FlxSprite #end {
 		_scaledFrameOffset.put();
 		super.destroy();
 	}
+
 }
 
 class BetterRect extends FlxRect {
+
 	public static function newGetRotatedBounds(parent:FlxRect, degrees:Float, ?origin:FlxPoint, ?newRect:FlxRect, ?innerOffset:FlxPoint):FlxRect {
 		origin ??= FlxPoint.weak();
 		newRect ??= FlxRect.get();
@@ -416,4 +418,5 @@ class BetterRect extends FlxRect {
 		innerOffset.putWeak();
 		return newRect;
 	}
+
 }

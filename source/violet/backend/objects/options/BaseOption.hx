@@ -4,39 +4,40 @@ import flixel.group.FlxGroup;
 
 class BaseOption extends FlxGroup {
 
-    public var selected:Bool = false;
-    public var alphabet:Alphabet;
+	public var selected:Bool = false;
+	public var alphabet:Alphabet;
 
-    public var centerX:Bool = false;
+	public var centerX:Bool = false;
 
-    public var title(default, set):String;
-    function set_title(value:String) {
-        alphabet.text = value;
-        return title = value;
-    }
+	public var title(default, set):String;
+	function set_title(value:String) {
+		alphabet.text = value;
+		return title = value;
+	}
 
-    public var x(default, set):Float;
-    function set_x(value:Float) return x = alphabet.x = value;
-    public var y(default, set):Float;
-    function set_y(value:Float) return y = alphabet.y = value;
+	public var x(default, set):Float;
+	function set_x(value:Float) return x = alphabet.x = value;
+	public var y(default, set):Float;
+	function set_y(value:Float) return y = alphabet.y = value;
 
-    public var description:String;
+	public var description:String;
 
-    public function new(title:String, description:String = "") {
-        super();
+	public function new(title:String, description:String = "") {
+		super();
 
-        alphabet = new Alphabet("");
-        add(alphabet);
+		alphabet = new Alphabet("");
+		add(alphabet);
 
-        this.title = title;
-        this.description = title;
-    }
+		this.title = title;
+		this.description = title;
+	}
 
-    override function update(elapsed:Float) {
-        super.update(elapsed);
-        this.alphabet.alpha = this.selected ? 1 : 0.5;
-        updatePosition();
-    }
+	override function update(elapsed:Float) {
+		super.update(elapsed);
+		this.alphabet.alpha = this.selected ? 1 : 0.5;
+		updatePosition();
+	}
 
-    public function updatePosition() {}
+	public function updatePosition() {}
+
 }

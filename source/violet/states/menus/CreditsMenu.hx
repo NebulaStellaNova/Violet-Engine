@@ -27,13 +27,13 @@ class CreditsMenu extends EditorListBackend {
 
 		for (i in entries) {
 			out.push({ title: i.title, skip: true });
-			contributorList.push({ name: "" });
+			contributorList.push({ name: '' });
 			for (contributor in i.contributors) {
 				contributorList.push(contributor);
 				out.push({ title: contributor.name, description: contributor.role, bold: false });
 			}
-			out.push({ title: "", skip: true });
-			contributorList.push({ name: "" });
+			out.push({ title: '', skip: true });
+			contributorList.push({ name: '' });
 		}
 		super(out, false, true);
 	}
@@ -71,4 +71,5 @@ class CreditsMenu extends EditorListBackend {
 			if (Std.isOfType(_parentState, MainMenu)) FlxTween.tween(cast(_parentState, MainMenu).bg, {x: 0 }, 0.5, { ease: FlxEase.quadInOut });
 		}
 	}
+
 }

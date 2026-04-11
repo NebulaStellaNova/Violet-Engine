@@ -18,14 +18,13 @@ class FileUtil {
 		var data:String;
 		try {
 			data = #if mobile openfl.utils.Assets.exists(path) ? openfl.utils.Assets.getText(path) : #end sys.io.File.getContent(path);
-		} catch (e) {
-			data = "";
-		}
+		} catch (e)
+			data = '';
 		return data;
 	}
 
 	public static function openSaveDialog(title:String, filters:Array<String>, ?defaultPath:String, ?onSelect:String->Void) {
-        var filter:Null<String> = filters[0].replace('*.', ''); // TODO: fork lime and add mutli support
+		var filter:Null<String> = filters[0].replace('*.', ''); // TODO: fork lime and add multi support
 		var fileDialog:FileDialog = new FileDialog();
 		fileDialog.onSelect.add(onSelect);
 		/* if (onCancel != null)
@@ -35,7 +34,7 @@ class FileUtil {
 
 		fileDialog.browse(SAVE, filter, defaultPath, title);
 
-		// var result:Array<String> = Dialogs.openFile("Select a file please!", "Please select one or more files, so we can see if this method works", filters);
+		// var result:Array<String> = Dialogs.openFile('Select a file please!', 'Please select one or more files, so we can see if this method works', filters);
 	}
 
 	public static function isDataFile(file:String):Bool {
@@ -45,7 +44,8 @@ class FileUtil {
 		}
 		return isData;
 	}
-	// inline public static function setFileContent(path:String):String {
-	// 	return sys.io.File.getContent(path);
-	// }
+	/* inline public static function setFileContent(path:String):String {
+		return sys.io.File.getContent(path);
+	} */
+
 }

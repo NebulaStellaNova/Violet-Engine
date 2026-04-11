@@ -6,6 +6,7 @@ import violet.backend.utils.NovaUtils;
 import violet.states.menus.MainMenu;
 
 class TitleState extends StateBackend {
+
 	public var logoBase:NovaSprite;
 	public var logoFull:NovaSprite;
 	public var logoText:NovaSprite;
@@ -19,31 +20,31 @@ class TitleState extends StateBackend {
 	override public function create() {
 		super.create();
 
-		titleGirlfriend = new NovaSprite(FlxG.width, 50, Paths.image("menus/titlescreen/gfDanceTitle"));
-		titleGirlfriend.addAnim("idle", "gfDance", 24, true);
-		titleGirlfriend.playAnim("idle", true);
+		titleGirlfriend = new NovaSprite(FlxG.width, 50, Paths.image('menus/titlescreen/gfDanceTitle'));
+		titleGirlfriend.addAnim('idle', 'gfDance', 24, true);
+		titleGirlfriend.playAnim('idle', true);
 		add(titleGirlfriend);
 
-		logoFull = new NovaSprite(Paths.image("menus/titlescreen/logoFull"));
+		logoFull = new NovaSprite(Paths.image('menus/titlescreen/logoFull'));
 		logoFull.scale.set(0.7, 0.7);
 		logoFull.visible = false;
 		add(logoFull);
 
-		logoBase = new NovaSprite(Paths.image("menus/titlescreen/baseLogo"));
+		logoBase = new NovaSprite(Paths.image('menus/titlescreen/baseLogo'));
 		logoBase.scale.set(0.6, 0.6);
 		logoBase.alpha = 0;
 		add(logoBase);
 
-		logoText = new NovaSprite(Paths.image("menus/titlescreen/violetEngineText"));
+		logoText = new NovaSprite(Paths.image('menus/titlescreen/violetEngineText'));
 		logoText.scale.set(0.7, 0.7);
-		logoText.addAnim("boot", "writingAnimation", 40, false);
-		logoText.playAnim("boot", true);
+		logoText.addAnim('boot', 'writingAnimation', 40, false);
+		logoText.playAnim('boot', true);
 		logoText.animation.finish();
 		logoText.visible = false;
 		add(logoText);
 
 		FlxTween.tween(logoBase, { alpha: 1 }, 2, { startDelay: 1, ease: FlxEase.smootherStepOut, onComplete: (_)->{
-			logoText.playAnim("boot", true);
+			logoText.playAnim('boot', true);
 			logoText.animation.onFinish.add((_)->{
 				logoText.visible = false;
 				logoBase.visible = false;
@@ -59,10 +60,10 @@ class TitleState extends StateBackend {
 		}});
 		FlxTween.tween(logoBase.scale, { x: 0.7, y: 0.7 }, 2, { startDelay: 1, ease: FlxEase.smootherStepOut });
 
-		titleEnter = new NovaSprite(Paths.image("menus/titlescreen/titleEnter"));
-		titleEnter.addAnim("pressed", "pressed", null, [7, 7], 24, true);
-		titleEnter.addAnim("idle", "idle", null, [0, 0], 24, true);
-		titleEnter.playAnim("idle", true);
+		titleEnter = new NovaSprite(Paths.image('menus/titlescreen/titleEnter'));
+		titleEnter.addAnim('pressed', 'pressed', null, [7, 7], 24, true);
+		titleEnter.addAnim('idle', 'idle', null, [0, 0], 24, true);
+		titleEnter.playAnim('idle', true);
 		titleEnter.y = FlxG.height;
 		add(titleEnter);
 
@@ -80,7 +81,7 @@ class TitleState extends StateBackend {
 		if (accept() && allowSwitch)
 			FlxG.switchState(MainMenu.new);
 		if (accept() && skippedIntro) {
-			titleEnter.playAnim("pressed", true);
+			titleEnter.playAnim('pressed', true);
 			FlxG.sound.play(Cache.sound('menu/confirm'));
 			allowSwitch = true;
 			new FlxTimer().start(0.5, (_) -> {
@@ -118,4 +119,5 @@ class TitleState extends StateBackend {
 		titleEnter.screenCenter(X);
 		titleEnter.x += 240;
 	}
+
 }

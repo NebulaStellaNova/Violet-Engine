@@ -16,6 +16,7 @@ import violet.states.menus.OptionsMenu;
 using flixel.util.FlxStringUtil;
 
 class DebugDisplay extends Sprite {
+
 	public var background:Bitmap;
 	public var background2:Bitmap;
 
@@ -127,8 +128,8 @@ class DebugDisplay extends Sprite {
 			shown = !shown;
 	}
 
-	@:unreflective
-	public static function registerVariable(label:String, variable:String) {
+	@:unreflective public static function registerVariable(label:String, variable:String) {
 		extraInfo.push({label: label, value: variable});
 	}
+
 }

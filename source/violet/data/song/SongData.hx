@@ -1,7 +1,7 @@
 package violet.data.song;
 
 typedef SongData = {
-    public var name:String;
+	public var name:String;
 	public var ?variant:String;
 	public var ?displayName:String;
 

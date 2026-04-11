@@ -8,6 +8,7 @@ import violet.data.notestyles.NoteStyle;
 import violet.data.notestyles.NoteStyleRegistry;
 
 class Note extends NovaSprite {
+
 	public static var swagWidth:Float = 160 * 0.7;
 
 	/**
@@ -230,4 +231,5 @@ class Note extends NovaSprite {
 		tail.resize(0);
 		super.destroy();
 	}
+
 }

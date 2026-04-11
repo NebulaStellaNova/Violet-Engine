@@ -1,6 +1,5 @@
 package violet.backend.api;
 
-
 /**
  * This file is from Codename Engine's Source code, but I added `getLatestCommits` and `getCommitCount`
  */
@@ -11,6 +10,7 @@ import haxe.Exception;
 
 // TODO: Document further and perhaps make this a Haxelib.
 class GitHub {
+
 	/**
 	 * Gets the latest 30 commits from a specific GitHub repository using the GitHub API.
 	 * @param user The user/organization that owns the repository
@@ -196,7 +196,7 @@ class GitHub {
 		return new GitHubException(msg, url);
 	}
 
-    public static function requestText(url:String):String {
+	public static function requestText(url:String):String {
 		var result:String = null;
 		var error:HttpError = null;
 		var redirected:Bool = false;
@@ -239,7 +239,7 @@ class GitHub {
 		return result;
 	}
 
-    private static function isRedirect(status:Int):Bool {
+	private static function isRedirect(status:Int):Bool {
 		switch (status)
 		{
 			// 301: Moved Permanently, 302: Found (Moved Temporarily), 307: Temporary Redirect, 308: Permanent Redirect  - Nex
@@ -249,6 +249,7 @@ class GitHub {
 		}
 		return false;
 	}
+
 }
 
 typedef GitHubRelease = {
@@ -360,6 +361,7 @@ typedef CreditsGitHubContributor = {
 
 
 class GitHubException extends Exception {
+
 	public var apiMessage:String;
 
 	public var documentationUrl:String;
@@ -369,6 +371,7 @@ class GitHubException extends Exception {
 		this.apiMessage = apiMessage;
 		this.documentationUrl = documentationUrl;
 	}
+
 }
 
 
@@ -547,6 +550,7 @@ enum abstract GitHubUserType(String) {
 }
 
 private class HttpError {
+
 	public var message:String;
 	public var url:String;
 	public var status:Int;
@@ -573,4 +577,5 @@ private class HttpError {
 
 		return parts.join(' | ');
 	}
+
 }

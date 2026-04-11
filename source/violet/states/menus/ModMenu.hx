@@ -13,6 +13,7 @@ import violet.backend.utils.NovaUtils;
 import violet.backend.SubStateBackend;
 
 class ModTag extends FlxSpriteGroup {
+
 	override public function new(tag:String) {
 		super();
 
@@ -28,11 +29,12 @@ class ModTag extends FlxSpriteGroup {
 		add(bg);
 		add(label);
 	}
+
 }
 
 class ModMenu extends SubStateBackend {
 
-	public var roundCornerShader:FlxRuntimeShader = new FlxRuntimeShader("
+	public var roundCornerShader:FlxRuntimeShader = new FlxRuntimeShader('
 		#pragma header
 		// Shader by: @NebulaStellaNova
 
@@ -58,7 +60,7 @@ class ModMenu extends SubStateBackend {
 
 			gl_FragColor = color * alpha;
 		}
-	");
+	');
 
 	public var statusText:NovaSprite;
 	public var tagImage:NovaSprite;
@@ -90,7 +92,7 @@ class ModMenu extends SubStateBackend {
 
 		roundCornerShader.setFloat('radius', 35);
 
-		modInfoBox = new NovaSprite(Paths.image("menus/modmenu/modInfoPanel"));
+		modInfoBox = new NovaSprite(Paths.image('menus/modmenu/modInfoPanel'));
 		modInfoBox.updateHitbox();
 		modInfoBox.scrollFactor.set();
 		modInfoBox.screenCenter();
@@ -98,7 +100,7 @@ class ModMenu extends SubStateBackend {
 		modInfoBox.x = FlxG.width + 200;
 		add(modInfoBox);
 
-		infoSeperator = new NovaSprite(Paths.image("menus/modmenu/modInfoSeperator"));
+		infoSeperator = new NovaSprite(Paths.image('menus/modmenu/modInfoSeperator'));
 		infoSeperator.updateHitbox();
 		infoSeperator.scrollFactor.set();
 		infoSeperator.screenCenter();
@@ -109,7 +111,7 @@ class ModMenu extends SubStateBackend {
 			var icon:FlxSpriteGroup = new FlxSpriteGroup();
 			icon.ID = i;
 
-			var iconBox = new NovaSprite(Paths.image("menus/modmenu/iconBox"));
+			var iconBox = new NovaSprite(Paths.image('menus/modmenu/iconBox'));
 			icon.add(iconBox);
 
 			var modIcon:ModIcon = new ModIcon(mod.folder);
@@ -127,28 +129,28 @@ class ModMenu extends SubStateBackend {
 
 		FlxTween.tween(modInfoBox, {x: FlxG.width - modInfoBox.width - 35 }, 0.5, { ease: FlxEase.smootherStepOut });
 
-		modTitleText = new NovaText(0, 0, modInfoBox.width/2, "", Paths.font("Tardling v1.1.ttf"));
+		modTitleText = new NovaText(0, 0, modInfoBox.width/2, '', Paths.font('Tardling v1.1.ttf'));
 		modTitleText.size = 125;
 		modTitleText.text = 'Yooooooo';
 		modTitleText.scrollFactor.set();
 		modTitleText.alignment = CENTER;
 		add(modTitleText);
 
-		tagsText = new NovaText(0, 0, "", Paths.font("PhantomMuff/empty letters.ttf"));
+		tagsText = new NovaText(0, 0, '', Paths.font('PhantomMuff/empty letters.ttf'));
 		tagsText.size = 60;
 		tagsText.text = 'Tag:';
 		tagsText.scrollFactor.set();
 		tagsText.alignment = LEFT;
 		add(tagsText);
 
-		tagImage = new NovaSprite(Paths.image("menus/modmenu/tags/example"));
+		tagImage = new NovaSprite(Paths.image('menus/modmenu/tags/example'));
 		tagImage.scale.scale(0.66, 0.66);
 		tagImage.x = tagsText.x + tagsText.width + 10;
 		tagImage.y = tagsText.y;
 		tagImage.scrollFactor.set();
 		// add(tagImage);
 
-		descriptionTitle = new NovaText(0, 0, modInfoBox.width/4, "", Paths.font("PhantomMuff/empty letters.ttf"));
+		descriptionTitle = new NovaText(0, 0, modInfoBox.width/4, '', Paths.font('PhantomMuff/empty letters.ttf'));
 		descriptionTitle.size = 75;
 		descriptionTitle.text = 'Description:';
 		descriptionTitle.scrollFactor.set();
@@ -156,21 +158,21 @@ class ModMenu extends SubStateBackend {
 		descriptionTitle.updateHitbox();
 		add(descriptionTitle);
 
-		description = new NovaText(0, descriptionTitle.y + descriptionTitle.height, modInfoBox.width/4, "", Paths.font("Tardling v1.1.ttf"));
+		description = new NovaText(0, descriptionTitle.y + descriptionTitle.height, modInfoBox.width/4, '', Paths.font('Tardling v1.1.ttf'));
 		description.size = 60;
 		description.text = 'Test';
 		description.scrollFactor.set();
 		description.alignment = LEFT;
 		add(description);
 
-		creditsTitle = new NovaText(0, 0, modInfoBox.width/2, "", Paths.font("PhantomMuff/empty letters.ttf"));
+		creditsTitle = new NovaText(0, 0, modInfoBox.width/2, '', Paths.font('PhantomMuff/empty letters.ttf'));
 		creditsTitle.size = 75;
 		creditsTitle.text = 'Credits:';
 		creditsTitle.scrollFactor.set();
 		creditsTitle.alignment = RIGHT;
 		add(creditsTitle);
 
-		statusText = new NovaSprite(Paths.image("menus/modmenu/enabled"));
+		statusText = new NovaSprite(Paths.image('menus/modmenu/enabled'));
 		statusText.scrollFactor.set();
 		add(statusText);
 
@@ -222,7 +224,7 @@ class ModMenu extends SubStateBackend {
 		if (FlxG.keys.justPressed.ENTER) {
 			if (ModdingAPI.checkModEnabled(selectedMod.id)) ModdingAPI.disableMod(selectedMod.id);
 			else ModdingAPI.enableMod(selectedMod.id);
-			statusText.loadSprite(Paths.image("menus/modmenu/" + (ModdingAPI.checkModEnabled(selectedMod.id) ? "enabled" : "disabled")));
+			statusText.loadSprite(Paths.image('menus/modmenu/' + (ModdingAPI.checkModEnabled(selectedMod.id) ? 'enabled' : 'disabled')));
 		}
 
 		modInfoBox.updateHitbox();
@@ -272,7 +274,7 @@ class ModMenu extends SubStateBackend {
 
 		tagSprites.resize(0);
 
-		tagsText.text = selectedMod.tags.length > 1 ? "Tags:" : "Tag:";
+		tagsText.text = selectedMod.tags.length > 1 ? 'Tags:' : 'Tag:';
 		tagsText.updateHitbox();
 
 		var xPos = 0.0;
@@ -286,7 +288,7 @@ class ModMenu extends SubStateBackend {
 			xPos += tag.width + 10;
 		}
 
-		statusText.loadSprite(Paths.image("menus/modmenu/" + (ModdingAPI.checkModEnabled(selectedMod.id) ? "enabled" : "disabled")));
+		statusText.loadSprite(Paths.image('menus/modmenu/' + (ModdingAPI.checkModEnabled(selectedMod.id) ? 'enabled' : 'disabled')));
 		statusText.updateHitbox();
 		statusText.x = modInfoBox.x + (modInfoBox.width/2) - (statusText.width/2);
 		statusText.y = (modInfoBox.y + modInfoBox.height) - (statusText.height + 20);
@@ -294,7 +296,7 @@ class ModMenu extends SubStateBackend {
 
 		var start = creditsTitle.y + creditsTitle.height + 5;
 		for (i in selectedMod.contributors) {
-			var name = new NovaText(creditsTitle.x, 0, modInfoBox.width/2, "", Paths.font("Tardling v1.1.ttf"));
+			var name = new NovaText(creditsTitle.x, 0, modInfoBox.width/2, '', Paths.font('Tardling v1.1.ttf'));
 			name.size = 125;
 			name.text = i.name;
 			name.scrollFactor.set();
@@ -306,7 +308,7 @@ class ModMenu extends SubStateBackend {
 			creditsStuff.push(name);
 			start += name.height;
 
-			var roles = new NovaText(creditsTitle.x, 0, modInfoBox.width/2, "", Paths.font("PhantomMuff/empty letters.ttf"));
+			var roles = new NovaText(creditsTitle.x, 0, modInfoBox.width/2, '', Paths.font('PhantomMuff/empty letters.ttf'));
 			roles.size = 125;
 			roles.text = i.role;
 			roles.scrollFactor.set();
@@ -355,4 +357,5 @@ class ModMenu extends SubStateBackend {
 			close();
 		});
 	}
+
 }

@@ -17,6 +17,7 @@ import violet.backend.filesystem.ModdingAPI;
 using violet.backend.utils.ArrayUtil;
 
 class Script implements IFlxDestroyable {
+
 	var scriptCode:String;
 	var executed:Bool = false;
 
@@ -170,4 +171,5 @@ class Script implements IFlxDestroyable {
 		}
 		return scriptCode = hasBlacklisted ? "" : scriptCode;
 	}
+
 }

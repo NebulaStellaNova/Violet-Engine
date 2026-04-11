@@ -12,14 +12,9 @@ private class HaxeLogo extends BitmapData {}
 
 class Cache {
 
-	public static var soundFoldersToCache:Array<String> = [
-		'menu',
-		'miss'
-	];
-
 	public static function init():Void {
 		trace("debug:<yellow>Initializing Cache System...");
-		for (i in soundFoldersToCache) {
+		for (i in ['menu', 'miss']) {
 			for (item in Paths.readFolder(['sounds', i].join('/'))) {
 				final jointPath:String = [i, item].join('/');
 				sound(jointPath);
@@ -110,4 +105,5 @@ class Cache {
 			PlayState.instance.characters.push(cachedCharacters.get('id'));
 		}
 	}
+
 }

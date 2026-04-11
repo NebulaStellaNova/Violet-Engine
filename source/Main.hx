@@ -1,5 +1,3 @@
-package;
-
 import flixel.FlxState;
 import flixel.util.FlxStringUtil;
 import lime.app.Application;
@@ -143,4 +141,5 @@ class Main extends openfl.display.Sprite {
 		violet.external.windows.WinAPI.setDarkMode(violet.external.windows.WinAPI.isSystemDarkMode());
 		#end
 	}
+
 }

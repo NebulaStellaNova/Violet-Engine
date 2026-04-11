@@ -1,4 +1,5 @@
 package violet.backend.filesystem;
+
 import haxe.zip.Entry;
 import haxe.io.BytesInput;
 import haxe.io.Path;
@@ -6,8 +7,8 @@ import sys.FileSystem;
 import openfl.Assets;
 import violet.backend.utils.NovaUtils;
 import violet.states.InitialState;
-#if MOD_SUPPORT
 
+#if MOD_SUPPORT
 import thx.semver.Version;
 import violet.backend.scripting.ScriptPack;
 import violet.backend.utils.FileUtil;
@@ -36,6 +37,7 @@ typedef ModMeta = {
 }
 
 class ModdingAPI {
+
 	@:unreflective public static var BLACKLISTED_IMPORTS:Array<Class<Dynamic>> = [
 		sys.io.File,
 		sys.FileSystem
@@ -127,11 +129,11 @@ class ModdingAPI {
 				tempFolders.push(modPath);
 				if (FileSystem.exists(modPath)) continue;
 				FileSystem.createDirectory(modPath);
-      			Sys.command("attrib +h " + modPath);
+	  			Sys.command("attrib +h " + modPath);
 
-				#if debug var startTime = Sys.time(); #end
+				#if debug var startTime = NovaUtils.getTimerPrecise(); #end
 				violet.backend.utils.ZipUtil.extractZip('$MOD_FOLDER/$path', modPath);
-				#if debug var delta = (Sys.time() - startTime) * 1000;
+				#if debug var delta = (NovaUtils.getTimerPrecise() - startTime) * 1000;
 				trace('debug:VMod extraction took ${Math.round(delta*100)/100} milliseconds'); #end
 			}
 		}
@@ -320,9 +322,11 @@ class ModdingAPI {
 		}
 		FileSystem.deleteDirectory(path);
 	}
+
 }
 
 class ModIcon extends NovaSprite {
+
 	override public function new(modId:String) {
 		var image = Paths.image('${ModdingAPI.MOD_FOLDER}/$modId/novamod_icon', 'root');
 		if (!Paths.fileExists(image, true)) {
@@ -330,5 +334,6 @@ class ModIcon extends NovaSprite {
 		}
 		super(image);
 	}
+
 }
 #end

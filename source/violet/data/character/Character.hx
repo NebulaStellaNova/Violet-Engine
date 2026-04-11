@@ -12,9 +12,8 @@ class Character extends violet.backend.objects.Bopper {
 	public var _data:CharacterData;
 
 	public var name(get, never):String;
-	function get_name():String {
-		return '${_data.name}';
-	}
+	function get_name():String
+		return _data.name;
 
 	public var idleSuffix:String = null;
 
@@ -41,10 +40,9 @@ class Character extends violet.backend.objects.Bopper {
 	private var faceLeftCache:Bool = false;
 	private var initialFlipX:Bool = false;
 
-
 	/**
-     * ![no blackie](https://raw.githubusercontent.com/NebulaStellaNova/Hamsters/refs/heads/main/extras/no-blackie.png)
-    */
+	 * ![no blackie](https://raw.githubusercontent.com/NebulaStellaNova/Hamsters/refs/heads/main/extras/no-blackie.png)
+	*/
 	public function new(x:Float = 0, y:Float = 0, id:String = 'bf', faceLeft:Bool = false) {
 		this.id = id;
 		this.faceLeftCache = faceLeft;
@@ -54,7 +52,7 @@ class Character extends violet.backend.objects.Bopper {
 
 		if (CharacterRegistry.characterDatas.get(id) == null) {
 			NovaUtils.addNotification('Character not found!', 'Could not find character with ID "$id" using default character "bf".', ERROR);
-        }
+		}
 
 		__refresh();
 
@@ -136,7 +134,7 @@ class Character extends violet.backend.objects.Bopper {
 
 	public function cloneData():Dynamic {
 		return {
-			version: "1.0.0",
+			version: "1.0.0',
 			name: _data.name,
 			animations: (_data.animations ?? []).copy(),
 			flipX: _data.flipX,
@@ -152,4 +150,5 @@ class Character extends violet.backend.objects.Bopper {
 			cameraOffsets: (_data.cameraOffsets ?? [0, 0]).copy()
 		}
 	}
+
 }

@@ -4,6 +4,7 @@ import violet.backend.objects.play.Strum;
 import violet.backend.objects.play.Sustain;
 
 class SustainHitEvent extends EventBase {
+
 	public final sustain:Sustain;
 	public final strum:Strum;
 
@@ -24,7 +25,7 @@ class SustainHitEvent extends EventBase {
 	public var animationSuffix:String = null; // null for none
 
 	public function new(sustain:Sustain) {
-        super();
+		super();
 		this.sustain = sustain;
 		this.strum = sustain.parentStrum;
 	}
@@ -35,4 +36,5 @@ class SustainHitEvent extends EventBase {
 	public function stopStrumAnim():Void {
 		this.playStrumAnim = false;
 	}
+
 }

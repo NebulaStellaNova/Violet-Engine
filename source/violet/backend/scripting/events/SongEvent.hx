@@ -1,7 +1,8 @@
 package violet.backend.scripting.events;
 
 class SongEvent extends EventBase {
-	public var name:String = "default";
+
+	public var name:String = 'default';
 	public var parameters:Array<Dynamic>;
 
 	public var params(get, set):Array<Dynamic>;
@@ -9,8 +10,9 @@ class SongEvent extends EventBase {
 	function set_params(value:Array<Dynamic>) return parameters = value;
 
 	public function new(name:String, ?parameters:Array<Dynamic>) {
-        super();
+		super();
 		this.name = name;
 		this.parameters = parameters ?? [];
 	}
+
 }

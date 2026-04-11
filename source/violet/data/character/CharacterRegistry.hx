@@ -8,11 +8,11 @@ class CharacterRegistry {
 	public static var characterDatas:Map<String, CharacterData> = new Map<String, CharacterData>();
 
 	public static function registerCharacters() {
-        trace('debug:<yellow>Registering characters...');
+		trace('debug:<yellow>Registering characters...');
 
 		characterDatas.clear();
 
-		for (file in Paths.readFolder("data/characters", v -> return FileUtil.isDataFile(v))) {
+		for (file in Paths.readFolder('data/characters', v -> return FileUtil.isDataFile(v))) {
 			register(Paths.fileName(file), ParseUtil.jsonOrYaml('data/characters/${Paths.fileName(file)}'));
 		}
 	}

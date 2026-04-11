@@ -44,8 +44,9 @@ typedef MenuData = {
 }
 
 class MainMenu extends StateBackend {
+
 	public var watermarkTexts = [
-		Constants.ENGINE_TITLE + " v" + Constants.ENGINE_VERSION + (Constants.ENGINE_SUFFIX != '' ? '-${Constants.ENGINE_SUFFIX}' : '')
+		Constants.ENGINE_TITLE + ' v' + Constants.ENGINE_VERSION + (Constants.ENGINE_SUFFIX != '' ? '-${Constants.ENGINE_SUFFIX}' : '')
 	];
 
 	public var debugTexts = [
@@ -53,8 +54,8 @@ class MainMenu extends StateBackend {
 		'Branch: ${Constants.GITHUB_BRANCH}'
 	];
 
-	public var curSelectedString:String = "";
-	public var bgColorString:String = "";
+	public var curSelectedString:String = '';
+	public var bgColorString:String = '';
 
 	public static var curSelected:Int = 0;
 
@@ -77,8 +78,8 @@ class MainMenu extends StateBackend {
 
 	public var substateTrans:Bool = true;
 
-	public var menuAlignment:String = "center";
-	public var watermarkAlignment:String = "right";
+	public var menuAlignment:String = 'center';
+	public var watermarkAlignment:String = 'right';
 
 
 	override public function create()
@@ -91,7 +92,7 @@ class MainMenu extends StateBackend {
 
 		// FlxG.camera.color = FlxColor.BLACK;
 
-		menuData = ParseUtil.json("data/config/menuData");
+		menuData = ParseUtil.json('data/config/menuData');
 
 		#if mobile
 		for (i in menuData.items) {
@@ -100,7 +101,7 @@ class MainMenu extends StateBackend {
 		#end
 
 		var mult:Float = 1/(menuData.items.length);
-		bg = new NovaSprite(Paths.image(menuData.directory + "/" + menuData.background));
+		bg = new NovaSprite(Paths.image(menuData.directory + '/' + menuData.background));
 		bg.setGraphicSize(FlxG.width, FlxG.height);
 		bg.scale.x += mult;
 		bg.scale.y += mult;
@@ -120,10 +121,10 @@ class MainMenu extends StateBackend {
 
 		for (i=>daItem in menuData.items) {
 			var startY = (175*i)+90;
-			var item = new NovaSprite(FlxG.width/2, startY, Paths.image(menuData.directory + "/" + daItem.item));
-			item.addAnim("selected", daItem.item + " " + daItem.animations.selected, [], daItem.animations?.offsets?.selected ?? [0, 0], 24, true);
-			item.addAnim("static", daItem.item + " " + daItem.animations.idle, [], daItem.animations?.offsets?.idle ?? [0, 0], 24, true);
-			item.playAnim("static");
+			var item = new NovaSprite(FlxG.width/2, startY, Paths.image(menuData.directory + '/' + daItem.item));
+			item.addAnim('selected', daItem.item + ' ' + daItem.animations.selected, [], daItem.animations?.offsets?.selected ?? [0, 0], 24, true);
+			item.addAnim('static', daItem.item + ' ' + daItem.animations.idle, [], daItem.animations?.offsets?.idle ?? [0, 0], 24, true);
+			item.playAnim('static');
 			item.scale.set(daItem.scale ?? 1, daItem.scale ?? 1);
 			item.updateHitbox();
 			item.centerOrigin();
@@ -136,37 +137,37 @@ class MainMenu extends StateBackend {
 			add(item);
 		}
 
-		leftWatermark = new NovaText(10, 0, "Nova Engine v0.1", 20);
+		leftWatermark = new NovaText(10, 0, 'Nova Engine v0.1', 20);
 		leftWatermark.y = FlxG.height - leftWatermark.getHeight() - 5;
-		leftWatermark.setFormat(Paths.font("vcr.ttf"), 40);
+		leftWatermark.setFormat(Paths.font('vcr.ttf'), 40);
 		leftWatermark.scrollFactor.set();
 		leftWatermark.alignment = watermarkAlignment;
 		switch (watermarkAlignment) {
-			case "right":
+			case 'right':
 				leftWatermark.x = FlxG.width - leftWatermark.getWidth();
 			default:
 				leftWatermark.x = 10;
 		}
-		//leftWatermark.setFormat(Paths.font("Tardling v1.1.ttf"), 20);
+		//leftWatermark.setFormat(Paths.font('Tardling v1.1.ttf'), 20);
 		add(leftWatermark);
 
 		debugWatermark = new NovaText(10, 10, debugTexts.join('\n'), 20);
-		debugWatermark.setFormat(Paths.font("vcr.ttf"), 40);
+		debugWatermark.setFormat(Paths.font('vcr.ttf'), 40);
 		debugWatermark.scrollFactor.set();
 		debugWatermark.alignment = watermarkAlignment;
 		switch (watermarkAlignment) {
-			case "right":
+			case 'right':
 				debugWatermark.x = FlxG.width - debugWatermark.getWidth();
 			default:
 				debugWatermark.x = 10;
 		}
-		//leftWatermark.setFormat(Paths.font("Tardling v1.1.ttf"), 20);
+		//leftWatermark.setFormat(Paths.font('Tardling v1.1.ttf'), 20);
 		add(debugWatermark);
 
 
 		#if FLX_DEBUG
-		FlxG.watch.add(this, "curSelectedString", "Current Selected Item:");
-		FlxG.watch.add(this, "bgColorString", "Background Color:");
+		FlxG.watch.add(this, 'curSelectedString', 'Current Selected Item:');
+		FlxG.watch.add(this, 'bgColorString', 'Background Color:');
 		FlxG.game.debugger.console.registerFunction('setSelectionColor', setSelectionColor);
 		FlxG.game.debugger.console.registerFunction('changeSelection', changeSelection);
 		#end
@@ -178,10 +179,10 @@ class MainMenu extends StateBackend {
 		FlxG.camera.fade(FlxColor.BLACK, 0.25, true);
 
 		#if debug
-		DebugDisplay.registerVariable("Current Menu Item Index", "curSelected");
-		DebugDisplay.registerVariable("Current Menu Item", "curSelectedString");
-		DebugDisplay.registerVariable("Background Color", "bgColorString");
-		DebugDisplay.registerVariable("Can Select", "canSelect");
+		DebugDisplay.registerVariable('Current Menu Item Index', 'curSelected');
+		DebugDisplay.registerVariable('Current Menu Item', 'curSelectedString');
+		DebugDisplay.registerVariable('Background Color', 'bgColorString');
+		DebugDisplay.registerVariable('Can Select', 'canSelect');
 		#end
 
 		NovaUtils.playMenuMusic();
@@ -211,7 +212,7 @@ class MainMenu extends StateBackend {
 
 		leftWatermark.updateHitbox();
 		switch (watermarkAlignment) {
-			case "right":
+			case 'right':
 				leftWatermark.x = FlxG.width - leftWatermark.getWidth() - 5;
 			default:
 				leftWatermark.x = 10;
@@ -219,7 +220,7 @@ class MainMenu extends StateBackend {
 
 		debugWatermark.updateHitbox();
 		switch (watermarkAlignment) {
-			case "right":
+			case 'right':
 				debugWatermark.x = FlxG.width - debugWatermark.getWidth() - 5;
 			default:
 				debugWatermark.x = 10;
@@ -258,7 +259,7 @@ class MainMenu extends StateBackend {
 		leftWatermark.borderStyle = OUTLINE;
 		leftWatermark.borderColor = FlxColor.BLACK;
 		leftWatermark.borderSize = 3;
-		leftWatermark.text = instance.join("\n");
+		leftWatermark.text = instance.join('\n');
 		leftWatermark.updateHitbox();
 		if (canSelect) {
 			leftWatermark.y = FlxG.height - leftWatermark.getHeight() - 5;
@@ -298,11 +299,11 @@ class MainMenu extends StateBackend {
 		}
 		var event:SelectionEvent = new SelectionEvent(target);
 		if (amt != 0) {
-			event = runEvent("changeSelection", new SelectionEvent(target));
+			event = runEvent('changeSelection', new SelectionEvent(target));
 			if (event.cancelled) return;
 		}
 		if (amt != 0 && !event.soundCancelled) {
-		    NovaUtils.playMenuSFX(SCROLL);
+			NovaUtils.playMenuSFX(SCROLL);
 		}
 		curSelected = event.selection;
 		for (i => item in menuItems) {
@@ -313,19 +314,19 @@ class MainMenu extends StateBackend {
 				daTarget.y = item.y + (item.height/2);
 				FlxG.camera.target = daTarget;
 			}
-			item.playAnim(i == curSelected ? "selected" : "static");
+			item.playAnim(i == curSelected ? 'selected' : 'static');
 			item.updateHitbox();
-			if (menuAlignment != "center") { // looked weird with the offset animations, so might as well not apply them for centered menus
-				item.offset.x = item.anims.get(i == curSelected ? "selected" : "static").offset[0];
-				item.offset.y = item.anims.get(i == curSelected ? "selected" : "static").offset[1];
+			if (menuAlignment != 'center') { // looked weird with the offset animations, so might as well not apply them for centered menus
+				item.offset.x = item.anims.get(i == curSelected ? 'selected' : 'static').offset[0];
+				item.offset.y = item.anims.get(i == curSelected ? 'selected' : 'static').offset[1];
 			}
 			if (canSelect) {
 				switch (menuAlignment) {
-					case "center":
+					case 'center':
 						item.screenCenter(X);
-					case "left":
+					case 'left':
 						item.x = 50;
-					case "right":
+					case 'right':
 						item.x = FlxG.width - item.width - 50;
 				}
 			}
@@ -335,7 +336,7 @@ class MainMenu extends StateBackend {
 
 	public function pickSelection() {
 		if (!canSelect) return;
-		var event:SelectionEvent = runEvent("pickSelection", new SelectionEvent(curSelected));
+		var event:SelectionEvent = runEvent('pickSelection', new SelectionEvent(curSelected));
 		if (!event.soundCancelled) NovaUtils.playMenuSFX(CONFIRM);
 		if (event.cancelled) return;
 
@@ -376,11 +377,11 @@ class MainMenu extends StateBackend {
 		for (i in menuItems) {
 			var prev = i.x;
 			switch (menuAlignment) {
-				case "center":
+				case 'center':
 					i.screenCenter(X);
-				case "left":
+				case 'left':
 					i.x = 50;
-				case "right":
+				case 'right':
 					i.x = FlxG.width - i.width - 50;
 			}
 			FlxTween.tween(i, { x: i.x }, 0.5, { ease: FlxEase.smootherStepOut, onComplete: (_)-> canSelect = true });
@@ -389,4 +390,5 @@ class MainMenu extends StateBackend {
 		FlxTween.tween(leftWatermark, { y: FlxG.height - leftWatermark.getHeight() - 5 }, 0.5, { ease: FlxEase.backOut });
 		FlxTween.tween(debugWatermark, { y: 10 }, 0.5, { ease: FlxEase.backOut });
 	}
+
 }

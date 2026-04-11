@@ -114,4 +114,5 @@ class StateBackend extends flixel.FlxState {
 		instance = null;
 		super.destroy();
 	}
+
 }

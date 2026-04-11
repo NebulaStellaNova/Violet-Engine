@@ -3,6 +3,7 @@ package violet.backend.objects;
 import flixel.text.FlxText;
 
 class NovaText extends FlxText {
+
 	public var upscaleResolution:Float = 1;
 
 	public function new(x:Float, y:Float, ?fieldWidth:Float = 0, text:String, size:Int = 8, ?font:String) {
@@ -27,4 +28,5 @@ class NovaText extends FlxText {
 	public function setFont(font:String) {
 		this.setFormat(font, this.size);
 	}
+
 }

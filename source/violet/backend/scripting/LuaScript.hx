@@ -94,9 +94,11 @@ class LuaScript extends Script {
 }
 #else
 class LuaScript extends Script {
+
 	public function new(path:String, preset:Bool = true) {
 		super('', true);
 		trace('warning:Lua scripting is not available for this version of the engine');
 	}
+
 }
 #end

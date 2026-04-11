@@ -18,106 +18,107 @@ import moonchart.formats.fnf.FNFCodename;
 
 
 enum FileType {
-    NONE;
-    YAML;
-    XML;
-    OBJECT;
+	NONE;
+	YAML;
+	XML;
+	OBJECT;
 }
 
 enum ChartFormat {
-    CODENAME;
-    PSYCH;
-    LEGACY;
-    VSLICE;
-    VIOLET;
-    KADE;
-    IMAGINATIVE;
+	CODENAME;
+	PSYCH;
+	LEGACY;
+	VSLICE;
+	VIOLET;
+	KADE;
+	IMAGINATIVE;
 }
 
 class ChartConverters {
 
-    public static var blankChart(get, never):ChartData;
-    static function get_blankChart() {
-        return {
-            strumLines: [],
-            events: [],
-            meta: { name: "Unknown Song" },
-            scrollSpeed: 1,
-            noteTypes: [],
-            stage: "default",
-            codenameChart: true
-        };
-    }
+	public static var blankChart(get, never):ChartData;
+	static function get_blankChart() {
+		return {
+			strumLines: [],
+			events: [],
+			meta: { name: 'Unknown Song' },
+			scrollSpeed: 1,
+			noteTypes: [],
+			stage: 'default',
+			codenameChart: true
+		};
+	}
 
-    public static function convertChart(chartCache:ChartCache):ChartData {
-        var parsedCache:Dynamic = parseFromCache(chartCache);
-        var detectedFormat:ChartFormatChecker.ChartFileFormat = ChartFormatChecker.checkFormat(parsedCache);
-        var convertedChart:ChartData;
-        switch (detectedFormat) {
-            case CODENAME:
-                convertedChart = parsedCache;
-            case VSLICE:
-                convertedChart = fromVSlice(chartCache.filePath, chartCache.difficulty);
-            case PSYCH:
-                convertedChart = fromPsych(chartCache.filePath);
-            case KADE:
-                convertedChart = fromKade(chartCache.filePath, chartCache.difficulty);
-            default:
-                convertedChart = blankChart;
-        }
+	public static function convertChart(chartCache:ChartCache):ChartData {
+		var parsedCache:Dynamic = parseFromCache(chartCache);
+		var detectedFormat:ChartFormatChecker.ChartFileFormat = ChartFormatChecker.checkFormat(parsedCache);
+		var convertedChart:ChartData;
+		switch (detectedFormat) {
+			case CODENAME:
+				convertedChart = parsedCache;
+			case VSLICE:
+				convertedChart = fromVSlice(chartCache.filePath, chartCache.difficulty);
+			case PSYCH:
+				convertedChart = fromPsych(chartCache.filePath);
+			case KADE:
+				convertedChart = fromKade(chartCache.filePath, chartCache.difficulty);
+			default:
+				convertedChart = blankChart;
+		}
 
-        if (chartCache.eventsPath != "") {
-            final parsedEvents = ParseUtil.jsonOrYaml(Path.withoutExtension(chartCache.eventsPath), 'root');
-            convertedChart.events ??= [];
-            for (i in parsedEvents.events ?? []) {
-                i.global = true;
-                convertedChart.events.push(i);
-            }
-        }
+		if (chartCache.eventsPath != '') {
+			final parsedEvents = ParseUtil.jsonOrYaml(Path.withoutExtension(chartCache.eventsPath), 'root');
+			convertedChart.events ??= [];
+			for (i in parsedEvents.events ?? []) {
+				i.global = true;
+				convertedChart.events.push(i);
+			}
+		}
 
-        for (i in convertedChart.events) {
-            i.global ??= false;
-        }
+		for (i in convertedChart.events) {
+			i.global ??= false;
+		}
 
-        return convertedChart;
-    }
+		return convertedChart;
+	}
 
-    public static function parseFromCache(chartCache:ChartCache):Dynamic {
-        var parsedCache:Dynamic = {};
-        switch (chartCache.fileExt) {
-            case "yaml":
-			    final options = new ParserOptions(); options.maps = false;
-                parsedCache = Yaml.parse(FileUtil.getFileContent(chartCache.filePath), options);
-            case "json":
-                parsedCache = Json.parse(FileUtil.getFileContent(chartCache.filePath));
-        }
-        return parsedCache;
-    }
+	public static function parseFromCache(chartCache:ChartCache):Dynamic {
+		var parsedCache:Dynamic = {};
+		switch (chartCache.fileExt) {
+			case 'yaml':
+				final options = new ParserOptions(); options.maps = false;
+				parsedCache = Yaml.parse(FileUtil.getFileContent(chartCache.filePath), options);
+			case 'json':
+				parsedCache = Json.parse(FileUtil.getFileContent(chartCache.filePath));
+		}
+		return parsedCache;
+	}
 
-    public static function fromVSlice(chartPath, difficulty:String):ChartData {
-        return cast new FNFCodename().fromFormat(new FNFVSlice().fromFile(chartPath, difficulty)).data; // Crashes someone fix this please
-    }
+	public static function fromVSlice(chartPath, difficulty:String):ChartData {
+		return cast new FNFCodename().fromFormat(new FNFVSlice().fromFile(chartPath, difficulty)).data; // Crashes someone fix this please
+	}
 
-    public static function fromPsych(chartPath:String):ChartData {
-        return cast new FNFCodename().fromFormat(new FNFPsych().fromFile(chartPath)).data;
-    }
+	public static function fromPsych(chartPath:String):ChartData {
+		return cast new FNFCodename().fromFormat(new FNFPsych().fromFile(chartPath)).data;
+	}
 
-    public static function fromKade(chartPath:String, difficulty:String):ChartData {
-        var parsed = Json.parse(FileUtil.getFileContent(chartPath));
-        parsed.song.eventObjects ??= [];
-        return cast new FNFCodename().fromFormat(new FNFKade().fromJson(Json.stringify(parsed))).data;
-    }
+	public static function fromKade(chartPath:String, difficulty:String):ChartData {
+		var parsed = Json.parse(FileUtil.getFileContent(chartPath));
+		parsed.song.eventObjects ??= [];
+		return cast new FNFCodename().fromFormat(new FNFKade().fromJson(Json.stringify(parsed))).data;
+	}
 
-    // public static function fromImaginative(chartPath:String) {
-        // return case new FNFCodename()
-    // }
+	// public static function fromImaginative(chartPath:String) {
+		// return case new FNFCodename()
+	// }
 
-    /**
-    ```haxe
-    // Code for converting the chart to yaml.
-    if (chartCache.fileExt != "yaml") {
-        sys.FileSystem.deleteFile(chartCache.filePath);
-        Yaml.write(chartCache.filePath.replace('.${chartCache.fileExt}', ".yaml"), convertChartData(parsedCache,  detectJsonChartFormat(parsedCache)));
-    }
-    ```*/
+	/**
+	```haxe
+	// Code for converting the chart to yaml.
+	if (chartCache.fileExt != 'yaml') {
+		sys.FileSystem.deleteFile(chartCache.filePath);
+		Yaml.write(chartCache.filePath.replace('.${chartCache.fileExt}', '.yaml'), convertChartData(parsedCache,  detectJsonChartFormat(parsedCache)));
+	}
+	```*/
+
 }

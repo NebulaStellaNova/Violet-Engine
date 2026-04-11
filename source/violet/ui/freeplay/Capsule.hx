@@ -8,6 +8,7 @@ import violet.backend.objects.special_thanks.GenzuSprite;
 import flixel.group.FlxSpriteGroup;
 
 class Capsule extends FlxSpriteGroup {
+
 	public var icon:GenzuSprite;
 	public var capsule:GenzuSprite;
 	public var bpmText:GenzuSprite;
@@ -27,18 +28,18 @@ class Capsule extends FlxSpriteGroup {
 	public function new(song:Song) {
 		super();
 
-		capsule = new GenzuSprite(0, 0, Paths.image("menus/freeplay/capsule/freeplayCapsule"));
-		capsule.addAnim("idle", "mp3 capsule w backing NOT SELECTED", [], [5, 0], 24, true);
-		capsule.addAnim("selected", "mp3 capsule w backing0", [], null, 24, true);
-		capsule.playAnim("idle");
+		capsule = new GenzuSprite(0, 0, Paths.image('menus/freeplay/capsule/freeplayCapsule'));
+		capsule.addAnim('idle', 'mp3 capsule w backing NOT SELECTED', [], [5, 0], 24, true);
+		capsule.addAnim('selected', 'mp3 capsule w backing0', [], null, 24, true);
+		capsule.playAnim('idle');
 		add(capsule);
 
-		bpmText = new GenzuSprite(110, 95, Paths.image("menus/freeplay/capsule/text/bpmtext"));
+		bpmText = new GenzuSprite(110, 95, Paths.image('menus/freeplay/capsule/text/bpmtext'));
 		bpmText.updateHitbox();
 		bpmText.scale.set(1.1, 1.1);
 		add(bpmText);
 
-		difficultyText = new GenzuSprite(460, 95, Paths.image("menus/freeplay/capsule/text/difficultytext"));
+		difficultyText = new GenzuSprite(460, 95, Paths.image('menus/freeplay/capsule/text/difficultytext'));
 		difficultyText.updateHitbox();
 		difficultyText.scale.set(1.1, 1.1);
 		add(difficultyText);
@@ -70,9 +71,9 @@ class Capsule extends FlxSpriteGroup {
 		icon.scale.set(2.5, 2.5);
 		icon.pixelPerfectRender = true;
 		icon.antialiasing = false;
-		icon.addAnim("idle", "idle", [], null, 24, true);
-		icon.addAnim("confirm", "confirm", [], null, 12, false);
-		icon.playAnim("idle");
+		icon.addAnim('idle', 'idle', [], null, 24, true);
+		icon.addAnim('confirm', 'confirm', [], null, 12, false);
+		icon.playAnim('idle');
 		iconGroup.add(icon);
 
 		add(iconGroup);
@@ -81,7 +82,7 @@ class Capsule extends FlxSpriteGroup {
 	var clipTween:FlxTween;
 
 	public function setSelected(selected:Bool) {
-		capsule.playAnim(selected ? "selected" : "idle");
+		capsule.playAnim(selected ? 'selected' : 'idle');
 		songNameText.blurredText.visible = selected;
 		songNameText.whiteText.alpha = selected ? 1 : 0.6;
 		/* if (selected) tweenLeft();
@@ -93,7 +94,7 @@ class Capsule extends FlxSpriteGroup {
 	}
 
 	public function playConfirm() {
-		icon.playAnim("confirm", true);
+		icon.playAnim('confirm', true);
 	}
 
 	public function updateRatingForDiff(song:Song, diffName:String) {
@@ -130,7 +131,7 @@ class Capsule extends FlxSpriteGroup {
 				case 1:
 					difficultyNumbers[i].digit = newRating % 10;
 				default:
-					trace("Uhhh... how'd we get here??");
+					trace('Uhhh... how\'d we get here??');
 			}
 		}
 	}
@@ -145,13 +146,15 @@ class Capsule extends FlxSpriteGroup {
 				case 2:
 					bpmNumbers[i].digit = bpm % 10;
 				default:
-					trace("Uhhh... how'd we get here again??");
+					trace('Uhhh... how\'d we get here again??');
 			}
 		}
 	}
+
 }
 
 class CapsuleNumber extends GenzuSprite {
+
 	public var digit(default, set):Int = 0;
 
 	function set_digit(val):Int {
@@ -174,14 +177,14 @@ class CapsuleNumber extends GenzuSprite {
 	public var baseY:Float = 0;
 	public var baseX:Float = 0;
 
-	var numToString:Array<String> = ["ZERO", "ONE", "TWO", "THREE", "FOUR", "FIVE", "SIX", "SEVEN", "EIGHT", "NINE"];
+	var numToString:Array<String> = ['ZERO', 'ONE', 'TWO', 'THREE', 'FOUR', 'FIVE', 'SIX', 'SEVEN', 'EIGHT', 'NINE'];
 
 	public function new(x, y, big:Bool = false, ?initDigit:Int = 0) {
 		super(x, y);
 		if (big) {
-			loadSprite(Paths.image("menus/freeplay/capsule/numbers/bignumbers"));
+			loadSprite(Paths.image('menus/freeplay/capsule/numbers/bignumbers'));
 		} else {
-			loadSprite(Paths.image("menus/freeplay/capsule/numbers/smallnumbers"));
+			loadSprite(Paths.image('menus/freeplay/capsule/numbers/smallnumbers'));
 		}
 		for (i in 0...10) {
 			var stringNum:String = numToString[i];
@@ -192,4 +195,5 @@ class CapsuleNumber extends GenzuSprite {
 		scale.set(1.1, 1.1);
 		updateHitbox();
 	}
+
 }

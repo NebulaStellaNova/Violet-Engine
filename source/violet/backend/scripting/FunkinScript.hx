@@ -10,7 +10,6 @@ import flixel.sound.FlxSound;
 import flixel.text.FlxText;
 import flixel.tweens.FlxTween;
 import flixel.util.FlxAxes;
-import flixel.util.FlxColor;
 import flixel.util.FlxTimer;
 // import hxwindowmode.WindowColorMode;
 import rulescript.RuleScript;

@@ -4,6 +4,7 @@ import thx.semver.Version;
 import haxe.macro.Compiler;
 
 class Constants {
+
 	public static var MENU_MUSIC:String = 'mainMenuTheme';
 
 	public static final COMMIT_HASH:String = Compiler.getDefine('COMMIT_HASH');
@@ -41,4 +42,5 @@ class Constants {
 	 * The default health icon if it can't find it.
 	 */
 	public static var DEFAULT_HEALTH_ICON:String = 'face';
+
 }
