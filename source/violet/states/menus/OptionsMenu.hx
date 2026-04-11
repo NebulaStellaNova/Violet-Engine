@@ -37,6 +37,8 @@ typedef OptionsMenuOption = {
 	var saveID:String;
 	var type:OptionsType;
 	var ?platform:String; // Used to have platform specific settings
+	var ?disabled:Bool;
+	var ?disabledInPlayState:Bool;
 	// for number option
 	var ?min:Float;
 	var ?max:Float;
@@ -74,6 +76,9 @@ class OptionsMenu extends SubStateBackend {
 				var platformTargets = optionData.platform.replace(' ', '').split(',');
 				for (platform in platformTargets) {
 					if (!NovaUtils.platformCheck(platform)) menu.options.remove(optionData);
+				}
+				if (optionData.disabledInPlayState && Std.isOfType(FlxG.state, PlayState)) {
+					optionData.disabled = true;
 				}
 			}
 		}
@@ -168,6 +173,7 @@ class OptionsMenu extends SubStateBackend {
 					option.centerX = true;
 					option.y = (FlxG.height/2) + ((i-optionCurSelected) * 100) - (option.alphabet.height/2);
 					option.updatePosition();
+					if (optionData.disabled) option.color = FlxColor.interpolate(FlxColor.WHITE, FlxColor.BLACK, 0.5);
 					insert(0, option);
 					options.push(option);
 
@@ -178,6 +184,7 @@ class OptionsMenu extends SubStateBackend {
 					option.checkbox.value = Options.get(optionData.saveID) ?? false; option.checkbox.animation.finish();
 					option.onChange = (value:Bool) -> Options.set(optionData.saveID, value);
 					option.updatePosition();
+					if (optionData.disabled) option.color = FlxColor.interpolate(FlxColor.WHITE, FlxColor.BLACK, 0.5);
 					insert(0, option);
 					options.push(option);
 
@@ -189,6 +196,7 @@ class OptionsMenu extends SubStateBackend {
 					option.numberText.text = '< ${option.value} >';
 					option.onChange = (value:Float) -> Options.set(optionData.saveID, value);
 					option.updatePosition();
+					if (optionData.disabled) option.color = FlxColor.interpolate(FlxColor.WHITE, FlxColor.BLACK, 0.5);
 					insert(0, option);
 					options.push(option);
 
@@ -198,6 +206,7 @@ class OptionsMenu extends SubStateBackend {
 					option.y = (FlxG.height/2) + ((i-optionCurSelected) * 100) - (option.alphabet.height/2);
 					option.updatePosition();
 					option.controlArray = Options.data.controls.get(optionData.saveID);
+					if (optionData.disabled) option.color = FlxColor.interpolate(FlxColor.WHITE, FlxColor.BLACK, 0.5);
 					insert(0, option);
 					options.push(option);
 			}
@@ -237,7 +246,7 @@ class OptionsMenu extends SubStateBackend {
 
 	function optionsScroll(amt) {
 		optionCurSelected = FlxMath.wrap(optionCurSelected + amt, 0, options.length-1);
-		while (optionsData.menus[menuCurSelected].options[optionCurSelected].type == SECTION) {
+		while (optionsData.menus[menuCurSelected].options[optionCurSelected].type == SECTION || optionsData.menus[menuCurSelected].options[optionCurSelected].disabled) {
 			optionCurSelected = FlxMath.wrap(optionCurSelected + (amt != 0 ? amt : 1), 0, options.length-1);
 		}
 		if (amt != 0) NovaUtils.playMenuSFX(SCROLL);

@@ -86,6 +86,7 @@ menus:
     description: If enabled, you will be able to play as the opponent.
     saveID: playAsOpponent
     type: bool
+    disabledInPlayState: true
   - name: Personal Scroll Speed
     description: Set it to 0 to use the default scroll speed.
     saveID: personalScrollSpeed

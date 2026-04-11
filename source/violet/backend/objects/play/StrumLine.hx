@@ -22,6 +22,7 @@ class StrumLine extends FlxGroup {
 	public final characters:Array<Character> = [];
 
 	public var downscroll:Bool = Options.data.downscroll;
+	public var disableOptionsAffect:Bool = false; // Makes it so changing downscroll in settings doesn't affect this strumline.
 
 	/**
 	 * States whether the strumLine is meant to be managed by the player.

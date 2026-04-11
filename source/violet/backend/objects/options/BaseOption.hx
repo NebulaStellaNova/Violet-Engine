@@ -7,6 +7,14 @@ class BaseOption extends FlxGroup {
 	public var selected:Bool = false;
 	public var alphabet:Alphabet;
 
+	public var color(default, set):FlxColor;
+	function set_color(value:FlxColor) {
+		for (i in alphabet.letters) {
+			i.color = value;
+		}
+		return color = value;
+	}
+
 	public var centerX:Bool = false;
 
 	public var title(default, set):String;

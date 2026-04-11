@@ -754,6 +754,31 @@ class PlayState extends violet.backend.StateBackend {
 		countdownTimer.active = true;
 	}
 
+	public function updateOptions() {
+		ghostTapping = Options.data.ghostTapping;
+		for (i=>strumLine in strumLines) {
+			if (!strumLine.disableOptionsAffect) {
+				strumLine.downscroll = Options.data.downscroll;
+				strumLine.setPosition(SONG.strumLines[i].strumPosition[0], SONG.strumLines[i].strumPosition[1], SONG.strumLines[i].strumPosIsPure);
+			}
+		}
+		healthBar.y = Options.data.downscroll ? FlxG.height * 0.1 : FlxG.height * 0.9;
+		scoreTxt.y = healthBar.y + healthBar.height + 5;
+		iconPlayer.y = healthBar.y + (healthBar.height/2) - (iconPlayer.height/2);
+		iconOpponent.y = healthBar.y + (healthBar.height/2) - (iconOpponent.height/2);
+
+		if (iconOpponent._data.color != null && Options.data.coloredHealthBar) {
+			healthBar.leftColor = iconOpponent._data.color;
+		} else {
+			healthBar.leftColor = FlxColor.RED;
+		}
+		if (iconPlayer._data.color != null && Options.data.coloredHealthBar) {
+			healthBar.rightColor = iconPlayer._data.color;
+		} else {
+			healthBar.rightColor = FlxColor.LIME;
+		}
+	}
+
 	override public function destroy():Void {
 		if (recordingMode) ReplaySystem.stopRecording();
 		if (recordingMode) ReplaySystem.saveRecording(SONG.id);

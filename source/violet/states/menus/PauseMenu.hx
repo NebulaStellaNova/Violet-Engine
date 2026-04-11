@@ -49,16 +49,16 @@ class PauseMenu extends EditorListBackend {
 			{ title: 'CHANGE DIFFICULTY', disabled: true, onClick: ()->{
 
 			}},
-			{ title: 'ENABLE PRACTICE MODE', disabled: true, onClick: ()->{
-
-			}},
-			{ title: 'OPTIONS', disabled: false, onClick: ()->{
+			{ title: 'CHANGE OPTIONS', disabled: false, onClick: ()->{
 				var event:EventBase = PlayState.instance.songScripts.event('onOpenOptions', new EventBase());
 				// event = subStateScripts.event('openOptions', event);
 				if (!event.cancelled) {
-					FlxTween.tween(optionBg, { alpha: 0.7 }, 0.5, { ease: FlxEase.expoOut });
+					FlxTween.tween(optionBg, { alpha: 1 }, 0.5, { ease: FlxEase.expoOut });
 					openSubState(new OptionsMenu());
 				}
+			}},
+			{ title: 'ENABLE PRACTICE MODE', disabled: true, onClick: ()->{
+
 			}},
 			{ title: 'EXIT TO MENU', disabled: false, onClick: ()->{
 				var event:EventBase = PlayState.instance.songScripts.event('onExitToMenu', new EventBase());
@@ -110,10 +110,12 @@ class PauseMenu extends EditorListBackend {
 			FlxTween.tween(infoText, { alpha: 1, y: (i * 35) + 20 }, 1, { ease: FlxEase.expoOut, startDelay: i * 0.1 });
 		}
 
-		optionBg = new NovaSprite().makeGraphic(FlxG.width, FlxG.height, FlxColor.WHITE);
+		optionBg = new NovaSprite(Paths.image('menus/mainmenu/menuBGdesat'));
 		optionBg.alpha = 0;
 		optionBg.scrollFactor.set();
 		optionBg.camera = subCamera;
+		optionBg.setGraphicSize(FlxG.width, FlxG.height);
+		optionBg.screenCenter();
 		add(optionBg);
 	}
 
@@ -147,6 +149,7 @@ class PauseMenu extends EditorListBackend {
 	}
 
 	override public function closeSubState() {
+		PlayState.instance.updateOptions();
 		FlxTween.tween(optionBg, { alpha: 0 }, 0.5, { ease: FlxEase.expoOut });
 		super.closeSubState();
 	}
