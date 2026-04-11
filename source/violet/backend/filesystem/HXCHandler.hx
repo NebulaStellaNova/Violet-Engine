@@ -17,7 +17,6 @@ class HXCHandler extends flixel.FlxBasic {
 
 	override public function new() {
 		super();
-		clear = hxcScripts.clear;
 		instance = this;
 	}
 

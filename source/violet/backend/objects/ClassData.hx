@@ -7,7 +7,7 @@ class ClassData {
 
 	public var type:String;
 	public var name:String;
-	public var target:flixel.FlxSubState;
+	public var target:Dynamic;
 	public var isSubState:Bool = false;
 
 	public function new(string:String) {
