@@ -53,6 +53,7 @@ class InitialState extends StateBackend { // for now
 			if (!Std.isOfType(FlxG.state, PlayState)) {
 				PlayState.hasSeenCutscene = false;
 				PlayState.isStoryMode = false;
+				@:bypassAccessor PlayState.practiceMode = false;
 				PlayState.playlist.resize(0);
 				PlayState.storyScore = 0;
 				PlayState.curStoryLevel = null;

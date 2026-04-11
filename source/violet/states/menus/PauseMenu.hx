@@ -1,5 +1,6 @@
 package violet.states.menus;
 
+import violet.backend.objects.Alphabet;
 import violet.backend.utils.NovaUtils;
 import flixel.text.FlxText;
 import violet.backend.utils.StringUtil;
@@ -22,8 +23,11 @@ class PauseMenu extends EditorListBackend {
 		PlayState.songData._data?.composer != null ? 'Composer: ${PlayState.songData._data?.composer}' : null,
 		PlayState.songData._data?.charter != null ? 'Charter: ${PlayState.songData._data?.charter}' : null,
 		'Difficulty: ${StringUtil.capitalizeFirst(PlayState.difficulty.toLowerCase())}',
-		'0 Blue Balls'
+		'0 Blue Balls',
+		'PRACTICE MODE'
 	];
+
+	public var infoTexts:Array<FlxText> = [];
 
 	public var pauseMenuOptions:Array<EditorListOption>;
 
@@ -33,12 +37,12 @@ class PauseMenu extends EditorListBackend {
 
 		pauseMenuOptions = [
 			{ title: 'RESUME', disabled: false, onClick: ()->{
-				var event:EventBase = PlayState.instance.songScripts.event('onResume', new EventBase());
+				var event:EventBase = PlayState.instance.songScripts.event('resume', new EventBase());
 				// event = subStateScripts.event('resume', event);
 				if (!event.cancelled) close();
 			}},
 			{ title: 'RESTART SONG', disabled: false, onClick: ()->{
-				var event:EventBase = PlayState.instance.songScripts.event('onRestartSong', new EventBase());
+				var event:EventBase = PlayState.instance.songScripts.event('restartSong', new EventBase());
 				// event = subStateScripts.event('restartSong', event);
 				if (event.cancelled) return;
 				Conductor.stop();
@@ -50,18 +54,28 @@ class PauseMenu extends EditorListBackend {
 
 			}},
 			{ title: 'CHANGE OPTIONS', disabled: false, onClick: ()->{
-				var event:EventBase = PlayState.instance.songScripts.event('onOpenOptions', new EventBase());
+				var event:EventBase = PlayState.instance.songScripts.event('openOptions', new EventBase());
 				// event = subStateScripts.event('openOptions', event);
 				if (!event.cancelled) {
 					FlxTween.tween(optionBg, { alpha: 1 }, 0.5, { ease: FlxEase.expoOut });
 					openSubState(new OptionsMenu());
 				}
 			}},
-			{ title: 'ENABLE PRACTICE MODE', disabled: true, onClick: ()->{
-
+			{ title: (PlayState.practiceMode ? 'DISABLE' : 'ENABLE') + ' PRACTICE MODE', disabled: PlayState.isStoryMode, onClick: ()->{
+				var event:EventBase = PlayState.instance.songScripts.event('changePracticeMode', new EventBase());
+				if (event.cancelled) return;
+				var listItem:Alphabet = null;
+				for (i in items) {
+					if (i.text == (PlayState.practiceMode ? 'DISABLE' : 'ENABLE') + ' PRACTICE MODE') {
+						listItem = i;
+						break;
+					}
+				}
+				PlayState.practiceMode = !PlayState.practiceMode;
+				if (listItem != null) listItem.text = (PlayState.practiceMode ? 'DISABLE' : 'ENABLE') + ' PRACTICE MODE';
 			}},
 			{ title: 'EXIT TO MENU', disabled: false, onClick: ()->{
-				var event:EventBase = PlayState.instance.songScripts.event('onExitToMenu', new EventBase());
+				var event:EventBase = PlayState.instance.songScripts.event('exitToMenu', new EventBase());
 				// event = subStateScripts.event('exitToMenu', event);
 				if (!event.cancelled) subCamera.fade(0.25, () -> {
 					PlayState.instance.exitToMenu();
@@ -105,6 +119,7 @@ class PauseMenu extends EditorListBackend {
 			infoText.x = FlxG.width - infoText.width - 20;
 			infoText.alpha = 0;
 			infoText.camera = subCamera;
+			infoTexts.push(infoText);
 			add(infoText);
 
 			FlxTween.tween(infoText, { alpha: 1, y: (i * 35) + 20 }, 1, { ease: FlxEase.expoOut, startDelay: i * 0.1 });
@@ -137,6 +152,9 @@ class PauseMenu extends EditorListBackend {
 		for (i=>item in items) {
 			item.y = (160 * i) + 30;
 			item.x = MathUtil.lerp(item.x, 90 + ((i-debugCurSelected)*20), 0.2);
+		}
+		for (text in infoTexts) {
+			if (text.text == "PRACTICE MODE") text.visible = PlayState.practiceMode;
 		}
 	}
 

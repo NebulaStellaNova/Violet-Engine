@@ -124,6 +124,14 @@ class PlayState extends violet.backend.StateBackend {
 	public var playAsOpponent:Bool = Options.data.playAsOpponent;
 	public var ghostTapping:Bool = Options.data.ghostTapping;
 
+	public var hasChangedPracticeMode(default, null):Bool = false;
+	public static var practiceMode(default, set):Bool = false;
+	static function set_practiceMode(value:Bool):Bool {
+		if (value != practiceMode)
+			@:bypassAccessor PlayState.instance.hasChangedPracticeMode = true;
+		return practiceMode = value;
+	}
+
 	public var countdownSprites:Array<String> = [null, 'ready', 'set', 'go'];
 	public var countdownSounds:Array<String> = ['introTHREE', 'introTWO', 'introONE', 'introGO'];
 	public var countdownTimer:FlxTimer = new FlxTimer();
@@ -403,7 +411,8 @@ class PlayState extends violet.backend.StateBackend {
 		}
 
 		if (health == 0 || Controls.reset) {
-			FlxG.switchState(new GameOverState(strumLines.members[1].characters[0]));
+			if (!practiceMode) FlxG.switchState(new GameOverState(strumLines.members[1].characters[0]));
+			else health = 0.01;
 		}
 
 		callSongScripts('postUpdate', [elapsed]);
@@ -677,8 +686,8 @@ class PlayState extends violet.backend.StateBackend {
 		event = runSongEvent('songEnd', event);
 		if (event.cancelled) return;
 		songEnded = true;
-		ScoreUtil.saveSongScore(songData.songName, difficulty, songData.variant, score);
-		ScoreUtil.saveSongAccuracy(songData.songName, difficulty, songData.variant, accuracy);
+		if (!hasChangedPracticeMode && !practiceMode) ScoreUtil.saveSongScore(songData.songName, difficulty, songData.variant, score);
+		if (!hasChangedPracticeMode && !practiceMode) ScoreUtil.saveSongAccuracy(songData.songName, difficulty, songData.variant, accuracy);
 		storyScore += score;
 		if (playlist.length == 0 || !isStoryMode) {
 			exitToMenu();
