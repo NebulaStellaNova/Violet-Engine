@@ -173,7 +173,6 @@ class OptionsMenu extends SubStateBackend {
 					option.centerX = true;
 					option.y = (FlxG.height/2) + ((i-optionCurSelected) * 100) - (option.alphabet.height/2);
 					option.updatePosition();
-					if (optionData.disabled) option.color = FlxColor.interpolate(FlxColor.WHITE, FlxColor.BLACK, 0.5);
 					insert(0, option);
 					options.push(option);
 
@@ -184,7 +183,7 @@ class OptionsMenu extends SubStateBackend {
 					option.checkbox.value = Options.get(optionData.saveID) ?? false; option.checkbox.animation.finish();
 					option.onChange = (value:Bool) -> Options.set(optionData.saveID, value);
 					option.updatePosition();
-					if (optionData.disabled) option.color = FlxColor.interpolate(FlxColor.WHITE, FlxColor.BLACK, 0.5);
+					if (optionData.disabled) option.checkbox.color = option.color = FlxColor.interpolate(FlxColor.WHITE, FlxColor.BLACK, 0.5);
 					insert(0, option);
 					options.push(option);
 
