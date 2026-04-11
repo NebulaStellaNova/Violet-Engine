@@ -189,10 +189,10 @@ class MainMenu extends StateBackend {
 		FlxG.camera.fade(FlxColor.BLACK, 0.25, true);
 
 		#if debug
-		DebugDisplay.registerVariable('Current Menu Item Index', 'curSelected');
-		DebugDisplay.registerVariable('Current Menu Item', 'curSelectedString');
-		DebugDisplay.registerVariable('Background Color', 'bgColorString');
-		DebugDisplay.registerVariable('Can Select', 'canSelect');
+		DebugDisplay.registerVariable('Current Menu Item Index', () -> return curSelected);
+		DebugDisplay.registerVariable('Current Menu Item', () -> return curSelectedString);
+		DebugDisplay.registerVariable('Background Color', () -> return bgColorString);
+		DebugDisplay.registerVariable('Can Select', () -> return canSelect);
 		#end
 
 		NovaUtils.playMenuMusic();

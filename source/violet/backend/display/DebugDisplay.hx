@@ -24,7 +24,7 @@ class DebugDisplay extends Sprite {
 
 	public var shown:Bool = false;
 
-	@:unreflective public static var extraInfo:Array<{label:String, value:Dynamic}> = [];
+	@:unreflective public static var extraInfo:Array<{label:String, func:Void->Dynamic}> = [];
 
 	public function new() {
 		super();
@@ -78,42 +78,45 @@ class DebugDisplay extends Sprite {
 	var cpuAvg:Float = 0;
 
 	function onEnterFrame(e:Event) {
-		_framesPassed++;
+		// so it doesn't update when off-screen
+		if (background2.x + background2.width > 0) {
+			_framesPassed++;
 
-		final deltaTime:Float = Math.max(NovaUtils.getTimerPrecise() - _previousTime, 0);
-		_updateClock += deltaTime;
+			final deltaTime:Float = Math.max(NovaUtils.getTimerPrecise() - _previousTime, 0);
+			_updateClock += deltaTime;
 
-		memories.push(FlxMath.roundDecimal(Memory.getProcessPhysicalMemoryUsage(), 2));
-		cpus.push(FlxMath.roundDecimal(CPU.getProcessCPUUsage(), 2));
-		if (memories.length > 100) memories.shift();
-		if (cpus.length > 100) cpus.shift();
+			memories.push(FlxMath.roundDecimal(Memory.getProcessPhysicalMemoryUsage(), 2));
+			cpus.push(FlxMath.roundDecimal(CPU.getProcessCPUUsage(), 2));
+			if (memories.length > 100) memories.shift();
+			if (cpus.length > 100) cpus.shift();
 
-		memoryAvg = cpuAvg = 0;
-		for (m in memories) memoryAvg += m;
-		for (c in cpus) cpuAvg += c;
-		maxMemory = Math.max(maxMemory, memoryAvg /= memories.length);
-		maxCpu = Math.max(maxCpu, cpuAvg /= cpus.length);
+			memoryAvg = cpuAvg = 0;
+			for (m in memories) memoryAvg += m;
+			for (c in cpus) cpuAvg += c;
+			maxMemory = Math.max(maxMemory, memoryAvg /= memories.length);
+			maxCpu = Math.max(maxCpu, cpuAvg /= cpus.length);
 
-		if (_updateClock >= 1000) {
-			framesPerSecond = (FlxG.drawFramerate > 0) ? FlxMath.minInt(_framesPassed, FlxG.drawFramerate) : _framesPassed;
-			_framesPassed = 0;
-			_updateClock = 0;
+			if (_updateClock >= 1000) {
+				framesPerSecond = (FlxG.drawFramerate > 0) ? FlxMath.minInt(_framesPassed, FlxG.drawFramerate) : _framesPassed;
+				_framesPassed = 0;
+				_updateClock = 0;
+			}
+			var parts:Array<String> = [
+				'Framerate: $framesPerSecond',
+				'Memory: ${FlxMath.roundDecimal(memoryAvg, 2).formatBytes()} / ${FlxMath.roundDecimal(maxMemory, 2).formatBytes()}',
+				'CPU: ${FlxMath.roundDecimal(cpuAvg, 2)}% / ${FlxMath.roundDecimal(maxCpu, 2)}%'
+			];
+			_previousTime = NovaUtils.getTimerPrecise();
+			if (extraInfo.length != 0)
+				parts = parts.concat(['']).concat([for (info in extraInfo) '${info.label}: ${Std.string(info.func() ?? '???')}']);
+			text.text = parts.join('\n');
+
+			background.width = text.width + 21;
+			background.height = text.height + 21;
+
+			background2.width = background.width + 10;
+			background2.height = background.height + 10;
 		}
-		var parts:Array<String> = [
-			'Framerate: $framesPerSecond',
-			'Memory: ${FlxMath.roundDecimal(memoryAvg, 2).formatBytes()} / ${FlxMath.roundDecimal(maxMemory, 2).formatBytes()}',
-			'CPU: ${FlxMath.roundDecimal(cpuAvg, 2)}% / ${FlxMath.roundDecimal(maxCpu, 2)}%'
-		];
-		_previousTime = NovaUtils.getTimerPrecise();
-		if (extraInfo.length != 0)
-			parts = parts.concat(['']).concat([for (info in extraInfo) '${info.label}: ${Reflect.getProperty(FlxG.state, info.value) != null ? Reflect.getProperty(FlxG.state, info.value) : (Reflect.field(FlxG.state, info.value) != null ? Reflect.field(FlxG.state, info.value) : (Reflect.getProperty(Type.getClass(FlxG.state), info.value) != null ? Reflect.getProperty(Type.getClass(FlxG.state), info.value) : "???"))}']);
-		text.text = parts.join('\n');
-
-		background.width = text.width + 21;
-		background.height = text.height + 21;
-
-		background2.width = background.width + 10;
-		background2.height = background.height + 10;
 
 		background.x = MathUtil.lerp(background.x, shown ? 20 : - background.width - 50, 0.1);
 
@@ -121,15 +124,14 @@ class DebugDisplay extends Sprite {
 		text.x = background.x + 10;
 		text.y = background.y + 10;
 
-
 		if (OptionsMenu.instance != null)
 			if (!OptionsMenu.instance.canSelectMenu) return;
 		if (Controls.debugDisplay)
 			shown = !shown;
 	}
 
-	@:unreflective public static function registerVariable(label:String, variable:String) {
-		extraInfo.push({label: label, value: variable});
+	public static function registerVariable(label:String, func:Void->Dynamic) {
+		extraInfo.push({label: label, func: func});
 	}
 
 }

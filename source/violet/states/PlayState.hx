@@ -325,14 +325,14 @@ class PlayState extends violet.backend.StateBackend {
 		}
 
 		#if debug
-		DebugDisplay.registerVariable('Current Song', 'song');
-		DebugDisplay.registerVariable('Current Difficulty', 'difficulty');
-		DebugDisplay.registerVariable('Current Variantion', 'variation');
-		DebugDisplay.registerVariable('Is Story Mode', 'isStoryMode');
-		DebugDisplay.registerVariable('Misses', 'misses');
-		DebugDisplay.registerVariable('Score', 'score');
-		DebugDisplay.registerVariable('Accuracy', 'accuracy');
-		if (playlist.length != 0) DebugDisplay.registerVariable('Playlist Items', 'playlist');
+		DebugDisplay.registerVariable('Current Song', () -> return song);
+		DebugDisplay.registerVariable('Current Difficulty', () -> return difficulty);
+		DebugDisplay.registerVariable('Current Variantion', () -> return variation);
+		DebugDisplay.registerVariable('Is Story Mode', () -> return isStoryMode);
+		DebugDisplay.registerVariable('Misses', () -> return misses);
+		DebugDisplay.registerVariable('Score', () -> return score);
+		DebugDisplay.registerVariable('Accuracy', () -> return accuracy);
+		if (playlist.length != 0) DebugDisplay.registerVariable('Playlist Items', () -> return playlist);
 		#end
 
 		Conductor.setSongPosition(0);
