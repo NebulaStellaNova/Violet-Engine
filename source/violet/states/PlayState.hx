@@ -198,12 +198,11 @@ class PlayState extends violet.backend.StateBackend {
 		// Start Dialogue
 		var sD:Array<ConverstationPiece> = ParseUtil.jsonOrYaml('songs/$song/start-dialogue');
 		var dialogueHandler = new DialogueHandler(sD);
-		dialogueHandler.camera = camHUD;
+		dialogueHandler.cameras = [camHUD];
 		dialogueHandler.updateHitbox();
 		dialogueHandler.screenCenter();
 		dialogueHandler.y += 150;
 		add(dialogueHandler);
-
 
 		strumLines = new FlxTypedGroup<StrumLine>();
 
@@ -261,9 +260,6 @@ class PlayState extends violet.backend.StateBackend {
 		}
 
 		comboGroup = new ComboGroup();
-		comboGroup.camera =  camGame;
-		comboGroup.x = 1100;
-		comboGroup.y = 300;
 
 		stage = new Stage(SONG.stage);
 		stage.stageScripts.parent = this;
@@ -271,9 +267,16 @@ class PlayState extends violet.backend.StateBackend {
 		defaultCamZoom = stage._data.zoom;
 		camGameBase.zoom = defaultCamZoom;
 
+		if (!members.contains(comboGroup)) {
+			comboGroup.visible = false;
+			comboGroup.setPosition(FlxG.width / 2, FlxG.height / 2);
+			comboGroup.zIndex = -1;
+			add(comboGroup);
+		}
+
 		healthBar = new HealthBar();
 		healthBar.y = Options.data.downscroll ? FlxG.height * 0.1 : FlxG.height * 0.9;
-		healthBar.camera = camHUD;
+		healthBar.cameras = [camHUD];
 		healthBar.screenCenter(X);
 		add(healthBar);
 
@@ -294,13 +297,13 @@ class PlayState extends violet.backend.StateBackend {
 		scoreTxt = new ScoreTxt();
 		scoreTxt.x = healthBar.x + healthBar.width - scoreTxt.width;
 		scoreTxt.y = healthBar.y + healthBar.height + 5;
-		scoreTxt.camera = camHUD;
+		scoreTxt.cameras = [camHUD];
 		add(scoreTxt);
 
-		iconPlayer.camera = camHUD;
+		iconPlayer.cameras = [camHUD];
 		add(iconPlayer);
 
-		iconOpponent.camera = camHUD;
+		iconOpponent.cameras = [camHUD];
 		iconOpponent.isOpponent = true;
 		add(iconOpponent);
 
@@ -488,6 +491,8 @@ class PlayState extends violet.backend.StateBackend {
 		note.parentStrum.holdCover?.playAnim('end', true);
 		if (note.parent.isComputer) note.parentStrum.holdCover?.animation.finish();
 		note.parentStrum.holdCover = null;
+
+		runSongEvent('noteMissedPost', event);
 	}
 
 	function onSustainHit(sustain:Sustain) {
@@ -512,13 +517,15 @@ class PlayState extends violet.backend.StateBackend {
 			if (sustain.parent.isComputer) sustain.parentStrum.holdCover?.animation.finish();
 			sustain.parentStrum.holdCover = null;
 		}
+
+		runSongEvent('sustainHitPost', event);
 	}
 
 	function onSustainMissed(sustain:Sustain) {
 		if (!Conductor.instrumental.playing && sustain.parent.isComputer) return;
 		if (sustain.wasMissed) return;
-		// final event:NoteHitEvent = runSongEvent('sustainMissed', new NoteHitEvent(sustain));
-		// if (event.cancelled) return;
+		final event:SustainHitEvent = runSongEvent('sustainMissed', new SustainHitEvent(sustain));
+		if (event.cancelled) return;
 
 		sustain.wasMissed = true; sustain.alpha *= 0.6;
 		generalVocals.pause(); sustain.parent.vocals.pause();
@@ -537,6 +544,8 @@ class PlayState extends violet.backend.StateBackend {
 		sustain.parentStrum.holdCover?.playAnim('end', true);
 		if (sustain.parent.isComputer) sustain.parentStrum.holdCover?.animation.finish();
 		sustain.parentStrum.holdCover = null;
+
+		runSongEvent('sustainMissedPost', event);
 	}
 
 	var countdownTick = 0;
@@ -562,7 +571,7 @@ class PlayState extends violet.backend.StateBackend {
 			if (countdownSounds[countdownTick] != null) NovaUtils.playSound('game/countdown/funkin/${countdownSounds[countdownTick]}');
 			if (countdownSprites[countdownTick] != null) {
 				var countdownSprite:NovaSprite = new NovaSprite(Paths.image('game/countdown/funkin/${countdownSprites[countdownTick]}'));
-				countdownSprite.camera = camHUD;
+				countdownSprite.cameras = [camHUD];
 				countdownSprite.scale.set(0.8, 0.8);
 				countdownSprite.updateHitbox();
 				countdownSprite.screenCenter();
@@ -648,6 +657,7 @@ class PlayState extends violet.backend.StateBackend {
 			trace('debug:Ran song event named "<yellow>${[null, "Camera Movement"][event.type]}<reset>" with parameters "<yellow>${event.params.join(", ")}<reset>"');
 		}
 
+		runSongEvent('onEventPost', scriptEvent);
 		// trace('debug:Ran event ');
 		// trace('debug:$event');
 	}
@@ -656,8 +666,7 @@ class PlayState extends violet.backend.StateBackend {
 
 		if (songStarted) return;
 
-		var event = runSongEvent('startSong', new EventBase());
-		event = runSongEvent('songStart', event);
+		var event = runSongEvent('startSong', runSongEvent('songStart', new EventBase()));
 
 		if (event.cancelled) return;
 
@@ -678,8 +687,7 @@ class PlayState extends violet.backend.StateBackend {
 	}
 
 	function endSong():Void {
-		var event:EventBase = runSongEvent('endSong', new EventBase());
-		event = runSongEvent('songEnd', event);
+		var event:EventBase = runSongEvent('endSong', runSongEvent('songEnd', new EventBase()));
 		if (event.cancelled) return;
 		songEnded = true;
 		if (!hasChangedPracticeMode && !practiceMode) ScoreUtil.saveSongScore(songData.songName, difficulty, songData.variant, score);
@@ -695,8 +703,7 @@ class PlayState extends violet.backend.StateBackend {
 	}
 
 	public function pause() {
-		var event:EventBase = runSongEvent('pause', new EventBase());
-		event = stage.stageScripts.event('pause', event);
+		var event:EventBase = runSongEvent('pause', stage.stageScripts.event('pause', new EventBase()));
 		if (!event.cancelled) {
 			countdownTimer.active = false;
 
@@ -760,6 +767,9 @@ class PlayState extends violet.backend.StateBackend {
 	}
 
 	public function updateOptions() {
+		var event = runSongEvent('updateOptions', new EventBase());
+		if (event.cancelled) return;
+
 		ghostTapping = Options.data.ghostTapping;
 		for (i=>strumLine in strumLines) {
 			if (!strumLine.disableOptionsAffect) {
@@ -767,21 +777,21 @@ class PlayState extends violet.backend.StateBackend {
 				strumLine.setPosition(SONG.strumLines[i].strumPosition[0], SONG.strumLines[i].strumPosition[1], SONG.strumLines[i].strumPosIsPure);
 			}
 		}
+
 		healthBar.y = Options.data.downscroll ? FlxG.height * 0.1 : FlxG.height * 0.9;
 		scoreTxt.y = healthBar.y + healthBar.height + 5;
 		iconPlayer.y = healthBar.y + (healthBar.height/2) - (iconPlayer.height/2);
 		iconOpponent.y = healthBar.y + (healthBar.height/2) - (iconOpponent.height/2);
 
-		if (iconOpponent._data.color != null && Options.data.coloredHealthBar) {
+		if (iconOpponent._data.color != null && Options.data.coloredHealthBar)
 			healthBar.leftColor = iconOpponent._data.color;
-		} else {
-			healthBar.leftColor = FlxColor.RED;
-		}
-		if (iconPlayer._data.color != null && Options.data.coloredHealthBar) {
+		else healthBar.leftColor = FlxColor.RED;
+
+		if (iconPlayer._data.color != null && Options.data.coloredHealthBar)
 			healthBar.rightColor = iconPlayer._data.color;
-		} else {
-			healthBar.rightColor = FlxColor.LIME;
-		}
+		else healthBar.rightColor = FlxColor.LIME;
+
+		runSongEvent('postUpdateOptions', event);
 	}
 
 	override public function destroy():Void {
