@@ -74,12 +74,11 @@ class OptionsMenu extends SubStateBackend {
 		for (menu in optionsData.menus) {
 			for (optionData in menu.options) {
 				var platformTargets = optionData.platform.replace(' ', '').split(',');
-				for (platform in platformTargets) {
-					if (!NovaUtils.platformCheck(platform)) menu.options.remove(optionData);
-				}
-				if (optionData.disabledInPlayState && Std.isOfType(FlxG.state, PlayState)) {
+				for (platform in platformTargets)
+					if (!NovaUtils.platformCheck(platform))
+						menu.options.remove(optionData);
+				if (optionData.disabledInPlayState && FlxG.state is PlayState)
 					optionData.disabled = true;
-				}
 			}
 		}
 
