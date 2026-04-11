@@ -86,11 +86,19 @@ class Options {
 		}
 	}
 
-	public static function setterCallback(what:String)
-	{
+	public static function setterCallback(what:String) {
 		switch (what) {
 			case 'antialiasTextures':
-				applyAntialiasingToState();
+				var state = FlxG.state;
+				while (state != null) {
+					state.forEach(basic -> {
+						if (basic is FlxSprite) {
+							var sprite:FlxSprite = cast basic;
+							sprite.antialiasing = data.antialiasTextures;
+						}
+					}, true);
+					state = state.subState;
+				}
 			case 'fps', 'vsync':
 				var newFps = if (data.vsync) Application.current.window.displayMode.refreshRate else data.fps;
 				if (data.vsync && data.fps == Application.current.window.displayMode.refreshRate) return;
@@ -104,33 +112,6 @@ class Options {
 					FlxG.drawFramerate = newFps;
 					FlxG.updateFramerate = newFps;
 				}
-		}
-	}
-
-	public static function applyAntialiasingToState()
-	{
-		try {
-			if (FlxG.state == null)
-				return;
-			applyAntialiasingToMembers((cast FlxG.state:FlxState).members);
-		} catch(e:Dynamic) {
-			trace('Error applying antialiasing to members: $e');
-		}
-	}
-
-	private static function applyAntialiasingToMembers(members:Array<Dynamic>)
-	{
-		if (members == null)
-			return;
-		for (m in members) {
-			if (m == null)
-				continue;
-			if (Std.isOfType(m, FlxSprite) && !Std.isOfType(m, FlxText)) {
-				(cast m:FlxSprite).antialiasing = data.antialiasTextures;
-			}
-			if (Std.isOfType(m, FlxGroup)) {
-				applyAntialiasingToMembers((cast m:FlxGroup).members);
-			}
 		}
 	}
 
