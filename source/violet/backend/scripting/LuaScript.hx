@@ -43,6 +43,7 @@ class LuaScript extends Script {
 			violet.backend.console.Logs.traceCallback(s, info);
 		}
 		initVars();
+		internalScript.execute();
 	}
 
 	override function initVars() {
@@ -82,13 +83,6 @@ class LuaScript extends Script {
 	override public function get<T>(variable:String, ?def:T):T {
 		var res:T =  internalScript.getVar(variable) ?? def;
 		return res;
-	}
-
-	override public function execute():Void {
-		if (executed) return;
-		internalScript.execute();
-		call('new');
-		executed = true;
 	}
 
 }
