@@ -77,14 +77,9 @@ class Main extends openfl.display.Sprite {
 		super();
 		instance = this;
 
-		lemonui.Constants.FONT_REGULAR = Paths.font('Inconsolata-Medium.ttf');
-		lemonui.Constants.FONT_BOLD = Paths.font('Inconsolata-Bold.ttf');
-
-		// violet.boot.HaxeUIHelper.init();
-
-		/* FlxG.signals.postStateSwitch.add(()->{
-			@:privateAccess violet.backend.CrashHandler.notificationManager = null;//new haxe.ui.notifications.NotificationManager();
-			}); */
+		lemonui.themes.ThemeManager.currentTheme = lemonui.themes.Theme.DarkTheme.instance;
+		lemonui.themes.ThemeManager.currentTheme.styles.fontRegular = Paths.font('Inconsolata-Medium.ttf');
+		lemonui.themes.ThemeManager.currentTheme.styles.fontBold = Paths.font('Inconsolata-Bold.ttf');
 
 		moonchart.Moonchart.DEFAULT_DIFF = 'normal';
 		moonchart.Moonchart.CASE_SENSITIVE_DIFFS = moonchart.Moonchart.SPACE_SENSITIVE_DIFFS = false;
@@ -104,10 +99,10 @@ class Main extends openfl.display.Sprite {
 		#end
 
 		@:privateAccess {
-			Constants.ENGINE_VERSION = lime.app.Application.current.meta.get('version');
+			Constants.ENGINE_VERSION = Application.current.meta.get('version');
 			#if CHECK_FOR_UPDATES
-			Constants.LATEST_ENGINE_VERSION = lime.app.Application.current.meta.get('version');
-			Constants.UPDATE_AVAILABLE = false;
+			Constants.LATEST_ENGINE_VERSION = Constants.ENGINE_VERSION;
+			Constants.UPDATE_AVAILABLE = Constants.LATEST_ENGINE_VERSION > Constants.ENGINE_VERSION;
 			#end
 		}
 
@@ -119,12 +114,7 @@ class Main extends openfl.display.Sprite {
 		var gameWidth = 1280; // Mobile Width = 1600;
 		var gameHeight = 720;
 
-		#if !linux
-		var defaultRefresh:Int = Application.current.window.displayMode.refreshRate;
-		#else
-		var defaultRefresh:Int = 60;
-		#end
-		var startFPS:Int = if (Options.data.vsync) defaultRefresh else Std.int(Options.data.fps);
+		var startFPS:Int = Options.data.vsync ? #if !linux Application.current.window.displayMode.refreshRate #else 60 #end : Std.int(Options.data.fps);
 		new flixel.FlxGame(gameWidth, gameHeight, violet.states.InitialState, startFPS, startFPS, true);
 		FlxG.sound.volume = FlxG.save.data.volume ?? 0.4;
 		@:privateAccess FlxG.game._customSoundTray = violet.backend.display.VioletSoundTray;
@@ -147,7 +137,7 @@ class Main extends openfl.display.Sprite {
 			}
 		});
 
-		lime.app.Application.current.onExit.add((_)->ModdingAPI.powerDown());
+		Application.current.onExit.add(_ -> ModdingAPI.powerDown());
 
 		#if windows
 		violet.external.windows.WinAPI.setDarkMode(violet.external.windows.WinAPI.isSystemDarkMode());
