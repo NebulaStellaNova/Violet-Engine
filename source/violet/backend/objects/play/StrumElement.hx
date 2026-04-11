@@ -1,6 +1,7 @@
 package violet.backend.objects.play;
 
 class StrumElement extends NovaSprite {
+
 	public final parent:Strum;
 
 	public function new(parent:Strum, ?path:String) {
@@ -22,4 +23,5 @@ class StrumElement extends NovaSprite {
 			centerOrigin();
 		}
 	}
+
 }

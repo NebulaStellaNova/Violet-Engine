@@ -54,8 +54,8 @@ class NumberOption extends BaseOption {
 		super.updatePosition();
 
 		numberText.y = y + 3;
-        numberText.x = x + alphabet.width + 40;
-        numberText.alpha = alphabet.alpha;
+		numberText.x = x + alphabet.width + 40;
+		numberText.alpha = alphabet.alpha;
 	}
 
 }

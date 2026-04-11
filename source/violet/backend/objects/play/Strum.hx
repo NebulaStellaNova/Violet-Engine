@@ -5,6 +5,7 @@ import violet.data.notestyles.NoteStyle;
 import violet.data.notestyles.NoteStyleRegistry;
 
 class Strum extends NovaSprite {
+
 	/**
 	 * The parent strumline.
 	 */
@@ -166,4 +167,5 @@ class Strum extends NovaSprite {
 		this.holdCovers.push(holdCover);
 		this.parent.add(holdCover);
 	}
+
 }

@@ -5,18 +5,19 @@ import violet.backend.utils.ParseUtil;
 
 class StageRegistry {
 
-    public static var stageDatas:Map<String, StageData> = new Map<String, StageData>();
+	public static var stageDatas:Map<String, StageData> = new Map<String, StageData>();
 
-    public static function registerStages() {
-        trace('debug:<yellow>Registering stages...');
+	public static function registerStages() {
+		trace('debug:<yellow>Registering stages...');
 
-        stageDatas.clear();
+		stageDatas.clear();
 
-        for (file in Paths.readFolder("data/stages")) {
-            if (!FileUtil.isDataFile(file)) continue;
-            final stageID = Paths.fileName(file);
-            stageDatas.set(stageID, ParseUtil.jsonOrYaml('data/stages/$stageID'));
-            trace('debug:<cyan>Found and registered stage with ID "<magenta>${stageID}<cyan>"');
-        }
-    }
+		for (file in Paths.readFolder('data/stages')) {
+			if (!FileUtil.isDataFile(file)) continue;
+			final stageID = Paths.fileName(file);
+			stageDatas.set(stageID, ParseUtil.jsonOrYaml('data/stages/$stageID'));
+			trace('debug:<cyan>Found and registered stage with ID "<magenta>${stageID}<cyan>"');
+		}
+	}
+
 }

@@ -20,7 +20,7 @@ class LuaScript extends Script {
 
 	public var storedVars:Map<String, Dynamic> = [];
 	override function setPublicVars(vars:Map<String, Dynamic>):Void
-		storedVars = vars ?? [];
+		storedVars = vars;
 
 	public function new(path:String, preset:Bool = true) {
 		super(path);
@@ -43,13 +43,6 @@ class LuaScript extends Script {
 			violet.backend.console.Logs.traceCallback(s, info);
 		}
 		initVars();
-		set('curStep', 0);
-		set('curBeat', 0);
-		if (Std.isOfType(FlxG.state, violet.states.PlayState)) {
-			for (i in violet.states.PlayState.instance.characterIDs) {
-				set(i.replace('-', '_').replace(' ', '_ '), new violet.data.character.Character(i));
-			}
-		}
 		internalScript.execute();
 	}
 
@@ -95,9 +88,11 @@ class LuaScript extends Script {
 }
 #else
 class LuaScript extends Script {
+
 	public function new(path:String, preset:Bool = true) {
 		super('', true);
 		trace('warning:Lua scripting is not available for this version of the engine');
 	}
+
 }
 #end

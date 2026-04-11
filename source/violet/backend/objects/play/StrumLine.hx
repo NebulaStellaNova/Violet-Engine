@@ -22,6 +22,7 @@ class StrumLine extends FlxGroup {
 	public final characters:Array<Character> = [];
 
 	public var downscroll:Bool = Options.data.downscroll;
+	public var disableOptionsAffect:Bool = false; // Makes it so changing downscroll in settings doesn't affect this strumline.
 
 	/**
 	 * States whether the strumLine is meant to be managed by the player.
@@ -341,6 +342,7 @@ class StrumLine extends FlxGroup {
 }
 
 class NoteGroup extends FlxTypedGroup<Note> {
+
 	/**
 	 * Applies a function to all rendered members.
 	 * @param func A function that modifies one note at a time.
@@ -388,9 +390,11 @@ class NoteGroup extends FlxTypedGroup<Note> {
 		);
 		FlxCamera._defaultCameras = oldDefaultCameras;
 	}
+
 }
 
 class SustainGroup extends FlxTypedGroup<Sustain> {
+
 	/**
 	 * Applies a function to all rendered members.
 	 * @param func A function that modifies one sustain at a time.
@@ -426,4 +430,5 @@ class SustainGroup extends FlxTypedGroup<Sustain> {
 		);
 		FlxCamera._defaultCameras = oldDefaultCameras;
 	}
+
 }

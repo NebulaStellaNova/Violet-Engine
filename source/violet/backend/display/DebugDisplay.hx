@@ -16,6 +16,7 @@ import violet.states.menus.OptionsMenu;
 using flixel.util.FlxStringUtil;
 
 class DebugDisplay extends Sprite {
+
 	public var background:Bitmap;
 	public var background2:Bitmap;
 
@@ -23,8 +24,7 @@ class DebugDisplay extends Sprite {
 
 	public var shown:Bool = false;
 
-	@:unreflective
-	public static var extraInfo:Array<{label:String, value:Dynamic}> = [];
+	@:unreflective public static var extraInfo:Array<{label:String, value:Dynamic}> = [];
 
 	public function new() {
 		super();
@@ -56,7 +56,7 @@ class DebugDisplay extends Sprite {
 
 		flixel.FlxG.signals.preStateSwitch.add(() -> {
 			maxMemory = maxCpu = 0;
-			extraInfo = [];
+			extraInfo.resize(0);
 		});
 
 		addEventListener(Event.ENTER_FRAME, onEnterFrame);
@@ -128,8 +128,8 @@ class DebugDisplay extends Sprite {
 			shown = !shown;
 	}
 
-	@:unreflective
-	public static function registerVariable(label:String, variable:String) {
+	@:unreflective public static function registerVariable(label:String, variable:String) {
 		extraInfo.push({label: label, value: variable});
 	}
+
 }

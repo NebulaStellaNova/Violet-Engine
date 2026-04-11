@@ -1,7 +1,16 @@
 {
+	"[github-actions-workflow][yaml][yml]": {
+		"editor.defaultFormatter": "esbenp.prettier-vscode",
+		"editor.insertSpaces": true,
+		"editor.tabSize": 2,
+		"prettier.tabWidth": 2,
+		"prettier.useTabs": false
+	},
+
 	"cSpell.words": [
 		"datas",
 		"flxrhythmconductor",
+		"Funcy",
 		"hxhardware",
 		"hxwindowmode",
 		"hython",
@@ -10,15 +19,28 @@
 		"lemonui",
 		"lscript",
 		"luac",
-		"paopao"
+		"luas",
+		"paopao",
+		"pscript",
+		"vmod"
 	],
 
+	"editor.insertSpaces": false,
+	"editor.tabSize": 4,
+
 	"files.associations": {
-		"*.hxp": "haxe",
-		"*.json": "jsonc",
+		"*.{hxc,hxs,hscript,hxp}": "haxe",
+		"*.{luac,luas,lscript}": "lua",
+		"*.{pyc,pys,pscript}": "python",
+		"*.json": "jsonc"
 	},
 	"files.autoGuessEncoding": true,
 	"files.enableTrash": true, // YOU'LL THANK ME LATER!!!
 	"files.trimFinalNewlines": true,
-	"files.trimTrailingWhitespace": true
+	"files.trimTrailingWhitespace": true,
+
+	"haxeTestExplorer.launchConfiguration": "Debug",
+
+	"prettier.tabWidth": 4,
+	"prettier.useTabs": true
 }

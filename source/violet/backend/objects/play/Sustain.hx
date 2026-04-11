@@ -7,6 +7,7 @@ import violet.data.notestyles.NoteStyle;
 import violet.data.notestyles.NoteStyleRegistry;
 
 class Sustain extends NovaSprite {
+
 	/**
 	 * The parent strumline.
 	 */
@@ -154,4 +155,5 @@ class Sustain extends NovaSprite {
 		if (clipRect != null)
 			clipRect.put();
 	}
+
 }

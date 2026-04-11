@@ -8,7 +8,7 @@ import haxe.macro.Expr;
 class Macro {
 
 	public static function print(message:String) {
-		Sys.println("\r\x1b[92m" + '[   MACRO   ] -> [  Macro.hx  ]: ' + "\033[0m" + '$message');
+		Sys.println('\r\x1b[92m[   MACRO   ] -> [  Macro.hx  ]: \033[0m$message');
 	}
 
 	public static function addMetadata(buildPath:String, classPath:String) {
@@ -189,7 +189,7 @@ class Macro {
 			/**
 			 * The property sort the objects by.
 			 */
-			public var sortBy:String = "zIndex";
+			public var sortBy:String = 'zIndex';
 
 			public var last(get, never):T;
 			function get_last() return this.members.copy().pop();

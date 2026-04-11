@@ -22,7 +22,7 @@ enum NotificationType {
 
 class NovaUtils {
 
-	public static var CURRENT_MUSIC:String = "";
+	public static var CURRENT_MUSIC:String = '';
 
 	public static var NOTIFICATION_CAMERA:FlxCamera;
 
@@ -43,7 +43,7 @@ class NovaUtils {
 		var notification = lemonui.controllers.NotificationController.instance.addNotification(title, body, expiryMs/1000);
 		if (type == ERROR) {
 			notification.elementColor = 0xFF591818;
-			violet.backend.console.Logs.log(body, ErrorMessage, infos);
+			violet.backend.console.Logs.log(body.replace('\n', ' '), ErrorMessage, infos);
 		}
 	}
 
@@ -124,10 +124,10 @@ class NovaUtils {
 	public static function getSparrowFrames(path:String):FlxAtlasFrames {
 		/* var bitmap = BitmapData.fromFile(path); // No Cache
 		var graphic = FlxGraphic.fromBitmapData(bitmap, path, false);
-		var xmlData = FileUtil.getFileContent(path.replace(".png", ".xml"));
+		var xmlData = FileUtil.getFileContent(path.replace('.png', '.xml'));
 		return FlxAtlasFrames.fromSparrow(graphic, xmlData); */
 
-		return FlxAtlasFrames.fromSparrow(Cache.image(path, 'root', null), FileUtil.getFileContent(path.replace(".png", ".xml")));
+		return FlxAtlasFrames.fromSparrow(Cache.image(path, 'root', null), FileUtil.getFileContent(path.replace('.png', '.xml')));
 	}
 
 	public static function getAtlasFrames(path:String, ?options:FlxAnimateSettings):FlxAtlasFrames {
@@ -139,4 +139,5 @@ class NovaUtils {
 		b = b.toUpperCase();
 		return a == b ? 0 : a > b ? 1 : -1;
 	}
+
 }

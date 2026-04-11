@@ -22,7 +22,8 @@ import violet.ui.freeplay.Capsule;
 import violet.backend.utils.MathUtil;
 
 class FreeplayMenu extends SubStateBackend {
-	static var prevInst:String = "";
+
+	static var prevInst:String = '';
 	public static var skipTransition:Bool = false;
 
 	static var curSelectedSong:Int = 0;
@@ -36,13 +37,13 @@ class FreeplayMenu extends SubStateBackend {
 
 	var difficultyDots:Map<String, DifficultyDot> = new Map();
 
-	var difficulties:Array<String> = ["easy", "normal", "hard"];
+	var difficulties:Array<String> = ['easy', 'normal', 'hard'];
 	var difficultyAssociations = [
-		"easy" => "",
-		"normal" => "",
-		"hard" => "",
-		"erect" => "erect",
-		"nightmare" => "erect"
+		'easy' => '',
+		'normal' => '',
+		'hard' => '',
+		'erect' => 'erect',
+		'nightmare' => 'erect'
 	];
 	var variant(get, never):String;
 	function get_variant() {
@@ -83,14 +84,14 @@ class FreeplayMenu extends SubStateBackend {
 	override function create() {
 		super.create();
 
-		prevInst = "";
+		prevInst = '';
 
 		camHUD = new FlxCamera();
 		camHUD.bgColor = FlxColor.TRANSPARENT;
 		camHUD.zoom = 0.8;
 		FlxG.cameras.add(camHUD, false);
 
-		backingImage = new GenzuSprite(0, 0, Paths.image("menus/freeplay/freeplayBGweek1-bf"));
+		backingImage = new GenzuSprite(0, 0, Paths.image('menus/freeplay/freeplayBGweek1-bf'));
 		backingImage.cameras = [camHUD];
 		backingImage.setGraphicSize(FlxG.width / 0.8);
 		backingImage.updateHitbox();
@@ -98,7 +99,7 @@ class FreeplayMenu extends SubStateBackend {
 		backingImage.x = -backingImage.width - 150;
 		backingImage.shader = angleMaskShader;
 
-		backingCard = new GenzuSprite(0, 0, Paths.image("menus/freeplay/backingCard/pinkBack"));
+		backingCard = new GenzuSprite(0, 0, Paths.image('menus/freeplay/backingCard/pinkBack'));
 		backingCard.cameras = [camHUD];
 		backingCard.setGraphicSize(FlxG.width / 0.8, FlxG.height / 0.8);
 		backingCard.scale.x = backingCard.scale.y;
@@ -117,31 +118,31 @@ class FreeplayMenu extends SubStateBackend {
 		add(backingImage);
 		add(backingCard);
 
-		diffSprite = new GenzuSprite(0, 0, Paths.image("menus/freeplay/difficulties/easy"));
+		diffSprite = new GenzuSprite(0, 0, Paths.image('menus/freeplay/difficulties/easy'));
 		diffSprite.scale.set(1.3, 1.3);
 		diffSprite.camera = camHUD;
 		diffSprite.updateHitbox();
 
-		selector1 = new GenzuSprite(-250, 10, Paths.image("menus/freeplay/difficulties/selector"));
+		selector1 = new GenzuSprite(-250, 10, Paths.image('menus/freeplay/difficulties/selector'));
 		selector1.scale.set(1.28, 1.28);
-		selector1.addAnim("pressed", "arrow pointer loop", [], null, 24, true);
-		selector1.playAnim("pressed");
+		selector1.addAnim('pressed', 'arrow pointer loop', [], null, 24, true);
+		selector1.playAnim('pressed');
 		selector1.camera = camHUD;
 
-		selector2 = new GenzuSprite(-250, selector1.y, Paths.image("menus/freeplay/difficulties/selector"));
+		selector2 = new GenzuSprite(-250, selector1.y, Paths.image('menus/freeplay/difficulties/selector'));
 		selector2.scale.set(1.28, 1.28);
-		selector2.addAnim("pressed", "arrow pointer loop", [], null, 24, true);
-		selector2.playAnim("pressed");
+		selector2.addAnim('pressed', 'arrow pointer loop', [], null, 24, true);
+		selector2.playAnim('pressed');
 		selector2.camera = camHUD;
 		selector2.flipX = true;
 
-		freeplayText = new NovaText(-145, -150, null, "FREEPLAY", 60);
-		freeplayText.setFont(Paths.font("vcr.ttf"));
+		freeplayText = new NovaText(-145, -150, null, 'FREEPLAY', 60);
+		freeplayText.setFont(Paths.font('vcr.ttf'));
 		freeplayText.updateHitbox();
 		freeplayText.camera = camHUD;
 
-		ostText = new NovaText(0, -150, FlxG.width, "OFFICIAL OST", 60);
-		ostText.setFont(Paths.font("vcr.ttf"));
+		ostText = new NovaText(0, -150, FlxG.width, 'OFFICIAL OST', 60);
+		ostText.setFont(Paths.font('vcr.ttf'));
 		ostText.alignment = RIGHT;
 		ostText.updateHitbox();
 		ostText.x = FlxG.width - ostText.width + 150;
@@ -205,7 +206,7 @@ class FreeplayMenu extends SubStateBackend {
 		var x = 2;
 		var y = selector2.y + 113;
 		var additive = 39;
-		for (diff in ["easy", "normal", "hard", "erect", "nightmare"]) {
+		for (diff in ['easy', 'normal', 'hard', 'erect', 'nightmare']) {
 			var dot = new DifficultyDot(diff);
 			dot.x = x;
 			dot.y = y;
@@ -228,8 +229,8 @@ class FreeplayMenu extends SubStateBackend {
 					x += additive;
 				}
 			}
-			for (varient in song.variants) {
-				var target = SongRegistry.getSongByID('${song.id}:$varient');
+			for (variant in song.variants) {
+				var target = SongRegistry.getSongByID('${song.id}:$variant');
 				if (target == null) continue;
 				for (diff in target.difficulties) {
 					if (!difficultyDots.exists(diff.toLowerCase())) {
@@ -273,9 +274,10 @@ class FreeplayMenu extends SubStateBackend {
 
 	public function build() {
 		var mainMenu:MainMenu = new MainMenu();
-        mainMenu.canSelect = false;
+		mainMenu.canSelect = false;
 		FreeplayMenu.skipTransition = true;
 		mainMenu.openSubState(this);
+		mainMenu.persistentUpdate = true;
 		return mainMenu;
 	}
 
@@ -299,12 +301,7 @@ class FreeplayMenu extends SubStateBackend {
 
 		if (FlxG.keys.justPressed.TAB) {
 			FlxG.sound.music.fadeOut(0.5);
-			camHUD.fade(FlxColor.BLACK, 0.5, ()->{
-				/* playableID = playableID == "bf" ? "pico" : "bf";
-				FreeplayMenu.skipTransition = true;
-				FreeplayMenu.curSelectedSong = 0; */
-				FlxG.switchState(CharacterSelectMenu.new/* new FreeplayMenu().build() */);
-			});
+			camHUD.fade(FlxColor.BLACK, 0.5, () -> FlxG.switchState(CharacterSelectMenu.new));
 		}
 
 		if (Controls.back && canSelect)
@@ -443,9 +440,9 @@ class FreeplayMenu extends SubStateBackend {
 		for (i in difficulties) difficultyAssociations.set(i, '');
 		for (i in song.variants) {
 			if (SongRegistry.songDatas.exists('${song.id}:$i')) {
-				var varientData = SongRegistry.getSongByID('${song.id}:$i');
-				difficulties = difficulties.concat(varientData.difficulties.copy());
-				for (d in varientData.difficulties) {
+				var variantData = SongRegistry.getSongByID('${song.id}:$i');
+				difficulties = difficulties.concat(variantData.difficulties.copy());
+				for (d in variantData.difficulties) {
 					difficultyAssociations.set(d, i);
 				}
 			}
@@ -630,4 +627,5 @@ class FreeplayMenu extends SubStateBackend {
 		highscoreTimer?.cancel();
 		super.destroy();
 	}
+
 }

@@ -51,6 +51,7 @@ class SubStateBackend extends flixel.FlxSubState {
 		subStateScripts.parent = this;
 		for (path in #if MOD_SUPPORT ModdingAPI.STATE_PATHS #else ['data/scripts/states'] #end)
 			ModdingAPI.checkForScripts(path, getScriptName(), subStateScripts);
+		subStateScripts.execute();
 		#end
 		callInScripts('create');
 	}
@@ -66,8 +67,8 @@ class SubStateBackend extends flixel.FlxSubState {
 	}
 
 	public function callInScripts<T>(funcName:String, ?args:Array<Dynamic>, ?def:T):T {
-		#if SCRIPT_SUPPORT if (GlobalPack.instance != null && !funcName.toLowerCase().contains('create')) GlobalPack.instance.callVarients(funcName, args); #end
-		return #if SCRIPT_SUPPORT subStateScripts.callVarients(funcName, args, def) ?? #end def;
+		#if SCRIPT_SUPPORT if (GlobalPack.instance != null && !funcName.toLowerCase().contains('create')) GlobalPack.instance.callVariants(funcName, args); #end
+		return #if SCRIPT_SUPPORT subStateScripts.callVariants(funcName, args, def) ?? #end def;
 	}
 
 	public function runEvent<T:EventBase>(func:String, event:T):T {
@@ -107,4 +108,5 @@ class SubStateBackend extends flixel.FlxSubState {
 		instance = null;
 		super.destroy();
 	}
+
 }

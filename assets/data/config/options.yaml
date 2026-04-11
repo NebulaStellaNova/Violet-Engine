@@ -86,6 +86,7 @@ menus:
     description: If enabled, you will be able to play as the opponent.
     saveID: playAsOpponent
     type: bool
+    disabledInPlayState: true
   - name: Personal Scroll Speed
     description: Set it to 0 to use the default scroll speed.
     saveID: personalScrollSpeed
@@ -102,6 +103,25 @@ menus:
   - name: Disable Score Text Lerp
     description: If checked, score text won't lerp and will hard cut to the current score.
     saveID: disableScoreLerping
+    type: bool
+
+- title: Graphics
+  options:
+  - name: Framerate
+    description: Sets the target framerate for the game.
+    saveID: fps
+    type: number
+    min: 30
+    max: 240
+    step: 1
+  - name: VSync
+    description: If enabled, the game will use the display's refresh rate instead of the Framerate value.
+    saveID: vsync
+    type: bool
+    platform: windows
+  - name: Texture Antialiasing
+    description: Enables linear filtering on textures for smoother visuals.
+    saveID: antialiasTextures
     type: bool
 
 - title: Miscellaneous
@@ -125,6 +145,6 @@ menus:
     saveID: debugDisplayOnStart
     type: bool
   - name: GPU Caching
-    description: < Insert Description >
+    description: Allows the GPU to store textures and keeps them cached, reducing RAM usage. (beefy GPU recommended for this)
     saveID: gpuCaching
     type: bool

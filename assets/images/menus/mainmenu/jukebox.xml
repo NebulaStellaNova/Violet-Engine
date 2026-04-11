@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TextureAtlas imagePath="jukebox.png" width="647" height="1093">
+	<SubTexture name="jukebox basic0000" x="1" y="585" width="541" height="167" frameX="-0" frameY="-0" frameWidth="541" frameHeight="168"/>
+	<SubTexture name="jukebox basic0001" x="1" y="585" width="541" height="167" frameX="-0" frameY="-0" frameWidth="541" frameHeight="168"/>
+	<SubTexture name="jukebox basic0002" x="1" y="585" width="541" height="167" frameX="-0" frameY="-0" frameWidth="541" frameHeight="168"/>
+	<SubTexture name="jukebox basic0003" x="1" y="755" width="541" height="167" frameX="-0" frameY="-0" frameWidth="541" frameHeight="168"/>
+	<SubTexture name="jukebox basic0004" x="1" y="755" width="541" height="167" frameX="-0" frameY="-0" frameWidth="541" frameHeight="168"/>
+	<SubTexture name="jukebox basic0005" x="1" y="755" width="541" height="167" frameX="-0" frameY="-0" frameWidth="541" frameHeight="168"/>
+	<SubTexture name="jukebox basic0006" x="1" y="925" width="540" height="167" frameX="-1" frameY="-0" frameWidth="541" frameHeight="168"/>
+	<SubTexture name="jukebox basic0007" x="1" y="925" width="540" height="167" frameX="-1" frameY="-0" frameWidth="541" frameHeight="168"/>
+	<SubTexture name="jukebox basic0008" x="1" y="925" width="540" height="167" frameX="-1" frameY="-0" frameWidth="541" frameHeight="168"/>
+	<SubTexture name="jukebox white0000" x="1" y="391" width="644" height="191" frameX="-1" frameY="-0" frameWidth="645" frameHeight="192"/>
+	<SubTexture name="jukebox white0001" x="1" y="196" width="644" height="192" frameX="-1" frameY="-0" frameWidth="645" frameHeight="192"/>
+	<SubTexture name="jukebox white0002" x="1" y="1" width="645" height="192" frameX="-0" frameY="-0" frameWidth="645" frameHeight="192"/>
+</TextureAtlas>

@@ -50,8 +50,7 @@ typedef LevelData = {
 /**
  * Data for a single prop for a story mode level.
  */
-typedef LevelPropData =
-{
+typedef LevelPropData = {
 	/**
 	 * The image to use for the prop. May optionally be a sprite sheet.
 	 */

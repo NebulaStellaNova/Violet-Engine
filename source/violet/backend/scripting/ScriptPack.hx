@@ -18,8 +18,8 @@ class ScriptPack {
 	inline static function setScriptPublicVars(script:Script, object:Dynamic):Void {
 		var vars:Map<String, Dynamic> = [];
 		if (object != null && object is FlxBasic) {
-			var data = Reflect.getProperty(object, 'extra');
-			if (data != null) vars = cast data;
+			var basic:FlxBasic = cast object;
+			vars = basic.extra;
 		}
 		script.setPublicVars(vars);
 	}
@@ -66,20 +66,27 @@ class ScriptPack {
 		return returner ?? def;
 	}
 
-	public function callVarients<T>(func:String, ?args:Array<Dynamic>, ?def:T):T {
+	public function execute() {
+		for (script in scripts) {
+			if (script == null) continue;
+			script.execute();
+		}
+	}
+
+	public function callVariants<T>(func:String, ?args:Array<Dynamic>, ?def:T):T {
 		var funcy = func.charAt(0).toUpperCase() + func.substr(1);
-		var varient1 = call(func, args);
-		var varient2 = call('on$funcy', args);
-		var varient3 = call('upon$funcy', args);
+		var variant1 = call(func, args);
+		var variant2 = call('on$funcy', args);
+		var variant3 = call('upon$funcy', args);
 		var out:T = def;
-		for (i in [varient1, varient2, varient3]) {
+		for (i in [variant1, variant2, variant3]) {
 			if (i != def) out = i;
 		}
 		return out;
 	}
 
 	public function event<T:EventBase>(func:String, event:T):T {
-		callVarients(func, [event]);
+		callVariants(func, [event]);
 		return event;
 	}
 

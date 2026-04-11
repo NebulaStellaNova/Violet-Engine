@@ -17,6 +17,7 @@ import violet.backend.filesystem.ModdingAPI;
 using violet.backend.utils.ArrayUtil;
 
 class Script implements IFlxDestroyable {
+
 	var scriptCode:String;
 	var executed:Bool = false;
 
@@ -28,7 +29,7 @@ class Script implements IFlxDestroyable {
 
 	public static var staticVars:Map<String, Dynamic> = [];
 
-	public var autoImports:Map<String, Dynamic> = [
+	public static var autoImports:Map<String, Dynamic> = [
 		// Flixel
 		'FlxG' => FlxG,
 		'FlxBasic' => FlxBasic,
@@ -133,6 +134,10 @@ class Script implements IFlxDestroyable {
 	public function get<T>(variable:String, ?def:T):T
 		return def;
 
+	public function execute() {
+		// make the script code here, in their sub-classes
+	}
+
 	public function destroy() {
 		//
 	}
@@ -166,4 +171,5 @@ class Script implements IFlxDestroyable {
 		}
 		return scriptCode = hasBlacklisted ? "" : scriptCode;
 	}
+
 }

@@ -32,3 +32,9 @@ I would greatly appreciate it.
 
 You MUST run `setup.bat` before compiling or it will not work<br>
 Once you run that simply open the console in this folder and type `lime test windows`
+
+
+# Credits
+Violet Engine Crew
+Codename Engine Crew - For console and sustain code
+Friday Night Funkin' - For the game lol.

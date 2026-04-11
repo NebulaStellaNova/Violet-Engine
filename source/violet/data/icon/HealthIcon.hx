@@ -23,22 +23,22 @@ class HealthIcon extends Bopper {
 		this._data.isPixel ??= false;
 		this._data.assetPath ??= 'icons/$id';
 
-		super(Paths.image(this._data.assetPath) != "" ? Paths.image(this._data.assetPath) : Paths.image(defaultData.assetPath));
+		super(Paths.image(this._data.assetPath) != '' ? Paths.image(this._data.assetPath) : Paths.image(defaultData.assetPath));
 
 		if (this.animated) {
-			this.addAnim("idle", "idle", 24, true);
-			this.addAnim("winning", "winning", 24, true);
-			this.addAnim("losing", "losing", 24, true);
-			/* this.animation.addByPrefix("toWinning", "toWinning", 24, false);
-			this.animation.addByPrefix("toLosing", "toLosing", 24, false);
-			this.animation.addByPrefix("fromWinning", "fromWinning", 24, false);
-			this.animation.addByPrefix("fromLosing", "fromLosing", 24, false); */
+			this.addAnim('idle', 'idle', 24, true);
+			this.addAnim('winning', 'winning', 24, true);
+			this.addAnim('losing', 'losing', 24, true);
+			/* this.animation.addByPrefix('toWinning', 'toWinning', 24, false);
+			this.animation.addByPrefix('toLosing', 'toLosing', 24, false);
+			this.animation.addByPrefix('fromWinning', 'fromWinning', 24, false);
+			this.animation.addByPrefix('fromLosing', 'fromLosing', 24, false); */
 		} else {
 			var frameSize = this._data.isPixel ? 32 : 150;
 			this.loadGraphic(this.graphic, true, frameSize, frameSize);
-			this.animation.add("idle", [0], 1, false, false);
-			this.animation.add("losing", [1], 1, false, false);
-			if (animation.numFrames >= 3) this.animation.add("winning", [2], 1, false, false);
+			this.animation.add('idle', [0], 1, false, false);
+			this.animation.add('losing', [1], 1, false, false);
+			if (animation.numFrames >= 3) this.animation.add('winning', [2], 1, false, false);
 		}
 
 		this.flipX = this._data.flipX;
@@ -87,4 +87,5 @@ class HealthIcon extends Bopper {
 		}
 		this.scale.x = this.scale.y = this._data.scale * (1.2 * bopAmount);
 	}
+
 }

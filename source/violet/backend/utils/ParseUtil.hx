@@ -5,6 +5,7 @@ import yaml.Parser;
 import yaml.Yaml;
 
 class ParseUtil {
+
 	public static function json(path:String, directory:String = ''):Dynamic {
 		try {
 			return Json.parse(removeJsonComments(FileUtil.getFileContent(Paths.json(path, directory))));
@@ -35,7 +36,7 @@ class ParseUtil {
 		} else if (jsonExists) {
 			return json(path, directory);
 		}
-		if (def == "null") return null;
+		if (def == 'null') return null;
 		return def ?? {};
 	}
 
@@ -43,7 +44,7 @@ class ParseUtil {
 		//               We've lost ALL the plot <3
 		var regex:EReg = ~/:[ \t]*\r?\n[ \t]*-[ \t]*(-?\d+(?:\.\d+)?)[ \t]*\r?\n[ \t]*-[ \t]*(-?\d+(?:\.\d+)?)/g;
 		var rawYaml:String = Yaml.render(data, null);
-		return regex.replace(rawYaml, ": [$1, $2]");
+		return regex.replace(rawYaml, ': [$1, $2]');
 	}
 
 	public static function stringifyJson(data:Dynamic) {
@@ -52,7 +53,7 @@ class ParseUtil {
 
 	public static function removeJsonComments(str:String) {
 		var split = str.split('');
-		var string = "";
+		var string = '';
 		var isComment = false;
 		var i = 0;
 		var isString = false;
@@ -60,13 +61,13 @@ class ParseUtil {
 			if (char == '"') {
 				isString = !isString;
 			} else if (!isString) {
-				if (char == "/" && split[i+1] == "/") {
+				if (char == '/' && split[i+1] == '/') {
 					isComment = true;
 				}
 			}
 			if (!isComment) {
 				string += char;
-			} else if (char == "\n") {
+			} else if (char == '\n') {
 				isComment = false;
 				string += char;
 			}
@@ -78,49 +79,51 @@ class ParseUtil {
 	/**
 	 * Correctly formats JSON files for export :D
 	 */
-/* 	public static function stringifyJson(jsonObject:Dynamic) {
-		var string = jsonObject is String ? jsonObject : Json.stringify(jsonObject, null, "\t");
+	/* public static function stringifyJson(jsonObject:Dynamic) {
+		var string = jsonObject is String ? jsonObject : Json.stringify(jsonObject, null, '\t');
 		string = string.trim();
-		string = string.replace("    ", "\t");
-		var finalStr = "";
+		string = string.replace('    ', '\t');
+		var finalStr = '';
 		var inArray = false;
-		var taber = "";
-		for (i=>char in string.split("")) {
-			var split = finalStr.split("");
+		var taber = '';
+		for (i=>char in string.split('')) {
+			var split = finalStr.split('');
 			var realI = finalStr.length;
 
-			inArray = i != 0 ? (char == "[" ? true : (char == "]" ? false : inArray)) : inArray;
-			inArray = i != 0 ? (char == "{" ? false : (char == "}" ? true : inArray)) : inArray;
+			inArray = i != 0 ? (char == '[' ? true : (char == ']' ? false : inArray)) : inArray;
+			inArray = i != 0 ? (char == '{' ? false : (char == '}' ? true : inArray)) : inArray;
 
-			if (char == "\t") taber += "\t";
+			if (char == '\t') taber += '\t';
 
 			var combined = split[realI-2] + split[realI-1] + char;
 
-			if (combined == "[ {" || combined == ", {") {
-				char = "\n" + taber + char;
+			if (combined == '[ {' || combined == ', {') {
+				char = '\n' + taber + char;
 			}
 
-			if (combined == "} ]") {
-				char = "\n" + taber.substr(taber.length - 1) + char;
+			if (combined == '} ]') {
+				char = '\n' + taber.substr(taber.length - 1) + char;
 			}
 
-			if (char == "\n") taber = "";
+			if (char == '\n') taber = '';
 
-			if (inArray && char == "\n") char = " ";
-			if (inArray && char == "\t") char = "";
+			if (inArray && char == '\n') char = ' ';
+			if (inArray && char == '\t') char = '';
 
 			finalStr += char;
 		}
-		finalStr = finalStr.replace("[ {", "[\n{");
-		finalStr = finalStr.replace("}, {", "},\n{");
+		finalStr = finalStr.replace('[ {', '[\n{');
+		finalStr = finalStr.replace('}, {', '},\n{');
 		return finalStr;
 	} */
+
 }
 
 /**
  * Used for parsing colors from json files.
  */
 abstract ParseColor(String) {
+
 	public var red(get, set):Int;
 	inline function get_red():Int
 		return toFlxColor().red;
@@ -170,4 +173,5 @@ abstract ParseColor(String) {
 		var color:FlxColor = toFlxColor();
 		return [color.red ?? 255, color.green ?? 255, color.blue ?? 255];
 	}
+
 }

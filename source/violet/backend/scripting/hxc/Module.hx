@@ -13,16 +13,13 @@ class ScriptedModule extends Module implements rulescript.scriptedClass.RuleScri
 
 @:strictScriptedConstructor
 class Module {
+
 	/**
 	 * Whether the module is currently active.
 	 */
-	public var active(default, set):Bool = true;
+	public var active:Bool = true;
 
-	function set_active(value:Bool):Bool {
-		return this.active = value;
-	}
-
-	public var moduleId(default, null):String = 'UNKNOWN';
+	public final moduleId:String;
 
 	/**
 	 * Determines the order in which modules receive events.
@@ -30,17 +27,12 @@ class Module {
 	 *
 	 * Priority 1 is processed before Priority 1000, etc.
 	 */
-	public var priority(default, set):Int = 1000;
+	public final priority:Int;
 
-	function set_priority(value:Int):Int {
-		this.priority = value;
-		return value;
-	}
-
-	public var state:Null<Class<Dynamic>> = null;
+	public final state:Null<Class<Dynamic>>;
 
 	public function new(moduleId:String, priority:Int = 1000, ?params:ModuleParams):Void {
-		this.moduleId = moduleId;
+		this.moduleId = moduleId ?? 'UNKNOWN';
 		this.priority = priority;
 
 		if (params != null) {
@@ -249,4 +241,5 @@ class Module {
 	 * Called when a character has been confirmed.
 	 */
 	// public function onCharacterConfirm(event:CharacterSelectScriptEvent):Void {}
+
 }

@@ -4,6 +4,7 @@ import violet.backend.objects.play.Note;
 import violet.backend.objects.play.Strum;
 
 class NoteHitEvent extends EventBase {
+
 	public final note:Note;
 	public final strum:Strum;
 
@@ -27,7 +28,7 @@ class NoteHitEvent extends EventBase {
 	public var spawnHoldCover:Bool;
 
 	public function new(note:Note) {
-        super();
+		super();
 		this.note = note;
 		this.strum = note.parentStrum;
 		this.spawnHoldCover = note.length > 10;
@@ -39,4 +40,5 @@ class NoteHitEvent extends EventBase {
 	public function stopStrumAnim():Void {
 		this.playStrumAnim = false;
 	}
+
 }

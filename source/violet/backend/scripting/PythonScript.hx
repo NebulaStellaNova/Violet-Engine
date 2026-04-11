@@ -25,7 +25,7 @@ class PythonScript extends Script {
 		return interp.parent;
 
 	override function setPublicVars(vars:Map<String, Dynamic>):Void
-		interp.pubVars = vars ?? [];
+		interp.pubVars = vars;
 
 	public function new(path:String) {
 		var filePath = path.split("/");
@@ -41,7 +41,6 @@ class PythonScript extends Script {
 		code += '\n' + FileUtil.getFileContent(path);
 		super(code, true);
 		initVars();
-		executeScript();
 	}
 
 	override function initVars():Void {
@@ -73,9 +72,12 @@ class PythonScript extends Script {
 		return null;
 	}
 
-	public function executeScript() {
+	override public function execute():Void {
+		if (executed) return;
 		try {
 			interp.execute(parser.parseString(scriptCode));
+			call('new');
+			executed = true;
 		} catch (_) {
 			var errorMsg = '$_'.replace('SyntaxError: ', '');
 			NovaUtils.addNotification('Novamod Script Exception!', 'Error executing "$fileName": ${errorMsg}', ERROR);
@@ -85,6 +87,7 @@ class PythonScript extends Script {
 }
 
 class PyInterp extends paopao.hython.Interp {
+
 	public var parent:Dynamic;
 	// even if they can't be created, it's still nice to be able to get them
 	public var pubVars:Map<String, Dynamic> = [];
@@ -124,5 +127,6 @@ class PyInterp extends paopao.hython.Interp {
 		}
 		return v;
 	}
+
 }
 #end

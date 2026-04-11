@@ -1,8 +1,5 @@
 package violet.backend.shaders;
 
-import flixel.system.FlxAssets.FlxShader;
-import flixel.util.FlxColor;
-
 // Credits to Funkin' Crew.
 class AngleMask extends FlxShader
 {
@@ -86,7 +83,7 @@ class AngleMask extends FlxShader
       col.xyz = col.xyz * extraTint.xyz;
       // col.xyz = gamma(col.xyz);
       gl_FragColor = col;
-    }')
+  }')
   public function new()
   {
     super();

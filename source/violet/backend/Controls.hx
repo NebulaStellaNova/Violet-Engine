@@ -7,6 +7,7 @@ import flixel.input.keyboard.FlxKey;
  * This class handles user controls, without it how would you do anything?
  */
 class Controls {
+
 	// Shortcut vars
 	/**
 	 * Left note press.
@@ -259,10 +260,10 @@ class Controls {
 		return FlxG.keys.anyJustReleased(bindCheck(key));
 
 	inline static function bindCheck(key:String):Array<FlxKey> {
-		var reses = [];
+		var lol = [];
 		return (active && bindMap.exists(key) ? bindMap.get(key) : []).filter((f) -> {
-			var out = !reses.contains(f);
-			reses.push(f);
+			var out = !lol.contains(f);
+			lol.push(f);
 			return out;
 		});
 	}
@@ -271,4 +272,5 @@ class Controls {
 	 * States whether that inputs will work.
 	 */
 	public static var active:Bool = true;
+
 }

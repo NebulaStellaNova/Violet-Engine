@@ -1,0 +1,10 @@
+{
+	"recommendations": [
+		"vshaxe.haxe-extension-pack",
+		"openfl.lime-vscode-extension",
+		"vitabletech.ansi-spectrum",
+		"esbenp.prettier-vscode",
+		// if your going to use this, run "haxelib install test-adapter" in your terminal
+		"vshaxe.haxe-test-adapter"
+	]
+}

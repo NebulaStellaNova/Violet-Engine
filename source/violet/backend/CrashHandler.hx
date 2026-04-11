@@ -11,7 +11,7 @@ import openfl.events.UncaughtErrorEvent;
 
 class CrashHandler {
 
-	static var SEPERATOR = '=====================';
+	inline static final SEPERATOR = '=====================';
 
 	public static function init():Void {
 		//Lib.current.loaderInfo.uncaughtErrorEvents.addEventListener(UncaughtErrorEvent.UNCAUGHT_ERROR, onError);
@@ -42,7 +42,7 @@ class CrashHandler {
 	}
 
 	static function onCrash(e:UncaughtErrorEvent):Void {
-		trace("warning:Uh Oh!");
+		trace('warning:Uh Oh!');
 		trace(e);
 		/* @:privateAccess FlxG.game._nextState = new violet.states.TitleState();
 		@:privateAccess FlxG.game.switchState(); */
@@ -105,4 +105,5 @@ class CrashHandler {
 
 		Sys.exit(1);
 	}
+
 }
