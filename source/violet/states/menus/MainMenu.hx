@@ -81,6 +81,8 @@ class MainMenu extends StateBackend {
 	public var menuAlignment:String = 'center';
 	public var watermarkAlignment:String = 'right';
 
+	public var flower:NovaSprite;
+	public var flowerTargetAngle:Float = 0;
 
 	override public function create()
 	{
@@ -118,6 +120,14 @@ class MainMenu extends StateBackend {
 		overlay.alpha = 0.25;
 		overlay.scrollFactor.set();
 		add(overlay);
+
+		flower = new NovaSprite(0, 0, Paths.image(menuData.directory + '/violet'));
+		flower.screenCenter(Y);
+		flower.scrollFactor.set(1, 0);
+		flower.updateHitbox();
+		flower.centerOrigin();
+		flower.x = FlxG.width - flower.width / 2;
+		add(flower);
 
 		for (i=>daItem in menuData.items) {
 			var startY = (175*i)+90;
@@ -240,6 +250,8 @@ class MainMenu extends StateBackend {
 			item.scale.y = item.scale.x;
 		}
 
+		flower.angle = FlxMath.lerp(flower.angle, flowerTargetAngle, Math.min(1, elapsed * 8));
+
 		if (Controls.back) {
 			// Main.switchState(new ClassData('TitleState')); // Crashes idk why
 		}
@@ -332,6 +344,7 @@ class MainMenu extends StateBackend {
 			}
 		}
 		curSelectedString = menuData.items[curSelected].item;
+		flowerTargetAngle += -amt * 360 / 6;
 	}
 
 	public function pickSelection() {
