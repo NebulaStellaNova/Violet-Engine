@@ -144,6 +144,6 @@ menus:
     saveID: debugDisplayOnStart
     type: bool
   - name: GPU Caching
-    description: Allows the GPU to store textures and keeps them cached, reducing RAM usage. (beefy GPU recommanded for this)
+    description: Allows the GPU to store textures and keeps them cached, reducing RAM usage. (beefy GPU recommended for this)
     saveID: gpuCaching
     type: bool
