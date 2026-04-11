@@ -134,7 +134,7 @@ class Character extends violet.backend.objects.Bopper {
 
 	public function cloneData():Dynamic {
 		return {
-			version: "1.0.0',
+			version: '1.0.0',
 			name: _data.name,
 			animations: (_data.animations ?? []).copy(),
 			flipX: _data.flipX,
