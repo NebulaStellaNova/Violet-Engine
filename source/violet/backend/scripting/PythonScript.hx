@@ -59,7 +59,7 @@ class PythonScript extends Script {
 			Logs.traceCallback(value, {methodName: "??", lineNumber: lineNumber, fileName: fileName, className: ""});
 		});
 
-		interp.staVars = Script.staticVars;
+		interp.staVars = FunkinScript.context.staticVariables;
 	}
 
 	override public function set(variable:String, value:Dynamic)

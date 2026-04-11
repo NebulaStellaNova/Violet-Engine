@@ -27,8 +27,6 @@ class Script implements IFlxDestroyable {
 	public var fullPath:String;
 	public var folderName:String;
 
-	public static var staticVars:Map<String, Dynamic> = [];
-
 	public static var autoImports:Map<String, Dynamic> = [
 		// Flixel
 		'FlxG' => FlxG,

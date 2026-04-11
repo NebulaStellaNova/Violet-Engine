@@ -1,5 +1,6 @@
-#if CAN_HAXE_SCRIPT
 package violet.backend.scripting;
+#if CAN_HAXE_SCRIPT
+import rulescript.Context;
 
 import flixel.*;
 import flixel.group.FlxGroup;
@@ -31,6 +32,7 @@ using violet.backend.utils.MathUtil;
  */
 class FunkinScript extends Script {
 
+	public static var context:Context = new Context();
 	var internalScript:RuleScript;
 
 	override function set_parent(value:Dynamic):Dynamic
@@ -50,7 +52,7 @@ class FunkinScript extends Script {
 			this.fullPath = extraPath;
 			this.fileName = Path.withoutDirectory(extraPath);
 		}
-		internalScript = new RuleScript(new rulescript.Context());
+		internalScript = new RuleScript(context);
 		internalScript.scriptName = '$folderName/$fileName';
 		initVars();
 		if (!isHXC) for (i in violet.backend.filesystem.ModdingAPI.getActiveMods()) {
@@ -69,8 +71,6 @@ class FunkinScript extends Script {
 		set('trace', Reflect.makeVarArgs(args ->
 			Logs.traceCallback([for (arg in args) Std.string(arg)].join(', '), internalScript.access.posInfos())
 		));
-
-		internalScript.context.staticVariables = Script.staticVars;
 	}
 
 	override public function call<T>(funcName:String, ?args:Array<Dynamic>, ?def:T):T {
