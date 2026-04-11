@@ -100,15 +100,12 @@ class Options {
 					state = state.subState;
 				}
 			case 'fps', 'vsync':
-				var newFps = if (data.vsync) Application.current.window.displayMode.refreshRate else data.fps;
+				var newFps = data.vsync ? Application.current.window.displayMode.refreshRate : data.fps;
 				if (data.vsync && data.fps == Application.current.window.displayMode.refreshRate) return;
-				if(data.fps > FlxG.drawFramerate)
-				{
+				if (data.fps > FlxG.drawFramerate) {
 					FlxG.updateFramerate = newFps;
 					FlxG.drawFramerate = newFps;
-				}
-				else
-				{
+				} else {
 					FlxG.drawFramerate = newFps;
 					FlxG.updateFramerate = newFps;
 				}
