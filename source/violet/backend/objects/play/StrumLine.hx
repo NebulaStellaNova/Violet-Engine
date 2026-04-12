@@ -3,9 +3,7 @@ package violet.backend.objects.play;
 import flixel.FlxCamera;
 import flixel.group.FlxGroup;
 import flixel.input.keyboard.FlxKey;
-import flixel.math.FlxMath;
 import flixel.math.FlxPoint;
-import flixel.math.FlxRect;
 import openfl.events.KeyboardEvent;
 import violet.backend.audio.Conductor;
 import violet.backend.options.Options;
@@ -237,48 +235,7 @@ class StrumLine extends FlxGroup {
 			}
 			if (wasKilled) return;
 
-			// note positioning code for now will be placed here
-			var resultAngle:Float = 270;
-			if (note.__scrollSpeed < 0) resultAngle += 180;
-			final angleDir:Float = resultAngle * (Math.PI / 180);
-
-			final strum:Strum = note.parentStrum;
-			final pos:Array<Float> = [strum.x, strum.y];
-			var disPos:Float = 0.45 * (Conductor.framePosition - note.time) * Math.abs(note.__scrollSpeed) * Math.abs(scale.x / scale.y);
-
-			pos[0] += Math.cos(angleDir) * disPos;
-			// TODO: Figure out how to do this better, especially for sustains.
-			pos[0] -= note.width / 2;
-			pos[0] += strum.width / 2;
-
-			pos[1] += Math.sin(angleDir) * disPos;
-			pos[1] -= note.height / 2;
-			pos[1] += strum.height / 2;
-
-			note.setPosition(pos[0], pos[1]);
-			pos.resize(0);
-
-			for (sustain in note.tail) {
-				if (sustain == null) continue; if (!sustain.exists) continue;
-				final pos:Array<Float> = [strum.x, strum.y];
-				disPos = 0.45 * (Conductor.framePosition - (note.time + sustain.time)) * Math.abs(sustain.__scrollSpeed) * Math.abs(scale.x / scale.y);
-
-				pos[0] += Math.cos(angleDir) * disPos;
-				pos[0] -= sustain.width / 2;
-				pos[0] += strum.width / 2;
-
-				pos[1] += Math.sin(angleDir) * disPos;
-				pos[1] += strum.height / 2;
-
-				sustain.setPosition(pos[0], pos[1]);
-				pos.resize(0);
-
-				if (sustain.wasHit) {
-					var t = FlxMath.bound((Conductor.framePosition - (note.time + sustain.time)) / sustain.height * 0.45 * sustain.__scrollSpeed, 0, 1);
-					var rect = sustain.clipRect == null ? FlxRect.get() : sustain.clipRect;
-					sustain.clipRect = rect.set(0, sustain.frameHeight * t, sustain.frameWidth, sustain.frameHeight * (1 - t));
-				}
-			}
+			note.updatePosition();
 		});
 	}
 

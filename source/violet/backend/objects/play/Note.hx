@@ -6,6 +6,8 @@ import violet.backend.options.Options;
 import violet.data.Scoring;
 import violet.data.notestyles.NoteStyle;
 import violet.data.notestyles.NoteStyleRegistry;
+import flixel.math.FlxMath;
+import flixel.math.FlxPoint;
 
 class Note extends NovaSprite {
 
@@ -129,10 +131,22 @@ class Note extends NovaSprite {
 		preventAutoStyleSet = false;
 
 		_stepLengthMs = flixel.addons.sound.FlxRhythmConductorUtil.getStepLengthMs(flixel.addons.sound.FlxRhythmConductor.instance.getCurrentTimeChangeBPMAccurate(time));
-		final roundedLength:Int = Math.round(tailLength / _stepLengthMs);
+
+		/* final roundedLength:Int = Math.round(tailLength / _stepLengthMs);
 		if (roundedLength > 1) {
 			for (susNote in 0...roundedLength)
 				tail.push(new Sustain(this, (_stepLengthMs * susNote), susNote == (roundedLength - 1)));
+			tail.sort(sortTail);
+		} */
+
+		if (tailLength > _stepLengthMs * 0.75) {
+			var len:Float = tailLength;
+			var curLen:Float = 0;
+			while (len > 10) {
+				curLen = Math.min(len, _stepLengthMs);
+				tail.push(new Sustain(this, curLen + (tailLength - len), len == curLen));
+				len -= curLen;
+			}
 			tail.sort(sortTail);
 		}
 
@@ -163,15 +177,44 @@ class Note extends NovaSprite {
 		blend = styleMeta.noteProperties.blendMode;
 	}
 
-	override public function draw():Void {
-		if (parent.downscroll) {
-			final prevY:Float = y;
-			y = getDefaultCamera().height - y - height + (getDefaultCamera().height / 2 + height) + 10;
-			globalOffset.y *= -1;
-			super.draw();
-			globalOffset.y *= -1;
-			y = prevY;
-		} else super.draw();
+	@:unreflective static final _note_pos:FlxPoint = FlxPoint.get();
+	@:unreflective static var _last_cos:Float = 0;
+	@:unreflective static var _last_sin:Float = 0;
+	public function updatePosition(?strum:Strum):Void {
+		strum ??= parentStrum;
+
+		// note positioning code for now will be placed here
+		var resultAngle:Float = parent.downscroll ? 90 : 270;
+		if (__scrollSpeed < 0) resultAngle += 180;
+		final angleDir:Float = resultAngle * flixel.math.FlxAngle.TO_RAD;
+
+		final disPos:Float = (Conductor.framePosition - time) * 0.45 * Math.abs(__scrollSpeed);
+		_note_pos.set(FlxMath.fastCos(angleDir) * disPos, FlxMath.fastSin(angleDir) * disPos);
+		_note_pos.x += -origin.x + offset.x;
+		_note_pos.y += -origin.y + offset.y;
+
+		_note_pos.x += strum.x + swagWidth / 2;
+		_note_pos.y += strum.y + swagWidth / 2;
+		setPosition(_note_pos.x, _note_pos.y);
+
+		for (sustain in tail) {
+			if (sustain == null) continue;
+			if (!sustain.exists) continue;
+
+			final disPos:Float = (Conductor.framePosition - (time + sustain.time)) * 0.45 * Math.abs(__scrollSpeed);
+			_note_pos.set((_last_cos = FlxMath.fastCos(angleDir)) * disPos, (_last_sin = FlxMath.fastSin(angleDir)) * disPos);
+			_note_pos.x += -sustain.origin.x + sustain.offset.x;
+			_note_pos.y += -sustain.origin.y + sustain.offset.y;
+
+			final multi = (sustain.height * 0.5 * (__scrollSpeed < 0 ? -1 : 1));
+			_note_pos.x += _last_cos * multi;
+			_note_pos.y += _last_sin * multi;
+
+			_note_pos.x += strum.x + swagWidth / 2;
+			_note_pos.y += strum.y + swagWidth / 2;
+			sustain.setPosition(_note_pos.x, _note_pos.y);
+			sustain.angle = resultAngle + 90;
+		}
 	}
 
 	/**
