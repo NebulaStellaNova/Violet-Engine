@@ -391,7 +391,6 @@ class CharacterEditorState extends StateBackend {
 		}
 
 		refreshCharacterDropdown();
-		lemonui.themes.ThemeManager.currentTheme = lemonui.themes.Theme.BlueTheme.instance;
 	}
 
 	public function refreshCharacterDropdown() {
