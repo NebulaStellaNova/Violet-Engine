@@ -177,6 +177,7 @@ class Note extends NovaSprite {
 		blend = styleMeta.noteProperties.blendMode;
 	}
 
+	// Credits to CNE devs for the note angle code
 	@:unreflective static final _note_pos:FlxPoint = FlxPoint.get();
 	@:unreflective static var _last_cos:Float = 0;
 	@:unreflective static var _last_sin:Float = 0;
