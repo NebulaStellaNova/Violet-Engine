@@ -118,6 +118,11 @@ jobs:
       - name: Run Setup
         run: bash .github/libs.sh
 
+      - name: Install VLC (Linux)
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libvlc-dev libvlccore-dev
+
       - name: Building HXCPP
         run: |
           cd ./.haxelib/hxcpp/git/tools/hxcpp
@@ -195,6 +200,11 @@ jobs:
       - name: Run Setup
         run: bash .github/libs.sh
 
+      - name: Install VLC (macOS)
+        run: |
+          brew update
+          brew install --cask vlc
+
       - name: Building HXCPP
         run: |
           cd ./.haxelib/hxcpp/git/tools/hxcpp
@@ -208,7 +218,7 @@ jobs:
         uses: actions/upload-artifact@main
         with:
           name: Violet macOS Build
-          path: export/debug/mac/bin
+          path: export/debug/mac/**
           overwrite: true
           include-hidden-files: true
           if-no-files-found: error
