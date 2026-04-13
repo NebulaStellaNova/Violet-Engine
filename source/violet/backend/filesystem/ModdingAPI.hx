@@ -114,7 +114,7 @@ class ModdingAPI {
 		activeModsIds = FlxG.save.data.enabledModIds;
 
 		// Main.threadCallacks.addOnce(reloadRegistries);
-		// new HXCHandler();
+		new HXCHandler();
 		reloadRegistries();
 	}
 
