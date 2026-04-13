@@ -1,5 +1,6 @@
 package violet.backend.objects.play;
 
+import violet.data.notestyles.NoteStyleRegistry;
 import flixel.FlxCamera;
 import flixel.group.FlxGroup;
 import flixel.input.keyboard.FlxKey;
@@ -140,6 +141,13 @@ class StrumLine extends FlxGroup {
 
 		noteStyle = chartData.noteStyle;
 
+		for (data in chartData.notes) {
+			var type = PlayState.SONG._data.noteTypes[data.type-1];
+			if (type == null || !NoteStyleRegistry.doesNoteStyleExist(type)) continue;
+			var noteStyle = NoteStyleRegistry.getNoteStyleByID(type);
+			Cache.image(noteStyle.getSplashAssetPath(), 'root');
+			Cache.image(noteStyle.getHoldCoverAssetPath(), 'root');
+		}
 	}
 
 	public function setPosition(x:Float = 0, y:Float = 0, purePos:Bool = true):Void {
