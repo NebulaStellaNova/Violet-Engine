@@ -193,8 +193,8 @@ jobs:
           key: mac-debug-cache
           path: |
             .haxelib/
-            export/debug/mac/haxe/
-            export/debug/mac/obj/
+            export/debug/macos/haxe/
+            export/debug/macos/obj/
           restore-keys: mac-debug-cache
 
       - name: Run Setup
@@ -218,7 +218,7 @@ jobs:
         uses: actions/upload-artifact@main
         with:
           name: Violet macOS Build
-          path: export/debug/mac/**
+          path: export/debug/macos/bin
           overwrite: true
           include-hidden-files: true
           if-no-files-found: error
@@ -249,6 +249,6 @@ jobs:
           key: mac-debug-cache
           path: |
             .haxelib/
-            export/debug/mac/haxe/
-            export/debug/mac/obj/
+            export/debug/macos/haxe/
+            export/debug/macos/obj/
           restore-keys: mac-debug-cache

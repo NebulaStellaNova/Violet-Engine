@@ -193,8 +193,8 @@ jobs:
           key: mac-build-cache
           path: |
             .haxelib/
-            export/build/mac/haxe/
-            export/build/mac/obj/
+            export/build/macos/haxe/
+            export/build/macos/obj/
           restore-keys: mac-build-cache
 
       - name: Run Setup
@@ -218,7 +218,7 @@ jobs:
         uses: actions/upload-artifact@main
         with:
           name: Violet macOS Build
-          path: export/build/mac/**
+          path: export/build/macos/**
           overwrite: true
           include-hidden-files: true
           if-no-files-found: error
@@ -249,6 +249,6 @@ jobs:
           key: mac-build-cache
           path: |
             .haxelib/
-            export/build/mac/haxe/
-            export/build/mac/obj/
+            export/build/macos/haxe/
+            export/build/macos/obj/
           restore-keys: mac-build-cache
