@@ -114,7 +114,7 @@ class ModdingAPI {
 		activeModsIds = FlxG.save.data.enabledModIds;
 
 		// Main.threadCallacks.addOnce(reloadRegistries);
-		new HXCHandler();
+		// new HXCHandler();
 		reloadRegistries();
 	}
 
@@ -208,9 +208,9 @@ class ModdingAPI {
 		violet.data.chart.ChartRegistry.registerCharts();
 		InitialState.loadingPercent += 1/7;
 
-		final foundHXC:Array<String> = checkForHXC();
+		/* final foundHXC:Array<String> = checkForHXC();
 		if (foundHXC.length == 0) trace('debug:<cyan>No HXC scripts found.');
-		else trace(['debug:<cyan>Found HXC scripts: "<magenta>', foundHXC.join('<cyan>", "<magenta>'), '<cyan>"'].join(''));
+		else trace(['debug:<cyan>Found HXC scripts: "<magenta>', foundHXC.join('<cyan>", "<magenta>'), '<cyan>"'].join('')); */
 	}
 
 	#if SCRIPT_SUPPORT
