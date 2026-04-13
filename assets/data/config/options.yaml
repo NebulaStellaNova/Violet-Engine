@@ -86,7 +86,10 @@ menus:
     description: If enabled, you will be able to play as the opponent.
     saveID: playAsOpponent
     type: bool
-    disabledInPlayState: true
+  - name: Disable Hold Jitter
+    description: If checked, hold note jitter will be disabled for all characters.
+    saveID: disableHoldJitter
+    type: bool
   - name: Personal Scroll Speed
     description: Set it to 0 to use the default scroll speed.
     saveID: personalScrollSpeed

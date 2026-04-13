@@ -15,6 +15,7 @@ import Std;
 	public var fps:Int = 60;
 	public var ghostTapping:Bool = true;
 	public var downscroll:Bool = false;
+	public var disableHoldJitter:Bool = false;
 	public var coloredHealthBar:Bool = true;
 	public var developerMode:Bool = false;
 	public var mouseControls:Bool = #if mobile false #else true #end;

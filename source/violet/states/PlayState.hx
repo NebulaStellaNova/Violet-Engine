@@ -441,7 +441,7 @@ class PlayState extends violet.backend.StateBackend {
 
 		if (!event.animCancelled)
 			for (char in note.parent.characters)
-				char.playSingAnim(note.id, event.animationSuffix);
+				char.playSingAnim(note.id, event.animationSuffix, true);
 
 		if (note.parent.isPlayer) {
 			final judgement:Judgement = Scoring.judgeNoteHit(note.time - Conductor.framePosition);

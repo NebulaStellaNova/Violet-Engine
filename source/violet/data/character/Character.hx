@@ -1,5 +1,6 @@
 package violet.data.character;
 
+import violet.backend.options.Options;
 import violet.backend.audio.Conductor;
 import violet.backend.scripting.ScriptPack;
 import violet.backend.utils.NovaUtils;
@@ -96,8 +97,13 @@ class Character extends violet.backend.objects.Bopper {
 	}
 
 	public static var singAnimations:Array<String> = ['singLEFT', 'singDOWN', 'singUP', 'singRIGHT'];
-	public function playSingAnim(direction:Int, isMiss:Bool = false, ?suffix:String) {
-		if (canSing) this.playAnim('${singAnimations[direction % singAnimations.length]}${isMiss ? 'miss' : ''}${suffix != null ? '-$suffix' : ''}', true);
+	public function playSingAnim(direction:Int, isMiss:Bool = false, ?suffix:String, noteJustHit:Bool = false) {
+		if (canSing) {
+			var targetAnim:String = '${singAnimations[direction % singAnimations.length]}${isMiss ? 'miss' : ''}${suffix != null ? '-$suffix' : ''}';
+			var force:Bool = !Options.data.disableHoldJitter;
+			if (this.animation.name != targetAnim || noteJustHit) force = true;
+			this.playAnim(targetAnim, force);
+		}
 		this.lastHit = Conductor.songPosition;
 		this.isSinging = true;
 	}
