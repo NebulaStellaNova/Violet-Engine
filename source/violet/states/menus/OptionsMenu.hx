@@ -29,6 +29,7 @@ typedef OptionsMenuData = {
 	var title:String;
 	var ?description:String;
 	var ?options:Array<OptionsMenuOption>;
+	var ?saveID:String; // Used for modded options.
 }
 
 typedef OptionsMenuOption = {

@@ -3,12 +3,7 @@ package violet.backend.options;
 import flixel.util.FlxSave;
 import flixel.FlxG;
 import flixel.FlxSprite;
-import flixel.text.FlxText;
-import flixel.group.FlxGroup;
-import flixel.FlxBasic;
-import flixel.FlxState;
 import lime.app.Application;
-import Std;
 
 @:structInit class OptionsData {
 
@@ -63,6 +58,8 @@ import Std;
 	public var savedAccuracies:Map<String, Float> = [];
 
 	public var savedLevelScores:Map<String, Int> = [];
+
+	public var modOptions:Dynamic = {};
 
 }
 
