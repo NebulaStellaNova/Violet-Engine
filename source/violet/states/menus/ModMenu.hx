@@ -310,7 +310,7 @@ class ModMenu extends SubStateBackend {
 
 			var roles = new NovaText(creditsTitle.x, 0, modInfoBox.width/2, '', Paths.font('PhantomMuff/empty letters.ttf'));
 			roles.size = 125;
-			roles.text = i.role;
+			roles.text = i.role ?? "";
 			roles.scrollFactor.set();
 			roles.alignment = RIGHT;
 			roles.size = 55;
@@ -318,7 +318,8 @@ class ModMenu extends SubStateBackend {
 			roles.updateHitbox();
 			add(roles);
 			creditsStuff.push(roles);
-			start += roles.height + 15;
+			if (i.role != null) start += roles.height;
+			start += 15;
 		}
 	}
 
