@@ -38,12 +38,6 @@ class SongRegistry {
 	}
 
 	public static function registerSong(song:Song) {
-		for (existingSong in songs) {
-			if (existingSong.id == song.id) {
-				trace('warning:Song is already registered. Skipping duplicate registration.');
-				return;
-			}
-		}
 		trace('debug:<cyan>Found and registered song with ID "<magenta>${song.id}<cyan>"');
 		songs.push(song);
 	}

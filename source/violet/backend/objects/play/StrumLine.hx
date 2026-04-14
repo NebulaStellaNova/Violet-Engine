@@ -136,8 +136,12 @@ class StrumLine extends FlxGroup {
 		// Rodney make this work thank.
 		/* if (Paths.fileExists(Paths.vocal(PlayState.song, characters[0].id, PlayState.variation)))
 			vocals = Conductor.addAdditionalTrack(FlxG.sound.load(Cache.sound(Paths.vocal(PlayState.song, characters[0].id, PlayState.variation), 'root', null, true), FlxG.sound.defaultMusicGroup));
-		else */ if (chartData.vocalsSuffix == null) vocals = Conductor.addAdditionalTrack(new FlxSound());
-		else vocals = Conductor.addAdditionalTrack(FlxG.sound.load(Cache.sound(Paths.vocal(PlayState.songData.songName, chartData.vocalsSuffix, PlayState.variation), 'root', null, true), FlxG.sound.defaultMusicGroup));
+		else */ if (chartData.vocalsSuffix == null || chartData.vocalsSuffix == "") vocals = Conductor.addAdditionalTrack(new FlxSound());
+		else {
+			var vocalPath = Paths.vocal(PlayState.songData.songName, chartData.vocalsSuffix, PlayState.variation);
+			if (vocalPath == "") vocalPath = Paths.vocal(PlayState.songData.songName, chartData.vocalsSuffix.substr(1), PlayState.variation);
+			vocals = Conductor.addAdditionalTrack(FlxG.sound.load(Cache.sound(vocalPath, 'root', null, true), FlxG.sound.defaultMusicGroup));
+		}
 
 		noteStyle = chartData.noteStyle;
 

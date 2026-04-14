@@ -13,26 +13,22 @@ class CharacterRegistry {
 
 		characterDatas.clear();
 
-		for (file in Paths.readFolder('data/characters', v -> return FileUtil.isDataFile(v))) {
+		for (file in Paths.readFolder('data/characters', v -> return FileUtil.isDataFile(v)))
 			register(Paths.fileName(file), ParseUtil.jsonOrYaml('data/characters/${Paths.fileName(file)}'));
-		}
 
 		for (file in Paths.readFolder('data/characters', v -> return FileUtil.hasExt(v, 'xml'))) {
 			var convertedChar:Null<CharacterData> = CharacterConverters.fromCodenameEngine('data/characters/$file');
 			if (convertedChar != null) {
 				register(Paths.fileName(file), convertedChar);
 			} else {
-				trace("error:Invalid Codename Engine character, not converting.");
+				trace('error:Codename Engine character "${Paths.fileName(file)}.xml" is invalid, not converting.');
 			}
 		}
 	}
 
 	public static function register(id:String, data:CharacterData) {
-		if (characterDatas.exists(id)) trace('warning:<cyan>Character with id "<magenta>$id<cyan>" already exists, skipping...');
-		else {
-			characterDatas.set(id, data);
-			trace('debug:<cyan>Found and registered character with ID "<magenta>$id<cyan>"');
-		}
+		characterDatas.set(id, data);
+		trace('debug:<cyan>Found and registered character with ID "<magenta>$id<cyan>"');
 	}
 
 }

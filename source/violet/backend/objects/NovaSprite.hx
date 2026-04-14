@@ -1,5 +1,7 @@
 package violet.backend.objects;
 
+import violet.backend.utils.FileUtil;
+import haxe.io.Path;
 import flixel.FlxCamera;
 import flixel.graphics.FlxGraphic;
 import flixel.graphics.frames.FlxAtlasFrames;
@@ -105,6 +107,9 @@ class NovaSprite extends #if ANIMATE_SUPPORT FlxAnimate #else FlxSprite #end {
 				this.animated = true;
 				this.frames = NovaUtils.getSparrowFrames(path);
 				this.onLoaded();
+			} else if (Paths.fileExists(Path.withoutExtension(path) + '/0.png')) {
+				var files = Paths.readFolder(Path.withoutExtension(path), true, v -> return FileUtil.hasExt(v, 'png'));
+				for (i in files) addFrames(Path.withoutExtension(path) + '/$i');
 			} else if (Paths.fileExists(path.replace(".png", ".txt"), true)) {
 				this.filePath = path;
 				this.fileName = Paths.getFileName(path, true);

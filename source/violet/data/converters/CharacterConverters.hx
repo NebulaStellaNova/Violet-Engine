@@ -1,13 +1,12 @@
 package violet.data.converters;
 
-import violet.backend.utils.AnimationUtil;
-import violet.data.animation.AnimationData;
 import violet.backend.utils.ParseUtil.ParseColor;
-import violet.backend.utils.StringUtil;
-import violet.data.character.CharacterRegistry;
-import haxe.xml.Access;
-import violet.backend.utils.FileUtil;
 import violet.data.character.CharacterData;
+import violet.backend.utils.AnimationUtil;
+import violet.backend.utils.StringUtil;
+import violet.backend.utils.FileUtil;
+
+import haxe.xml.Access;
 
 class CharacterConverters {
 	public static function fromCodenameEngine(path:String):Null<CharacterData> {
@@ -48,7 +47,7 @@ class CharacterConverters {
 			offsets: [xPosition, yPosition],
 			cameraOffsets: [cameraX, cameraY],
 			isPixel: !antialiasing,
-			danceEvery: 1,
+			danceEvery: 2,
 			singTime: holdTime,
 			animations: [],
 			flipX: flipX

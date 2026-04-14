@@ -8,6 +8,11 @@ import thx.semver.Version;
 typedef StageData = {
 	var name:String;
 
+	/**
+	 * If set to true characters will be positioned in the same way as Codename Engine or Psych Engine rather than the V-Slice method.
+	 */
+	var ?basicCharPos:Bool;
+
 	@:default([])
 	var ?props:Array<StagePropData>;
 
@@ -43,6 +48,9 @@ typedef StagePropData = {
 
 	@:default(1)
 	var ?alpha:Float;
+
+	@:default(0)
+	var ?angle:Float;
 
 	@:default(false)
 	var ?visible:Bool;
