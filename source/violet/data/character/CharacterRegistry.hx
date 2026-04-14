@@ -1,5 +1,6 @@
 package violet.data.character;
 
+import violet.data.converters.CharacterConverters;
 import violet.backend.utils.FileUtil;
 import violet.backend.utils.ParseUtil;
 
@@ -14,6 +15,15 @@ class CharacterRegistry {
 
 		for (file in Paths.readFolder('data/characters', v -> return FileUtil.isDataFile(v))) {
 			register(Paths.fileName(file), ParseUtil.jsonOrYaml('data/characters/${Paths.fileName(file)}'));
+		}
+
+		for (file in Paths.readFolder('data/characters', v -> return FileUtil.hasExt(v, 'xml'))) {
+			var convertedChar:Null<CharacterData> = CharacterConverters.fromCodenameEngine('data/characters/$file');
+			if (convertedChar != null) {
+				register(Paths.fileName(file), convertedChar);
+			} else {
+				trace("error:Invalid Codename Engine character, not converting.");
+			}
 		}
 	}
 

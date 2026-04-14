@@ -1,5 +1,6 @@
 package violet.backend.utils;
 
+import flixel.util.typeLimit.OneOfTwo;
 import haxe.io.Path;
 import lime.ui.FileDialog;
 import openfl.net.FileReference;
@@ -43,6 +44,16 @@ class FileUtil {
 			if (Path.extension(file) == i) isData = true;
 		}
 		return isData;
+	}
+
+	public static function hasExt(v:String, ext:OneOfTwo<Array<String>, String>) {
+		if (ext is Array) {
+			var valid:Bool = false;
+			for (i in cast (ext, Array<Dynamic>)) if (Path.extension(v) == i) valid = true;
+			return valid;
+		} else {
+			return Path.extension(v) == ext;
+		}
 	}
 	/* inline public static function setFileContent(path:String):String {
 		return sys.io.File.getContent(path);
