@@ -62,7 +62,6 @@ class CharacterConverters {
 			var frameRate:Float = Std.parseFloat(d(i, 'fps', '24'));
 			var offsetX:Float = Std.parseFloat(d(i, 'x', '0'));
 			var offsetY:Float = Std.parseFloat(d(i, 'y', '0'));
-			if (isPlayer) { offsetX *= -1; offsetY *= -1; }
 			var frameIndices:String = d(i, 'indices', null);
 			var byLabel:Bool = d(i, 'label', 'true') == 'true';
 			characterData.animations.push({
