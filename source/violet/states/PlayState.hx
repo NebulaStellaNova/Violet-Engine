@@ -265,7 +265,7 @@ class PlayState extends violet.backend.StateBackend {
 			}
 		}
 
-		comboGroup = new ComboGroup();
+		comboGroup = new ComboGroup(Options.data.kadePopups ? 'kade' : 'funkin');
 
 		stage = new Stage(SONG.stage);
 		stage.stageScripts.parent = this;
@@ -818,6 +818,8 @@ class PlayState extends violet.backend.StateBackend {
 				strumLine.setPosition(SONG.strumLines[i].strumPosition[0], SONG.strumLines[i].strumPosition[1], SONG.strumLines[i].strumPosIsPure);
 			}
 		}
+
+		comboGroup.style = Options.data.kadePopups ? 'kade' : 'funkin';
 
 		healthBar.y = Options.data.downscroll ? FlxG.height * 0.1 : FlxG.height * 0.9;
 		scoreTxt.y = healthBar.y + healthBar.height + 5;

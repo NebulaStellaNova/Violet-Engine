@@ -90,6 +90,10 @@ menus:
     description: If checked, hold note jitter will be disabled for all characters.
     saveID: disableHoldJitter
     type: bool
+  - name: Kade Engine Popups
+    description: If checked, popups like sick, bad, etc. will use Kade Engine's graphics.
+    saveID: kadePopups
+    type: bool
   - name: Personal Scroll Speed
     description: Set it to 0 to use the default scroll speed.
     saveID: personalScrollSpeed
