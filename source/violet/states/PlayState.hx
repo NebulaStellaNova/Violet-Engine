@@ -100,6 +100,7 @@ class PlayState extends violet.backend.StateBackend {
 
 	public var defaultCamZoom:Float = 0.7;
 
+	public var combo:Int = 0;
 	public var misses:Int = 0;
 	private var accuracies:Array<Float> = [];
 	public var accuracy(get, never):Float;
@@ -453,7 +454,8 @@ class PlayState extends violet.backend.StateBackend {
 			if (judgement.splash && event.spawnSplash != false) note.parentStrum.spawnSplash(note);
 			score += Math.round(judgement.score);
 			health += Constants.DEFAULT_HEALTH_GAIN;
-			comboGroup.popupRating(judgement.rating, 0);
+			combo++;
+			comboGroup.popupRating(judgement.rating, combo);
 
 			var noteHitDelta = note.time - Conductor.framePosition;
 			// trace(Math.abs(noteHitDelta) + ', ' + Scoring.missThreshold);
@@ -477,6 +479,7 @@ class PlayState extends violet.backend.StateBackend {
 		if (event.cancelled) return;
 
 		misses++;
+		combo = 0;
 
 		note.wasMissed = true; note.alpha *= 0.6;
 		generalVocals.pause(); note.parent.vocals.pause();
@@ -545,6 +548,7 @@ class PlayState extends violet.backend.StateBackend {
 
 		if (sustain.parent.isPlayer) score += Math.round(Scoring.missScore);
 		health -= Constants.DEFAULT_HEALTH_LOSS * (sustain.parent.isPlayer ? 1 : -1);
+		combo = 0;
 
 		sustain.parentStrum.holdCover?.playAnim('end', true);
 		if (sustain.parent.isComputer) sustain.parentStrum.holdCover?.animation.finish();

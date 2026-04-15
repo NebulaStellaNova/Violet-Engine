@@ -119,8 +119,6 @@ class StageConverters {
 			}
 			if (propToAdd != null) stageData.props.push(propToAdd);
 		}
-
-		trace(stageData);
 		return stageData;
 	}
 
