@@ -31,7 +31,7 @@ class DiscordRPC {
 		final discordPresence:DiscordRichPresence = new DiscordRichPresence();
 		discordPresence.type = DiscordActivityType_Playing;
 		discordPresence.details = "In the menus";
-		discordPresence.largeImageKey = "https://github.com/NebulaStellaNova/Violet-Engine/blob/main/art/iconOG.png?raw=true";
+		discordPresence.largeImageKey = "https://files.catbox.moe/mp8wja.png";
 
 		final button:DiscordButton = new DiscordButton();
 		button.label = "Violet Engine Discord";
