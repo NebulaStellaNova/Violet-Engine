@@ -25,6 +25,7 @@ class CharacterConverters {
 
 		var xPosition:Float = Std.parseFloat(d(character, 'x', '0'));
 		var yPosition:Float = Std.parseFloat(d(character, 'y', '0'));
+		var interval:Float = Std.parseFloat(d(character, 'interval', '2'));
 		var cameraX:Float = Std.parseFloat(d(character, 'camx', '0'));
 		var cameraY:Float = Std.parseFloat(d(character, 'camy', '0'));
 		var holdTime:Float = Std.parseFloat(d(character, 'holdTime', '4'));
@@ -47,7 +48,7 @@ class CharacterConverters {
 			offsets: [xPosition, yPosition],
 			cameraOffsets: [cameraX, cameraY],
 			isPixel: !antialiasing,
-			danceEvery: 2,
+			danceEvery: interval,
 			singTime: holdTime,
 			animations: [],
 			flipX: flipX

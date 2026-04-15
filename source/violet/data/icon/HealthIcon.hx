@@ -12,8 +12,14 @@ class HealthIcon extends Bopper {
 	public var canDance:Bool = true;
 	public var bopAmount:Float = 1;
 
-	public function new(id:String) {
+	public function new(id:String, isOpponent:Bool = true) {
 		this.id = id;
+		this.isOpponent = isOpponent;
+		super();
+		setIcon(id);
+	}
+
+	public function setIcon(id:String) {
 		var defaultData = HealthIconRegistry.healthIconDatas.get(Constants.DEFAULT_HEALTH_ICON);
 		this._data = HealthIconRegistry.healthIconDatas.get(id) ?? defaultData;
 
@@ -23,7 +29,7 @@ class HealthIcon extends Bopper {
 		this._data.isPixel ??= false;
 		this._data.assetPath ??= 'icons/$id';
 
-		super(Paths.image(this._data.assetPath) != '' ? Paths.image(this._data.assetPath) : Paths.image(defaultData.assetPath));
+		loadSprite(Paths.image(this._data.assetPath) != '' ? Paths.image(this._data.assetPath) : Paths.image(defaultData.assetPath));
 
 		if (this.animated) {
 			this.addAnim('idle', 'idle', 24, true);
@@ -48,6 +54,8 @@ class HealthIcon extends Bopper {
 
 		this.scale.scale(this._data.scale);
 		this.updateHitbox();
+
+		if (!isOpponent) this.flipX = !this.flipX;
 	}
 
 	public function updateFromHealth(value:Float) {

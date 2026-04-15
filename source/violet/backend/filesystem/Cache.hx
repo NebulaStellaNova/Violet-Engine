@@ -2,6 +2,7 @@ package violet.backend.filesystem;
 
 import violet.states.PlayState;
 import violet.data.character.Character;
+import violet.data.stage.Stage;
 import flixel.graphics.FlxGraphic;
 import openfl.display.BitmapData;
 import openfl.media.Sound;
@@ -94,10 +95,7 @@ class Cache {
 	// -- In Prep for Change Character Event -- \\
 
 	public static var cachedCharacters:Map<String, Character> = [];
-
-	public static function getCharacter(id:String) {
-		return cachedCharacters.get(id);
-	}
+	public static var cachedStages:Map<String, Stage> = [];
 
 	public static function character(id:String) {
 		if (cachedCharacters.exists(id)) return;

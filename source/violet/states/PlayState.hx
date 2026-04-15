@@ -204,7 +204,7 @@ class PlayState extends violet.backend.StateBackend {
 		// Start Dialogue
 		var sD:Array<ConverstationPiece> = ParseUtil.jsonOrYaml('songs/$song/start-dialogue');
 		var dialogueHandler = new DialogueHandler(sD);
-		dialogueHandler.cameras = [camHUD];
+		dialogueHandler.camera = camHUD; // Literally EXACTLY the same as cameras = [camHUD] with less bytes so no idea why you changed it
 		dialogueHandler.updateHitbox();
 		dialogueHandler.screenCenter();
 		dialogueHandler.y += 150;
@@ -222,7 +222,7 @@ class PlayState extends violet.backend.StateBackend {
 			if (data == null) continue;
 
 			var strumLine = new StrumLine(data);
-			strumLine.cameras = [camHUD];
+			strumLine.camera = camHUD;
 			strumLine.visible = data.visible;
 			strumLine.ID = i;
 			strumLines.add(strumLine);
@@ -233,8 +233,7 @@ class PlayState extends violet.backend.StateBackend {
 				char.alpha = 0.5;
 				char.stagePosition = data.charStagePosition;
 				if (data.charStagePosition == 'boyfriend' && iconPlayer == null) {
-					iconPlayer = new HealthIcon(char._data.healthIcon);
-					iconPlayer.flipX = !iconPlayer.flipX;
+					iconPlayer = new HealthIcon(char._data.healthIcon, false);
 				} else if (iconOpponent == null) {
 					iconOpponent = new HealthIcon(char._data.healthIcon);
 				}
@@ -282,12 +281,12 @@ class PlayState extends violet.backend.StateBackend {
 
 		healthBar = new HealthBar();
 		healthBar.y = Options.data.downscroll ? FlxG.height * 0.1 : FlxG.height * 0.9;
-		healthBar.cameras = [camHUD];
+		healthBar.camera = camHUD;
 		healthBar.screenCenter(X);
 		add(healthBar);
 
 		if (iconOpponent == null) iconOpponent = new HealthIcon('face'); // Null safety
-		if (iconPlayer == null) iconPlayer = new HealthIcon('face'); // Null safety
+		if (iconPlayer == null) iconPlayer = new HealthIcon('face', false); // Null safety
 
 		if (iconOpponent._data.color != null && Options.data.coloredHealthBar) {
 			healthBar.leftColor = iconOpponent._data.color;
@@ -303,14 +302,13 @@ class PlayState extends violet.backend.StateBackend {
 		scoreTxt = new ScoreTxt();
 		scoreTxt.x = healthBar.x + healthBar.width - scoreTxt.width;
 		scoreTxt.y = healthBar.y + healthBar.height + 5;
-		scoreTxt.cameras = [camHUD];
+		scoreTxt.camera = camHUD;
 		add(scoreTxt);
 
-		iconPlayer.cameras = [camHUD];
+		iconPlayer.camera = camHUD;
 		add(iconPlayer);
 
-		iconOpponent.cameras = [camHUD];
-		iconOpponent.isOpponent = true;
+		iconOpponent.camera = camHUD;
 		add(iconOpponent);
 
 		health = 0.5;
@@ -578,7 +576,7 @@ class PlayState extends violet.backend.StateBackend {
 			if (countdownSounds[countdownTick] != null) NovaUtils.playSound('game/countdown/funkin/${countdownSounds[countdownTick]}');
 			if (countdownSprites[countdownTick] != null) {
 				var countdownSprite:NovaSprite = new NovaSprite(Paths.image('game/countdown/funkin/${countdownSprites[countdownTick]}'));
-				countdownSprite.cameras = [camHUD];
+				countdownSprite.camera = camHUD;
 				countdownSprite.scale.set(0.8, 0.8);
 				countdownSprite.updateHitbox();
 				countdownSprite.screenCenter();
@@ -615,21 +613,28 @@ class PlayState extends violet.backend.StateBackend {
 				var characterIndex:Int = event.params[2];
 				var updateIcon:Bool = event.params[3];
 
-				var charToAdd:Character = Cache.getCharacter(characterID);
 				var charToReplace:Character = strumLines.members[strumlineID].characters[characterIndex];
-				@:privateAccess charToAdd.faceLeftCache = @:privateAccess charToReplace.faceLeftCache;
-				@:privateAccess charToAdd.initialFlipX = charToReplace.stagePosition == "boyfriend";
-				@:privateAccess charToAdd.__refresh();
+				var isPlayer = charToReplace.stagePosition == "boyfriend";
+				var charToAdd:Character = new Character(characterID, isPlayer);
 				charToAdd.stagePosition = charToReplace.stagePosition;
 				charToAdd.x = charToReplace.x;
 				charToAdd.y = charToReplace.y;
 				charToAdd.z = charToReplace.z + 1;
 
-				var zIndex = members.indexOf(charToReplace);
+				if (charToAdd.animationList.contains(charToReplace.animation.name)) {
+					charToAdd.playAnim(charToReplace.animation.name);
+					charToAdd.animation.curAnim.curFrame = charToReplace.animation.curAnim.curFrame;
+				}
+
+				var indexToAdd = members.indexOf(charToReplace) + 1;
 				remove(charToReplace);
 				strumLines.members[strumlineID].characters[characterIndex] = charToAdd;
-				insert(zIndex + 1, strumLines.members[strumlineID].characters[characterIndex]);
+				insert(indexToAdd, strumLines.members[strumlineID].characters[characterIndex]);
 				characters.push(charToAdd);
+
+				if (updateIcon)
+					isPlayer ? iconPlayer.setIcon(charToAdd._data.healthIcon) : iconOpponent.setIcon(charToAdd._data.healthIcon);
+
 
 			case 'Camera Modulo Change':
 				camBopInterval = event.params[0] ?? 4;
