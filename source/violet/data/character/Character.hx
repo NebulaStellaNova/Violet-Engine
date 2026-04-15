@@ -120,6 +120,8 @@ class Character extends violet.backend.objects.Bopper {
 
 	public var canDance:Bool = true; // For play animation event;
 
+	public var hasNeitherAnims:Bool = false;
+
 	override public function dance(force:Bool = false) {
 		if (!canDance) return;
 		final suffix:String = idleSuffix != null ? '-$idleSuffix' : '';
@@ -127,10 +129,12 @@ class Character extends violet.backend.objects.Bopper {
 			if (this.animation.name != 'danceLeft$suffix' && this.animation.name != 'danceRight$suffix' && !force) return;
 			this.playAnim(alternator ? 'danceLeft$suffix' : 'danceRight$suffix', true);
 			alternator = !alternator;
-		} else {
+		} else if (this.animationList.contains('idle$suffix')) {
 			if (this.animation.name != 'idle$suffix' && !force) return;
 			this.playAnim('idle$suffix', true);
 		}
+
+		hasNeitherAnims = !this.animationList.contains('idle$suffix') && !this.animationList.contains('danceLeft$suffix');
 	}
 
 	override function beatHit(beat:Int) {

@@ -40,6 +40,7 @@ class Cache {
 				FlxG.bitmap.removeByKey(key);
 			}
 		}
+		cachedCharacters.clear();
 		cache.clear();
 	}
 
@@ -101,9 +102,9 @@ class Cache {
 	public static function character(id:String) {
 		if (cachedCharacters.exists(id)) return;
 		cachedCharacters.set(id, new Character(id));
-		if (Std.isOfType(FlxG.state, PlayState)) {
+		/* if (Std.isOfType(FlxG.state, PlayState)) {
 			PlayState.instance.characters.push(cachedCharacters.get('id'));
-		}
+		} */
 	}
 
 }

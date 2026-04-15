@@ -112,7 +112,7 @@ class StageConverters {
 						id: 'combo',
 						type: COMBO,
 						position: [
-							Std.parseFloat(d(i, 'x', '0')) + 150, // to account for centering
+							Std.parseFloat(d(i, 'x', '0')) + 90, // to account for centering
 							Std.parseFloat(d(i, 'y', '0'))
 						]
 					}

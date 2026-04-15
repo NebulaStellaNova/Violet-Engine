@@ -182,6 +182,12 @@ class PlayState extends violet.backend.StateBackend {
 		songData = SongRegistry.getSongByID(song);
 		variation = songData.variant;
 
+		for (i => data in SONG.events) {
+			if (data.name == "Change Character") {
+				Cache.character(data.params[1]);
+			}
+		}
+
 		for (i => data in SONG.strumLines) {
 			if (data == null) continue;
 			for(charName in data.characters) if (charName != null) characterIDs.push(charName);
@@ -440,8 +446,9 @@ class PlayState extends violet.backend.StateBackend {
 		if (event.playStrumAnim) note.parentStrum.playStrumAnim('confirm', true);
 
 		if (!event.animCancelled)
-			for (char in note.parent.characters)
+			for (i=>char in note.parent.characters) {
 				char.playSingAnim(note.id, event.animationSuffix, true);
+			}
 
 		if (note.parent.isPlayer) {
 			final judgement:Judgement = Scoring.judgeNoteHit(note.time - Conductor.framePosition);
@@ -602,6 +609,28 @@ class PlayState extends violet.backend.StateBackend {
 		if (scriptEvent.cancelled) return;
 
 		switch (eventName) {
+			case 'Change Character':
+				var strumlineID:Int = event.params[0];
+				var characterID:String = event.params[1];
+				var characterIndex:Int = event.params[2];
+				var updateIcon:Bool = event.params[3];
+
+				var charToAdd:Character = Cache.getCharacter(characterID);
+				var charToReplace:Character = strumLines.members[strumlineID].characters[characterIndex];
+				@:privateAccess charToAdd.faceLeftCache = @:privateAccess charToReplace.faceLeftCache;
+				@:privateAccess charToAdd.initialFlipX = charToReplace.stagePosition == "boyfriend";
+				@:privateAccess charToAdd.__refresh();
+				charToAdd.stagePosition = charToReplace.stagePosition;
+				charToAdd.x = charToReplace.x;
+				charToAdd.y = charToReplace.y;
+				charToAdd.z = charToReplace.z + 1;
+
+				var zIndex = members.indexOf(charToReplace);
+				remove(charToReplace);
+				strumLines.members[strumlineID].characters[characterIndex] = charToAdd;
+				insert(zIndex + 1, strumLines.members[strumlineID].characters[characterIndex]);
+				characters.push(charToAdd);
+
 			case 'Camera Modulo Change':
 				camBopInterval = event.params[0] ?? 4;
 				camBopOffset = event.params[1] ?? 0;
@@ -639,13 +668,16 @@ class PlayState extends violet.backend.StateBackend {
 			case 'Play Animation':
 				var targetCharacter:Character = strumLines.members[scriptEvent.params[0]].characters[0];
 				targetCharacter.canDance = false;
+				targetCharacter.canSing = false;
 				targetCharacter.isSinging = false;
 				targetCharacter.playAnim(scriptEvent.params[1], true);
 				targetCharacter.animation.onFinish.addOnce(name -> {
 					if (name == scriptEvent.params[1]) {
 						targetCharacter.canDance = true;
+						targetCharacter.canSing = true;
 						targetCharacter.dance(true);
-						targetCharacter.animation.finish();
+						if (!targetCharacter.hasNeitherAnims)
+							targetCharacter.animation.finish();
 					}
 				});
 		}
