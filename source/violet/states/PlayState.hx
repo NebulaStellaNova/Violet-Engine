@@ -362,6 +362,8 @@ class PlayState extends violet.backend.StateBackend {
 	override public function update(elapsed:Float):Void {
 		super.update(elapsed);
 
+		staticExit = exitToMenu;
+
 		callSongScripts('update', [elapsed]);
 		callSongScripts('onUpdate', [elapsed]);
 
@@ -853,6 +855,8 @@ class PlayState extends violet.backend.StateBackend {
 		PlayState.variation = variation;
 		FlxG.switchState(() -> new PlayState());
 	}
+
+	public static var staticExit:Void->Void;
 
 	public dynamic function exitToMenu() {
 		if (isStoryMode)
