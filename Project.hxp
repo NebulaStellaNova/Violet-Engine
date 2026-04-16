@@ -69,7 +69,7 @@ class Project extends HXProject {
 		new Lib('lscript', 'https://github.com/SrtHero278/lscript'),
 		new Lib('rulescript', 'https://github.com/Kriptel/RuleScript', ['dev']),
 		new Lib('flixel-animate', 'https://github.com/NebulaStellaNova/flixel-animate', ['bullshity-fix', '--skip-dependencies']),
-		new Lib('hython', 'https://github.com/Paopun20/hython.git', ['dev'])
+		new Lib('hython', 'https://github.com/Paopun20/hython.git', ['legacy'])
 	];
 
 	// Basic variables.

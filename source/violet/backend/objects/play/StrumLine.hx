@@ -140,14 +140,14 @@ class StrumLine extends FlxGroup {
 		if (chartData.vocalsSuffix == null || chartData.vocalsSuffix == "") vocals = Conductor.addAdditionalTrack(new FlxSound());
 		else {
 			var vocalPath = "";
-			if (vocalPath == "") vocalPath = Paths.vocal(PlayState.songData.songName, chartData.vocalsSuffix, '');
-			if (vocalPath == "") vocalPath = Paths.vocal(PlayState.songData.songName, chartData.vocalsSuffix, '', false);
-			if (vocalPath == "") vocalPath = Paths.vocal(PlayState.songData.songName, chartData.vocalsSuffix.substr(0), '');
-			if (vocalPath == "") vocalPath = Paths.vocal(PlayState.songData.songName, chartData.vocalsSuffix.substr(0), '', false);
 			if (vocalPath == "") vocalPath = Paths.vocal(PlayState.songData.songName, chartData.vocalsSuffix, PlayState.variation);
 			if (vocalPath == "") vocalPath = Paths.vocal(PlayState.songData.songName, chartData.vocalsSuffix, PlayState.variation, false);
 			if (vocalPath == "") vocalPath = Paths.vocal(PlayState.songData.songName, chartData.vocalsSuffix.substr(0), PlayState.variation);
 			if (vocalPath == "") vocalPath = Paths.vocal(PlayState.songData.songName, chartData.vocalsSuffix.substr(0), PlayState.variation, false);
+			if (vocalPath == "") vocalPath = Paths.vocal(PlayState.songData.songName, chartData.vocalsSuffix, '');
+			if (vocalPath == "") vocalPath = Paths.vocal(PlayState.songData.songName, chartData.vocalsSuffix, '', false);
+			if (vocalPath == "") vocalPath = Paths.vocal(PlayState.songData.songName, chartData.vocalsSuffix.substr(0), '');
+			if (vocalPath == "") vocalPath = Paths.vocal(PlayState.songData.songName, chartData.vocalsSuffix.substr(0), '', false);
 			if (vocalPath == "") vocalPath = Paths.vocal(PlayState.songData.songName, chartData.vocalsSuffix, '');
 			vocals = Conductor.addAdditionalTrack(FlxG.sound.load(Cache.sound(vocalPath, 'root', null, true), FlxG.sound.defaultMusicGroup));
 		}
