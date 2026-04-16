@@ -52,6 +52,7 @@ class InitialState extends StateBackend { // for now
 		FlxG.signals.postStateSwitch.add(()->{
 			if (!Std.isOfType(FlxG.state, PlayState)) {
 				PlayState.hasSeenCutscene = false;
+				PlayState.hasSeenDialogue = false;
 				PlayState.isStoryMode = false;
 				@:bypassAccessor PlayState.practiceMode = false;
 				PlayState.playlist.resize(0);

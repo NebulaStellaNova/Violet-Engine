@@ -2,7 +2,7 @@ version: 1.0.0
 name: Darnell
 assetPath: characters/darnell
 singTime: 8
-cameraOffsets: [-100, 100]
+cameraOffsets: [-150, 0]
 offsets:
   - 0
   - 0

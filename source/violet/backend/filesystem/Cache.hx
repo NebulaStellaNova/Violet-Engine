@@ -100,9 +100,11 @@ class Cache {
 	public static function character(id:String) {
 		if (cachedCharacters.exists(id)) return;
 		cachedCharacters.set(id, new Character(id));
-		/* if (Std.isOfType(FlxG.state, PlayState)) {
-			PlayState.instance.characters.push(cachedCharacters.get('id'));
-		} */
+	}
+
+	public static function stage(id:String) {
+		if (cachedStages.exists(id)) return;
+		cachedStages.set(id, new Stage(id));
 	}
 
 }

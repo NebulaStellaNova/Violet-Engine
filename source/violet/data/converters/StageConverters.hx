@@ -1,5 +1,6 @@
 package violet.data.converters;
 
+import violet.backend.utils.ParseUtil;
 import violet.backend.utils.ParseUtil.ParseColor;
 import violet.backend.utils.AnimationUtil;
 import violet.backend.utils.StringUtil;
@@ -100,13 +101,13 @@ class StageConverters {
 						]
 					}
 				case 'bf' | 'boyfriend' | 'player':
-					propToAdd = getCharData('player', i);
+					propToAdd = getXmlCharData('player', i);
 				case 'girlfriend' | 'gf':
-					propToAdd = getCharData('spectator', i);
+					propToAdd = getXmlCharData('spectator', i);
 				case 'dad' | 'opponent':
-					propToAdd = getCharData('opponent', i);
+					propToAdd = getXmlCharData('opponent', i);
 				case 'character' | 'char':
-					propToAdd = getCharData(i.att.name, i);
+					propToAdd = getXmlCharData(i.att.name, i);
 				case 'ratings' | 'combo':
 					propToAdd = {
 						id: 'combo',
@@ -122,7 +123,7 @@ class StageConverters {
 		return stageData;
 	}
 
-	private static function getCharData(id:String, i:Access):StagePropData {
+	private static function getXmlCharData(id:String, i:Access):StagePropData {
 		return {
 			id: id,
 			type: CHARACTER,
@@ -151,4 +152,72 @@ class StageConverters {
 	private static function d(access:Access, attribute:String, def:String):String {
 		return access.has.resolve(attribute) ? access.att.resolve(attribute) : def;
 	}
+
+	public static function fromVSlice(path:String):StageData {
+		var stageData = ParseUtil.json(path);
+		var props:Array<StagePropData> = [];
+
+		var out:StageData = {
+			cameraPosition: [0, 0],
+			name: stageData.name,
+			zoom: stageData.cameraZoom,
+			directory: 'stages/' + stageData.directory,
+			props: stageData.props
+		}
+
+		var bf:StageDataCharacter = stageData.characters.bf;
+		var data:StagePropData = {
+			id: 'player',
+			type: CHARACTER,
+			zIndex: bf?.zIndex,
+			position: bf?.position,
+			cameraOffsets: bf?.cameraOffsets,
+			scale: [bf?.scale ?? 1, bf?.scale ?? 1],
+			scroll: bf?.scroll,
+			angle: bf?.angle,
+			alpha: bf?.alpha
+		};
+		out.props.push(data);
+
+		var gf:StageDataCharacter = stageData.characters.gf;
+		var data:StagePropData = {
+			id: 'spectator',
+			type: CHARACTER,
+			zIndex: gf?.zIndex,
+			position: gf?.position,
+			cameraOffsets: gf?.cameraOffsets,
+			scale: [gf?.scale ?? 1, gf?.scale ?? 1],
+			scroll: gf?.scroll,
+			angle: gf?.angle,
+			alpha: gf?.alpha
+		};
+		out.props.push(data);
+
+		var dad:StageDataCharacter = stageData.characters.dad;
+		var data:StagePropData = {
+			id: 'opponent',
+			type: CHARACTER,
+			zIndex: dad?.zIndex,
+			position: dad?.position,
+			cameraOffsets: dad?.cameraOffsets,
+			scale: [dad?.scale ?? 1, dad?.scale ?? 1],
+			scroll: dad?.scroll,
+			angle: dad?.angle,
+			alpha: dad?.alpha
+		};
+		out.props.push(data);
+
+		return out;
+	}
 }
+
+typedef StageDataCharacter =
+{
+  var ?zIndex:Int;
+  var ?position:Array<Float>;
+  var ?scale:Float;
+  var ?cameraOffsets:Array<Float>;
+  var ?scroll:Array<Float>;
+  var ?alpha:Float;
+  var ?angle:Float;
+};

@@ -74,6 +74,7 @@ class PlayState extends violet.backend.StateBackend {
 	public static var playlist:Array<String> = [];
 	public static var doFadeOut:Bool = false;
 	public static var hasSeenCutscene:Bool = false;
+	public static var hasSeenDialogue:Bool = false;
 	public static var isStoryMode:Bool = false;
 	public static var curStoryLevel:String;
 	public static var storyScore:Int = 0;
@@ -83,6 +84,7 @@ class PlayState extends violet.backend.StateBackend {
 	public var countdownEase:Float->Float = FlxEase.linear;
 
 	public var inCutscene = false;
+	public var inDialogue = false;
 
 	#if SCRIPT_SUPPORT
 	public var songScripts:ScriptPack = new ScriptPack();
@@ -201,15 +203,6 @@ class PlayState extends violet.backend.StateBackend {
 		songScripts.parent = this;
 		songScripts.execute();
 		callSongScripts('onLoaded');
-
-		// Start Dialogue
-		var sD:Array<ConverstationPiece> = ParseUtil.jsonOrYaml('songs/$song/start-dialogue');
-		var dialogueHandler = new DialogueHandler(sD);
-		dialogueHandler.camera = camHUD; // Literally EXACTLY the same as cameras = [camHUD] with less bytes so no idea why you changed it
-		dialogueHandler.updateHitbox();
-		dialogueHandler.screenCenter();
-		dialogueHandler.y += 150;
-		add(dialogueHandler);
 
 		strumLines = new FlxTypedGroup<StrumLine>();
 
@@ -561,7 +554,25 @@ class PlayState extends violet.backend.StateBackend {
 
 	var countdownTick = 0;
 
+
 	function startCountdown():Void {
+
+		// Start Dialogue
+		if (!hasSeenDialogue) {
+			var sD:Array<ConverstationPiece> = ParseUtil.jsonOrYaml('songs/$song/start-dialogue', null, 'null');
+			if (sD != null) {
+				var dialogueHandler = new DialogueHandler(sD);
+				dialogueHandler.camera = camHUD;
+				dialogueHandler.updateHitbox();
+				dialogueHandler.screenCenter();
+				dialogueHandler.y += 150;
+				add(dialogueHandler);
+				hasSeenDialogue = true;
+				inDialogue = true;
+				return;
+			}
+		}
+
 		countdownTick = 0;
 		var event:EventBase = runSongEvent('startCountdown', new EventBase());
 		if (event.cancelled) return;
@@ -746,6 +757,7 @@ class PlayState extends violet.backend.StateBackend {
 	}
 
 	public function pause() {
+		if (inDialogue) return;
 		var event:EventBase = runSongEvent('pause', stage.stageScripts.event('pause', new EventBase()));
 		if (!event.cancelled) {
 			countdownTimer.active = false;

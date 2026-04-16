@@ -279,11 +279,19 @@ class NovaSprite extends #if ANIMATE_SUPPORT FlxAnimate #else FlxSprite #end {
 		}
 
 		// Fuck my fat chud life - Nebula D:
-		if (!currentByLabel) this.x -= (__baseFlipped ? animationOffset.x : -animationOffset.x) ?? 0;
-		if (!currentByLabel) this.y -= (flipY ? -animationOffset.y : animationOffset.y) ?? 0;
+		if (globalIsAtlas) {
+			this.x -= (flipX ? -animationOffset.x : animationOffset.x) ?? 0;
+			this.y -= (flipY ? -animationOffset.y : animationOffset.y) ?? 0;
+			this.x += globalOffset.x;
+			this.y += globalOffset.y;
+		}
 		super.draw();
-		if (!currentByLabel) this.x += (__baseFlipped ? animationOffset.x : -animationOffset.x) ?? 0;
-		if (!currentByLabel) this.y += (flipY ? -animationOffset.y : animationOffset.y) ?? 0;
+		if (globalIsAtlas) {
+			this.x += (flipX ? -animationOffset.x : animationOffset.x) ?? 0;
+			this.y += (flipY ? -animationOffset.y : animationOffset.y) ?? 0;
+			this.x -= globalOffset.x;
+			this.y -= globalOffset.y;
+		}
 		if (xFlip) {
 			__offsetFlipX = false;
 			flipX = !flipX;
@@ -330,7 +338,7 @@ class NovaSprite extends #if ANIMATE_SUPPORT FlxAnimate #else FlxSprite #end {
 	}
 
 	override function drawComplex(camera:FlxCamera):Void {
-		if (!currentByLabel) {
+		if (globalIsAtlas) {
 			super.drawComplex(camera);
 			return;
 		}

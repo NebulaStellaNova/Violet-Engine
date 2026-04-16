@@ -1,4 +1,6 @@
 assetPath: game/dialogue/boxes/basic
+offsets: [50, 0]
+textPosition: [100, 100] # based on top left corner of the box
 animations:
   - name: open
     prefix: open
