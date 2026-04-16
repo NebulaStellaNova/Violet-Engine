@@ -123,8 +123,9 @@ class Paths {
 			'$path${ext == null || path.endsWith('.$ext') ? '' : '.$ext'}'
 		]).join('/'), directory == 'root');
 
-	#if release inline #end public static function vocal(song:String, suffix:String = '', ?variant:String):String {
-		return root('songs/$song/song/Voices${suffix != '' ? '-$suffix' : ''}${variant != '' ? '-$variant' : ''}.ogg');
+	#if release inline #end public static function vocal(song:String, suffix:String = '', ?variant:String, dashes:Bool = true):String {
+		var prefix = dashes ? '-' : '';
+		return root('songs/$song/song/Voices${suffix != '' ? '$prefix$suffix' : ''}${variant != '' ? '$prefix$variant' : ''}.ogg');
 	}
 
 	#if release inline #end public static function inst(song:String, ?variant:String):String
