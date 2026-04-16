@@ -9,10 +9,18 @@ typedef ModuleParams = {
 	?state:Class<Dynamic>
 }
 
-class ScriptedModule extends Module implements rulescript.scriptedClass.RuleScriptedClass {}
+class Module extends SrcModule implements rulescript.scriptedClass.RuleScriptedClass {}
 
-@:strictScriptedConstructor
-class Module {
+class SrcModule {
+
+	public function new(moduleId:String, priority:Int = 1000, ?params:ModuleParams):Void {
+		this.moduleId = moduleId ?? 'UNKNOWN';
+		this.priority = priority;
+
+		if (params != null) {
+			this.state = params.state ?? null;
+		}
+	}
 
 	/**
 	 * Whether the module is currently active.
@@ -30,15 +38,6 @@ class Module {
 	public final priority:Int;
 
 	public final state:Null<Class<Dynamic>>;
-
-	public function new(moduleId:String, priority:Int = 1000, ?params:ModuleParams):Void {
-		this.moduleId = moduleId ?? 'UNKNOWN';
-		this.priority = priority;
-
-		if (params != null) {
-			this.state = params.state ?? null;
-		}
-	}
 
 	public function toString():String {
 		return 'Module(' + this.moduleId + ')';

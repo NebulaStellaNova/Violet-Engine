@@ -208,9 +208,9 @@ class ModdingAPI {
 		violet.data.chart.ChartRegistry.registerCharts();
 		InitialState.loadingPercent += 1/7;
 
-		/* final foundHXC:Array<String> = checkForHXC();
+		final foundHXC:Array<String> = checkForHXC();
 		if (foundHXC.length == 0) trace('debug:<cyan>No HXC scripts found.');
-		else trace(['debug:<cyan>Found HXC scripts: "<magenta>', foundHXC.join('<cyan>", "<magenta>'), '<cyan>"'].join('')); */
+		else trace(['debug:<cyan>Found HXC scripts: "<magenta>', foundHXC.join('<cyan>", "<magenta>'), '<cyan>"'].join(''));
 	}
 
 	#if SCRIPT_SUPPORT
@@ -261,21 +261,13 @@ class ModdingAPI {
 	}
 
 	public static var allFolders(get, never):Array<String>;
-	inline static function get_allFolders():Array<String>
-		return checkFolder('') #if REDIRECT_ASSETS_FOLDER .concat(checkFolder(Paths.ASSETS_FOLDER)).concat(checkFolder(MOD_FOLDER)) #end;
+	inline static function get_allFolders():Array<String> {
+		return checkFolder(Paths.ASSETS_FOLDER).concat(checkFolder(MOD_FOLDER));
+	}
 
 	public static function checkFolder(string:String) {
 		var out:Array<String> = [];
 		var files = FileSystem.isDirectory(string) || string == '' ? FileSystem.readDirectory(string) : [];
-		// NOTE: DOESN'T FUCKING WORK
-		files = files.filter((v) -> {
-			if ([Paths.ASSETS_FOLDER, MOD_FOLDER].contains(v))
-				return true;
-			for (mod in getActiveMods())
-				if (['$MOD_FOLDER/${mod.folder}'].contains(v))
-					return true;
-			return false;
-		});
 		for (i in files) {
 			var path = string == '' ? i : [string, i].join('/');
 			if (FileSystem.isDirectory(path)) {
@@ -291,6 +283,13 @@ class ModdingAPI {
 		var out:Array<String> = [];
 
 		for (i in allFolders) {
+			if (i.replace('../../../../', '').startsWith('mods')) {
+				var check:Bool = false;
+				for (mod in getActiveMods()) {
+					if (mod.folder == i.replace('../../../../', '').split('/')[1]) check = true;
+				}
+				if (!check) continue;
+			}
 			var files = (FileSystem.readDirectory(i) ?? []).filter((f)->return f.endsWith('.hxc'));
 			for (f in files) out.push([i, f].join('/'));
 		}

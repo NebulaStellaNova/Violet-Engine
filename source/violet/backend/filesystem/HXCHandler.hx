@@ -25,12 +25,8 @@ class HXCHandler extends flixel.FlxBasic {
 		for (i in importRedirects.keys())
 			scriptCode = scriptCode.replace(i, importRedirects.get(i));
 
-		var script = new violet.backend.scripting.FunkinScript(scriptCode, true, true, path);
-		script.fullPath = path;
+		var script = new violet.backend.scripting.ModuleScript(path);
 		var filePath = path.split("/");
-		script.fileName = filePath.pop();
-		if (filePath.getFirstOf() == "mods") script.folderName = filePath[1];
-		else script.folderName = filePath.getFirstOf();
 		hxcScripts.addScript(script);
 	}
 
