@@ -25,6 +25,8 @@ class StageRegistry {
 				} else {
 					register(Paths.fileName(file), parsed);
 				}
+			} else {
+				register(Paths.fileName(file), ParseUtil.jsonOrYaml('data/stages/${Paths.fileName(file)}'));
 			}
 		}
 
