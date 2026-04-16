@@ -260,11 +260,15 @@ class NovaSprite extends #if ANIMATE_SUPPORT FlxAnimate #else FlxSprite #end {
 		}
 	}
 
+	var __characterFlip:Bool = false;
 	var __baseFlipped:Bool = false;
 	var __offsetFlipX:Bool = false;
 	var __offsetFlipY:Bool = false;
 	override public function draw():Void {
 		// TODO: Add __baseFlipped check.
+
+		var softFlipX = flipX != __baseFlipped;
+
 		final xFlip:Bool = flipX;
 		final yFlip:Bool = flipY;
 		if (xFlip) {
@@ -280,15 +284,15 @@ class NovaSprite extends #if ANIMATE_SUPPORT FlxAnimate #else FlxSprite #end {
 
 		// Fuck my fat chud life - Nebula D:
 		if (globalIsAtlas) {
-			this.x -= (flipX ? -animationOffset.x : animationOffset.x) ?? 0;
-			this.y -= (flipY ? -animationOffset.y : animationOffset.y) ?? 0;
+			this.x -= (xFlip ? animationOffset.x : -animationOffset.x) ?? 0;
+			this.y -= (yFlip ? -animationOffset.y : animationOffset.y) ?? 0;
 			this.x += globalOffset.x;
 			this.y += globalOffset.y;
 		}
 		super.draw();
 		if (globalIsAtlas) {
-			this.x += (flipX ? -animationOffset.x : animationOffset.x) ?? 0;
-			this.y += (flipY ? -animationOffset.y : animationOffset.y) ?? 0;
+			this.x += (xFlip ? animationOffset.x : -animationOffset.x) ?? 0;
+			this.y += (yFlip ? -animationOffset.y : animationOffset.y) ?? 0;
 			this.x -= globalOffset.x;
 			this.y -= globalOffset.y;
 		}

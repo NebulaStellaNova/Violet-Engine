@@ -1,22 +1,38 @@
-animations:
+animations: 
   - prefix: BF idle dance
     name: idle
+    byLabel: false
   - prefix: BF NOTE LEFT
     name: singLEFT
+    byLabel: false
   - prefix: BF NOTE DOWN
+    offsets: [21, -42]
     name: singDOWN
+    byLabel: false
   - prefix: BF NOTE UP
+    offsets: [15, 65]
     name: singUP
+    byLabel: false
   - prefix: BF NOTE RIGHT
+    offsets: [49, 8]
     name: singRIGHT
+    byLabel: false
   - prefix: BF NOTE LEFT MISS
+    offsets: [0, 13]
     name: singLEFTmiss
+    byLabel: false
   - prefix: BF NOTE UP MISS
+    offsets: [16, 61]
     name: singDOWNmiss
+    byLabel: false
   - prefix: BF NOTE RIGHT MISS
+    offsets: [39, 13]
     name: singRIGHTmiss
+    byLabel: false
   - prefix: "BF HEY!!"
+    offsets: [3, 9]
     name: hey
+    byLabel: false
 assetPath: characters/bf
 offsets: [-100, 0]
 cameraOffsets: [100, 100]
