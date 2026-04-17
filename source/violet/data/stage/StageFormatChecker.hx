@@ -1,4 +1,4 @@
-package violet.data.converters;
+package violet.data.stage;
 
 @:structInit @:publicFields class VSliceStage {
 	var version:String;

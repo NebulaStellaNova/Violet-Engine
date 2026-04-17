@@ -1,10 +1,8 @@
 package violet.data.stage;
 
-import violet.data.converters.StageFormatChecker;
 import haxe.io.Path;
 import violet.backend.utils.FileUtil;
 import violet.backend.utils.ParseUtil;
-import violet.data.converters.StageConverters;
 
 class StageRegistry {
 

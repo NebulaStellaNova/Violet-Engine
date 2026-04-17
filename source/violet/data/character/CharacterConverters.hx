@@ -1,5 +1,7 @@
-package violet.data.converters;
+package violet.data.character;
 
+import violet.data.animation.AnimationData;
+import violet.backend.utils.ParseUtil;
 import violet.backend.utils.ParseUtil.ParseColor;
 import violet.data.character.CharacterData;
 import violet.backend.utils.AnimationUtil;
@@ -9,13 +11,18 @@ import violet.backend.utils.FileUtil;
 import haxe.xml.Access;
 
 class CharacterConverters {
+
+	public static function nameFromId(id:String):String {
+		var idSplit = id.replace('-', ' ').split(' ');
+		for (i=>v in idSplit) idSplit[i] = StringUtil.capitalizeFirst(v);
+		return idSplit.join(' ');
+	}
+
 	public static function fromCodenameEngine(path:String):Null<CharacterData> {
 		var xmlData:Xml = Xml.parse(FileUtil.getFileContent(Paths.file(path)));
 		var xmlAccess:Access = new Access(xmlData);
 		var characterID:String = Paths.fileName(path);
-		var idSplit = characterID.replace('-', ' ').split(' ');
-		for (i=>v in idSplit) idSplit[i] = StringUtil.capitalizeFirst(v);
-		var characterName:String = idSplit.join(' ');
+		var characterName:String = nameFromId(characterID);
 
 		var character = xmlAccess.node.character;
 
@@ -80,5 +87,41 @@ class CharacterConverters {
 
 	private static function d(access:Access, attribute:String, def:String):String {
 		return access.has.resolve(attribute) ? access.att.resolve(attribute) : def;
+	}
+
+	public static function fromPsych(path:String):Null<CharacterData> {
+		var characterData = ParseUtil.json(path);
+		if (characterData.image == null) return null;
+		if (characterData.animations == null) return null;
+
+		var characterID:String = Paths.fileName(path);
+		var characterName:String = nameFromId(characterID);
+
+		var out:CharacterData = {
+			version: '1.0.0',
+			name: characterName,
+			assetPath: characterData.image,
+			scale: characterData?.scale ?? 1,
+			healthIcon: characterData?.healthicon ?? 'face',
+			offsets: characterData?.position ?? [0.0, 0.0],
+			cameraOffsets: characterData?.camera_position ?? [0.0, 0.0],
+			flipX: characterData?.flip_x ?? false,
+			isPixel: characterData?.no_antialiasing ?? false,
+			animations: []
+		}
+
+		for (i in cast (characterData.animations, Array<Dynamic>)) {
+			var anim:AnimationData = {
+				name: i.anim,
+				prefix: i.name,
+				frameRate: i?.fps ?? 24,
+				looped: i?.loop ?? false,
+				frameIndices: i?.indices,
+				offsets: cast i?.offsets ?? [0.0, 0.0]
+			}
+			out.animations.push(anim);
+		}
+
+		return out;
 	}
 }

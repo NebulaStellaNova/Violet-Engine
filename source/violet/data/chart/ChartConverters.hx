@@ -1,4 +1,4 @@
-package violet.data.converters;
+package violet.data.chart;
 
 import haxe.io.Path;
 import moonchart.formats.fnf.FNFKade;

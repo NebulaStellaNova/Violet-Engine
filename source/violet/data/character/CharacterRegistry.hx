@@ -1,6 +1,5 @@
 package violet.data.character;
 
-import violet.data.converters.CharacterConverters;
 import violet.backend.utils.FileUtil;
 import violet.backend.utils.ParseUtil;
 
@@ -13,8 +12,19 @@ class CharacterRegistry {
 
 		characterDatas.clear();
 
-		for (file in Paths.readFolder('data/characters', v -> return FileUtil.isDataFile(v)))
-			register(Paths.fileName(file), ParseUtil.jsonOrYaml('data/characters/${Paths.fileName(file)}'));
+		for (file in Paths.readFolder('data/characters', v -> return FileUtil.isDataFile(v))) {
+			if (FileUtil.hasExt(file, 'json')) {
+				var parsed = ParseUtil.jsonOrYaml('data/characters/${Paths.fileName(file)}');
+				var format = CharacterFormatChecker.checkFormat(parsed);
+				if (format == PSYCH) {
+					register(Paths.fileName(file), CharacterConverters.fromPsych('data/characters/${Paths.fileName(file)}'));
+				}
+			} else {
+				register(Paths.fileName(file), ParseUtil.jsonOrYaml('data/characters/${Paths.fileName(file)}'));
+			}
+
+
+		}
 
 		for (file in Paths.readFolder('data/characters', v -> return FileUtil.hasExt(v, 'xml'))) {
 			var convertedChar:Null<CharacterData> = CharacterConverters.fromCodenameEngine('data/characters/$file');

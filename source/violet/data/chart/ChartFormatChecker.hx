@@ -1,4 +1,4 @@
-package violet.data.converters;
+package violet.data.chart;
 
 @:structInit @:publicFields class VSliceChart {
 	var version:String;
