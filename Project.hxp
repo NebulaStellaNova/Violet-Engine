@@ -66,7 +66,7 @@ class Project extends HXProject {
 		new Lib('hxcpp-debug-server', true, 'https://github.com/FunkinCrew/hxcpp-debugger'),
 		new Lib('hxhardware', 'https://github.com/Vortex2Oblivion/hxhardware'),
 		new Lib('linc_luajit', 'https://github.com/superpowers04/linc_luajit'),
-		new Lib('lscript', 'https://github.com/SrtHero278/lscript'),
+		new Lib('lscript', 'https://github.com/SrtHero278/lscript', ['--skip-dependencies']),
 		new Lib('rulescript', 'https://github.com/Kriptel/RuleScript', ['dev']),
 		new Lib('flixel-animate', 'https://github.com/NebulaStellaNova/flixel-animate', ['bullshity-fix', '--skip-dependencies']),
 		new Lib('hython', 'https://github.com/Paopun20/hython.git', ['legacy'])
