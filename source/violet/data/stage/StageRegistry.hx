@@ -16,10 +16,11 @@ class StageRegistry {
 		for (file in Paths.readFolder('data/stages', v -> return FileUtil.isDataFile(v))) {
 			if (FileUtil.hasExt(file, 'json')) {
 				var parsed = ParseUtil.jsonOrYaml('data/stages/${Paths.fileName(file)}');
-				if (StageFormatChecker.checkFormat(parsed) == VSLICE) {
-					var converted = StageConverters.fromVSlice('data/stages/${Paths.fileName(file)}');
-					trace(Paths.fileName(file));
-					register(Paths.fileName(file), converted);
+				var format = StageFormatChecker.checkFormat(parsed);
+				if (format == VSLICE) {
+					register(Paths.fileName(file), StageConverters.fromVSlice('data/stages/${Paths.fileName(file)}'));
+				} else if (format == PSYCHLEGACY) {
+					register(Paths.fileName(file), StageConverters.fromPsych('data/stages/${Paths.fileName(file)}'));
 				} else {
 					register(Paths.fileName(file), parsed);
 				}

@@ -11,13 +11,17 @@ import haxe.xml.Access;
 
 class StageConverters {
 
+	public static function nameFromId(id:String):String {
+		var idSplit = id.replace('-', ' ').split(' ');
+		for (i=>v in idSplit) idSplit[i] = StringUtil.capitalizeFirst(v);
+		return idSplit.join(' ');
+	}
+
 	public static function fromCodenameEngine(path:String):Null<StageData> {
 		var xmlData:Xml = Xml.parse(FileUtil.getFileContent(Paths.file(path)));
 		var xmlAccess:Access = new Access(xmlData);
 		var stageID:String = Paths.fileName(path);
-		var idSplit = stageID.replace('-', ' ').split(' ');
-		for (i=>v in idSplit) idSplit[i] = StringUtil.capitalizeFirst(v);
-		var stageName:String = idSplit.join(' ');
+		var stageName:String = nameFromId(stageID);
 
 		var stage = xmlAccess.node.stage;
 
@@ -207,6 +211,43 @@ class StageConverters {
 		};
 		out.props.push(data);
 
+		return out;
+	}
+
+	public static function fromPsych(path:String):Null<StageData> {
+		var stageData = ParseUtil.json(path);
+		var stageID:String = Paths.fileName(path);
+		var stageName:String = nameFromId(stageID);
+
+		var out:StageData = {
+			name: stageName,
+			basicCharPos: true,
+			zoom: stageData?.defaultZoom ?? 0.7,
+			directory: stageData?.directory ?? '',
+			props: [
+				{
+					id: 'spectator',
+					type: CHARACTER,
+					zIndex: 249,
+					position: cast stageData?.girlfriend ?? [0, 0],
+					cameraOffsets: cast stageData?.camera_girlfriend ?? [0, 0]
+				},
+				{
+					id: 'player',
+					type: CHARACTER,
+					zIndex: 250,
+					position: cast stageData?.boyfriend ?? [0, 0],
+					cameraOffsets: cast stageData?.camera_boyfriend ?? [0, 0]
+				},
+				{
+					id: 'opponent',
+					type: CHARACTER,
+					zIndex: 251,
+					position: cast stageData?.opponent ?? [0, 0],
+					cameraOffsets: cast stageData?.camera_opponent ?? [0, 0]
+				}
+			]
+		}
 		return out;
 	}
 }

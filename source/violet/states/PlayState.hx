@@ -567,7 +567,13 @@ class PlayState extends violet.backend.StateBackend {
 				dialogueHandler.screenCenter();
 				dialogueHandler.y += 150;
 				add(dialogueHandler);
-				hasSeenDialogue = true;
+
+				dialogueHandler.onDialogueEnd = ()->{
+					dialogueHandler.destroy();
+					inDialogue = false;
+					hasSeenDialogue = true;
+					startCountdown();
+				}
 				inDialogue = true;
 				return;
 			}

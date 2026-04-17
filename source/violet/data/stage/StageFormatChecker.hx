@@ -7,6 +7,12 @@ package violet.data.stage;
 	var characters:Dynamic;
 }
 
+@:structInit @:publicFields class LegacyPsychStage {
+	var boyfriend:Array<Dynamic>;
+	var girlfriend:Array<Dynamic>;
+	var opponent:Array<Dynamic>;
+}
+
 enum abstract StageFileFormat(String) {
 	var VSLICE = 'vslice';
 	var PSYCH = 'psych';
@@ -25,6 +31,11 @@ class StageFormatChecker {
 			if (!Reflect.hasField(parsedStageObject, i)) isVSlice = false;
 		}
 		if (isVSlice) return VSLICE;
+
+		for (i in Type.getInstanceFields(LegacyPsychStage)) {
+			if (!Reflect.hasField(parsedStageObject, i)) isPELegacy = false;
+		}
+		if (isPELegacy) return PSYCHLEGACY;
 
 		return UNKNOWN;
 	}
