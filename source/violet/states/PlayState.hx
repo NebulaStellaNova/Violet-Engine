@@ -102,6 +102,8 @@ class PlayState extends violet.backend.StateBackend {
 
 	public var defaultCamZoom:Float = 0.7;
 
+	public var pauseTime:Float = 0;
+
 	public var combo:Int = 0;
 	public var misses:Int = 0;
 	private var accuracies:Array<Float> = [];
@@ -218,6 +220,7 @@ class PlayState extends violet.backend.StateBackend {
 			var strumLine = new StrumLine(data);
 			strumLine.camera = camHUD;
 			strumLine.visible = data.visible;
+			strumLine.z = 1000;
 			strumLine.ID = i;
 			strumLines.add(strumLine);
 
@@ -772,6 +775,7 @@ class PlayState extends violet.backend.StateBackend {
 				tween.active = false;
 			});
 
+			pauseTime = Conductor.instrumental.time;
 			var pauseMenu:PauseMenu = new PauseMenu();
 			openSubState(pauseMenu);
 		}

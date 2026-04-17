@@ -140,7 +140,10 @@ class PauseMenu extends EditorListBackend {
 
 	override function close() {
 		super.close();
-		if (PlayState.instance.songStarted) Conductor.play();
+		if (PlayState.instance.songStarted) {
+			Conductor.instrumental.time = PlayState.instance.pauseTime;
+			Conductor.play();
+		}
 		FlxG.state.persistentUpdate = true;
 		FlxTween.globalManager.forEach((tween:FlxTween)->{
 			tween.active = true;
