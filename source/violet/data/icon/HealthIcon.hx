@@ -78,6 +78,7 @@ class HealthIcon extends Bopper {
 		// if (this._data.isPixel) this.antialiasing = false;
 		if (sillyBop) this.angle = MathUtil.lerp(this.angle, 0, 0.2);
 		this.scale.x = this.scale.y = MathUtil.lerp(this.scale.y, this._data.scale, 0.2);
+		this.updateHitbox();
 	}
 
 	public var sillyBop(default, set):Bool = false; // Silly Icon Bop :3
@@ -94,6 +95,7 @@ class HealthIcon extends Bopper {
 			this.angle = alt ? 20 : -20;
 		}
 		this.scale.x = this.scale.y = this._data.scale * (1.2 * bopAmount);
+		this.updateHitbox();
 	}
 
 }
