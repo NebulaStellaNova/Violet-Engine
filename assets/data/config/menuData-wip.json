@@ -22,6 +22,20 @@
 			"state": "source:FreeplayMenu",
 			"color": "#ff4242"
 		},
+		/* {
+			"id": "online",
+			"item": "online",
+			"animations": {
+				"idle": "basic",
+				"selected": "white",
+				"offsets": {
+					"selected": [ 0, -20 ]
+				}
+			},
+			"disabled": true,
+			"state": "source:OnlineMenu",
+			"color": "#5542FF"
+		}, */
 		{
 			"id": "mods",
 			"item": "mods",
@@ -36,6 +50,21 @@
 			"state": "source:ModMenu",
 			"color": "#ffff00"
 		},
+			/* {
+				"id": "jukebox",
+				"item": "jukebox",
+				"scale": 0.9,
+				"animations": {
+					"idle": "basic",
+					"selected": "white",
+					"offsets": {
+						"idle": [ -10, -10 ],
+						"selected": [ -20, -20 ]
+					}
+				},
+				"state": "source:JukeBox",
+				"color": "#6600FF"
+			}, */
 		{
 			"id": "credits",
 			"item": "credits",

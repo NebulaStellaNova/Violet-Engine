@@ -128,7 +128,7 @@ class MainMenu extends StateBackend {
 		flower.updateHitbox();
 		flower.centerOrigin();
 		flower.x = FlxG.width - flower.width / 2;
-		add(flower);
+		// add(flower);
 
 		for (i=>daItem in menuData.items) {
 			var startY = (175*i)+90;
@@ -173,7 +173,7 @@ class MainMenu extends StateBackend {
 				debugWatermark.x = 10;
 		}
 		//leftWatermark.setFormat(Paths.font('Tardling v1.1.ttf'), 20);
-		if (Options.data.developerMode) add(debugWatermark);
+		add(debugWatermark);
 
 
 		#if FLX_DEBUG
@@ -229,6 +229,7 @@ class MainMenu extends StateBackend {
 				leftWatermark.x = 10;
 		}
 
+		debugWatermark.visible = Options.data.developerMode;
 		debugWatermark.updateHitbox();
 		switch (watermarkAlignment) {
 			case 'right':
