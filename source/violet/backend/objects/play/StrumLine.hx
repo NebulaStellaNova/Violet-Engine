@@ -1,5 +1,7 @@
 package violet.backend.objects.play;
 
+import violet.backend.utils.MathUtil;
+import flixel.addons.display.FlxBackdrop;
 import violet.data.notestyles.NoteStyleRegistry;
 import flixel.FlxCamera;
 import flixel.group.FlxGroup;
@@ -49,6 +51,10 @@ class StrumLine extends FlxGroup {
 	public final strums:FlxTypedGroup<Strum>;
 	public final notes:NoteGroup;
 	public final sustains:SustainGroup;
+	public final lanes:FlxTypedSpriteGroup<FlxBackdrop>;
+
+	// TODO: allow this to be changed via noteStyle and noteType
+	public final flashColors:Array<FlxColor> = [0xFFc24b99, 0xFF00ffff, 0xFF12fa05, 0xFFf9393f];
 
 	public var splashes(get, never):Array<StrumElement>;
 	function get_splashes():Array<StrumElement> {
@@ -94,11 +100,15 @@ class StrumLine extends FlxGroup {
 
 	public final vocals:FlxSound;
 
+
 	public function new(chartData:_ChartStrumLine) {
 		this.chartData = chartData;
 		controllerType = chartData.type;
 		scrollSpeed = chartData.scrollSpeed;
 		super();
+
+
+		add(lanes = new FlxTypedSpriteGroup());
 
 		scale = new FlxCallbackPoint((point) -> @:privateAccess {
 			for (strum in strums) {
@@ -161,9 +171,61 @@ class StrumLine extends FlxGroup {
 			Cache.image(noteStyle.getSplashAssetPath(), 'root');
 			Cache.image(noteStyle.getHoldCoverAssetPath(), 'root');
 		}
+
+		generateLanes();
+
+	}
+
+	public var dynamicLanes:Array<FlxBackdrop> = [];
+	public var dynamicLanesColored:Array<FlxBackdrop> = [];
+
+	public function generateLanes() {
+		for (i in lanes.members) {
+			if (dynamicLanes.contains(i)) dynamicLanes.remove(i);
+			if (dynamicLanesColored.contains(i)) dynamicLanesColored.remove(i);
+			lanes.remove(i);
+			i.destroy();
+		}
+		if (Options.data.laneUnderlay) {
+			if (Options.data.fancyLaneUnderlay) {
+				for (i=>strum in strums) {
+					var lane = new FlxBackdrop(new FlxSprite().makeGraphic(Math.round(Note.swagWidth), FlxG.height, FlxColor.BLACK).pixels, Y);
+					lane.x = Note.swagWidth * strumScale * strumSpacing * i;
+					lane.alpha = Options.data.underlayOpacity / 100;
+					dynamicLanes.push(lane);
+					lanes.add(lane);
+
+					var lane = new FlxBackdrop(new FlxSprite().makeGraphic(Math.round(Note.swagWidth), FlxG.height, flashColors[i % 4]).pixels, Y);
+					lane.x = Note.swagWidth * strumScale * strumSpacing * i;
+					lane.alpha = 0;
+					dynamicLanesColored.push(lane);
+					lanes.add(lane);
+
+				}
+			} else {
+				var width:Int = Math.round(Note.swagWidth * strumScale * strumSpacing * strums.length);
+				width += Math.round(Options.data.laneGrow) * 2;
+				var lane = new FlxBackdrop(new FlxSprite().makeGraphic(width, FlxG.height, FlxColor.BLACK).pixels, Y);
+				lane.alpha = Options.data.underlayOpacity / 100;
+				lanes.add(lane);
+			}
+		}
 	}
 
 	public function setPosition(x:Float = 0, y:Float = 0, purePos:Bool = true):Void {
+		if (Options.data.forceMiddleScroll && !purePos) {
+			if (x == 0.75) x = 0.5;
+			else if (x == 0.25) x = -1000;
+		}
+		if (purePos) {
+			lanes.x = x;
+		} else {
+			var width:Int = Math.round(Note.swagWidth * strumScale * strumSpacing * strums.length);
+			lanes.x = getDefaultCamera().width * x;
+			lanes.x -= width/2;
+			if (!Options.data.fancyLaneUnderlay) lanes.x -= Options.data.laneGrow;
+			lanes.x -= 8;
+		}
 		if (downscroll) y = getDefaultCamera().height - y - Note.swagWidth;
 		for (i => strum in strums) {
 			var _x:Float = x;
@@ -301,6 +363,18 @@ class StrumLine extends FlxGroup {
 				}
 			}
 		});
+
+		for (i => strum in strums.members) {
+			if (strum.animation.name == 'confirm') {
+				if (strum.animation.curAnim.curFrame == 0) dynamicLanesColored[i].alpha = Options.data.laneFlashIntensity / 100;
+			} else if (strum.animation.name == 'press') {
+				dynamicLanesColored[i].alpha = 0.25 * (Options.data.laneFlashIntensity / 100);
+			}
+		}
+
+		for (i => lane in dynamicLanesColored) {
+			lane.alpha = MathUtil.lerp(lane.alpha, 0, 0.2);
+		}
 	}
 
 	final currentInputs:Array<Bool> = [];
@@ -327,6 +401,7 @@ class StrumLine extends FlxGroup {
 			}
 			_onNoteHit(frontNote);
 		} else _onVoidTap(inputId, this);
+
 	}
 	function _on_release(event:KeyboardEvent):Void {
 		if (FlxG.state.subState != null) return;

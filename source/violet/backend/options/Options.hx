@@ -22,6 +22,7 @@ import lime.app.Application;
 	public var playAsOpponent:Bool = false;
 	public var gpuCaching:Bool = false;
 	public var antialiasTextures:Bool = true;
+	public var forceMiddleScroll:Bool = false;
 	public var vsync:Bool = #if linux false #else true #end;
 	public var controls:Map<String, Array<String>> = [
 		'note_left' => ['A', 'LEFT'],
@@ -61,6 +62,15 @@ import lime.app.Application;
 	public var savedLevelScores:Map<String, Int> = [];
 
 	public var modOptions:Dynamic = {};
+
+	// -- Lane Underlays -- \\
+	public var laneUnderlay:Bool = false;
+	public var laneGrow:Float = 20; // px
+	public var underlayOpacity:Float = 25; // %
+
+	public var fancyLaneUnderlay:Bool = false;
+	public var laneFlashIntensity:Float = 100; // %
+
 
 }
 

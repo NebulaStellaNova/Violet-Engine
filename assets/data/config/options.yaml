@@ -87,20 +87,16 @@ menus:
     saveID: playAsOpponent
     type: bool
     disabledInPlayState: true
-  - name: Disable Hold Jitter
-    description: If checked, hold note jitter will be disabled for all characters.
-    saveID: disableHoldJitter
-    type: bool
-  - name: Kade Engine Popups
-    description: If checked, popups like sick, bad, etc. will use Kade Engine's graphics.
-    saveID: kadePopups
-    type: bool
   - name: Personal Scroll Speed
     description: Set it to 0 to use the default scroll speed.
     saveID: personalScrollSpeed
     type: number
     min: 0
     step: 0.1
+  - name: Force Middle Scroll
+    description: If enabled, middle scroll will be forced for songs that use default strumline positioning.
+    saveID: forceMiddleScroll
+    type: bool
 
 - title: Appearance
   options:
@@ -112,6 +108,62 @@ menus:
     description: If checked, score text won't lerp and will hard cut to the current score.
     saveID: disableScoreLerping
     type: bool
+  - name: Kade Engine Popups
+    description: If checked, popups like sick, bad, etc. will use Kade Engine's graphics.
+    saveID: kadePopups
+    type: bool
+  - name: Disable Hold Jitter
+    description: If checked, hold note jitter will be disabled for all characters.
+    saveID: disableHoldJitter
+    type: bool
+
+  # Lane Underlay
+  - name: Enable Lane Underlay
+    description: If checked, a black box will appear under the notes.
+    saveID: laneUnderlay
+    type: bool
+  - name: Underlay Expansion
+    description: How much should the lane's width expand from the default.
+    saveID: laneGrow
+    type: number
+    min: 0
+    step: 1
+    conditions:
+      - id: laneUnderlay
+        state: true
+      - id: fancyLaneUnderlay
+        state: false
+
+  - name: Underlay Opacity
+    description: How visible should the lane(s) be. (0% - 100%)
+    saveID: underlayOpacity
+    type: number
+    min: 0
+    max: 100
+    step: 1
+    conditions:
+      - id: laneUnderlay
+        state: true
+
+  - name: Fancy Lane Underlay
+    description: If checked, lane underlays will be "fancy".
+    saveID: fancyLaneUnderlay
+    conditions:
+      - id: laneUnderlay
+        state: true
+    type: bool
+  - name: Lane Flash Intensity
+    description: 0% - 100%.
+    saveID: laneFlashIntensity
+    type: number
+    min: 0
+    max: 100
+    step: 1
+    conditions:
+      - id: laneUnderlay
+        state: true
+      - id: fancyLaneUnderlay
+        state: true
 
 - title: Graphics
   options:

@@ -30,6 +30,11 @@ class BoolOption extends BaseOption {
 		checkbox.alpha = alphabet.alpha;
 	}
 
+	override function setEnabled(enabled:Bool) {
+		super.setEnabled(enabled);
+		checkbox.color = enabled ? FlxColor.WHITE : FlxColor.interpolate(FlxColor.WHITE, FlxColor.BLACK, 0.5);
+	}
+
 }
 
 class Checkbox extends NovaSprite {

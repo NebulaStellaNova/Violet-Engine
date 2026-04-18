@@ -839,6 +839,7 @@ class PlayState extends violet.backend.StateBackend {
 		for (i=>strumLine in strumLines) {
 			if (!strumLine.disableOptionsAffect) {
 				strumLine.downscroll = Options.data.downscroll;
+				strumLine.generateLanes();
 				strumLine.setPosition(SONG.strumLines[i].strumPosition[0], SONG.strumLines[i].strumPosition[1], SONG.strumLines[i].strumPosIsPure);
 			}
 		}
