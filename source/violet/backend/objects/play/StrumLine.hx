@@ -364,13 +364,11 @@ class StrumLine extends FlxGroup {
 			}
 		});
 
-		if (Options.data.fancyLaneUnderlay) {
-			for (i => strum in strums.members) {
-				if (strum.animation.name == 'confirm') {
-					if (strum.animation.curAnim.curFrame == 0) dynamicLanesColored[i].alpha = Options.data.laneFlashIntensity / 100;
-				} else if (strum.animation.name == 'press') {
-					dynamicLanesColored[i].alpha = 0.25 * (Options.data.laneFlashIntensity / 100);
-				}
+		for (i => strum in strums.members) {
+			if (strum.animation.name == 'confirm') {
+				if (strum.animation.curAnim.curFrame == 0 && dynamicLanesColored[i] != null) dynamicLanesColored[i].alpha = Options.data.laneFlashIntensity / 100;
+			} else if (strum.animation.name == 'press') {
+				if (dynamicLanesColored[i] != null) dynamicLanesColored[i].alpha = 0.25 * (Options.data.laneFlashIntensity / 100);
 			}
 		}
 
