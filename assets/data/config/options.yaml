@@ -214,7 +214,7 @@ menus:
 - title: Miscellaneous
   options:
   - name: Developer Mode
-    description: Enables developer features like debug display, editors, etc.
+    description: Enables the following developer features:\nDebug Hotkeys, Editors, Error Notifications, Test Song, Debug Display
     saveID: developerMode
     type: bool
   - name: Mouse Controls
@@ -227,6 +227,9 @@ menus:
     saveID: forceMouseScrolling
     platform: desktop
     type: bool
+    conditions:
+      - id: mouseControls
+        state: false
   - name: Debug Display on Start
     description: Shows the debug display when you start the game.
     saveID: debugDisplayOnStart

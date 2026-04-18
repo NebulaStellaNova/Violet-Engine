@@ -173,7 +173,7 @@ class MainMenu extends StateBackend {
 				debugWatermark.x = 10;
 		}
 		//leftWatermark.setFormat(Paths.font('Tardling v1.1.ttf'), 20);
-		add(debugWatermark);
+		if (Options.data.developerMode) add(debugWatermark);
 
 
 		#if FLX_DEBUG

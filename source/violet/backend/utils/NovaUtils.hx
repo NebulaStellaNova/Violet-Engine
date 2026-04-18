@@ -1,5 +1,6 @@
 package violet.backend.utils;
 
+import violet.backend.options.Options;
 import flixel.graphics.FlxGraphic;
 import openfl.display.BitmapData;
 import animate.FlxAnimateFrames.FlxAnimateSettings;
@@ -40,6 +41,7 @@ class NovaUtils {
 	}
 
 	public static function addNotification(title:String, body:String, expiryMs:Int = 10000, type:NotificationType = DEFAULT, ?infos:haxe.PosInfos) {
+		if (type == ERROR && !Options.data.developerMode) return;
 		var notification = lemonui.controllers.NotificationController.instance.addNotification(title, body, expiryMs/1000);
 		if (type == ERROR) {
 			notification.elementColor = 0xFF591818;
