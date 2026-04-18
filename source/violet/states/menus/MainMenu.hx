@@ -1,5 +1,6 @@
 package violet.states.menus;
 
+import violet.backend.options.Options;
 import violet.data.Constants;
 import flixel.FlxObject;
 import flixel.math.FlxMath;
@@ -285,7 +286,7 @@ class MainMenu extends StateBackend {
 			debugWatermark.y = 10;
 		}
 
-		if (FlxG.keys.justPressed.SEVEN) {
+		if (FlxG.keys.justPressed.SEVEN && Options.data.developerMode) {
 			substateTrans = false;
 			openSubState(new violet.states.debug.EditorPickerMenu());
 		}

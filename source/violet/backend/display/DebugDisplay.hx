@@ -61,7 +61,8 @@ class DebugDisplay extends Sprite {
 
 		addEventListener(Event.ENTER_FRAME, onEnterFrame);
 
-		if (violet.backend.options.Options.data.debugDisplayOnStart)
+		var options = violet.backend.options.Options.data;
+		if (options.debugDisplayOnStart && options.developerMode)
 			shown = true;
 	}
 
@@ -126,7 +127,7 @@ class DebugDisplay extends Sprite {
 
 		if (OptionsMenu.instance != null)
 			if (!OptionsMenu.instance.canSelectMenu) return;
-		if (Controls.debugDisplay)
+		if (Controls.debugDisplay && violet.backend.options.Options.data.developerMode)
 			shown = !shown;
 	}
 

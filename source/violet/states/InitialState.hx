@@ -1,5 +1,6 @@
 package violet.states;
 
+import violet.backend.options.Options;
 import flixel.util.FlxStringUtil;
 import violet.backend.utils.ParseUtil;
 import violet.backend.scripting.GlobalPack;
@@ -95,6 +96,8 @@ class InitialState extends StateBackend { // for now
 					lime.app.Application.current.window.y = defaultParams.y;
 				}
 			}
+
+			if (!Options.data.developerMode) return;
 
 			if (FlxG.keys.justPressed.F2/* Controls.console // Doesn't work for some reason, crashes when I try to add setting for it. */) {
 				#if windows

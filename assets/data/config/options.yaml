@@ -45,9 +45,10 @@ menus:
   - name: Pause
     type: control
     saveID: pause
-  - name: Reset
+
+  - name: Fullscreen
     type: control
-    saveID: reset
+    saveID: fullscreen
 
   - name: ''
     type: section
@@ -55,22 +56,41 @@ menus:
   # UI Keybinds
   - name: DEVELOPER
     type: section
+    conditions:
+      - id: developerMode
+        state: true
   # ---------------
-  - name: Fullscreen
-    type: control
-    saveID: fullscreen
   - name: Reload State
     type: control
     saveID: resetState
+    conditions:
+      - id: developerMode
+        state: true
   - name: Main Menu
     type: control
     saveID: shortcutState
+    conditions:
+      - id: developerMode
+        state: true
   - name: Debug Display
     type: control
     saveID: debugDisplay
+    conditions:
+      - id: developerMode
+        state: true
   - name: Reload Assets
     type: control
     saveID: reloadGame
+    conditions:
+      - id: developerMode
+        state: true
+  - name: Reset
+    description: Sets your health to 0.
+    type: control
+    saveID: reset
+    conditions:
+      - id: developerMode
+        state: true
 
 - title: Gameplay
   options:
@@ -167,6 +187,11 @@ menus:
 
 - title: Graphics
   options:
+  - name: VSync
+    description: If enabled, the game will use the display's refresh rate instead of the Framerate value.
+    saveID: vsync
+    type: bool
+    platform: windows
   - name: Framerate
     description: Sets the target framerate for the game.
     saveID: fps
@@ -174,14 +199,16 @@ menus:
     min: 30
     max: 240
     step: 1
-  - name: VSync
-    description: If enabled, the game will use the display's refresh rate instead of the Framerate value.
-    saveID: vsync
-    type: bool
-    platform: windows
+    conditions:
+      - id: vsync
+        state: false
   - name: Texture Antialiasing
     description: Enables linear filtering on textures for smoother visuals.
     saveID: antialiasTextures
+    type: bool
+  - name: GPU Caching
+    description: Allows the GPU to store textures and keeps them cached, reducing RAM usage. (Mid-High End GPU recommended for this)
+    saveID: gpuCaching
     type: bool
 
 - title: Miscellaneous
@@ -204,7 +231,6 @@ menus:
     description: Shows the debug display when you start the game.
     saveID: debugDisplayOnStart
     type: bool
-  - name: GPU Caching
-    description: Allows the GPU to store textures and keeps them cached, reducing RAM usage. (beefy GPU recommended for this)
-    saveID: gpuCaching
-    type: bool
+    conditions:
+      - id: developerMode
+        state: true

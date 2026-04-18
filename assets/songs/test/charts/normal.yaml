@@ -1049,7 +1049,7 @@ strumLines:
         id: 3
     position: dad
     characters:
-      - "bf-pixel"
+      - "proto"
     type: 0
     visible: true
     noteStyle: pixel
