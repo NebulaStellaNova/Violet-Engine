@@ -526,6 +526,12 @@ class CharacterEditorState extends StateBackend {
 		cameraTarget.zoom += FlxG.keys.pressed.Q ? -zoomAmt : FlxG.keys.pressed.E ? zoomAmt : 0;
 		cameraTarget.zoom = FlxMath.bound(cameraTarget.zoom, 0.1, 50);
 
+		if (FlxG.keys.justPressed.LEFT) xOffsetStepper.onChange(xOffsetStepper.value += FlxG.keys.pressed.SHIFT ? 1 : 10);
+		if (FlxG.keys.justPressed.RIGHT) xOffsetStepper.onChange(xOffsetStepper.value -= FlxG.keys.pressed.SHIFT ? 1 : 10);
+
+		if (FlxG.keys.justPressed.UP) yOffsetStepper.onChange(yOffsetStepper.value += FlxG.keys.pressed.SHIFT ? 1 : 10);
+		if (FlxG.keys.justPressed.DOWN) yOffsetStepper.onChange(yOffsetStepper.value -= FlxG.keys.pressed.SHIFT ? 1 : 10);
+
 		if (FlxG.keys.justPressed.SPACE) character.playAnim(characterAnim, true);
 
 		if (FlxG.keys.justPressed.I) {
