@@ -162,7 +162,6 @@ class StageConverters {
 		var props:Array<StagePropData> = [];
 
 		var out:StageData = {
-			cameraPosition: [0, 0],
 			name: stageData.name,
 			zoom: stageData.cameraZoom,
 			directory: 'stages/' + stageData.directory,

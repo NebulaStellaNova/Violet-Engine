@@ -28,7 +28,6 @@ class Stage extends flixel.group.FlxGroup {
 		super();
 		this.id = StageRegistry.stageDatas.get(id) != null ? id : 'default';
 		this._data = StageRegistry.stageDatas.get(id) ?? StageRegistry.stageDatas.get('default');
-		this._data.cameraPosition ??= [0, 0];
 		this._data.basicCharPos ??= false;
 		this.stage = this;
 
@@ -129,6 +128,12 @@ class Stage extends flixel.group.FlxGroup {
 							char.angle = i.angle;
 							applyProperties(char, i.properties ?? {});
 							add(char);
+							if (i.id == 'opponent' && this._data.cameraPosition == null) {
+								this._data.cameraPosition = [
+									char.getMidpoint().x + char.cameraOffsets[0],
+									char.getMidpoint().y + char.cameraOffsets[1]
+								];
+							}
 						}
 					}
 			}
