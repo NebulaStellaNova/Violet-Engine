@@ -50,8 +50,21 @@ class PauseMenu extends EditorListBackend {
 				Conductor.instrumental.time = 0;
 				FlxG.resetState();
 			}},
-			{ title: 'CHANGE DIFFICULTY', disabled: true, onClick: ()->{
-
+			{ title: 'CHANGE DIFFICULTY', disabled: false, onClick: ()->{
+				var event:EventBase = PlayState.instance.songScripts.event('openDifficultyPicker', new EventBase());
+				// event = subStateScripts.event('openOptions', event);
+				if (!event.cancelled) {
+					FlxTween.tween(optionBg, { alpha: 1 }, 0.5, { ease: FlxEase.expoOut });
+					var diffSelectMenu = new EditorListBackend([for (i in PlayState.songData.difficulties) { title: i.toUpperCase()	}]);
+					diffSelectMenu.onClick = (title:String)->{
+						PlayState.difficulty = title.toLowerCase();
+						Conductor.stop();
+						Conductor.offset = 0;
+						Conductor.instrumental.time = 0;
+						FlxG.resetState();
+					}
+					openSubState(diffSelectMenu);
+				}
 			}},
 			{ title: 'CHANGE OPTIONS', disabled: false, onClick: ()->{
 				var event:EventBase = PlayState.instance.songScripts.event('openOptions', new EventBase());

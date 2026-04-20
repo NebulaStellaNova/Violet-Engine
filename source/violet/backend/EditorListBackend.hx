@@ -174,6 +174,9 @@ class EditorListBackend extends violet.backend.SubStateBackend {
 	public function pickOption(option:{title:String, onClick:Void->Void}) {
 		option.onClick ??= ()->{};
 		option.onClick();
+		onClick(option.title);
 	}
+
+	public dynamic function onClick(title:String) {}
 
 }
