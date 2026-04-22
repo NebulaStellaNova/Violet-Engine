@@ -61,8 +61,8 @@ props:
 
   - id: player
     type: Character
-    position: [977.5, 1005]
-    cameraOffsets: [-150, -150]
+    position: [877.5, 955]
+    cameraOffsets: [-150, -175]
 
   - name: lights
     assetPath: lights

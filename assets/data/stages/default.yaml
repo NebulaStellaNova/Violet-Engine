@@ -23,5 +23,5 @@ props:
 
 - id: player
   type: Character
-  position: [1550, 885]
+  position: [1450, 835]
   cameraOffsets: [-300, -120]

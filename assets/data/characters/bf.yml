@@ -1,4 +1,4 @@
-animations: 
+animations:
   - prefix: BF idle dance
     name: idle
     byLabel: false
@@ -34,7 +34,7 @@ animations:
     name: hey
     byLabel: false
 assetPath: characters/bf
-offsets: [-100, 0]
+offsets: [0, 50]
 cameraOffsets: [100, 100]
 healthIcon: bf
 flipX: true

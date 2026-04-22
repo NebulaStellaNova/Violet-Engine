@@ -3,7 +3,7 @@ name: Girlfriend (Christmas)
 assetPath: characters/gfChristmas
 startingAnimation: danceLeft
 danceEvery: 1
-offsets: [0, 50]
+offsets: [-100, 0]
 animations:
   - name: danceLeft
     prefix: GF Dancing Beat
