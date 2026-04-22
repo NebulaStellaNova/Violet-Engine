@@ -165,22 +165,26 @@ class StageConverters {
 			name: stageData.name,
 			zoom: stageData.cameraZoom,
 			directory: 'stages/' + stageData.directory,
-			props: stageData.props
+			props: []
 		}
 
-		var bf:StageDataCharacter = stageData.characters.bf;
-		var data:StagePropData = {
-			id: 'player',
-			type: CHARACTER,
-			zIndex: bf?.zIndex,
-			position: bf?.position,
-			cameraOffsets: bf?.cameraOffsets,
-			scale: [bf?.scale ?? 1, bf?.scale ?? 1],
-			scroll: bf?.scroll,
-			angle: bf?.angle,
-			alpha: bf?.alpha
-		};
-		out.props.push(data);
+		for (i in cast (stageData.props, Array<Dynamic>)) {
+			if (cast (i?.assetPath ?? "", String).startsWith('#')) {
+				out.props.push({
+					type: SOLID,
+					id: i.name,
+					name: i.name,
+					zIndex: i.zIndex,
+					color: i.assetPath,
+					position: i.position,
+					width: i.scale[0],
+					height: i.scale[1]
+				});
+			} else {
+				out.props.push(i);
+			}
+		}
+
 
 		var gf:StageDataCharacter = stageData.characters.gf;
 		var data:StagePropData = {
@@ -193,6 +197,20 @@ class StageConverters {
 			scroll: gf?.scroll,
 			angle: gf?.angle,
 			alpha: gf?.alpha
+		};
+		out.props.push(data);
+
+		var bf:StageDataCharacter = stageData.characters.bf;
+		var data:StagePropData = {
+			id: 'player',
+			type: CHARACTER,
+			zIndex: bf?.zIndex,
+			position: bf?.position,
+			cameraOffsets: bf?.cameraOffsets,
+			scale: [bf?.scale ?? 1, bf?.scale ?? 1],
+			scroll: bf?.scroll,
+			angle: bf?.angle,
+			alpha: bf?.alpha
 		};
 		out.props.push(data);
 
