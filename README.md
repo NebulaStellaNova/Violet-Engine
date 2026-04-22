@@ -14,17 +14,15 @@ https://youtu.be/iwcN0Sr3S3A
 
 # What I hope to accomplish with this engine:
 ### Main Focuses
-- Almost full mod support for V-Slice, Codename, and Psych mods. With some additions of my own.
+- Easy to use mod system with data compatibility for other engines.
 - Super sleek menus, with seamless transitions.
-- Make modding easier so people can bring their creations to life, but if you post slop I'll blacklist your mod negl.
+- Make modding easier so people can bring their creations to life.
 
 ### Back Burner
 - Full online multiplayer.
 - In-Game Mod Downloader/Updater.
 
 # How to contribute?
-Well for one, the engine is being coded on the dev branch.
-
 But please, make PR's to help if you want to :D<br>
 I would greatly appreciate it.
 
@@ -36,5 +34,15 @@ Once you run that simply open the console in this folder and type `lime test win
 
 # Credits
 Violet Engine Crew
-Codename Engine Crew - For console and sustain code
+Codename Engine Crew - For console and sustain code.
 Friday Night Funkin' - For the game lol.
+
+# Violet Engine Crew
+- [Nebula S. Nova](https://github.com/NebulaStellaNova): Main Coder.
+- [Rodney528](https://github.com/rodney528): Secondary Coder.
+- [GENZU](https://github.com/g3n-zu): Secondary Coder.
+- [PurSnake](https://github.com/PurSnake): Created and helped implement [FlxRhythmConductor](https://github.com/PurSnake/FlxRhythmConductor).
+- [ADA_Funni](https://github.com/ADA-Funni): Small code tweaks and fixes.
+- [LORAY-guy](https://open.spotify.com/artist/7hPljx3DXYez3j2UeswXsS): Menu Concept Designer.
+- [vissafyre](https://github.com/harlow-sint): Helped code a LOT of LemonUI.
+- [Jake_Official](https://open.spotify.com/artist/7hPljx3DXYez3j2UeswXsS): Violet Engine Theme.
