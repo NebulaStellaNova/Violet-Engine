@@ -72,8 +72,8 @@ class Paths {
 		return '';
 	}
 
-	public static function multiRoot(path:String):Array<String> {
-		var rootPaths:Array<String> = [ASSETS_FOLDER].concat(#if MOD_SUPPORT [for (meta in ModdingAPI.getActiveMods()) '${ModdingAPI.MOD_FOLDER}/${meta.folder}'] #else [] #end);
+	public static function multiRoot(path:String, modOnly:Bool = false):Array<String> {
+		var rootPaths:Array<String> = (modOnly ? [] : [ASSETS_FOLDER]).concat(#if MOD_SUPPORT [for (meta in ModdingAPI.getActiveMods()) '${ModdingAPI.MOD_FOLDER}/${meta.folder}'] #else [] #end);
 		var results:Array<String> = [];
 		for (root in rootPaths)
 			if (folderExists('$root/$path', true) || fileExists('$root/$path', true))
@@ -105,6 +105,8 @@ class Paths {
 		return file(path, directory == 'root' ? 'root' : [directory, 'sounds'].join('/'), ext);
 
 	#if release inline #end public static function frag(path:String, directory:String = '', ?ext:String = 'frag'):String
+		return file(path, directory == 'root' ? 'root' : [directory, 'shaders'].join('/'), ext);
+	#if release inline #end public static function vert(path:String, directory:String = '', ?ext:String = 'vert'):String
 		return file(path, directory == 'root' ? 'root' : [directory, 'shaders'].join('/'), ext);
 
 	#if release inline #end public static function music(path:String, directory:String = '', ?ext:String = 'ogg'):String
@@ -138,13 +140,13 @@ class Paths {
 	#if release inline #end public static function folderExists(path:String, startFromRoot:Bool = false):Bool
 		return #if mobile _readFolder(Path.removeTrailingSlashes(root(path, startFromRoot))).length != 0 || #end FileSystem.isDirectory(Path.removeTrailingSlashes(root(path, startFromRoot)));
 
-	public static function readFolder(path:String, startFromRoot:Bool = false, ?filter:String->Bool):Array<String> {
+	public static function readFolder(path:String, startFromRoot:Bool = false, ?filter:String->Bool, modOnly:Bool = false):Array<String> {
 		if (startFromRoot) {
 			var files = folderExists(path, startFromRoot) ? _handleDirectories(Path.removeTrailingSlashes(root(path, true))) : [];
 			return filter != null ? files.filter(filter) : files;
 		}
 		var files:Array<String> = [];
-		for (folder in multiRoot(path))
+		for (folder in multiRoot(path, modOnly))
 			for (file in _handleDirectories(Path.removeTrailingSlashes(folder)))
 				files.push(file);
 		return filter != null ? files.filter(filter) : files;

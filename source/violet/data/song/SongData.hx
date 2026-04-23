@@ -21,9 +21,13 @@ typedef SongData = {
 	public var ?variants:Array<String>;
 	public var ?customValues:Dynamic;
 
+	public var ?freeplayText:String;
+	public var ?freeplayCapsule:String;
+
 
 	public var ?icon:String;
-	public var ?color:violet.backend.utils.ParseUtil.ParseColor; // Doesn't do shit, only here for compatibility
+	public var ?color:violet.backend.utils.ParseUtil.ParseColor; // for cne compat
+	public var ?gradient:Array<violet.backend.utils.ParseUtil.ParseColor>; // for freeplay
 
 	public var ?coopAllowed:Bool; // Doesn't do shit, only here for compatibility
 	public var ?opponentModeAllowed:Bool; // Doesn't do shit, only here for compatibility

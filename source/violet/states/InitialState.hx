@@ -11,11 +11,6 @@ import violet.backend.audio.Conductor;
 import openfl.system.Capabilities;
 import violet.backend.objects.ClassData;
 
-typedef RedirectPiece = {
-	var state:String;
-	var target:String;
-}
-
 class InitialState extends StateBackend { // for now
 
 	var logo:NovaSprite = new NovaSprite(Paths.image('icons/dad'));
@@ -150,10 +145,9 @@ class InitialState extends StateBackend { // for now
 	public static function refreshRedirects() {
 		stateRedirects.resize(0);
 		for (i in ModdingAPI.getActiveMods()) {
-			var thisOne:Array<RedirectPiece> = ParseUtil.jsonOrYaml('${ModdingAPI.MOD_FOLDER}/${i.folder}/data/config/stateRedirects', 'root', 'null');
-			if (thisOne != null) {
-				stateRedirects = stateRedirects.concat(thisOne);
-			}
+			var thisOne:Array<RedirectPiece> = ParseUtil.jsonOrYaml('${ModdingAPI.MOD_FOLDER}/${i.folder}/data/config/stateRedirects', 'root', 'null') ?? (cast []); // bs mane
+			if (i.stateRedirects != null) thisOne = thisOne.concat(i.stateRedirects);
+			stateRedirects = stateRedirects.concat(thisOne);
 		}
 	}
 

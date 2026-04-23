@@ -45,9 +45,9 @@ class Cache {
 		cache.clear();
 	}
 
-	public static function image(path:String, directory:String = '', ?ext:String = 'png'):FlxGraphic {
+	public static function image(path:String, directory:String = '', ?ext:String = 'png', doCache:Bool = true):FlxGraphic {
 		var imagePath:String = Paths.image(path, directory, ext);
-		if (cache.exists(imagePath)) {
+		if (cache.exists(imagePath) && doCache) {
 			var graphic:FlxGraphic = cache.get(imagePath);
 			if (!graphic.isDestroyed)
 				return graphic;

@@ -11,7 +11,9 @@ class LevelRegistry {
 		trace('debug:<yellow>Registering levels...');
 		levels.resize(0);
 		levelDatas.clear();
-		var levelFiles = Paths.readFolder('data/levels');
+		var hidden:Bool = false;
+		for (i in ModdingAPI.getActiveMods()) if (i.hideBaseSongs) hidden = true;
+		var levelFiles = Paths.readFolder('data/levels', false, hidden);
 		for (levelFile in levelFiles) {
 			levelDatas.set(levelFile.replace('.json', ''), ParseUtil.json('data/levels/$levelFile'));
 			registerLevel(new Level(levelFile.replace('.json', '')));

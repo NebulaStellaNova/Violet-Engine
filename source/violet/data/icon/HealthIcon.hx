@@ -11,6 +11,7 @@ class HealthIcon extends Bopper {
 	public var isOpponent:Bool = false;
 	public var canDance:Bool = true;
 	public var bopAmount:Float = 1;
+	public var scaleOffset:Float = 1;
 
 	public function new(id:String, isOpponent:Bool = true) {
 		this.id = id;
@@ -77,7 +78,7 @@ class HealthIcon extends Bopper {
 		if (this.flipX) this.globalOffset.x *= -1;
 		// if (this._data.isPixel) this.antialiasing = false;
 		if (sillyBop) this.angle = MathUtil.lerp(this.angle, 0, 0.2);
-		this.scale.x = this.scale.y = MathUtil.lerp(this.scale.y, this._data.scale, 0.2);
+		this.scale.x = this.scale.y = MathUtil.lerp(this.scale.y, this._data.scale * this.scaleOffset, 0.2);
 		this.updateHitbox();
 	}
 

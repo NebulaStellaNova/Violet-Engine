@@ -1,0 +1,1 @@
+Capsule background height MUST be 85px for it to look right

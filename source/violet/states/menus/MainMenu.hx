@@ -85,6 +85,13 @@ class MainMenu extends StateBackend {
 	public var flower:NovaSprite;
 	public var flowerTargetAngle:Float = 0;
 
+	public static var instance:MainMenu;
+
+	override public function new() {
+		instance = this;
+		super();
+	}
+
 	override public function create()
 	{
 		super.create();

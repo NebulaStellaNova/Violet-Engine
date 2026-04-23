@@ -14,6 +14,11 @@ import violet.backend.scripting.ScriptPack;
 import violet.backend.utils.FileUtil;
 import violet.backend.utils.ParseUtil;
 
+typedef RedirectPiece = {
+	var state:String;
+	var target:String;
+}
+
 typedef ModContributor = {
 	var name:String;
 	var color:ParseColor;
@@ -34,6 +39,9 @@ typedef ModMeta = {
 	var ?api_version:Version;
 
 	var mod_version:String; // Version is being weird /shrug
+
+	var ?hideBaseSongs:Bool;
+	var ?stateRedirects:Array<RedirectPiece>;
 }
 
 class ModdingAPI {

@@ -117,7 +117,7 @@ class NovaSprite extends #if ANIMATE_SUPPORT FlxAnimate #else FlxSprite #end {
 				this.frames = FlxAtlasFrames.fromSpriteSheetPacker(path, path.replace(".png", ".txt"));
 				this.onLoaded();
 			} else {
-				this.loadGraphic(useCache ? Cache.image(path, 'root', null) : path);
+				this.loadGraphic(Cache.image(path, 'root', null, useCache));
 				this.updateHitbox();
 				this.onLoaded();
 			}
