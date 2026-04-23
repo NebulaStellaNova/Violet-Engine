@@ -136,7 +136,7 @@ class CharacterConverters {
 		return {
 			version: '1.0.0',
 			name: characterName,
-			assetPath: characterData.assetPath.replace('shared:', ''),
+			assetPath: '${characterData.assetPath}'.replace('shared:', ''),
 			scale: characterData?.scale ?? 1,
 			healthIcon: characterData?.healthIcon?.id ?? characterID,
 			offsets: characterData?.offsets ?? [0.0, 0.0],
