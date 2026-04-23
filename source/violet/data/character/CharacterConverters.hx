@@ -85,6 +85,7 @@ class CharacterConverters {
 		return characterData;
 	}
 
+
 	private static function d(access:Access, attribute:String, def:String):String {
 		return access.has.resolve(attribute) ? access.att.resolve(attribute) : def;
 	}
@@ -123,5 +124,26 @@ class CharacterConverters {
 		}
 
 		return out;
+	}
+
+	public static function fromVSlice(path:String):CharacterData {
+		var characterData = ParseUtil.json(path);
+		if (characterData.assetPath == null) return null;
+
+		var characterID:String = Paths.fileName(path);
+		var characterName:String = nameFromId(characterID);
+
+		return {
+			version: '1.0.0',
+			name: characterName,
+			assetPath: characterData.assetPath.replace('shared:', ''),
+			scale: characterData?.scale ?? 1,
+			healthIcon: characterData?.healthIcon?.id ?? characterID,
+			offsets: characterData?.offsets ?? [0.0, 0.0],
+			cameraOffsets: characterData?.cameraOffsets ?? [0.0, 0.0],
+			flipX: characterData?.flipX ?? false,
+			isPixel: characterData?.isPixel ?? false,
+			animations: characterData.animations != null ? cast characterData.animations : []
+		};
 	}
 }

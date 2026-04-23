@@ -18,6 +18,10 @@ class CharacterRegistry {
 				var format = CharacterFormatChecker.checkFormat(parsed);
 				if (format == PSYCH) {
 					register(Paths.fileName(file), CharacterConverters.fromPsych('data/characters/${Paths.fileName(file)}'));
+				} else if (format == VSLICE) {
+					register(Paths.fileName(file), CharacterConverters.fromVSlice('data/characters/${Paths.fileName(file)}'));
+				} else {
+					trace('error:Unknown character format for file "data/characters/${Paths.fileName(file)}", skipping.');
 				}
 			} else {
 				register(Paths.fileName(file), ParseUtil.jsonOrYaml('data/characters/${Paths.fileName(file)}'));
