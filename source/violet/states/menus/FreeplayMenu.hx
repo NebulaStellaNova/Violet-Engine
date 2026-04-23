@@ -1,5 +1,7 @@
 package violet.states.menus;
 
+import violet.backend.audio.Conductor;
+import flixel.effects.FlxFlicker;
 import violet.backend.utils.ScoreUtil;
 import violet.backend.utils.MathUtil;
 import violet.backend.utils.NovaUtils;
@@ -127,6 +129,8 @@ class FreeplayMenu extends SubStateBackend {
 
 	public var scoreLerp:Float = 0;
 
+	public var updateCapsulePosition:Bool = true;
+
 	override function update(elapsed) {
 		super.update(elapsed);
 
@@ -137,18 +141,19 @@ class FreeplayMenu extends SubStateBackend {
 
 		scoreText.y = topBar.y + 15;
 		difficultyText.y = bottomBar.y + 50;
-		difficultyText.color = difficultyColors.get(difficultyText.text.toLowerCase());
 
 		for (index=>cap in songCapsules) {
 			var offset = 55 * (selectedSongIndex - index);
 			offset += (selectedSongIndex - index) == 0 ? 0 : 50;
 
-			cap.x -= capsuleOffset.x;
-			cap.x = lerp(cap.x, (FlxG.width/2) + offset, snap ? 1 : 0.2);
-			cap.x += capsuleOffset.x;
-			cap.y -= capsuleOffset.y;
-			cap.y = lerp(cap.y, 100 * (index - selectedSongIndex) + (FlxG.height/2) - (85/2), snap ? 1 : 0.2);
-			cap.y += capsuleOffset.y;
+			if (updateCapsulePosition) {
+				cap.x -= capsuleOffset.x;
+				cap.x = lerp(cap.x, (FlxG.width/2) + offset, snap ? 1 : 0.2);
+				cap.x += capsuleOffset.x;
+				cap.y -= capsuleOffset.y;
+				cap.y = lerp(cap.y, 100 * (index - selectedSongIndex) + (FlxG.height/2) - (85/2), snap ? 1 : 0.2);
+				cap.y += capsuleOffset.y;
+			}
 			cap.backCase.x = lerp(cap.backCase.x, cap.frontCase.x + (index == selectedSongIndex ? -15 : -5), snap ? 1 : 0.2);
 		}
 
@@ -158,11 +163,14 @@ class FreeplayMenu extends SubStateBackend {
 		if (Controls.uiLeft) changeDiff(-1);
 		if (Controls.uiRight) changeDiff(1);
 
+		if (Controls.accept) selectSong();
+
 		snap = false;
 	}
 
 	function changeSelection(amount:Int) {
 		selectedSongIndex = FlxMath.wrap(selectedSongIndex + amount, 0, songCapsules.length - 1);
+		if (amount != 0) NovaUtils.playMenuSFX();
 		changeDiff(0);
 	}
 
@@ -173,6 +181,27 @@ class FreeplayMenu extends SubStateBackend {
 		difficultyText.text = song.difficulties[newDiffIndex].toUpperCase();
 		difficultyText.updateHitbox();
 		difficultyText.x = 215 - (difficultyText.width/2);
+		difficultyText.color = difficultyColors.get(difficultyText.text.toLowerCase());
+	}
+
+	function selectSong() {
+		updateCapsulePosition = false;
+
+		NovaUtils.playMenuSFX(CONFIRM);
+		FlxG.sound.music.fadeOut(1);
+
+		for (index=>text in songCapsules) {
+			if (index != selectedSongIndex) {
+				FlxTween.tween(text, {alpha: 0, x: text.x + 500}, 0.3, { ease: FlxEase.backIn});
+			} else {
+				var selectedSongMeta = getSongList()[selectedSongIndex];
+				FlxFlicker.flicker(text, 1, 0.06, false, false, _->{
+					camera.fade(FlxColor.BLACK, 0.5, ()->{
+						PlayState.loadSong(selectedSongMeta.id, difficultyText.text.toLowerCase(), selectedSongMeta.variant);
+					});
+				});
+			}
+		}
 	}
 
 	public var transitioning:Bool = false;

@@ -61,7 +61,7 @@ class NovaUtils {
 		}
 	}
 
-	public static function playMenuSFX(which:MenuSFX, volume:Float = 1):FlxSound {
+	public static function playMenuSFX(which:MenuSFX = SCROLL, volume:Float = 1):FlxSound {
 		final bruh = switch (which) {
 			case SCROLL: 'scroll';
 			case CANCEL: 'cancel';

@@ -8,7 +8,7 @@ ratings:
   easy: 2
   normal: 3
   hard: 4
-color: "#F6B604"
+gradient: ["#F6B604", "#FFFFFF"]
 coopAllowed: true
 stepsPerBeat: 4
 displayName: Ugh

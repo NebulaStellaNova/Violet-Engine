@@ -12,10 +12,12 @@ class HealthIcon extends Bopper {
 	public var canDance:Bool = true;
 	public var bopAmount:Float = 1;
 	public var scaleOffset:Float = 1;
+	public var cache:Bool = true;
 
-	public function new(id:String, isOpponent:Bool = true) {
+	public function new(id:String, isOpponent:Bool = true, cache:Bool = true) {
 		this.id = id;
 		this.isOpponent = isOpponent;
+		this.cache = cache;
 		super();
 		setIcon(id);
 	}
@@ -30,7 +32,7 @@ class HealthIcon extends Bopper {
 		this._data.isPixel ??= false;
 		this._data.assetPath ??= 'icons/$id';
 
-		loadSprite(Paths.image(this._data.assetPath) != '' ? Paths.image(this._data.assetPath) : Paths.image(defaultData.assetPath));
+		loadSprite(Paths.image(this._data.assetPath) != '' ? Paths.image(this._data.assetPath) : Paths.image(defaultData.assetPath), cache);
 
 		if (this.animated) {
 			this.addAnim('idle', 'idle', 24, true);

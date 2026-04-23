@@ -8,7 +8,7 @@ ratings:
   easy: 1
   normal: 1
   hard: 2
-color: "#9271FD"
+gradient: ["#8385E9", "#CF3EE9"]
 coopAllowed: true
 stepsPerBeat: 4
 displayName: Fresh

@@ -1,5 +1,5 @@
 customValues: {}
-color: "#9271FD"
+gradient: ["#E40F3D", "#E72EFF"]
 opponentModeAllowed: true
 icon: gf
 difficulties:

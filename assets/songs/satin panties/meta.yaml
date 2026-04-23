@@ -8,10 +8,10 @@ ratings:
   easy: 1
   normal: 2
   hard: 2
-color: "#FC96D7"
 coopAllowed: true
 stepsPerBeat: 4
 displayName: Satin Panties
+gradient: ["#FF00FF", "#FF6800"]
 beatsPerMeasure: 4
 needsVoices: true
 bpm: 110
