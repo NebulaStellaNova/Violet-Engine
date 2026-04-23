@@ -120,8 +120,8 @@ props:
 
 - id: player
   type: Character
-  position: [1050, 985]
-  cameraOffsets: [-200, -150]
+  position: [1050, 910]
+  cameraOffsets: [-200, -100]
 
 - name: tankmanAudience0
   assetPath: tank0
