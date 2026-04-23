@@ -188,7 +188,6 @@ class FreeplayMenu extends SubStateBackend {
 		updateCapsulePosition = false;
 
 		NovaUtils.playMenuSFX(CONFIRM);
-		FlxG.sound.music.fadeOut(1);
 
 		for (index=>text in songCapsules) {
 			if (index != selectedSongIndex) {
@@ -196,6 +195,7 @@ class FreeplayMenu extends SubStateBackend {
 			} else {
 				var selectedSongMeta = getSongList()[selectedSongIndex];
 				FlxFlicker.flicker(text, 1, 0.06, false, false, _->{
+					FlxG.sound.music.fadeOut(0.5);
 					camera.fade(FlxColor.BLACK, 0.5, ()->{
 						PlayState.loadSong(selectedSongMeta.id, difficultyText.text.toLowerCase(), selectedSongMeta.variant);
 					});
