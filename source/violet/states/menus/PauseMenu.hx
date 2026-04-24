@@ -1,5 +1,6 @@
 package violet.states.menus;
 
+import openfl.events.KeyboardEvent;
 import violet.backend.objects.Alphabet;
 import violet.backend.utils.NovaUtils;
 import flixel.text.FlxText;

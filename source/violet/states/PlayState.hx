@@ -1,5 +1,6 @@
 package violet.states;
 
+import openfl.events.KeyboardEvent;
 import violet.backend.utils.StringUtil;
 import violet.backend.utils.WindowUtil;
 import violet.backend.filesystem.HXCHandler;
@@ -792,6 +793,14 @@ class PlayState extends violet.backend.StateBackend {
 			FlxTween.globalManager.forEach((tween:FlxTween)->{
 				tween.active = false;
 			});
+
+			for (i in strumLines) {
+				for (key in ['note_left', 'note_down', 'note_up', 'note_right']) {
+					for (flxkey in Controls.bindMap.get(key)) {
+						@:privateAccess i._on_release(new KeyboardEvent("", 0, flxkey), true);
+					}
+				}
+			}
 
 			pauseTime = Conductor.instrumental.time;
 			var pauseMenu:PauseMenu = new PauseMenu();

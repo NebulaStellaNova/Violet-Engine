@@ -141,7 +141,7 @@ class StrumLine extends FlxGroup {
 		scale.set(1, 1); setPosition(chartData.strumPosition[0], chartData.strumPosition[1], chartData.strumPosIsPure);
 
 		FlxG.stage.addEventListener(KeyboardEvent.KEY_DOWN, _on_press);
-		FlxG.stage.addEventListener(KeyboardEvent.KEY_UP, _on_release);
+		FlxG.stage.addEventListener(KeyboardEvent.KEY_UP, _->_on_release(_));
 
 		// Rodney make this work thank.
 		/* if (Paths.fileExists(Paths.vocal(PlayState.song, characters[0].id, PlayState.variation)))
@@ -411,12 +411,14 @@ class StrumLine extends FlxGroup {
 		} else _onVoidTap(inputId, this);
 
 	}
-	function _on_release(event:KeyboardEvent):Void {
+	function _on_release(event:KeyboardEvent, force:Bool = false):Void {
 		if (FlxG.state.subState != null) return;
 		if (isComputer) return;
 		final inputId:Int = getKeyFromEvent(['note_left', 'note_down', 'note_up', 'note_right'], event.keyCode);
-		if (inputId < 0 || inputId >= strums.length) return;
-		if (!FlxG.keys.checkStatus(event.keyCode, JUST_RELEASED)) return;
+		if (!force) {
+			if (inputId < 0 || inputId >= strums.length) return;
+			if (!FlxG.keys.checkStatus(event.keyCode, JUST_RELEASED)) return;
+		}
 		currentInputs[inputId] = false;
 
 		final strum:Strum = strums.members[inputId];
@@ -439,7 +441,7 @@ class StrumLine extends FlxGroup {
 	override public function destroy():Void {
 		scale.put();
 		FlxG.stage.removeEventListener(KeyboardEvent.KEY_DOWN, _on_press);
-		FlxG.stage.removeEventListener(KeyboardEvent.KEY_UP, _on_release);
+		FlxG.stage.removeEventListener(KeyboardEvent.KEY_UP, _->_on_release(_));
 		super.destroy();
 	}
 
