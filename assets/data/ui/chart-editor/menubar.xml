@@ -28,18 +28,18 @@
 
     <menu text="Audio">
         <menu-item text="" height="75">
-            <text text="Instrumental - 100%" x="5" y="5"/>
-            <slider defaultValue="1" x="25" y="20" trackWidth="250"/>
+            <text id="instLabel" text="Instrumental - 100%" x="5" y="5"/>
+            <slider id="instVolume" defaultValue="1" x="25" y="20" trackWidth="250"/>
         </menu-item>
         <menu-separator />
         <menu-item text="" height="75">
             <text text="Vocals - 100%" x="5" y="5"/>
-            <slider defaultValue="1" x="25" y="20" trackWidth="250"/>
+            <slider id="vocalVolume" defaultValue="1" x="25" y="20" trackWidth="250"/>
         </menu-item>
         <menu-separator />
         <menu-item text="" height="75">
             <text text="Hitsounds - 100%" x="5" y="5"/>
-            <slider defaultValue="1" x="25" y="20" trackWidth="250"/>
+            <slider id="hitsoundVolume" defaultValue="1" x="25" y="20" trackWidth="250"/>
         </menu-item>
     </menu>
 
