@@ -23,7 +23,7 @@ https://youtu.be/iwcN0Sr3S3A
 - In-Game Mod Downloader/Updater.
 
 # How to contribute?
-But please, make PR's to help if you want to :D<br>
+Please make PR's to help if you want to :D<br>
 I would greatly appreciate it.
 
 # Compilation
@@ -33,8 +33,8 @@ Once you run that simply open the console in this folder and type `lime test win
 
 
 # Credits
-Violet Engine Crew
-Codename Engine Crew - For console and sustain code.
+Violet Engine Crew<br>
+Codename Engine Crew - For console and sustain code.<br>
 Friday Night Funkin' - For the game lol.
 
 # Violet Engine Crew
