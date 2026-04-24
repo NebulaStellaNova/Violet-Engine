@@ -378,10 +378,13 @@ class NovaSprite extends #if ANIMATE_SUPPORT FlxAnimate #else FlxSprite #end {
 		return returner;
 	}
 
+	public var destroyed:Bool = false;
+
 	override public function destroy() {
 		globalOffset.put();
 		animationOffset.put();
 		_scaledFrameOffset.put();
+		destroyed = true;
 		super.destroy();
 	}
 

@@ -304,6 +304,11 @@ class StrumLine extends FlxGroup {
 
 		// checks when a note and its tail can be killed
 		notes.forEachExists((note:Note) -> {
+			if (note.time - Conductor.songPosition < -100 && note.tail.length <= 1) {
+				note.destroy();
+				// notes.remove(note);
+			}
+
 			var wasKilled:Bool = false;
 			if (note.tail.length != 0) {
 				note.tail.sort(Note.sortTail); // jic

@@ -529,6 +529,7 @@ class PlayState extends violet.backend.StateBackend {
 			sustain.parentStrum.holdCover?.playAnim('end', true);
 			if (sustain.parent.isComputer) sustain.parentStrum.holdCover?.animation.finish();
 			sustain.parentStrum.holdCover = null;
+			sustain.parentNote.destroy();
 		}
 
 		runSongEvent('sustainHitPost', event);

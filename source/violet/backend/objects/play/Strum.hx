@@ -111,6 +111,9 @@ class Strum extends NovaSprite {
 		}
 	}
 
+	public var splashBin:Map<String, Array<StrumElement>> = [];
+	public var splashBinIndex:Map<String, Int> = [];
+
 	public function spawnSplash(?note:Note):Void {
 		var finalMeta;
 		if (note?.style != null) {
@@ -118,23 +121,40 @@ class Strum extends NovaSprite {
 		} else {
 			finalMeta = styleMeta;
 		}
-		final splash:StrumElement = new StrumElement(this, finalMeta.getSplashAssetPath());
-		for (data in finalMeta.getSplashAnimations(ID, parent.keyCount))
-			splash.addAnimFromData(data);
+
+		if (!splashBin.exists(finalMeta.id)) splashBin.set(finalMeta.id, []);
+		if (!splashBinIndex.exists(finalMeta.id)) splashBinIndex.set(finalMeta.id, 0);
+
+		var index:Int = splashBinIndex.get(finalMeta.id) % 3;
+		var bin:Array<StrumElement> = splashBin.get(finalMeta.id);
+
+		var splash:StrumElement = null;
+
+		if (bin[index] == null) {
+			splash = new StrumElement(this, finalMeta.getSplashAssetPath());
+			for (data in finalMeta.getSplashAnimations(ID, parent.keyCount))
+				splash.addAnimFromData(data);
+			bin[index] = splash;
+			this.splashes.push(splash);
+			this.parent.add(splash);
+		} else {
+			splash = bin[index];
+		}
 
 		splash.playAnim(FlxG.random.getObject(splash.animationList), true);
 		splash.setScale(finalMeta.splashProperties.scale);
-		splash.animation.onFinish.add(name -> {
-			this.splashes.remove(splash);
-			splash.destroy();
+		splash.animation.onFinish.addOnce(name -> {
+			splash.visible = false;
 		});
 		final partOffsets:Array<Float> = finalMeta.getSplashOffsets();
 		splash.setPosition(this.x - (splash.width/2) + partOffsets[0], this.y - (splash.height/2) + partOffsets[1]);
 		splash.antialiasing = finalMeta.isSplashPixel();
 		splash.alpha = finalMeta.splashProperties.alpha;
 		splash.blend = finalMeta.splashProperties.blendMode;
-		this.splashes.push(splash);
-		this.parent.add(splash);
+		splash.visible = true;
+
+		splashBin.set(finalMeta.id, bin);
+		splashBinIndex.set(finalMeta.id, index + 1);
 	}
 
 
