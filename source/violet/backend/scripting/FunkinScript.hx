@@ -58,6 +58,7 @@ class FunkinScript extends Script {
 				scriptCode += '\n' + FileUtil.getFileContent('${ModdingAPI.MOD_FOLDER}/${i.folder}/data/scripts/import.hx');
 		}
 		checkForBlacklistedImports();
+		execute();
 	}
 
 	override function initVars():Void {
