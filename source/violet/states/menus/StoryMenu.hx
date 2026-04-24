@@ -210,8 +210,11 @@ class StoryMenu extends SubStateBackend {
 		scoreText.text = 'HIGH SCORE: ' + ScoreUtil.stringifyScore(scoreLerp, 0, true);
 		scoreText.updateHitbox();
 
-		if (isFlashing)
-			titleGraphics[curSelected].color = (time % 0.1 > 0.05) ? FlxColor.WHITE : 0xFF33ffff;
+		if (isFlashing) {
+			var color:FlxColor = levelList[curSelected]._data?.flashColor;
+			if (color == -1) color = 0xFF33ffff;
+			titleGraphics[curSelected].color = (time % 0.1 > 0.05) ? FlxColor.WHITE : color;
+		}
 
 		if (Controls.back) {
 			exit();
