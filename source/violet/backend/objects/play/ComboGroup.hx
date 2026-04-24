@@ -39,12 +39,12 @@ class ComboGroup extends FlxSpriteGroup {
 		add(comboSprite);
 
 		var comboSplit = '$combo'.split('');
-		var offset = (70*comboSplit.length)/2;
+		var offset = (60*comboSplit.length)/2;
 		if (combo >= 10) for (i=>num in comboSplit) {
 			var numberPath = Paths.image('game/popup/$style/num$num');
 			if (numberPath == "") numberPath = Paths.image('game/popup/funkin/num$num');
-			var number = new NovaSprite(70*i, 30, numberPath);
-			number.scale.set(0.7, 0.7);
+			var number = new NovaSprite(60*i, 30, numberPath);
+			number.scale.set(0.6, 0.6);
 			number.updateHitbox();
 			number.x -= offset;
 			number.alpha = 0;
