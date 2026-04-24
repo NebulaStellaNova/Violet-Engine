@@ -9,6 +9,7 @@ ratings:
   normal: 2
   hard: 3
 gradient: ["#FF00FF", "#FF6800"]
+freeplayCapsule: limo
 coopAllowed: true
 stepsPerBeat: 4
 displayName: High

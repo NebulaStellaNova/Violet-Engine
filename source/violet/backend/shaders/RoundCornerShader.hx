@@ -13,6 +13,6 @@ class RoundCornerShader extends ModShader {
 
 	public function new() {
 		super("roundCorners");
-		radius = 25;
+		radius = 25.0;
 	}
 }

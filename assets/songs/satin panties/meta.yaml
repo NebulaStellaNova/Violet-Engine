@@ -12,6 +12,7 @@ coopAllowed: true
 stepsPerBeat: 4
 displayName: Satin Panties
 gradient: ["#FF00FF", "#FF6800"]
+freeplayCapsule: limo
 beatsPerMeasure: 4
 needsVoices: true
 bpm: 110

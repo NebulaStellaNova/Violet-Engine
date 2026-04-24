@@ -42,6 +42,7 @@ typedef ModMeta = {
 
 	var ?hideBaseSongs:Bool;
 	var ?stateRedirects:Array<RedirectPiece>;
+	var ?windowTitle:String;
 }
 
 class ModdingAPI {

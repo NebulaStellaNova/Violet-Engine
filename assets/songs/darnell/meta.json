@@ -11,13 +11,14 @@
 	],
 	"variants": [
 		"erect",
-		"bf"	
+		"bf"
 	],
 	"needsVoices": false,
 	"displayName": "Darnell",
 	"icon": "darnell",
 	"name": "darnell",
-	"color": "#6162FF",
+	"freeplayCapsule": "streets",
+	"gradient": ["#6162FF", "#00FF48"],
 	"customValues": {
 		"stickerPack": "bonus-weekend1",
 		"album": "volume4"

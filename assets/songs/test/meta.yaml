@@ -4,7 +4,7 @@ difficulties:
   - normal
 isDev: true
 coopAllowed: true
-color: "#9271FD"
+gradient: ["#7BD6F6", "#31B0D1"]
 stepsPerBeat: 4
 displayName: Test
 beatsPerMeasure: 4

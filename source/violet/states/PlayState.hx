@@ -1,5 +1,7 @@
 package violet.states;
 
+import violet.backend.utils.StringUtil;
+import violet.backend.utils.WindowUtil;
 import violet.backend.filesystem.HXCHandler;
 import flixel.FlxObject;
 import flixel.math.FlxPoint;
@@ -362,6 +364,11 @@ class PlayState extends violet.backend.StateBackend {
 
 		callSongScripts('update', [elapsed]);
 		callSongScripts('onUpdate', [elapsed]);
+
+		var totalTime = Conductor.instrumental.length;
+		var currentTime = Conductor.instrumental.time;
+
+		WindowUtil.suffix = ' - ${songData.displayName} [${StringUtil.capitalizeFirst(difficulty)}] - ${StringUtil.formatTime(currentTime, "m:ss")} / ${StringUtil.formatTime(totalTime, "m:ss")}';
 
 		var camTargetX:Float = camFollowPoint.x - (FlxG.width/2);
 		var camTargetY:Float = camFollowPoint.y - (FlxG.height/2);
@@ -870,6 +877,7 @@ class PlayState extends violet.backend.StateBackend {
 		Conductor.offset = 0;
 		super.destroy();
 		for (i in SONG.events) i.ran = false;
+		WindowUtil.suffix = '';
 	}
 
 	public static function loadSong(id:String, difficulty:String = 'normal', ?variation:String) {

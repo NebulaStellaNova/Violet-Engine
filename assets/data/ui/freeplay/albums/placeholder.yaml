@@ -2,6 +2,8 @@ version: 1.0.0
 name: Placeholder
 artists:
   - GENZU
-albumArtAsset: menus/freeplay/albums/placeholder
-albumTitleAsset: menus/freeplay/albums/volume1-text
-albumTitleOffsets: [8, 0]
+albumArtAsset: menus/freeplaymenu/albums/placeholder
+albumTitleAsset: menus/freeplaymenu/albums/volume1-text
+albumTitleOffsets:
+  - 8
+  - 0

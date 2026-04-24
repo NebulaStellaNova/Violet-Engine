@@ -2,7 +2,7 @@
 	"opponentModeAllowed": true,
 	"icon": "darnell",
 	"name": "darnell",
-	"color": "#6162FF",
+	"gradient": ["#6162FF", "#00FF48"],
 	"coopAllowed": true,
 	"difficulties": [
 		"erect",
@@ -17,5 +17,6 @@
 	"beatsPerMeasure": 4,
 	"bpm": 155,
 	"instSuffix": "-erect",
+	"freeplayCapsule": "streets-erect",
 	"needsVoices": false
 }

@@ -9,6 +9,7 @@ ratings:
   normal: 3
   hard: 4
 gradient: ["#FF00FF", "#FF6800"]
+freeplayCapsule: limo
 coopAllowed: true
 stepsPerBeat: 4
 displayName: M.I.L.F

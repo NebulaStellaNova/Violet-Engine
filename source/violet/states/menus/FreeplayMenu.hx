@@ -1,5 +1,9 @@
 package violet.states.menus;
 
+import flixel.text.FlxText;
+import flixel.addons.display.FlxBackdrop;
+import violet.backend.objects.freeplay.Album;
+import violet.backend.utils.ParseUtil;
 import violet.backend.audio.Conductor;
 import flixel.effects.FlxFlicker;
 import violet.backend.utils.ScoreUtil;
@@ -45,17 +49,22 @@ class FreeplayMenu extends SubStateBackend {
 	```
 	*/
 
+	public var albumMap:Map<String, Album> = [];
+
 	public var background:NovaSprite;
 	public var bottomBar:NovaSprite;
 	public var topBar:NovaSprite;
 
 	public var scoreText:NovaText;
+	public var ostText:NovaText;
 
 	public var songCapsules:Array<Capsule> = [];
 
 	public var capsuleOffset:FlxPoint = new FlxPoint(0, 0);
 
 	public var difficultyText:NovaText;
+
+	public var selectASongText:FlxBackdrop;
 
 	override function create() {
 		super.create();
@@ -64,11 +73,24 @@ class FreeplayMenu extends SubStateBackend {
 		this.camera.bgColor = FlxColor.TRANSPARENT;
 		FlxG.cameras.add(this.camera, false);
 
-		background = new NovaSprite(-FlxG.width, 0, Paths.image('menus/freeplaymenu/background'));
-		background.setGraphicSize(FlxG.width, FlxG.height);
+		background = new NovaSprite(-(FlxG.width+4), -2, Paths.image('menus/freeplaymenu/background'));
+		background.setGraphicSize(FlxG.width+4, FlxG.height+4);
+		background.updateHitbox();
 		add(background);
 
+		var album = new Album('placeholder');
+		album.x = 0;
+		albumMap.set('placeholder', album);
+		add(album);
+
 		for (i => data in getSongList()) {
+			if (!albumMap.exists(data._data.album) && data._data.album != null) {
+				var album = new Album(data._data.album);
+				album.x = 0;
+				albumMap.set(data._data.album, album);
+				add(album);
+			}
+
 			var cap = new Capsule(data);
 			cap.x = FlxG.width;
 			cap.y = 100 * i + (FlxG.height/2) - (85/2);
@@ -106,6 +128,7 @@ class FreeplayMenu extends SubStateBackend {
 			bottomBar.y = FlxG.height - bottomBar.height;
 			topBar.y = 0;
 			capsuleOffset.x = 0;
+			camera.fade(FlxColor.BLACK, 0.5, true);
 		} else {
 			FlxTween.tween(background, {x: 0}, 1, { ease: FlxEase.expoOut });
 			FlxTween.tween(capsuleOffset, {x: 0}, 1, { ease: FlxEase.expoOut });
@@ -114,6 +137,14 @@ class FreeplayMenu extends SubStateBackend {
 		}
 
 		changeSelection(0);
+
+		ostText = new NovaText(100, FlxG.height - 47, 500*2, "FIRE FIGHT P1");
+		ostText.setFormat(Paths.font("akira", null, "otf"), 50, FlxColor.WHITE, "center");
+		ostText.antialiasing = true;
+		ostText.scale.x = ostText.scale.y = 0.5;
+		ostText.scale.y *= 1.4;
+		ostText.updateHitbox();
+		add(ostText);
 	}
 
 	public function build() {
@@ -165,6 +196,18 @@ class FreeplayMenu extends SubStateBackend {
 
 		if (Controls.accept) selectSong();
 
+		var targetID:Null<String> = getSongList()[selectedSongIndex]._data.album;
+		targetID ??= 'placeholder';
+		for (i in albumMap.keys()) {
+			var album = albumMap.get(i);
+			album.visible = album.id == targetID;
+			if (album.visible) {
+				ostText.text = album?.ostText ?? "OFFICIAL OST";
+				ostText.updateHitbox();
+				ostText.x = 1975 + 25 - ostText.width + 125;
+			}
+		}
+
 		snap = false;
 	}
 
@@ -172,6 +215,23 @@ class FreeplayMenu extends SubStateBackend {
 		selectedSongIndex = FlxMath.wrap(selectedSongIndex + amount, 0, songCapsules.length - 1);
 		if (amount != 0) NovaUtils.playMenuSFX();
 		changeDiff(0);
+
+		var selectASong = new FlxText(0, 0, 0, getSongList()[selectedSongIndex].displayName.toUpperCase() + " · ");
+		selectASong.setFormat(Paths.font("Nunito-Medium"), 65, FlxColor.WHITE, "center");
+		selectASong.antialiasing = true;
+		selectASong.scale.x = selectASong.scale.y = 0.5;
+		selectASong.updateHitbox();
+		selectASong.drawFrame();
+
+		if (selectASongText != null) remove(selectASongText);
+		selectASongText = new FlxBackdrop(selectASong.pixels, X);
+		selectASongText.antialiasing = true;
+		selectASongText.y = -4;
+		selectASongText.scale.x = selectASongText.scale.y = topBar.scale.x;
+		selectASongText.updateHitbox();
+		selectASongText.alpha = 0.5;
+		selectASongText.velocity.set(100, 0);
+		insert(members.indexOf(topBar) - 1, selectASongText);
 	}
 
 	function changeDiff(amount:Int) {
@@ -197,6 +257,7 @@ class FreeplayMenu extends SubStateBackend {
 				FlxFlicker.flicker(text, 1, 0.06, false, false, _->{
 					FlxG.sound.music.fadeOut(0.5);
 					camera.fade(FlxColor.BLACK, 0.5, ()->{
+						PlayState.doFadeOut = true;
 						PlayState.loadSong(selectedSongMeta.id, difficultyText.text.toLowerCase(), selectedSongMeta.variant);
 					});
 				});

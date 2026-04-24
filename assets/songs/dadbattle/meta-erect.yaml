@@ -16,6 +16,7 @@ icon: dad
 coopAllowed: false
 stepsPerBeat: 4
 displayName: DadBattle Erect
+freeplayCapsule: mainStageErect
 beatsPerMeasure: 4
 needsVoices: false
 vocalsSuffix: -erect

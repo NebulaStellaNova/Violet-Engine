@@ -1,5 +1,7 @@
 package violet.backend.objects.freeplay;
 
+import violet.backend.shaders.AngleCropShader;
+import violet.backend.shaders.AngleMask;
 import violet.backend.shaders.ColorToAlphaShader;
 import flixel.text.FlxText;
 import violet.backend.utils.ParseUtil.ParseColor;
@@ -26,6 +28,7 @@ class Capsule extends FlxSpriteGroup {
 
     public static var colorToAlphaShader:ColorToAlphaShader = new ColorToAlphaShader();
     public static var outlineExtractionShader:OutlineExtractionShader = new OutlineExtractionShader();
+    public static var angleCropShader:AngleCropShader = new AngleCropShader();
 
 	override public function new(songData:Song) {
 		super();
@@ -40,9 +43,13 @@ class Capsule extends FlxSpriteGroup {
 		var gradient:Array<ParseColor> = songData._data.gradient != null ? songData._data.gradient : [songData._data.color, songData._data.color];
 		var capsuleBG:String = songData._data.freeplayCapsule ?? songData?.customValues?.capsuleBackground ?? "mainStage";
 
-		var capsuleBackground = new NovaSprite().loadSprite(Paths.image("menus/freeplaymenu/capsuleBackgrounds/" + capsuleBG), false);
+        var temp = new NovaSprite(0, 0).loadSprite(Paths.image("menus/freeplaymenu/capsuleBackgrounds/" + capsuleBG));
+		temp.drawFrame();
+
+		var capsuleBackground = new FlxSkewedSprite(-11, 0);
+        capsuleBackground.loadGraphicFromSprite(temp);
 		capsuleBackground.drawFrame();
-		skewPixels(capsuleBackground, 30, 0);
+		// skewPixels(capsuleBackground, 30, 0);
 
 		backCase = new FlxSkewedSprite(0, 0);
 		backCase.makeGraphic(FlxG.width, 85, gradient[0]);
@@ -57,7 +64,9 @@ class Capsule extends FlxSpriteGroup {
         frontCase.skew.set(-30, 0);
         add(frontCase);
 
-		frontCase.stamp(capsuleBackground, -50, 0);
+        capsuleBackground.shader = angleCropShader;
+        add(capsuleBackground);
+
 
 		blackGradient = new FlxSkewedSprite(15, 0);
 		blackGradient.loadGraphic(FlxGradient.createGradientFlxSprite(Math.round(frontCase.width/2), Math.round(frontCase.height), [FlxColor.BLACK, FlxColor.BLACK, FlxColor.TRANSPARENT], 1, 0).pixels);

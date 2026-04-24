@@ -8,7 +8,8 @@ ratings:
   easy: 1
   normal: 2
   hard: 3
-color: "#FF78BF"
+gradient: ["#FF78BF", "#afeafa"]
+freeplayCapsule: school
 coopAllowed: true
 stepsPerBeat: 4
 displayName: Senpai

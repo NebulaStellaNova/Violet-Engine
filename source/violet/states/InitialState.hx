@@ -1,5 +1,6 @@
 package violet.states;
 
+import violet.backend.utils.WindowUtil;
 import violet.backend.options.Options;
 import flixel.util.FlxStringUtil;
 import violet.backend.utils.ParseUtil;
@@ -65,6 +66,13 @@ class InitialState extends StateBackend { // for now
 					break;
 				}
 			}
+			var title:String = "Friday Night Funkin': Violet Engine";
+			for (i in ModdingAPI.getActiveMods()) {
+				if (i.windowTitle != null) {
+					title = i.windowTitle;
+				}
+			}
+			WindowUtil.title = title;
 		});
 
 		FlxG.signals.preUpdate.add(() -> {

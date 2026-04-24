@@ -11,6 +11,7 @@ icon: dad
 coopAllowed: false
 stepsPerBeat: 4
 displayName: Fresh Erect
+freeplayCapsule: mainStageErect
 beatsPerMeasure: 4
 needsVoices: false
 vocalsSuffix: -erect
