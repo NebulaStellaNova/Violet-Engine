@@ -1,0 +1,53 @@
+animations:
+  - prefix: Parent Christmas Idle
+    name: idle
+  - prefix: Parent Left Note Dad
+    offsets:
+      - -27
+      - 20
+    name: singLEFT
+  - prefix: Parent Down Note Dad
+    offsets:
+      - -29
+      - -26
+    name: singDOWN
+  - prefix: Parent Up Note Dad
+    offsets:
+      - -44
+      - 25
+    name: singUP
+  - prefix: Parent Right Note Dad
+    offsets:
+      - 0
+      - -20
+    name: singRIGHT
+  - prefix: Parent Left Note Mom
+    offsets:
+      - -28
+      - 18
+    name: singLEFT-alt
+  - prefix: Parent Down Note Mom
+    offsets:
+      - -38
+      - -24
+    name: singDOWN-alt
+  - prefix: Parent Up Note Mom
+    offsets:
+      - -44
+      - 28
+    name: singUP-alt
+  - prefix: Parent Right Note Mom
+    offsets:
+      - 1
+      - -20
+    name: singRIGHT-alt
+assetPath: characters/mom_dad_christmas_assets
+offsets:
+  - 100
+  - 0
+cameraOffsets:
+  - 200
+  - 0
+healthIcon: parents-christmas
+name: Mommy and Daddy (Festive)
+version: 1.0.0
