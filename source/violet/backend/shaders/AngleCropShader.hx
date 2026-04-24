@@ -18,7 +18,7 @@ class AngleCropShader extends ModShader {
 
 	public function new() {
 		super("angleCrop");
-		angle = -3.45;
+		angle = -3.41;
 		pivotY = 1;
 	}
 

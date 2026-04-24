@@ -86,9 +86,11 @@ class FreeplayMenu extends SubStateBackend {
 		for (i => data in getSongList()) {
 			if (!albumMap.exists(data._data.album) && data._data.album != null) {
 				var album = new Album(data._data.album);
-				album.x = 0;
+				album.x = skipTransition ? 0 : -(FlxG.width/2);
 				albumMap.set(data._data.album, album);
 				add(album);
+
+				FlxTween.tween(album, { x: 0 }, 0.5, { ease: FlxEase.expoOut, startDelay: 0.5 });
 			}
 
 			var cap = new Capsule(data);
@@ -211,7 +213,10 @@ class FreeplayMenu extends SubStateBackend {
 		snap = false;
 	}
 
+	var timer:FlxTimer;
+
 	function changeSelection(amount:Int) {
+		if (transitioning) return;
 		selectedSongIndex = FlxMath.wrap(selectedSongIndex + amount, 0, songCapsules.length - 1);
 		if (amount != 0) NovaUtils.playMenuSFX();
 		changeDiff(0);
@@ -232,9 +237,13 @@ class FreeplayMenu extends SubStateBackend {
 		selectASongText.alpha = 0.5;
 		selectASongText.velocity.set(100, 0);
 		insert(members.indexOf(topBar) - 1, selectASongText);
+
+		if (timer != null) timer.cancel();
+		timer = FlxTimer.wait(0.5, onTimerEnd);
 	}
 
 	function changeDiff(amount:Int) {
+		if (transitioning) return;
 		var song = getSongList()[selectedSongIndex];
 		var currentDiffIndex = song.difficulties.indexOf(difficultyText.text.toLowerCase());
 		var newDiffIndex = FlxMath.wrap(currentDiffIndex + amount, 0, song.difficulties.length - 1);
@@ -244,7 +253,15 @@ class FreeplayMenu extends SubStateBackend {
 		difficultyText.color = difficultyColors.get(difficultyText.text.toLowerCase());
 	}
 
+	function onTimerEnd() {
+		if (transitioning) return;
+		var songData = getSongList()[selectedSongIndex];
+		Conductor.playSong(songData.songName, songData.variant);
+	}
+
 	function selectSong() {
+		if (transitioning) return;
+		transitioning = true;
 		updateCapsulePosition = false;
 
 		NovaUtils.playMenuSFX(CONFIRM);
@@ -281,6 +298,9 @@ class FreeplayMenu extends SubStateBackend {
 		FlxTween.tween(bottomBar, {y: FlxG.height}, 0.5, { ease: FlxEase.expoIn });
 		FlxTween.tween(topBar, {y: -topBar.height}, 0.5, { ease: FlxEase.expoIn });
 		FlxTween.tween(capsuleOffset, {x: FlxG.width}, 0.5, { ease: FlxEase.expoIn });
+		for (i in albumMap) {
+			FlxTween.tween(i, {x: -(FlxG.width/2)}, 0.5, { ease: FlxEase.expoIn });
+		}
 
 		FlxTimer.wait(0.5, ()->{
 			close();
@@ -293,6 +313,9 @@ class FreeplayMenu extends SubStateBackend {
 		FlxTween.cancelTweensOf(bottomBar);
 		FlxTween.cancelTweensOf(topBar);
 		FlxTween.cancelTweensOf(capsuleOffset);
+		for (i in albumMap) {
+			FlxTween.cancelTweensOf(i);
+		}
 	}
 
 	public function getSongList():Array<Song> {

@@ -46,7 +46,7 @@ class Capsule extends FlxSpriteGroup {
         var temp = new NovaSprite(0, 0).loadSprite(Paths.image("menus/freeplaymenu/capsuleBackgrounds/" + capsuleBG));
 		temp.drawFrame();
 
-		var capsuleBackground = new FlxSkewedSprite(-11, 0);
+		var capsuleBackground = new FlxSkewedSprite(-10, 0);
         capsuleBackground.loadGraphicFromSprite(temp);
 		capsuleBackground.drawFrame();
 		// skewPixels(capsuleBackground, 30, 0);
@@ -68,7 +68,7 @@ class Capsule extends FlxSpriteGroup {
         add(capsuleBackground);
 
 
-		blackGradient = new FlxSkewedSprite(15, 0);
+		blackGradient = new FlxSkewedSprite(14, 0);
 		blackGradient.loadGraphic(FlxGradient.createGradientFlxSprite(Math.round(frontCase.width/2), Math.round(frontCase.height), [FlxColor.BLACK, FlxColor.BLACK, FlxColor.TRANSPARENT], 1, 0).pixels);
         blackGradient.antialiasing = true;
         blackGradient.skew.set(-30, 0);
