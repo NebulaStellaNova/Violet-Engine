@@ -189,13 +189,15 @@ class StrumLine extends FlxGroup {
 		if (Options.data.laneUnderlay) {
 			if (Options.data.fancyLaneUnderlay) {
 				for (i=>strum in strums) {
-					var lane = new FlxBackdrop(new FlxSprite().makeGraphic(Math.round(Note.swagWidth), FlxG.height, FlxColor.BLACK).pixels, Y);
+					var lane = new FlxBackdrop(Y);
+					lane.makeGraphic(Math.round(Note.swagWidth), FlxG.height, FlxColor.BLACK);
 					lane.x = Note.swagWidth * strumScale * strumSpacing * i;
 					lane.alpha = Options.data.underlayOpacity / 100;
 					dynamicLanes.push(lane);
 					lanes.add(lane);
 
-					var lane = new FlxBackdrop(new FlxSprite().makeGraphic(Math.round(Note.swagWidth), FlxG.height, flashColors[i % 4]).pixels, Y);
+					var lane = new FlxBackdrop(Y);
+					lane.makeGraphic(Math.round(Note.swagWidth), FlxG.height, flashColors[i % 4]);
 					lane.x = Note.swagWidth * strumScale * strumSpacing * i;
 					lane.alpha = 0;
 					dynamicLanesColored.push(lane);
@@ -205,7 +207,8 @@ class StrumLine extends FlxGroup {
 			} else {
 				var width:Int = Math.round(Note.swagWidth * strumScale * strumSpacing * strums.length);
 				width += Math.round(Options.data.laneGrow) * 2;
-				var lane = new FlxBackdrop(new FlxSprite().makeGraphic(width, FlxG.height, FlxColor.BLACK).pixels, Y);
+				var lane = new FlxBackdrop(Y);
+				lane.makeGraphic(width, FlxG.height, FlxColor.BLACK);
 				lane.alpha = Options.data.underlayOpacity / 100;
 				lanes.add(lane);
 			}
@@ -214,8 +217,8 @@ class StrumLine extends FlxGroup {
 
 	public function setPosition(x:Float = 0, y:Float = 0, purePos:Bool = true):Void {
 		if (Options.data.forceMiddleScroll && !purePos) {
-			if (x == 0.75) x = 0.5;
-			else if (x == 0.25) x = -1000;
+			if (isPlayer) x = 0.5;
+			else x = -1000;
 		}
 		if (purePos) {
 			lanes.x = x;
