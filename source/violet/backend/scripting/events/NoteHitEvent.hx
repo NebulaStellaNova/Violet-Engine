@@ -1,5 +1,6 @@
 package violet.backend.scripting.events;
 
+import violet.states.PlayState;
 import violet.backend.objects.play.Note;
 import violet.backend.objects.play.Strum;
 
@@ -29,6 +30,12 @@ class NoteHitEvent extends EventBase {
 
 	public function new(note:Note) {
 		super();
+		for (i=>strumLine in PlayState.instance.strumLines.members) {
+			if (strumLine == note.parent) {
+				animationSuffix = PlayState.instance.defaultSuffix[i];
+				break;
+			}
+		}
 		this.note = note;
 		this.strum = note.parentStrum;
 		this.spawnHoldCover = note.length > 10;

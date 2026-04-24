@@ -81,6 +81,8 @@ class PlayState extends violet.backend.StateBackend {
 	public static var curStoryLevel:String;
 	public static var storyScore:Int = 0;
 
+	public var defaultSuffix:Array<String> = [];
+
 	public var staticAccess = PlayState;
 
 	public var countdownEase:Float->Float = FlxEase.linear;
@@ -641,6 +643,14 @@ class PlayState extends violet.backend.StateBackend {
 		if (scriptEvent.cancelled) return;
 
 		switch (eventName) {
+			case 'Alt Animation Toggle':
+				var enableOnSing:Bool = event.params[0];
+				var enableOnIdle:Bool = event.params[1];
+				var strumLineID:Int = event.params[2];
+				defaultSuffix[strumLineID] = enableOnSing ? 'alt' : null;
+				for (i in strumLines.members[strumLineID].characters)
+					i.idleSuffix = enableOnIdle ? 'alt' : null;
+
 			case 'Change Character':
 				var strumlineID:Int = event.params[0];
 				var characterID:String = event.params[1];
