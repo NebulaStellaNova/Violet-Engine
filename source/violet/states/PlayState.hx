@@ -365,6 +365,8 @@ class PlayState extends violet.backend.StateBackend {
 	override public function update(elapsed:Float):Void {
 		super.update(elapsed);
 
+		if (!songStarted) Conductor.setSongPosition(0);
+
 		staticExit = exitToMenu;
 
 		callSongScripts('update', [elapsed]);
