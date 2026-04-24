@@ -288,7 +288,9 @@ class PlayState extends violet.backend.StateBackend {
 		add(healthBar);
 
 		if (iconOpponent == null) iconOpponent = new HealthIcon('face'); // Null safety
+		iconOpponent.scaleFromCenter = false;
 		if (iconPlayer == null) iconPlayer = new HealthIcon('face', false); // Null safety
+		iconPlayer.scaleFromCenter = false;
 
 		if (iconOpponent._data.color != null && Options.data.coloredHealthBar) {
 			healthBar.leftColor = iconOpponent._data.color;
