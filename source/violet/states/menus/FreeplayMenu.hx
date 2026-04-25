@@ -253,9 +253,13 @@ class FreeplayMenu extends SubStateBackend {
 		difficultyText.color = difficultyColors.get(difficultyText.text.toLowerCase());
 	}
 
+	var current:String = null;
+
 	function onTimerEnd() {
 		if (transitioning) return;
 		var songData = getSongList()[selectedSongIndex];
+		if (current == '${songData.songName}:${songData.variant}') return;
+		else current = '${songData.songName}:${songData.variant}';
 		Conductor.playSong(songData.songName, songData.variant);
 	}
 
