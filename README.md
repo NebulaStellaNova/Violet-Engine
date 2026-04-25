@@ -1,3 +1,9 @@
+# Get The Engine
+Here's direct downloads for each platform:<br>
+- [Violet Engine Windows Build](https://nightly.link/NebulaStellaNova/Violet-Engine/workflows/debug/main/Violet%20Windows%20Build.zip)<br>
+- [Violet Engine Linux Build](https://nightly.link/NebulaStellaNova/Violet-Engine/workflows/debug/main/Violet%20Linux%20Build.zip)<br>
+- [Violet Engine MacOS Build](https://nightly.link/NebulaStellaNova/Violet-Engine/workflows/debug/main/Violet%20macOS%20Build.zip)<br>
+
 # About
 A brand new fnf engine coded entirely from the ground up, NO it's not a fork of Psych Engine.<br>
 And if you think Psych forks are engines you should be ashamed, they are FORKS...<br>
