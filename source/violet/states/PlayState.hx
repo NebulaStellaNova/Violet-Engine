@@ -914,10 +914,18 @@ class PlayState extends violet.backend.StateBackend {
 	public static var staticExit:Void->Void;
 
 	public dynamic function exitToMenu() {
-		if (isStoryMode)
-			FlxG.switchState(new StoryMenu().build());
-		else
-			FlxG.switchState(new FreeplayMenu().build());
+		var onComplete = ()->{
+			if (isStoryMode)
+				FlxG.switchState(new StoryMenu().build());
+			else
+				FlxG.switchState(new FreeplayMenu().build());
+		}
+		if (subState != null) onComplete();
+		else {
+			for (i in FlxG.cameras.list)
+				i.fade(FlxColor.BLACK, 0.5);
+			FlxTimer.wait(0.6, onComplete);
+		}
 	}
 
 }
