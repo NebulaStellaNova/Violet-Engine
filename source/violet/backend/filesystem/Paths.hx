@@ -143,13 +143,17 @@ class Paths {
 	public static function readFolder(path:String, startFromRoot:Bool = false, ?filter:String->Bool, modOnly:Bool = false):Array<String> {
 		if (startFromRoot) {
 			var files = folderExists(path, startFromRoot) ? _handleDirectories(Path.removeTrailingSlashes(root(path, true))) : [];
-			return filter != null ? files.filter(filter) : files;
+			var out = (filter != null ? files.filter(filter) : files);
+			out.sort(NovaUtils.sortAlphabetically);
+			return out;
 		}
 		var files:Array<String> = [];
 		for (folder in multiRoot(path, modOnly))
 			for (file in _handleDirectories(Path.removeTrailingSlashes(folder)))
 				files.push(file);
-		return filter != null ? files.filter(filter) : files;
+		var out = (filter != null ? files.filter(filter) : files);
+		out.sort(NovaUtils.sortAlphabetically)
+		return out;
 	}
 
 	/**
