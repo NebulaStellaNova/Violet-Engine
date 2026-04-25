@@ -30,11 +30,7 @@ class StageConverters {
 			basicCharPos: true,
 			zoom: Std.parseFloat(d(stage, 'zoom', '0.6')),
 			directory: d(stage, 'folder', ''),
-			props: [],
-			cameraPosition: [
-				Std.parseFloat(d(stage, 'startCamPosX', '0')),
-				Std.parseFloat(d(stage, 'startCamPosY', '0'))
-			]
+			props: []
 		}
 
 		for (i in stage.elements) {
@@ -62,7 +58,7 @@ class StageConverters {
 						alpha: Std.parseFloat(d(i, 'alpha', '1')),
 						angle: Std.parseFloat(d(i, 'angle', '0')),
 						color: d(i, 'color', '#FFFFFF'),
-						isPixel: d(i, 'antialiasing', 'true') == 'true',
+						isPixel: d(i, 'antialiasing', 'true') == 'false',
 						flipX: d(i, 'flipX', 'false') == 'true',
 						flipY: d(i, 'flipY', 'false') == 'true',
 						animations: []
