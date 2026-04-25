@@ -152,7 +152,7 @@ class Paths {
 			for (file in _handleDirectories(Path.removeTrailingSlashes(folder)))
 				files.push(file);
 		var out = (filter != null ? files.filter(filter) : files);
-		out.sort(NovaUtils.sortAlphabetically)
+		out.sort(NovaUtils.sortAlphabetically);
 		return out;
 	}
 
