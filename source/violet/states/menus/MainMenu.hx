@@ -36,6 +36,7 @@ typedef MenuItem = {
 	var disabled:Bool;
 	var color:ParseColor;
 	var animations:MenuAnimations;
+	var ?transition:Bool;
 }
 
 typedef MenuData = {
@@ -103,6 +104,8 @@ class MainMenu extends StateBackend {
 		// FlxG.camera.color = FlxColor.BLACK;
 
 		menuData = ParseUtil.json('data/config/menuData');
+		for (i in menuData.items)
+			i.transition ??= true;
 
 		#if mobile
 		for (i in menuData.items) {
@@ -366,7 +369,7 @@ class MainMenu extends StateBackend {
 
 		var classData = new ClassData(menuData.items[curSelected].state);
 
-		if (classData.isSubState) {
+		if (classData.isSubState && menuData.items[curSelected].transition) {
 			FlxTween.tween(bg, {x: FlxG.width - bg.width }, 0.5*2, { ease: FlxEase.smootherStepInOut });
 			for (i in menuItems) {
 				FlxTween.tween(i, { x: i.x - FlxG.width }, 0.5, { ease: FlxEase.smootherStepIn });
@@ -375,7 +378,7 @@ class MainMenu extends StateBackend {
 			FlxTween.tween(debugWatermark, { y: -debugWatermark.getHeight() }, 0.5, { ease: FlxEase.backIn });
 		}
 
-		new FlxTimer().start(0.5, (t)->{
+		new FlxTimer().start(menuData.items[curSelected].transition ? 0.5 : 0.001, (t)->{
 			if (classData.isSubState) {
 				openSubState(classData.target);
 				persistentUpdate = true;

@@ -17,3 +17,5 @@ beatsPerMeasure: 4
 needsVoices: true
 bpm: 165
 album: volume1
+variants:
+  - erect

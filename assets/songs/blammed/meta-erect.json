@@ -1,0 +1,26 @@
+{
+	
+	"gradient": ["#83FD99", "#FF6700"],
+	"freeplayCapsule": "train-erect",
+	"ratings": {
+		"nightmare": 12,
+		"erect": 11
+	},
+	"composer": "Kawai Sprite",
+	"album": "volume3",
+	"charter": "fabs + Spazkid",
+	"instSuffix": "-erect",
+	"opponentModeAllowed": false,
+	"difficulties": [
+		"erect",
+		"nightmare"
+	],
+	"icon": "pico",
+	"coopAllowed": false,
+	"stepsPerBeat": 4,
+	"displayName": "Blammed Erect",
+	"beatsPerMeasure": 4,
+	"needsVoices": false,
+	"vocalsSuffix": "-erect",
+	"bpm": 170
+}

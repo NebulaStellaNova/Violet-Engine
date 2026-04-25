@@ -111,6 +111,8 @@ class InitialState extends StateBackend { // for now
 
 			if (Controls.reloadGame) {
 				Conductor.pause();
+				FlxG.sound.music.stop();
+				for (i in FlxG.sound.list.members) i.stop();
 				ModdingAPI.reloadModList();
 				ModdingAPI.reloadRegistries();
 				ModdingAPI.checkForHXC();

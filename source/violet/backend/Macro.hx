@@ -38,6 +38,9 @@ class Macro {
 	public static macro function buildFlxCamera():Array<Field> {
 		var classFields:Array<Field> = Context.getBuildFields();
 		var tempClass = macro class TempClass {
+
+			private var addedShaders:Map<FlxShader, openfl.filters.ShaderFilter> = [];
+
 			/**
 			 * Adds a FlxShader as a filter to the camera
 			 * @param shader Shader to add
@@ -47,7 +50,15 @@ class Macro {
 				var filter:openfl.filters.ShaderFilter = null;
 				if (filters == null) filters = [];
 				filters.push(filter = new openfl.filters.ShaderFilter(shader));
+				addedShaders.set(shader, filter);
 				return filter;
+			}
+
+			public function removeShader(shader:FlxShader) {
+				if (addedShaders.exists(shader)) {
+					filters.remove(addedShaders.get(shader));
+					addedShaders.remove(shader);
+				}
 			}
 		}
 
