@@ -50,6 +50,7 @@ class ChartConverters {
 	}
 
 	public static function convertChart(chartCache:ChartCache):ChartData {
+		if (chartCache?.fileExt == null) return blankChart;
 		var parsedCache:Dynamic = parseFromCache(chartCache);
 		var detectedFormat:ChartFormatChecker.ChartFileFormat = ChartFormatChecker.checkFormat(parsedCache);
 		var convertedChart:ChartData;
