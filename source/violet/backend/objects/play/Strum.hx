@@ -96,7 +96,7 @@ class Strum extends NovaSprite {
 		if (holdCover == null) return;
 		if (holdCover.exists && holdCover.animation.name != 'end') {
 			final partOffsets:Array<Float> = styleMeta.getHoldCoverOffsets();
-			holdCover.setPosition(this.x - (holdCover.width/2) + partOffsets[0], this.y - (holdCover.height/2) + partOffsets[1]);
+			holdCover.setPosition(this.x - (holdCover.width/2) + partOffsets[0], this.y - (holdCover.height/2) + (partOffsets[1] + (parent.downscroll ? 7 : 0)));
 		}
 	}
 
