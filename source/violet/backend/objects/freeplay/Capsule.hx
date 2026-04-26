@@ -85,7 +85,9 @@ class Capsule extends FlxSpriteGroup {
         iconBG.updateHitbox();
         add(iconBG);
 
-		var iconImage = new HealthIcon(songData.icon, false, false);
+		final outlinePathe = 'icons/outlines/${songData.icon}-outline'; // Typo but I'm not changing it now
+		final outlineAsset = Paths.image(outlinePathe);
+		var iconImage = new HealthIcon(songData.icon, false, false, outlineAsset != '' ? outlinePathe : null);
         iconImage.scaleOffset = 0.45;
 		iconImage.globalOffset.set(0, 0);
 		iconImage.canDance = false;

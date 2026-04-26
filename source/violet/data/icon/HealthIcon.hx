@@ -14,16 +14,19 @@ class HealthIcon extends Bopper {
 	public var scaleOffset:Float = 1;
 	public var cache:Bool = true;
 	public var scaleFromCenter:Bool = true;
+	public var assetPathOverride:Null<String>;
 
-	public function new(id:String, isOpponent:Bool = true, cache:Bool = true) {
+	public function new(id:String, isOpponent:Bool = true, cache:Bool = true, ?assetPathOverride:String) {
 		this.id = id;
 		this.isOpponent = isOpponent;
 		this.cache = cache;
 		super();
-		setIcon(id);
+		setIcon(id, assetPathOverride);
 	}
 
-	public function setIcon(id:String) {
+	public function setIcon(id:String, ?assetPathOverride:String) {
+		this.id = id;
+		this.assetPathOverride = assetPathOverride;
 		var defaultData = HealthIconRegistry.healthIconDatas.get(Constants.DEFAULT_HEALTH_ICON);
 		this._data = HealthIconRegistry.healthIconDatas.get(id) ?? defaultData;
 
@@ -33,7 +36,8 @@ class HealthIcon extends Bopper {
 		this._data.isPixel ??= false;
 		this._data.assetPath ??= 'icons/$id';
 
-		loadSprite(Paths.image(this._data.assetPath) != '' ? Paths.image(this._data.assetPath) : Paths.image(defaultData.assetPath), cache);
+		final assetPath = assetPathOverride ?? this._data.assetPath;
+		loadSprite(Paths.image(assetPath) != '' ? Paths.image(assetPath) : Paths.image(defaultData.assetPath), cache);
 
 		if (this.animated) {
 			this.addAnim('idle', 'idle', 24, true);
