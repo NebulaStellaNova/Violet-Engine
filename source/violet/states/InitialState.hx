@@ -113,11 +113,7 @@ class InitialState extends StateBackend { // for now
 				Conductor.pause();
 				FlxG.sound.music.stop();
 				for (i in FlxG.sound.list.members) i.stop();
-				ModdingAPI.reloadModList();
-				ModdingAPI.reloadRegistries();
-				ModdingAPI.checkForHXC();
-				GlobalPack.init();
-				refreshRedirects();
+				reloadEverything();
 				resetState();
 			}
 			if (Controls.resetState) resetState();
@@ -141,6 +137,14 @@ class InitialState extends StateBackend { // for now
 			GlobalPack.init();
 		});
 		// FlxG.camera.visible = false;
+	}
+
+	public static function reloadEverything() {
+		ModdingAPI.reloadModList();
+		ModdingAPI.reloadRegistries();
+		ModdingAPI.checkForHXC();
+		GlobalPack.init();
+		refreshRedirects();
 	}
 
 	public function resetState() {

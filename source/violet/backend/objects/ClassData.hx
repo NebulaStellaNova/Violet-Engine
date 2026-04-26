@@ -29,6 +29,9 @@ class ClassData {
 				case "OptionsMenu":
 					this.target = new OptionsMenu();
 					this.isSubState = true;
+				case "MoTW" | "ModOfTheWeekMenu":
+					this.target = new ModOfTheWeekMenu();
+					this.isSubState = true;
 				/* case "CreditsState":
 					this.target = new CreditsState();
 				case "PlayState":

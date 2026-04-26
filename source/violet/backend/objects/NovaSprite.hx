@@ -125,7 +125,7 @@ class NovaSprite extends #if ANIMATE_SUPPORT FlxAnimate #else FlxSprite #end {
 		return this;
 	}
 
-	dynamic function onLoaded():Void {}
+	public dynamic function onLoaded():Void {}
 
 	@:unreflective var prevUrl:String = "";
 	@:unreflective function fromWeb(url:String):NovaSprite @:privateAccess {

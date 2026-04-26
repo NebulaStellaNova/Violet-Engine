@@ -1,5 +1,6 @@
 package violet.data.chart;
 
+import flixel.util.typeLimit.OneOfTwo;
 import violet.data.song.SongData;
 
 typedef ChartData = {
@@ -37,7 +38,7 @@ typedef ChartNote = {
 	var time:Float;
 	var id:Int;
 	var sLen:Float;
-	var ?type:Int;
+	var ?type:OneOfTwo<Int, String>;
 }
 
 typedef ChartEvent = {

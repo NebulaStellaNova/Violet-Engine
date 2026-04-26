@@ -1,5 +1,6 @@
 package violet.states.menus;
 
+import flixel.FlxCamera;
 import violet.backend.options.Options;
 import violet.data.Constants;
 import flixel.FlxObject;
@@ -59,6 +60,11 @@ class MainMenu extends StateBackend {
 	public var curSelectedString:String = '';
 	public var bgColorString:String = '';
 
+	public var reloadingText:NovaText;
+	public var reloadingBG:NovaSprite;
+	// public var reloadingCamera:FlxCamera;
+	public static var fromReload:Bool = false;
+
 	public static var curSelected:Int = 0;
 
 	public var menuData:MenuData;
@@ -88,6 +94,10 @@ class MainMenu extends StateBackend {
 
 	public static var instance:MainMenu;
 
+	public static var doReload:Bool = false;
+
+	public var fadeIn:Bool = true;
+
 	override public function new() {
 		instance = this;
 		super();
@@ -96,6 +106,7 @@ class MainMenu extends StateBackend {
 	override public function create()
 	{
 		super.create();
+		instance = this;
 
 		NovaUtils.playMenuMusic();
 
@@ -197,7 +208,7 @@ class MainMenu extends StateBackend {
 		FlxG.camera.snapToTarget();
 		FlxG.camera.followLerp = 0.1;
 
-		FlxG.camera.fade(FlxColor.BLACK, 0.25, true);
+		if (fadeIn) FlxG.camera.fade(FlxColor.BLACK, 0.25, true);
 
 		#if debug
 		DebugDisplay.registerVariable('Current Menu Item Index', () -> return curSelected);
@@ -207,6 +218,29 @@ class MainMenu extends StateBackend {
 		#end
 
 		NovaUtils.playMenuMusic();
+
+		reloadingBG = new NovaSprite().makeGraphic(FlxG.width, FlxG.height, FlxColor.BLACK);
+		reloadingBG.scrollFactor.set();
+		add(reloadingBG);
+
+		reloadingText = new NovaText(0, 0, 0, 'Reloading Mods...', Paths.font('Tardling v1.1'));
+		reloadingText.size = 100;
+		reloadingText.x = 20;
+		reloadingText.y = FlxG.height - 50;
+		reloadingText.updateHitbox();
+		reloadingText.scrollFactor.set();
+		add(reloadingText);
+
+		reloadingBG.alpha = fromReload ? 1 : 0;
+		reloadingText.alpha = fromReload ? 1 : 0;
+
+		if (fromReload) FlxTween.tween(reloadingBG, { alpha: 0 }, 0.5);
+		if (fromReload) FlxTween.tween(reloadingText, { alpha: 0 }, 0.5);
+
+		if (fromReload) fromReload = false;
+
+		// if (fromReload) FlxTimer.wait(0.1, ()->FlxTween.tween(reloadingCamera, { alpha: 0 }, 1, { ease: FlxEase.expoOut }));
+		// if (fromReload) fromReload = false;
 
 		callInScripts('postCreate');
 	}
@@ -224,6 +258,19 @@ class MainMenu extends StateBackend {
 	override public function update(elapsed:Float)
 	{
 		super.update(elapsed);
+
+		if (doReload) {
+			doReload = false;
+			FlxTween.tween(reloadingBG, { alpha: 1 }, 0.5);
+			FlxTween.tween(reloadingText, { alpha: 1 }, 0.5);
+			FlxTimer.wait(0.6, ()->{
+				InitialState.reloadEverything();
+				var mm = new MainMenu();
+				fadeIn = false;
+				fromReload = true;
+				FlxG.switchState(mm);
+			});
+		}
 		// trace(Main.stateClassName);
 		// trace(Main.subStateClassName);
 		if (canSelect && (Controls.uiUp || Controls.uiDown))
@@ -415,5 +462,11 @@ class MainMenu extends StateBackend {
 		FlxTween.tween(leftWatermark, { y: FlxG.height - leftWatermark.getHeight() - 5 }, 0.5, { ease: FlxEase.backOut });
 		FlxTween.tween(debugWatermark, { y: 10 }, 0.5, { ease: FlxEase.backOut });
 	}
+
+	public function reloadMods() {
+		doReload = true;
+	}
+
+
 
 }

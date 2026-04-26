@@ -1,5 +1,8 @@
 package violet.backend.utils;
 
+import openfl.net.URLRequest;
+import openfl.net.URLLoader;
+import openfl.net.URLLoaderDataFormat;
 import violet.backend.options.Options;
 import flixel.graphics.FlxGraphic;
 import openfl.display.BitmapData;
@@ -140,6 +143,15 @@ class NovaUtils {
 		a = a.toUpperCase();
 		b = b.toUpperCase();
 		return a == b ? 0 : a > b ? 1 : -1;
+	}
+
+	public static function loadURL(url:String, onLoaded:Dynamic->Void, ?type:URLLoaderDataFormat = BINARY) {
+		final loader = new URLLoader();
+		loader.dataFormat = URLLoaderDataFormat.BINARY;
+		loader.addEventListener("complete", _ -> {
+			onLoaded(loader.data);
+		});
+		loader.load(new URLRequest(url));
 	}
 
 }

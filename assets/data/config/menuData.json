@@ -37,6 +37,22 @@
 			"color": "#ffff00"
 		},
 		{
+			"id": "motw",
+			"item": "motw",
+			"scale": 0.8,
+			"transition": false,
+			"animations": {
+				"idle": "basic",
+				"selected": "white",
+				"offsets": {
+					"selected": [ 0, -20 ],
+					"idle": [ 0, -20 ]
+				}
+			},
+			"state": "source:ModOfTheWeekMenu",
+			"color": "#00FF11"
+		},
+		{
 			"id": "credits",
 			"item": "credits",
 			"animations": {
