@@ -175,10 +175,10 @@ class NovaSprite extends #if ANIMATE_SUPPORT FlxAnimate #else FlxSprite #end {
 		updateHitbox();
 	}
 
+	public var prevPlayedAnim:String;
+
 	public function playAnim(name:String, forced:Bool = false, reversed:Bool = false, frame:Int = 0):Void {
-		/* if (this.animation.exists(name)) {
-			this.animation.play(name, forced, reversed, frame);
-		} */
+		prevPlayedAnim = name;
 		if (this.anim.exists(name)) {
 			this.anim.play(name, forced, reversed, frame);
 		}
@@ -246,18 +246,22 @@ class NovaSprite extends #if ANIMATE_SUPPORT FlxAnimate #else FlxSprite #end {
 			#else
 			trace('warning:Atlas\'s aren\'t supported in this build of Violet Engine.');
 			#end
+			if (newFrames != null) {
+				#if ANIMATE_SUPPORT
+				this.frames = animate.FlxAnimateFrames.combineAtlas(newFrames, cast this.frames);
+				#else
+				if (this.frames is FlxAtlasFrames)
+					this.frames = newFrames.addAtlas(cast(this.frames, FlxAtlasFrame));
+				#end
+			}
 		} else {
 			if (Paths.fileExists(path.replace(".png", ".xml"), true))
 				newFrames = NovaUtils.getSparrowFrames(path);
+			if (newFrames != null) {
+				for (i in newFrames.frames) this.frames.pushFrame(i);
+			}
 		}
-		if (newFrames != null) {
-			#if ANIMATE_SUPPORT
-			this.frames = animate.FlxAnimateFrames.combineAtlas(newFrames, cast this.frames);
-			#else
-			if (this.frames is FlxAtlasFrames)
-				this.frames = newFrames.addAtlas(cast(this.frames, FlxAtlasFrame));
-			#end
-		}
+
 	}
 
 	var __characterFlip:Bool = false;
