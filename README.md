@@ -34,8 +34,9 @@ I would greatly appreciate it.
 
 # Compilation
 
-You MUST run `setup.bat` before compiling or it will not work<br>
-Once you run that simply open the console in this folder and type `lime test windows`
+You MUST run the setup script before compiling or it will not work.<br>
+Use `setup.bat` on Windows, or `sh setup.sh` on Linux/macOS.<br>
+Once you run that, open the console in this folder and type `lime test windows`, `lime test linux`, or `lime test mac`.
 
 
 # Credits
