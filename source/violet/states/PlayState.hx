@@ -670,8 +670,8 @@ class PlayState extends violet.backend.StateBackend {
 				charToAdd.y = charToReplace.y;
 				charToAdd.z = charToReplace.z + 1;
 
-				if (charToAdd.animationList.contains(charToReplace.animation.name)) {
-					charToAdd.playAnim(charToReplace.animation.name);
+				if (charToAdd.animationList.contains(charToReplace.prevPlayedAnim)) {
+					charToAdd.playAnim(charToReplace.prevPlayedAnim);
 					charToAdd.animation.curAnim.curFrame = charToReplace.animation.curAnim.curFrame;
 				}
 
