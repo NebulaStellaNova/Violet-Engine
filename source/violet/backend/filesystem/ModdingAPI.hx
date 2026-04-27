@@ -191,6 +191,7 @@ class ModdingAPI {
 				meta.tags ??= [];
 				meta.id ??= meta.folder;
 				meta.title ??= meta.folder;
+				meta.contributors ??= [];
 				for (contributor in meta.contributors)
 					contributor.color ??= FlxColor.WHITE;
 				meta;
