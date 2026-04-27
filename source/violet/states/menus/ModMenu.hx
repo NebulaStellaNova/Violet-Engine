@@ -249,6 +249,7 @@ class ModMenu extends SubStateBackend {
 
 		if (Controls.uiUp || Controls.uiDown || instant) {
 			updateCredits();
+			if (!instant) NovaUtils.playMenuSFX();
 		}
 
 		for (ind=>i in creditsStuff) {
