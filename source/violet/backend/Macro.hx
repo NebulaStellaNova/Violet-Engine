@@ -213,6 +213,7 @@ class Macro {
 		var tempClass = macro class TempClass {
 			/**
 			 * The property sort the objects by.
+			 * [NOTE] If you change this value it will use reflection, which CAN cause lag so be aware.
 			 */
 			public var sortBy:String = 'zIndex';
 
@@ -227,8 +228,8 @@ class Macro {
 				f.expr = macro {
 					members.sort((a, b)->{
 						if (a == null || b == null) return 0;
-						final aOutput = Reflect.getProperty(a, sortBy);
-						final bOutput = Reflect.getProperty(b, sortBy);
+						final aOutput:Null<Dynamic> = sortBy == 'zIndex' ? a.zIndex : Reflect.getProperty(a, sortBy);
+						final bOutput:Null<Dynamic> = sortBy == 'zIndex' ? b.zIndex : Reflect.getProperty(b, sortBy);
 						if (aOutput == null || bOutput == null) return 0;
 						if (Math.isNaN(aOutput) || Math.isNaN(bOutput)) return 0;
 						return flixel.util.FlxSort.byValues(-1, aOutput, bOutput);
