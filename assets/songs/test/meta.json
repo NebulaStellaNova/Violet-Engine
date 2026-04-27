@@ -1,0 +1,19 @@
+{
+  "opponentModeAllowed": true,
+  "icon": "bf",
+  "difficulties": [
+    "normal"
+  ],
+  "isDev": true,
+  "coopAllowed": true,
+  "gradient": [
+    "#7BD6F6",
+    "#31B0D1"
+  ],
+  "stepsPerBeat": 4,
+  "displayName": "Test",
+  "beatsPerMeasure": 4,
+  "needsVoices": true,
+  "album": "volume1",
+  "bpm": 150
+}
