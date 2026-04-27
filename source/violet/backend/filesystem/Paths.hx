@@ -148,11 +148,13 @@ class Paths {
 			return out;
 		}
 		var files:Array<String> = [];
-		for (folder in multiRoot(path, modOnly))
-			for (file in _handleDirectories(Path.removeTrailingSlashes(folder)))
+		for (folder in multiRoot(path, modOnly)) {
+			var list = _handleDirectories(Path.removeTrailingSlashes(folder));
+			list.sort(NovaUtils.sortAlphabetically);
+			for (file in list)
 				files.push(file);
+		}
 		var out = (filter != null ? files.filter(filter) : files);
-		out.sort(NovaUtils.sortAlphabetically);
 		return out;
 	}
 
