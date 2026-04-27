@@ -14,7 +14,7 @@ class CharacterRegistry {
 
 		for (file in Paths.readFolder('data/characters', v -> return FileUtil.isDataFile(v))) {
 			if (FileUtil.hasExt(file, 'json')) {
-				var parsed = ParseUtil.jsonOrYaml('data/characters/${Paths.fileName(file)}');
+				var parsed = ParseUtil.json('data/characters/${Paths.fileName(file)}');
 				var format = CharacterFormatChecker.checkFormat(parsed);
 				if (format == PSYCH) {
 					register(Paths.fileName(file), CharacterConverters.fromPsych('data/characters/${Paths.fileName(file)}'));
@@ -24,7 +24,7 @@ class CharacterRegistry {
 					trace('error:Unknown character format for file "data/characters/${Paths.fileName(file)}", skipping.');
 				}
 			} else {
-				register(Paths.fileName(file), ParseUtil.jsonOrYaml('data/characters/${Paths.fileName(file)}'));
+				register(Paths.fileName(file), ParseUtil.yaml('data/characters/${Paths.fileName(file)}'));
 			}
 
 

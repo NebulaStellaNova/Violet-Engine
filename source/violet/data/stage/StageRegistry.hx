@@ -15,7 +15,7 @@ class StageRegistry {
 
 		for (file in Paths.readFolder('data/stages', v -> return FileUtil.isDataFile(v))) {
 			if (FileUtil.hasExt(file, 'json')) {
-				var parsed = ParseUtil.jsonOrYaml('data/stages/${Paths.fileName(file)}');
+				var parsed = ParseUtil.json('data/stages/${Paths.fileName(file)}');
 				var format = StageFormatChecker.checkFormat(parsed);
 				if (format == VSLICE) {
 					register(Paths.fileName(file), StageConverters.fromVSlice('data/stages/${Paths.fileName(file)}'));
@@ -25,7 +25,7 @@ class StageRegistry {
 					register(Paths.fileName(file), parsed);
 				}
 			} else {
-				register(Paths.fileName(file), ParseUtil.jsonOrYaml('data/stages/${Paths.fileName(file)}'));
+				register(Paths.fileName(file), ParseUtil.yaml('data/stages/${Paths.fileName(file)}'));
 			}
 		}
 
