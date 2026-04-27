@@ -252,21 +252,24 @@ class StrumLine extends FlxGroup {
 			currentInputs.push(false);
 		}
 	}
+
+	public var preparedNotes:Array<Note> = [];
+
 	public function generateNotes(?time:Float):Void {
 		var stackedNoteCount:Int = 0;
 		for (data in chartData.notes) {
 			if (data.time < time ?? Math.NEGATIVE_INFINITY) continue;
 			var note:Note = new Note(this, data.id, data.time, data.sLen, PlayState.SONG._data.noteTypes[data.type-1]);
 			var exists = false;
-			for (i in notes) {
+			for (i in preparedNotes) {
 				if (i.time == data.time && i.id == data.id) exists = true;
 				if (exists && data.sLen > i.length) {
-					notes.remove(i);
+					preparedNotes.remove(i);
 					i.destroy();
 					exists = false;
 				}
 			}
-			if (!exists) notes.add(note);
+			if (!exists) preparedNotes.push(note);
 			else note.destroy();
 			if (exists) stackedNoteCount++;
 		}
@@ -280,6 +283,14 @@ class StrumLine extends FlxGroup {
 	public dynamic function _onSustainMissed(sustain:Sustain):Void {}
 
 	override public function update(elapsed:Float):Void {
+
+		for (i in preparedNotes) {
+			var speed = i?.__scrollSpeed ?? scrollSpeed;
+			if (!i.destroyed && !notes.members.contains(i) && i.time - Conductor.songPosition < 1500 / speed) {
+				notes.add(i);
+			}
+		}
+
 		// auto hit and note miss
 		notes.forEachExists((note:Note) -> {
 			if (note.tooLate && !note.wasHit && !note.wasMissed)
@@ -384,6 +395,10 @@ class StrumLine extends FlxGroup {
 		for (i => lane in dynamicLanesColored) {
 			lane.alpha = MathUtil.lerp(lane.alpha, 0, 0.2);
 		}
+
+		notes.forEachExists((note:Note) -> {
+			if (note.destroyed) notes.remove(note);
+		});
 	}
 
 	final currentInputs:Array<Bool> = [];
