@@ -220,16 +220,16 @@ class Macro {
 			function get_last() return this.members.copy().pop();
 		}
 
-		var drawFuncy = classFields.filter(field -> return field.name == 'draw')[0];
+		var drawFuncy = classFields.filter(field -> return field.name == 'update')[0];
 		switch (drawFuncy.kind) {
 			case FFun(f):
 				var initExpr:Expr = f.expr;
 				f.expr = macro {
 					members.sort((a, b)->{
 						if (a == null || b == null) return 0;
-						if (!(Reflect.hasField(a, sortBy) || Reflect.hasField(b, sortBy))) return 0;
 						final aOutput = Reflect.getProperty(a, sortBy);
 						final bOutput = Reflect.getProperty(b, sortBy);
+						if (aOutput == null || bOutput == null) return 0;
 						if (Math.isNaN(aOutput) || Math.isNaN(bOutput)) return 0;
 						return flixel.util.FlxSort.byValues(-1, aOutput, bOutput);
 					});

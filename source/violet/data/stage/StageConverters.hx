@@ -238,12 +238,6 @@ class StageConverters {
 		};
 		out.props.push(data);
 
-		out.props.sort((a, b)->{
-			if (a.zIndex > b.zIndex) return 1;
-			if (a.zIndex < b.zIndex) return -1;
-			return 0;
-		});
-
 		return out;
 	}
 
