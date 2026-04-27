@@ -242,13 +242,13 @@ class NovaSprite extends #if ANIMATE_SUPPORT FlxAnimate #else FlxSprite #end {
 		var newFrames:FlxAtlasFrames = null;
 		if (Path.extension(path) == 'json') {
 			#if ANIMATE_SUPPORT
-			newFrames = NovaUtils.getAtlasFrames(path);
+			newFrames = NovaUtils.getAtlasFrames(Path.directory(path));
 			#else
 			trace('warning:Atlas\'s aren\'t supported in this build of Violet Engine.');
 			#end
 			if (newFrames != null) {
 				#if ANIMATE_SUPPORT
-				this.frames = animate.FlxAnimateFrames.combineAtlas(newFrames, cast this.frames);
+				this.frames = animate.FlxAnimateFrames.combineAtlas(cast this.frames, newFrames);
 				#else
 				if (this.frames is FlxAtlasFrames)
 					this.frames = newFrames.addAtlas(cast(this.frames, FlxAtlasFrame));
