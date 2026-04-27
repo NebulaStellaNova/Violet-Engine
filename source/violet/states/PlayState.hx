@@ -212,6 +212,7 @@ class PlayState extends violet.backend.StateBackend {
 		callSongScripts('onLoaded');
 
 		strumLines = new FlxTypedGroup<StrumLine>();
+		strumLines.z = 100;
 
 		Conductor.playSong(songData.songName, variation); Conductor.pause();
 		Conductor.offset = (countdownLength) * Conductor.beatLengthMs;
@@ -225,7 +226,6 @@ class PlayState extends violet.backend.StateBackend {
 			var strumLine = new StrumLine(data);
 			strumLine.camera = camHUD;
 			strumLine.visible = data.visible;
-			strumLine.z = 1000;
 			strumLine.ID = i;
 			strumLines.add(strumLine);
 
