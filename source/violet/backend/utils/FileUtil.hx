@@ -1,5 +1,7 @@
 package violet.backend.utils;
 
+import sys.io.File;
+import sys.FileSystem;
 import flixel.util.typeLimit.OneOfTwo;
 import haxe.io.Path;
 import lime.ui.FileDialog;
@@ -58,5 +60,53 @@ class FileUtil {
 	/* inline public static function setFileContent(path:String):String {
 		return sys.io.File.getContent(path);
 	} */
+
+	public static function deleteDirectory(path) {
+		if (!FileSystem.exists(path)) return;
+		var subObjects = FileSystem.readDirectory(path);
+		for (i in subObjects) {
+			if (!StringTools.contains(i, ".")) {
+				deleteDirectory(path + "/" + i);
+			} else {
+				FileSystem.deleteFile(path + "/" + i);
+			}
+		}
+		FileSystem.deleteDirectory(path);
+	}
+
+	public static function moveFile(filePath:String, destination:String) {
+		var destinationSplit:Array<String> = destination.split('/');
+		var current = "";
+		for (i in destinationSplit) {
+			if (current == '')
+				current = i;
+			else
+				current = '$current/$i';
+
+			if (!FileSystem.exists(current)) FileSystem.createDirectory(current);
+		}
+		File.saveBytes('$destination/${Path.withoutDirectory(filePath)}', File.getBytes(filePath));
+		FileSystem.deleteFile(filePath);
+	}
+
+	public static function renameFile(filePath:String, name:String) {
+		FileSystem.rename(filePath, '${Path.directory(filePath)}/$name.${Path.extension(filePath)}');
+	}
+
+	public static function moveDirectory(path:String, to:String) {
+		var subObjects = FileSystem.readDirectory(path);
+		for (i in subObjects) {
+			if (FileSystem.isDirectory('$path/$i')) {
+				moveDirectory('$path/$i', '$to/$i');
+			} else {
+				moveFile('$path/$i', '$to');
+			}
+		}
+		FileSystem.deleteDirectory(path);
+	}
+
+	public static function deleteFile(filePath:String) {
+		FileSystem.deleteFile(filePath);
+	}
 
 }

@@ -1,5 +1,6 @@
 package violet.data.stage;
 
+import violet.data.stage.Stage.StageItemType;
 import violet.backend.utils.ParseUtil;
 import violet.backend.utils.ParseUtil.ParseColor;
 import violet.backend.utils.AnimationUtil;
@@ -160,25 +161,38 @@ class StageConverters {
 		var out:StageData = {
 			name: stageData.name,
 			zoom: stageData.cameraZoom,
-			directory: 'stages/' + stageData.directory,
+			directory: stageData.directory != null && stageData.directory != '' ? 'stages/' + stageData.directory : '',
 			props: []
 		}
 
 		for (i in cast (stageData.props, Array<Dynamic>)) {
+			var propOut = null;
 			if (cast (i?.assetPath ?? "", String).startsWith('#')) {
-				out.props.push({
-					type: SOLID,
+				propOut = {
+					type: StageItemType.SOLID,
 					id: i.name,
 					name: i.name,
 					zIndex: i.zIndex,
 					color: i.assetPath,
+					alpha: i.alpha,
 					position: i.position,
 					width: i.scale[0],
-					height: i.scale[1]
-				});
+					height: i.scale[1],
+					properties: null
+				};
 			} else {
-				out.props.push(i);
+				propOut = i;
 			}
+			var blend:Null<Int> = [
+				"add", "alpha", "darken", "difference", "erase",
+				"hardlight", "invert", "layer", "lighten", "multiply",
+				"normal", "overlay", "screen", "shader", "subtract"
+			].indexOf(i.blend);
+			if (blend == -1) blend = null;
+			propOut.properties = {
+				blend: blend
+			}
+			out.props.push(propOut);
 		}
 
 
@@ -223,6 +237,12 @@ class StageConverters {
 			alpha: dad?.alpha
 		};
 		out.props.push(data);
+
+		out.props.sort((a, b)->{
+			if (a.zIndex > b.zIndex) return 1;
+			if (a.zIndex < b.zIndex) return -1;
+			return 0;
+		});
 
 		return out;
 	}

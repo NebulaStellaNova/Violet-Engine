@@ -81,7 +81,7 @@ class Album extends FlxSpriteGroup {
 	public function setAlbum(id:String) {
 		this.id = id;
 
-		_data = ParseUtil.yaml('data/ui/freeplay/albums/$id');
+		_data = ParseUtil.jsonOrYaml('data/ui/freeplay/albums/$id');
 		if (image != null) remove(image);
 
 		image = new NovaSprite(100, 210, Paths.image(albumArtAsset));

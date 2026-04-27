@@ -19,11 +19,14 @@ class HealthIconRegistry {
 			var healthIconData:HealthIconData = null;
 			if (Paths.yaml(filePath) != '') healthIconData = ParseUtil.yaml(filePath);
 			else if (Paths.json(filePath) != '') healthIconData = ParseUtil.json(filePath);
-			if (healthIconData != null) {
-				healthIconDatas.set(iconID, healthIconData);
-				trace('debug:<cyan>Found and registered health icon with ID "<magenta>${iconID}<cyan>"');
-			}
+			if (healthIconData != null)
+				registerIcon(iconID, healthIconData);
 		}
+	}
+
+	public static function registerIcon(id:String, data:HealthIconData) {
+		healthIconDatas.set(id, data);
+		trace('debug:<cyan>Found and registered health icon with ID "<magenta>$id<cyan>"');
 	}
 
 }

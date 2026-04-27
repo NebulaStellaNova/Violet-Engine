@@ -1,5 +1,6 @@
 package violet.data.character;
 
+import violet.data.icon.HealthIconRegistry;
 import violet.data.animation.AnimationData;
 import violet.backend.utils.ParseUtil;
 import violet.backend.utils.ParseUtil.ParseColor;
@@ -133,7 +134,18 @@ class CharacterConverters {
 		var characterID:String = Paths.fileName(path);
 		var characterName:String = nameFromId(characterID);
 
-		return {
+		var iconID:String = characterData?.healthIcon?.id ?? characterID;
+
+		if (!HealthIconRegistry.healthIconDatas.exists(iconID)) HealthIconRegistry.registerIcon(iconID, {
+			id: iconID,
+			assetPath: 'icons/icon-' + iconID,
+			offsets: characterData?.healthIcon?.offsets ?? [10.0, 0.0],
+			flipX: characterData?.healthIcon?.flipX ?? false,
+			isPixel: characterData?.healthIcon?.isPixel ?? false,
+			scale: characterData?.healthIcon?.scale ?? 1
+		});
+
+		var out:CharacterData = {
 			version: '1.0.0',
 			name: characterName,
 			assetPath: '${characterData.assetPath}'.replace('shared:', ''),
@@ -143,7 +155,15 @@ class CharacterConverters {
 			cameraOffsets: characterData?.cameraOffsets ?? [0.0, 0.0],
 			flipX: characterData?.flipX ?? false,
 			isPixel: characterData?.isPixel ?? false,
-			animations: characterData.animations != null ? cast characterData.animations : []
-		};
+			animations: []
+		}
+
+		for (i in (characterData.animations != null ? cast characterData.animations : [])) {
+			if (i.asset != null) i.assetPath = i.asset;
+			i.assetPath = '${i.assetPath}'.replace('shared:', '');
+			out.animations.push(cast i);
+		}
+
+		return out;
 	}
 }

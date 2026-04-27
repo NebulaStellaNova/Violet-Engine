@@ -1,5 +1,6 @@
 package violet.states.menus;
 
+import violet.backend.utils.FileUtil;
 import violet.backend.scripting.GlobalPack;
 import sys.FileSystem;
 import violet.backend.shaders.RoundCornerShader;
@@ -191,7 +192,7 @@ class ModOfTheWeekMenu extends SubStateBackend {
 				if (Paths.fileExists('${ModdingAPI.MOD_FOLDER}/${motw.modID}.vmod', true)) FileSystem.deleteFile('${ModdingAPI.MOD_FOLDER}/${motw.modID}.vmod');
 				for (i in ModdingAPI.availableMods) {
 					if (i.id == motw.modID)
-						@:privateAccess ModdingAPI.deleteDirectory('${ModdingAPI.MOD_FOLDER}/${i.folder}');
+						FileUtil.deleteDirectory('${ModdingAPI.MOD_FOLDER}/${i.folder}');
 				}
 				somethingChanged = true;
 			} else if (downloadIcon.mode == DOWNLOAD) {

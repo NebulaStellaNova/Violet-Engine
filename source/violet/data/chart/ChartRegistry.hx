@@ -39,7 +39,7 @@ class ChartRegistry {
 
 	public static function registerChart(song:Song, diff:String, cache:ChartCache) {
 		chartCache.set('${song.id}:$diff', cache);
-		// fetchChart('${song.id}:$diff', true); // Uncomment if you want to enable chart preloading for whatever reason.
+		fetchChart('${song.id}:$diff', true); // Uncomment if you want to enable chart preloading for whatever reason.
 		trace('debug:<cyan>Found and registered chart for song with ID "<magenta>${song.songName}<cyan>" for difficulty "<magenta>$diff<cyan>"' + (song.variant != '' ? ' for variant "<magenta>${song.variant}<cyan>"' : ''));
 	}
 

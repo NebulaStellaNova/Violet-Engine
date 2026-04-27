@@ -1,5 +1,8 @@
 package violet.data.chart;
 
+import sys.io.File;
+import violet.data.song.SongData;
+import sys.FileSystem;
 import haxe.io.Path;
 import moonchart.formats.fnf.FNFKade;
 import moonchart.formats.fnf.legacy.FNFPsych;
@@ -107,6 +110,209 @@ class ChartConverters {
 		var parsed = Json.parse(FileUtil.getFileContent(chartPath));
 		parsed.song.eventObjects ??= [];
 		return cast new FNFCodename().fromFormat(new FNFKade().fromJson(Json.stringify(parsed))).data;
+	}
+
+	public static function convertVSliceSong(songID, ?varient:String) {
+		var suffix = '';
+		if (varient != null) {
+			suffix = '-$varient';
+		}
+		var path = Path.directory(Paths.json('songs/$songID/$songID-metadata$suffix'));
+		var meta = ParseUtil.jsonDirect('songs/$songID/$songID-metadata$suffix');
+		if (meta.playData.noteStyle == 'funkin')
+			meta.playData.noteStyle = 'default';
+		var chart = ParseUtil.jsonDirect('songs/$songID/$songID-chart$suffix');
+		var metaOut:SongData = {
+			name: songID,
+			displayName: meta.songName,
+
+			composer: meta.artist,
+			charter: meta.charter,
+
+			icon: meta.playData.characters.opponent,
+
+			variants: meta.playData.songVariations,
+			difficulties: meta.playData.difficulties,
+			ratings: meta.playData.ratings,
+			album: meta.playData.album,
+
+			instSuffix: meta.playData.characters.instrumental,
+
+			bpm: meta.timeChanges[0].bpm,
+			beatsPerMeasure: meta.timeChanges[0].n,
+			stepsPerBeat: meta.timeChanges[0].d,
+		}
+		if (!FileSystem.exists('$path/charts' + (varient != null ? '/$varient' : '')))
+			FileSystem.createDirectory('$path/charts' + (varient != null ? '/$varient' : ''));
+
+		for (i in metaOut.difficulties) {
+			var chartOut:ChartData = {
+				strumLines: [],
+				events: [],
+				stage: meta.playData.stage,
+				noteStyle: meta.playData.noteStyle,
+				scrollSpeed: Reflect.field(chart.scrollSpeed, i),
+				noteTypes: []
+			}
+			var opp = {
+				characters: [meta.playData.characters.opponent],
+				position: 'dad',
+				type: OPPONENT,
+				notes: [],
+				vocalsSuffix: meta.playData.characters.opponentVocals[0]
+			};
+			var play = {
+				characters: [meta.playData.characters.player],
+				position: 'boyfriend',
+				type: PLAYER,
+				notes: [],
+				vocalsSuffix: meta.playData.characters.playerVocals[0]
+			}
+			var spec = {
+				characters: [meta.playData.characters.girlfriend],
+				position: 'girlfriend',
+				type: ADDITIONAL,
+				visible: false,
+				notes: []
+			}
+			chartOut.strumLines.push(opp);
+			chartOut.strumLines.push(play);
+			chartOut.strumLines.push(spec);
+
+			for (note in cast (Reflect.field(chart.notes, i), Array<Dynamic>)) {
+				var time = note.t;
+				var data = note.d;
+				var length = note.l;
+				var kind = note.k;
+				var extra = note.p;
+
+				if (!chartOut.noteTypes.contains(kind)) {
+					chartOut.noteTypes.push(kind);
+				}
+
+				var dir = data % 4;
+				var strumlineID:Int = Math.floor(data / 4);
+
+				var noteOut:ChartNote = {
+					time: time,
+					id: dir,
+					sLen: length,
+					extra: extra,
+					type: chartOut.noteTypes.indexOf(kind)
+				}
+				switch (strumlineID) {
+					case 0:
+						play.notes.push(noteOut);
+					case 1:
+						opp.notes.push(noteOut);
+				}
+			}
+
+			var sub = varient != null ? '/$varient' : '';
+			File.saveContent('$path/charts$sub/$i.json', Json.stringify(chartOut, null, '\t'));
+		}
+
+		var outEvents:{events:Array<ChartEvent>} = {
+			events: []
+		}
+		for (i in chart?.events ?? []) {
+			switch (i.e) {
+				case 'FocusCamera':
+					var target:Int = i.v.char;
+					var x:Float = i.v.x;
+					var y:Float = i.v.y;
+					var dur:Float = i.v.duration;
+					var ease:String = i.v.ease;
+					var easeDir:String = i.v.easeDir;
+
+					if (target != -1) {
+						if (ease == 'CLASSIC') {
+							outEvents.events.push({
+								name: 'Camera Movement',
+								time: i.t,
+								params: [[1, 0, 2][target]]
+							});
+						} else {
+							outEvents.events.push({
+								name: 'Camera Tween Focus',
+								time: i.t,
+								params: [
+									[1, 0, 2][target],
+									ease == 'INSTANT' ? 0.0001 : dur,
+									ease,
+									easeDir
+								]
+							});
+						}
+					} else {
+						outEvents.events.push({
+							name: 'Camera Position',
+							time: i.t,
+							params: [
+								x,
+								y,
+								easeDir,
+								ease == 'INSTANT' ? 0.0001 : dur,
+								ease
+							]
+						});
+					}
+				case 'ZoomCamera':
+					var zoom:Float = i.v.zoom;
+					var dur:Float = i.v.duration;
+					var ease:String = i.v.ease;
+					var easeDir:String = i.v.easeDir;
+					outEvents.events.push({
+						name: 'Camera Zoom',
+						time: i.t,
+						params: [
+							true,
+							zoom,
+							'camGame',
+							ease == 'INSTANT' ? 0.0001 : dur,
+							ease,
+							easeDir
+						]
+					});
+				case 'SetCameraBop':
+					var rate = i.v.rate;
+					var offset = i.v.offset;
+					var intensity = i.v.intensity;
+					outEvents.events.push({
+						name: 'Camera Modulo Change',
+						time: i.t,
+						params: [
+							rate,
+							offset,
+							intensity
+						]
+					});
+				case 'PlayAnimation':
+					var anim:String = i.v.anim;
+					var target:String = i.v.target;
+					outEvents.events.push({
+						name: 'Play Animation',
+						time: i.t,
+						params: [
+							['dad', 'boyfriend', 'girlfriend'].indexOf(target),
+							anim
+						]
+					});
+
+			}
+		}
+		File.saveContent('$path/events$suffix.json', Json.stringify(outEvents, null, '\t'));
+
+		File.saveContent('$path/meta$suffix.json', Json.stringify(metaOut, null, '\t'));
+		for (i in meta.playData?.songVariations ?? []) {
+			convertVSliceSong(songID, i);
+		}
+
+		ModdingAPI.onRegistryFinishReload.addOnce(()->{
+			if (varient == null) FileUtil.deleteDirectory('$path/charts');
+			FileUtil.deleteFile('$path/meta$suffix.json');
+			FileUtil.deleteFile('$path/events$suffix.json');
+		});
 	}
 
 	// public static function fromImaginative(chartPath:String) {

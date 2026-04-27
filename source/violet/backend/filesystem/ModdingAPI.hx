@@ -1,5 +1,7 @@
 package violet.backend.filesystem;
 
+import flixel.util.FlxSignal;
+import sys.io.File;
 import haxe.zip.Entry;
 import haxe.io.BytesInput;
 import haxe.io.Path;
@@ -148,6 +150,36 @@ class ModdingAPI {
 		}
 		#end
 
+		// sys.FileSystem.rename('$MOD_FOLDER/rename_test/test', '$MOD_FOLDER/rename_test/fuck');
+		// FileUtil.moveFile('$MOD_FOLDER/rename_test/test/internal/hi.txt', '$MOD_FOLDER/rename_test/test/internal2');
+
+		for (path in Paths.readFolder(MOD_FOLDER, true)) {
+			var f = '$MOD_FOLDER/$path';
+			if (Paths.fileExists('$f/_polymod_meta.json', true)) {
+  				FileUtil.renameFile('$f/_polymod_meta.json', 'novamod_meta');
+				if (Paths.fileExists('$f/_polymod_icon.png', true)) FileUtil.renameFile('$f/_polymod_icon.png', 'novamod_icon');
+				if (FileSystem.exists('$f/songs')) {
+					for (i in FileSystem.readDirectory('$f/songs').filter(v->return FileSystem.isDirectory('$f/songs/$v'))) {
+						for (inst in FileSystem.readDirectory('$f/songs/$i').filter(v->return Path.extension(v) == 'ogg')) {
+							FileUtil.moveFile('$f/songs/$i/$inst', '$f/songs/$i/song');
+						}
+					}
+				}
+				if (FileSystem.exists('$f/data/songs')) {
+					for (i in FileSystem.readDirectory('$f/data/songs').filter(v->return FileSystem.isDirectory('$f/data/songs/$v'))) {
+						for (json in FileSystem.readDirectory('$f/data/songs/$i').filter(v->return Path.extension(v) == 'json')) {
+							FileUtil.moveFile('$f/data/songs/$i/$json', '$f/songs/$i');
+						}
+					}
+					FileUtil.deleteDirectory('$f/data/songs');
+				}
+				if (FileSystem.exists('$f/shared')) {
+					FileUtil.moveDirectory('$f/shared', '$f');
+				}
+				trace('debug:V-Slice Mod Found in "mods/$path"');
+			}
+		}
+
 		@:bypassAccessor availableMods = [
 			for (path in Paths.readFolder(MOD_FOLDER, true)) {
 				var meta:ModMeta = ParseUtil.json('$MOD_FOLDER/$path/novamod_meta', 'root');
@@ -156,6 +188,8 @@ class ModdingAPI {
 
 				// null check all properties and set defaults
 				meta.folder = path;
+				meta.tags ??= [];
+				meta.id ??= meta.folder;
 				meta.title ??= meta.folder;
 				for (contributor in meta.contributors)
 					contributor.color ??= FlxColor.WHITE;
@@ -197,6 +231,8 @@ class ModdingAPI {
 	inline public static function getActiveMods():Array<ModMeta>
 		return [for (id in activeModsIds) getMod(id)].filter((meta)->{return meta.id != "null";});
 
+	public static var onRegistryFinishReload:FlxSignal = new FlxSignal();
+
 	private static var registered:Bool = false;
 	public static function reloadRegistries():Void {
 		trace('debug:<yellow>${registered ? "Reloading" : "Initializing"} Registries...');
@@ -217,9 +253,11 @@ class ModdingAPI {
 		violet.data.chart.ChartRegistry.registerCharts();
 		InitialState.loadingPercent += 1/7;
 
-		final foundHXC:Array<String> = checkForHXC();
+		/* final foundHXC:Array<String> = checkForHXC();
 		if (foundHXC.length == 0) trace('debug:<cyan>No HXC scripts found.');
-		else trace(['debug:<cyan>Found HXC scripts: "<magenta>', foundHXC.join('<cyan>", "<magenta>'), '<cyan>"'].join(''));
+		else trace(['debug:<cyan>Found HXC scripts: "<magenta>', foundHXC.join('<cyan>", "<magenta>'), '<cyan>"'].join('')); */
+
+		onRegistryFinishReload.dispatch();
 	}
 
 	#if SCRIPT_SUPPORT
@@ -315,22 +353,9 @@ class ModdingAPI {
 
 	@:unreflective public static function powerDown() {
 		for (i in tempFolders) {
-			if (FileSystem.exists(i)) deleteDirectory(i);
+			if (FileSystem.exists(i)) FileUtil.deleteDirectory(i);
 		}
 	}
-
-	@:unreflective static function deleteDirectory(path) {
-		var subObjects = FileSystem.readDirectory(path);
-		for (i in subObjects) {
-			if (!StringTools.contains(i, ".")) {
-				deleteDirectory(path + "/" + i);
-			} else {
-				FileSystem.deleteFile(path + "/" + i);
-			}
-		}
-		FileSystem.deleteDirectory(path);
-	}
-
 }
 
 class ModIcon extends NovaSprite {

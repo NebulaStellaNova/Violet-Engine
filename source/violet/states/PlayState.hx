@@ -699,12 +699,33 @@ class PlayState extends violet.backend.StateBackend {
 				scrollTween?.cancel();
 				var x:Float = scriptEvent.params[0];
 				var y:Float = scriptEvent.params[1];
-				var duration:Float = scriptEvent.params[3];
-				var ease:String = scriptEvent.params[4];
-				var direction:String = scriptEvent.params[5] ?? 'Out';
-				var targetEase = NovaUtils.easeFromString(ease, direction);
+				var duration:Float = scriptEvent.params[2];
+				var ease:String = scriptEvent.params[3];
+				var direction:String = scriptEvent.params[4];
+				var targetEase = null;
+				if (direction == null) targetEase = NovaUtils.easeFromString(ease, '');
+				else targetEase = NovaUtils.easeFromString(ease, direction);
+
 				scrollTween = FlxTween.tween(camFollowPoint, { x: x, y: y }, (Conductor.stepLengthMs / 1000) * duration, { ease: targetEase, onUpdate: _->{
-					FlxG.camera.snapToTarget();
+					snapCamera();
+				}});
+
+			case 'Camera Tween Focus': // To tween to the target
+				scrollTween?.cancel();
+				var targetCharacter:Character = strumLines.members[scriptEvent.params[0]].characters[0];
+				strumlineTarget = scriptEvent.params[0];
+
+				var x = targetCharacter.getMidpoint().x + (targetCharacter.cameraOffsets ?? [0, 0])[0];
+				var y = targetCharacter.getMidpoint().y + (targetCharacter.cameraOffsets ?? [0, 0])[1];
+
+				var duration:Float = scriptEvent.params[1];
+				var ease:String = scriptEvent.params[2];
+				var direction:String = scriptEvent.params[5];
+				var targetEase = null;
+				if (direction == null) targetEase = NovaUtils.easeFromString(ease, '');
+				else targetEase = NovaUtils.easeFromString(ease, direction);
+				scrollTween = FlxTween.tween(camFollowPoint, { x: x, y: y }, (Conductor.stepLengthMs / 1000) * duration, { ease: targetEase, onUpdate: _->{
+					snapCamera();
 				}});
 
 			case 'Camera Movement':
@@ -719,7 +740,7 @@ class PlayState extends violet.backend.StateBackend {
 					var targetCamera = ['camGame' => camGameBase].get(scriptEvent.params[2]);
 					var	targetZoom = scriptEvent.params[1];
 					var targetDuration = (Conductor.stepLengthMs/1000) * scriptEvent.params[3];
-					var targetEase = NovaUtils.easeFromString(scriptEvent.params[4], scriptEvent.params[5] ?? 'Out');
+					var targetEase = NovaUtils.easeFromString(scriptEvent.params[4], scriptEvent.params[5] ?? '');
 					FlxTween.cancelTweensOf(targetCamera);
 					FlxTween.tween(targetCamera, { zoom: targetZoom }, targetDuration, { ease: targetEase });
 				}

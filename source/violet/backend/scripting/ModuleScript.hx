@@ -19,6 +19,8 @@ class ModuleScript extends Script {
 	override public function new(path:String) {
 		super(path, false);
 
+		return;
+
 		ScriptedTypeUtil.resolveModule = resolveModule;
 
 		Typedefs.register("funkin.modding.module.Module", violet.backend.scripting.hxc.Module);

@@ -240,7 +240,7 @@ class NovaSprite extends #if ANIMATE_SUPPORT FlxAnimate #else FlxSprite #end {
 
 	public function addFrames(path:String):Void {
 		var newFrames:FlxAtlasFrames = null;
-		if (@:privateAccess Paths._checkExists('${haxe.io.Path.withoutExtension(path)}/Animation.json')) {
+		if (Path.extension(path) == 'json') {
 			#if ANIMATE_SUPPORT
 			newFrames = NovaUtils.getAtlasFrames(path);
 			#else

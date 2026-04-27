@@ -1,5 +1,12 @@
 package violet.data.song;
 
+import violet.data.chart.ChartConverters;
+import violet.data.chart.ChartData;
+import sys.FileSystem;
+import haxe.Json;
+import haxe.io.Path;
+import sys.io.File;
+import violet.backend.utils.FileUtil;
 import violet.backend.utils.ParseUtil;
 import violet.data.level.LevelRegistry;
 
@@ -19,9 +26,10 @@ class SongRegistry {
 		for (level in LevelRegistry.getAllLevels()) {
 			songList = songList.concat(level.getSongs());
 		}
+		checkAndConvertVSliceSongs(songList);
 		for (songID in songList) {
-			final parsed:Dynamic = ParseUtil.jsonOrYaml('songs/$songID/meta');
-			if (parsed == {}) {
+			final parsed:Dynamic = ParseUtil.jsonOrYaml('songs/$songID/meta', null, 'null');
+			if (parsed == null) {
 				trace('warning:Could not find meta file for song with ID "$songID". Skipping registration.');
 				continue;
 			} else {
@@ -36,6 +44,16 @@ class SongRegistry {
 			}
 		}
 	}
+
+	static function checkAndConvertVSliceSongs(songList:Array<String>) {
+		for (songID in songList) {
+			if (Paths.fileExists('songs/$songID/$songID-metadata.json')) {
+				if (!Paths.fileExists('songs/$songID/$songID-chart.json')) continue;
+				ChartConverters.convertVSliceSong(songID);
+			}
+		}
+	}
+
 
 	public static function registerSong(song:Song) {
 		trace('debug:<cyan>Found and registered song with ID "<magenta>${song.id}<cyan>"');

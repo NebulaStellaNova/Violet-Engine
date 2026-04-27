@@ -8,12 +8,19 @@ class ParseUtil {
 
 	public static function json(path:String, directory:String = ''):Dynamic {
 		try {
-			return Json.parse(removeJsonComments(FileUtil.getFileContent(Paths.json(path, directory))));
+			return Json.parse(FileUtil.getFileContent(Paths.json(path, directory)));
 		} catch(error:haxe.Exception)
 			try {
 				return Json.parse(removeJsonComments(FileUtil.getFileContent(Paths.json(path, directory, 'jsonc'))));
 			} catch(error:haxe.Exception)
 				return null;
+	}
+
+	/**
+	 * This parses faster than `ParseUtil.json()` as it does not do a comment check.
+	 */
+	public static function jsonDirect(path:String, directory:String = '') {
+		return Json.parse(FileUtil.getFileContent(Paths.json(path, directory)));
 	}
 
 	public static function yaml(path:String, directory:String = '', ext:String = 'yaml'):Dynamic {
