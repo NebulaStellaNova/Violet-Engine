@@ -89,6 +89,7 @@ class Macro {
 			public var onUpdate = new flixel.util.FlxSignal.FlxTypedSignal<Float->Void>();
 			// Doesn't work tho idk why ??
 
+			public var parentGroup:flixel.group.FlxGroup.FlxTypedGroup<Dynamic> = null;
 
 			/**
 			 * Extra data the object can hold.
@@ -97,7 +98,12 @@ class Macro {
 			/**
 			 * The layering index of the object.
 			 */
-			public var zIndex:Int = 0;
+			public var zIndex(default, set):Int = 0;
+			function set_zIndex(v:Int):Int {
+				zIndex = v;
+				if (parentGroup != null) parentGroup.reorder();
+				return v;
+			}
 
 			public var z(get, set):Int;
 			function get_z() return zIndex;
@@ -219,26 +225,46 @@ class Macro {
 
 			public var last(get, never):T;
 			function get_last() return this.members.copy().pop();
+
+			public function reorder() {
+				members.sort((a, b)->{
+					if (a == null || b == null) return 0;
+					final aOutput:Null<Dynamic> = sortBy == 'zIndex' ? a.zIndex : Reflect.getProperty(a, sortBy);
+					final bOutput:Null<Dynamic> = sortBy == 'zIndex' ? b.zIndex : Reflect.getProperty(b, sortBy);
+					if (aOutput == null || bOutput == null) return 0;
+					if (Math.isNaN(aOutput) || Math.isNaN(bOutput)) return 0;
+					return flixel.util.FlxSort.byValues(-1, aOutput, bOutput);
+				});
+			}
+
+			public var previousMembers:Array<T> = [];
 		}
 
-		var drawFuncy = classFields.filter(field -> return field.name == 'update')[0];
+		var drawFuncy = classFields.filter(field -> return field.name == 'onMemberAdd')[0];
 		switch (drawFuncy.kind) {
 			case FFun(f):
 				var initExpr:Expr = f.expr;
 				f.expr = macro {
-					members.sort((a, b)->{
-						if (a == null || b == null) return 0;
-						final aOutput:Null<Dynamic> = sortBy == 'zIndex' ? a.zIndex : Reflect.getProperty(a, sortBy);
-						final bOutput:Null<Dynamic> = sortBy == 'zIndex' ? b.zIndex : Reflect.getProperty(b, sortBy);
-						if (aOutput == null || bOutput == null) return 0;
-						if (Math.isNaN(aOutput) || Math.isNaN(bOutput)) return 0;
-						return flixel.util.FlxSort.byValues(-1, aOutput, bOutput);
-					});
 					$initExpr;
+					member.parentGroup = this;
+					reorder();
 				}
 				drawFuncy.kind = FFun(f);
 			default:
 		}
+
+		/* var updateFuncu = classFields.filter(field -> return field.name == 'update')[0];
+		switch (updateFuncy.kind) {
+			case FFun(f):
+				var initExpr:Expr = f.expr;
+				f.expr = macro {
+					$initExpr;
+					basic.parentGroup = this;
+					reorder();
+				}
+				drawFuncy.kind = FFun(f);
+			default:
+		} */
 
 		return classFields.concat(tempClass.fields);
 	}
