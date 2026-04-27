@@ -136,6 +136,10 @@ menus:
     description: If checked, hold note jitter will be disabled for all characters.
     saveID: disableHoldJitter
     type: bool
+  - name: Play Miss Sound
+    description: If checked, missed notes will play a record scratch sound effect.
+    saveID: playMissSound
+    type: bool
 
   # Lane Underlay
   - name: Enable Lane Underlay

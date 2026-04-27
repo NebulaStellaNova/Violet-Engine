@@ -19,6 +19,7 @@ import lime.app.Application;
 	public var personalScrollSpeed:Float = 0;
 	public var disableScoreLerping:Bool = false;
 	public var kadePopups:Bool = false;
+	public var playMissSound:Bool = true;
 	public var playAsOpponent:Bool = false;
 	public var gpuCaching:Bool = false;
 	public var antialiasTextures:Bool = true;
