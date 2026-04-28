@@ -134,14 +134,15 @@ class PlayState extends violet.backend.StateBackend {
 
 	public var scoreTxt:ScoreTxt;
 	public var botplayText:FlxText;
-	var botplayTextTween:FlxTween;
+	public var botplayTextTweenAlpha:FlxTween;
+	public var botplayTextTweenScale:FlxTween;
 
 	public var playAsOpponent:Bool = Options.data.playAsOpponent;
 	public var ghostTapping:Bool = Options.data.ghostTapping;
 	public var botplay:Bool = false;
 	public var botplayScoreDiscarded(default, null):Bool = false;
-	var sortedEvents:Array<ChartEvent> = [];
-	var nextEventIndex:Int = 0;
+	public var sortedEvents:Array<ChartEvent> = [];
+	public var nextEventIndex:Int = 0;
 
 	public var hasChangedPracticeMode(default, null):Bool = false;
 	public static var practiceMode(default, set):Bool = false;
@@ -891,7 +892,8 @@ class PlayState extends violet.backend.StateBackend {
 
 		botplayText.visible = botplay;
 		positionBotplayText();
-		botplayTextTween?.cancel();
+		botplayTextTweenAlpha?.cancel();
+		botplayTextTweenScale?.cancel();
 		botplayText.alpha = botplay ? 1 : 0;
 	}
 
@@ -967,13 +969,14 @@ class PlayState extends violet.backend.StateBackend {
 		if (!Conductor.instrumental.playing) return;
 
 		if (botplay && botplayText != null) {
-			botplayTextTween?.cancel();
+			botplayTextTweenAlpha?.cancel();
+			botplayTextTweenScale?.cancel();
 			botplayText.alpha = 1;
 			botplayText.scale.set(1, 1);
 			if (Options.data.botplayFlashingText) {
 				botplayText.scale.set(1.12, 1.12);
-				botplayTextTween = FlxTween.tween(botplayText, { alpha: 0.35 }, Conductor.beatLengthMs / 1000, { ease: FlxEase.quadOut });
-				FlxTween.tween(botplayText.scale, { x: 1, y: 1 }, Conductor.beatLengthMs / 1000, { ease: FlxEase.elasticOut });
+				botplayTextTweenAlpha = FlxTween.tween(botplayText, { alpha: 0.35 }, Conductor.beatLengthMs / 1000, { ease: FlxEase.quadOut });
+				botplayTextTweenScale = FlxTween.tween(botplayText.scale, { x: 1, y: 1 }, Conductor.beatLengthMs / 1000, { ease: FlxEase.quadOut });
 			}
 		}
 
