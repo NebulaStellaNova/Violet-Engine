@@ -72,7 +72,8 @@ import lime.app.Application;
 	public var fancyLaneUnderlay:Bool = false;
 	public var laneFlashIntensity:Float = 100; // %
 
-
+	public var enableNoteSplashes:Bool = true;
+	public var enableHoldCovers:Bool = true;
 }
 
 class Options {

@@ -141,6 +141,15 @@ menus:
     saveID: playMissSound
     type: bool
 
+  - name: Enable Note Splashes
+    description: If checked, note splashes will show upon hitting a note.
+    saveID: enableNoteSplashes
+    type: bool
+  - name: Enable Hold Covers
+    description: If checked, note covers will show upon hitting a hold note.
+    saveID: enableHoldCovers
+    type: bool
+
   # Lane Underlay
   - name: Enable Lane Underlay
     description: If checked, a black box will appear under the notes.

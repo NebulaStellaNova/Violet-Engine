@@ -1,5 +1,6 @@
 package violet.backend.objects.play;
 
+import violet.backend.options.Options;
 import violet.backend.audio.Conductor;
 import violet.data.notestyles.NoteStyle;
 import violet.data.notestyles.NoteStyleRegistry;
@@ -123,6 +124,7 @@ class Strum extends NovaSprite {
 	public var holdCoverBin:Map<String, Array<StrumElement>> = [];
 
 	public function spawnSplash(?note:Note):Void {
+		if (!Options.data.enableNoteSplashes) return;
 		var finalMeta;
 		if (note?.style != null) {
 			finalMeta = NoteStyleRegistry.getNoteStyleByID(note.style);
@@ -167,6 +169,7 @@ class Strum extends NovaSprite {
 
 
 	public function spawnHoldCover():Void {
+		if (!Options.data.enableHoldCovers) return;
 		if (holdCover != null) {
 			holdCover.playAnim('end', true);
 			holdCover.animation.finish();
