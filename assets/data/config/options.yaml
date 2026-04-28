@@ -146,7 +146,7 @@ menus:
     saveID: enableNoteSplashes
     type: bool
   - name: Enable Hold Covers
-    description: If checked, note covers will show upon hitting a hold note.
+    description: If checked, note covers will show while holding a hold note.
     saveID: enableHoldCovers
     type: bool
 
