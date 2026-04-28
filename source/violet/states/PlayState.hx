@@ -11,6 +11,7 @@ import violet.backend.utils.ParseUtil;
 import flixel.FlxCamera;
 import flixel.group.FlxGroup;
 import flixel.math.FlxMath;
+import flixel.text.FlxText;
 import flixel.util.FlxSort;
 
 import violet.backend.audio.Conductor;
@@ -82,6 +83,7 @@ class PlayState extends violet.backend.StateBackend {
 	public static var isStoryMode:Bool = false;
 	public static var curStoryLevel:String;
 	public static var storyScore:Int = 0;
+	public static var storyScoreDiscarded:Bool = false;
 
 	public var defaultSuffix:Array<String> = [];
 
@@ -131,9 +133,13 @@ class PlayState extends violet.backend.StateBackend {
 	public var iconOpponent:HealthIcon;
 
 	public var scoreTxt:ScoreTxt;
+	public var botplayText:FlxText;
+	var botplayTextTween:FlxTween;
 
 	public var playAsOpponent:Bool = Options.data.playAsOpponent;
 	public var ghostTapping:Bool = Options.data.ghostTapping;
+	public var botplay:Bool = false;
+	public var botplayScoreDiscarded(default, null):Bool = false;
 	var sortedEvents:Array<ChartEvent> = [];
 	var nextEventIndex:Int = 0;
 
@@ -320,6 +326,18 @@ class PlayState extends violet.backend.StateBackend {
 		scoreTxt.camera = camHUD;
 		add(scoreTxt);
 
+		botplayText = new FlxText(0, 0, 0, 'BOTPLAY', 36);
+		botplayText.font = Paths.font('vcr.ttf');
+		botplayText.borderStyle = OUTLINE;
+		botplayText.borderColor = FlxColor.BLACK;
+		botplayText.borderSize = 3;
+		botplayText.updateHitbox();
+		botplayText.centerOrigin();
+		botplayText.camera = camHUD;
+		botplayText.visible = false;
+		add(botplayText);
+		positionBotplayText();
+
 		iconPlayer.camera = camHUD;
 		add(iconPlayer);
 
@@ -477,14 +495,14 @@ class PlayState extends violet.backend.StateBackend {
 			}
 
 		if (note.parent.isPlayer) {
-			final judgement:Judgement = Scoring.judgeNoteHit(note.time - Conductor.framePosition);
+			final noteHitDelta = botplay ? 0 : note.time - Conductor.framePosition;
+			final judgement:Judgement = Scoring.judgeNoteHit(noteHitDelta);
 			if (judgement.splash && event.spawnSplash != false) note.parentStrum.spawnSplash(note);
 			score += Math.round(judgement.score);
 			health += Constants.DEFAULT_HEALTH_GAIN;
 			combo++;
 			comboGroup.popupRating(judgement.rating, combo);
 
-			var noteHitDelta = note.time - Conductor.framePosition;
 			var rawAcc = Math.abs(noteHitDelta) / Scoring.missThreshold;
 			var roundedAcc = Math.round(rawAcc*10000)/10000;
 			var acc = 100 - (roundedAcc * 100);
@@ -807,20 +825,90 @@ class PlayState extends violet.backend.StateBackend {
 		if (recordingMode) ReplaySystem.startRecording();
 	}
 
+	public function enableBotplay():Void {
+		if (botplay) return;
+		botplay = true;
+		botplayScoreDiscarded = true;
+		if (isStoryMode) storyScoreDiscarded = true;
+		updateBotplayText();
+	}
+
+	function positionBotplayText():Void {
+		if (botplayText == null) return;
+
+		var foundStrumline:Bool = false;
+		var foundSecondStrumline:Bool = false;
+		var firstCenterY:Float = 0;
+		var secondCenterY:Float = 0;
+
+		for (strumLine in strumLines) {
+			if (strumLine == null || !strumLine.visible || strumLine.strums.length == 0) continue;
+
+			var minX:Float = Math.POSITIVE_INFINITY;
+			var maxX:Float = Math.NEGATIVE_INFINITY;
+			var centerYTotal:Float = 0;
+			var strumCount:Int = 0;
+
+			for (strum in strumLine.strums.members) {
+				if (strum == null) continue;
+				minX = Math.min(minX, strum.x);
+				maxX = Math.max(maxX, strum.x + strum.width);
+				centerYTotal += strum.y + (strum.height * 0.5);
+				strumCount++;
+			}
+			if (strumCount == 0) continue;
+
+			// if the strummline is offscreen, just ignore it
+			// middlescroll might be fucky unfortunately :(
+			if (maxX < -100 || minX > FlxG.width + 100) continue;
+
+			final centerY:Float = centerYTotal / strumCount;
+			if (!foundStrumline) {
+				firstCenterY = centerY;
+				foundStrumline = true;
+			} else {
+				secondCenterY = centerY;
+				foundSecondStrumline = true;
+				break;
+			}
+		}
+
+		var targetX:Float = FlxG.width * 0.5;
+		var targetY:Float = Options.data.downscroll ? FlxG.height - 155 : 115;
+
+		if (foundSecondStrumline) {
+			targetY = (firstCenterY + secondCenterY) * 0.5;
+		} else if (foundStrumline) {
+			targetY = firstCenterY;
+		}
+
+		botplayText.x = targetX - (botplayText.width * 0.5);
+		botplayText.y = targetY - (botplayText.height * 0.5);
+	}
+
+	function updateBotplayText():Void {
+		if (botplayText == null) return;
+
+		botplayText.visible = botplay;
+		positionBotplayText();
+		botplayTextTween?.cancel();
+		botplayText.alpha = botplay ? 1 : 0;
+	}
+
 	function endSong():Void {
 		var event:EventBase = runSongEvent('endSong', runSongEvent('songEnd', new EventBase()));
 		if (event.cancelled) return;
 		songEnded = true;
-		if (!hasChangedPracticeMode && !practiceMode) ScoreUtil.saveSongScore(songData.songName, difficulty, songData.variant, score);
-		if (!hasChangedPracticeMode && !practiceMode) ScoreUtil.saveSongAccuracy(songData.songName, difficulty, songData.variant, accuracy);
-		storyScore += score;
+		if (!hasChangedPracticeMode && !practiceMode && !botplayScoreDiscarded) ScoreUtil.saveSongScore(songData.songName, difficulty, songData.variant, score);
+		if (!hasChangedPracticeMode && !practiceMode && !botplayScoreDiscarded) ScoreUtil.saveSongAccuracy(songData.songName, difficulty, songData.variant, accuracy);
+		if (!botplayScoreDiscarded && !storyScoreDiscarded) storyScore += score;
 		if (playlist.length == 0 || !isStoryMode) {
 			exitToMenu();
 		} else {
 			hasSeenCutscene = false;
 			loadSong(playlist.shift(), difficulty, variation);
 		}
-		if (isStoryMode && playlist.length == 0) ScoreUtil.saveLevelScore(curStoryLevel, difficulty, storyScore);
+		if (isStoryMode && playlist.length == 0 && !botplayScoreDiscarded && !storyScoreDiscarded) ScoreUtil.saveLevelScore(curStoryLevel, difficulty, storyScore);
 	}
 
 	public function pause() {
@@ -878,6 +966,17 @@ class PlayState extends violet.backend.StateBackend {
 
 		if (!Conductor.instrumental.playing) return;
 
+		if (botplay && botplayText != null) {
+			botplayTextTween?.cancel();
+			botplayText.alpha = 1;
+			botplayText.scale.set(1, 1);
+			if (Options.data.botplayFlashingText) {
+				botplayText.scale.set(1.12, 1.12);
+				botplayTextTween = FlxTween.tween(botplayText, { alpha: 0.35 }, Conductor.beatLengthMs / 1000, { ease: FlxEase.quadOut });
+				FlxTween.tween(botplayText.scale, { x: 1, y: 1 }, Conductor.beatLengthMs / 1000, { ease: FlxEase.elasticOut });
+			}
+		}
+
 		callSongScripts('beatHit', [curBeat]);
 
 		if (curBeat % camBopInterval == camBopOffset || camBopInterval == 1) {
@@ -909,6 +1008,7 @@ class PlayState extends violet.backend.StateBackend {
 				strumLine.setPosition(SONG.strumLines[i].strumPosition[0], SONG.strumLines[i].strumPosition[1], SONG.strumLines[i].strumPosIsPure);
 			}
 		}
+		updateBotplayText();
 
 		comboGroup.style = Options.data.kadePopups ? 'kade' : 'funkin';
 

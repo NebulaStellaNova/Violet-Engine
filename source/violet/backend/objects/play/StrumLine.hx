@@ -40,7 +40,7 @@ class StrumLine extends FlxGroup {
 	 */
 	public var isComputer(get, never):Bool;
 	function get_isComputer():Bool {
-		return !isPlayer; // like this for now, will be changed later
+		return !isPlayer || (isPlayer && PlayState.instance != null && PlayState.instance.botplay);
 	}
 
 	/**

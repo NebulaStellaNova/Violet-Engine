@@ -140,6 +140,10 @@ menus:
     description: If checked, missed notes will play a record scratch sound effect.
     saveID: playMissSound
     type: bool
+  - name: Flashing Botplay Text
+    description: If checked, the bot play indicator will flash to the song BPM.
+    saveID: botplayFlashingText
+    type: bool
 
   - name: Enable Note Splashes
     description: If checked, note splashes will show upon hitting a note.

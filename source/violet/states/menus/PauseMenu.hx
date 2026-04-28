@@ -75,6 +75,12 @@ class PauseMenu extends EditorListBackend {
 					openSubState(new OptionsMenu());
 				}
 			}},
+			{ title: 'ENABLE BOTPLAY', description: 'ENABLING BOTPLAY DISCARDS YOUR SCORE FOR THE ENTIRE LEVEL!', onClick: ()->{
+				var event:EventBase = PlayState.instance.songScripts.event('enableBotplay', new EventBase());
+				if (event.cancelled) return;
+				PlayState.instance.enableBotplay();
+				close();
+			}},
 			{ title: (PlayState.practiceMode ? 'DISABLE' : 'ENABLE') + ' PRACTICE MODE', disabled: PlayState.isStoryMode, onClick: ()->{
 				var event:EventBase = PlayState.instance.songScripts.event('changePracticeMode', new EventBase());
 				if (event.cancelled) return;
@@ -96,6 +102,9 @@ class PauseMenu extends EditorListBackend {
 				});
 			}}
 		];
+
+		if (PlayState.instance.botplay)
+			pauseMenuOptions = pauseMenuOptions.filter((option) -> option.title != 'ENABLE BOTPLAY');
 
 		if (PlayState.instance.inCutscene) {
 			pauseMenuOptions[1].title = pauseMenuOptions[1].title.replace('SONG', 'CUTSCENE');

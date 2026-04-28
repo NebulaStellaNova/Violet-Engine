@@ -305,6 +305,8 @@ class StoryMenu extends SubStateBackend {
 				PlayState.doFadeOut = true;
 				PlayState.isStoryMode = true;
 				PlayState.playlist = levelList[curSelected].getSongs();
+				PlayState.storyScore = 0;
+				PlayState.storyScoreDiscarded = false;
 				PlayState.curStoryLevel = levelList[curSelected].id;
 				PlayState.loadSong(PlayState.playlist.shift(), curDifficultyString);
 			});

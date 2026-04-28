@@ -54,6 +54,7 @@ class InitialState extends StateBackend { // for now
 				@:bypassAccessor PlayState.practiceMode = false;
 				PlayState.playlist.resize(0);
 				PlayState.storyScore = 0;
+				PlayState.storyScoreDiscarded = false;
 				PlayState.curStoryLevel = null;
 			}
 		});
