@@ -475,7 +475,6 @@ class PlayState extends violet.backend.StateBackend {
 			comboGroup.popupRating(judgement.rating, combo);
 
 			var noteHitDelta = note.time - Conductor.framePosition;
-			// trace(Math.abs(noteHitDelta) + ', ' + Scoring.missThreshold);
 			var rawAcc = Math.abs(noteHitDelta) / Scoring.missThreshold;
 			var roundedAcc = Math.round(rawAcc*10000)/10000;
 			var acc = 100 - (roundedAcc * 100);

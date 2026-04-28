@@ -410,21 +410,13 @@ class StrumLine extends FlxGroup {
 		if (!FlxG.keys.checkStatus(event.keyCode, JUST_PRESSED)) return;
 		currentInputs[inputId] = true;
 
-		final activeNotes:Array<Note> = Note.filterNotes(notes.members, inputId);
-		if (activeNotes.length != 0) {
-			var frontNote:Note = activeNotes[0]; // took from psych, fixes a dumb issue where it eats up jacks
-			if (activeNotes.length > 2) {
-				final backNote:Note = activeNotes[1];
-				if (Math.abs(backNote.time - frontNote.time) < 1.0) {
-					final liveNote:Note = backNote.length < frontNote.length ? backNote : frontNote;
-					final deadNote:Note = backNote.length < frontNote.length ? frontNote : backNote;
-					deadNote.destroy(); // shouldn't need to keep existing
-					frontNote = liveNote;
-				} else if (backNote.time < frontNote.time)
-					frontNote = backNote;
-			}
-			_onNoteHit(frontNote);
-		} else _onVoidTap(inputId, this);
+		for (note in notes) {
+			var active = note.exists && note.canHit && !note.wasHit && !note.wasMissed && !note.tooLate && note.id == (inputId ?? note.id);
+			if (!active) continue;
+			_onNoteHit(note);
+			return;
+		}
+		 _onVoidTap(inputId, this);
 
 	}
 
