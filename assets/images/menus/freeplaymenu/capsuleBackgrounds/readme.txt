@@ -1,1 +1,1 @@
-Capsule background height MUST be 85px for it to look right
+Capsule background resolution MUST be 829x85 for it to look right

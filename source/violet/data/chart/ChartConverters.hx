@@ -324,7 +324,8 @@ class ChartConverters {
 
 	public static function aliasVSliceStage(stageID:String):String {
 		var aliases:Map<String, String> = [
-			"limoRide" => "limo"
+			"limoRide" => "limo",
+			"limoRideErect" => "limo-erect"
 		];
 		if (!aliases.exists(stageID)) return stageID;
 		return aliases.get(stageID);
