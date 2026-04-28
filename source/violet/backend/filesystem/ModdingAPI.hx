@@ -156,8 +156,8 @@ class ModdingAPI {
 		for (path in Paths.readFolder(MOD_FOLDER, true)) {
 			var f = '$MOD_FOLDER/$path';
 			if (Paths.fileExists('$f/_polymod_meta.json', true)) {
-  				FileUtil.renameFile('$f/_polymod_meta.json', 'novamod_meta');
-				if (Paths.fileExists('$f/_polymod_icon.png', true)) FileUtil.renameFile('$f/_polymod_icon.png', 'novamod_icon');
+  				// FileUtil.renameFile('$f/_polymod_meta.json', 'novamod_meta');
+				// if (Paths.fileExists('$f/_polymod_icon.png', true)) FileUtil.renameFile('$f/_polymod_icon.png', 'novamod_icon');
 				if (FileSystem.exists('$f/songs')) {
 					for (i in FileSystem.readDirectory('$f/songs').filter(v->return FileSystem.isDirectory('$f/songs/$v'))) {
 						for (inst in FileSystem.readDirectory('$f/songs/$i').filter(v->return Path.extension(v) == 'ogg')) {
@@ -184,6 +184,7 @@ class ModdingAPI {
 			for (path in Paths.readFolder(MOD_FOLDER, true)) {
 				var meta:ModMeta = ParseUtil.json('$MOD_FOLDER/$path/novamod_meta', 'root');
 				if (meta == null) meta = ParseUtil.yaml('$MOD_FOLDER/$path/novamod_meta', 'root');
+				if (meta == null) meta = ParseUtil.json('$MOD_FOLDER/$path/_polymod_meta', 'root');
 				if (meta == null) continue;
 
 				// null check all properties and set defaults
@@ -363,6 +364,7 @@ class ModIcon extends NovaSprite {
 
 	override public function new(modId:String) {
 		var image = Paths.image('${ModdingAPI.MOD_FOLDER}/$modId/novamod_icon', 'root');
+		if (!Paths.fileExists(image, true)) image = Paths.image('${ModdingAPI.MOD_FOLDER}/$modId/_polymod_icon', 'root');
 		if (!Paths.fileExists(image, true)) {
 			image = Paths.image('${ModdingAPI.MOD_FOLDER}/example/novamod_icon', 'root');
 		}
