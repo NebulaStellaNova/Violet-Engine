@@ -247,33 +247,85 @@ class StrumLine extends FlxGroup {
 		}
 		keyCount = mania;
 		currentInputs.resize(0);
+		activeNotesByLane.resize(0);
+		activeNoteLaneCursors.resize(0);
+		activeSustainsByLane.resize(0);
+		activeSustainLaneCursors.resize(0);
 		for (i in 0...keyCount) {
 			strums.add(new Strum(this, i));
 			currentInputs.push(false);
+			activeNotesByLane.push([]);
+			activeNoteLaneCursors.push(0);
+			activeSustainsByLane.push([]);
+			activeSustainLaneCursors.push(0);
 		}
 	}
 
 	public var preparedNotes:Array<Note> = [];
+	public var nextNoteIndex:Int = 0;
+	public var spawnLookaheadMs:Float = 1500;
 
 	public function generateNotes(?time:Float):Void {
 		var stackedNoteCount:Int = 0;
+		preparedNotes.resize(0);
+		nextNoteIndex = 0;
+
 		for (data in chartData.notes) {
-			if (data.time < time ?? Math.NEGATIVE_INFINITY) continue;
-			var note:Note = new Note(this, data.id, data.time, data.sLen, PlayState.SONG._data.noteTypes[data.type-1]);
-			var exists = false;
+			if (time != null && data.time < time) continue;
+
+			var existingNote:Note = null;
 			for (i in preparedNotes) {
-				if (i.time == data.time && i.id == data.id) exists = true;
-				if (exists && data.sLen > i.length) {
-					preparedNotes.remove(i);
-					i.destroy();
-					exists = false;
+				if (i.time == data.time && i.id == data.id) {
+					existingNote = i;
+					break;
 				}
 			}
-			if (!exists) preparedNotes.push(note);
-			else note.destroy();
-			if (exists) stackedNoteCount++;
+
+			if (existingNote != null) {
+				stackedNoteCount++;
+				if (data.sLen <= existingNote.length)
+					continue;
+
+				preparedNotes.remove(existingNote);
+				existingNote.destroy();
+			}
+
+			preparedNotes.push(new Note(this, data.id, data.time, data.sLen, PlayState.SONG._data.noteTypes[data.type-1]));
 		}
+		preparedNotes.sort(Note.sortNotes);
 		if (stackedNoteCount != 0) trace('warning:Found <cyan>$stackedNoteCount<reset> stacked note${stackedNoteCount == 1 ? '' : 's'} for strumline <cyan>$ID<reset>. (They where removed)');
+	}
+
+	inline function getSpawnWindow(note:Note):Float {
+		var speed:Float = Math.abs(note.__scrollSpeed);
+		if (speed < 0.001) speed = 0.001;
+		return spawnLookaheadMs / speed;
+	}
+
+	function spawnNote(note:Note):Void {
+		if (note.destroyed) return;
+
+		notes.add(note);
+		if (note.id >= 0 && note.id < activeNotesByLane.length)
+			activeNotesByLane[note.id].push(note);
+
+		for (sustain in note.tail) {
+			if (sustain != null && !sustain.destroyed) {
+				sustains.add(sustain);
+				if (sustain.id >= 0 && sustain.id < activeSustainsByLane.length)
+					activeSustainsByLane[sustain.id].push(sustain);
+			}
+		}
+	}
+
+	function spawnPreparedNotes():Void {
+		while (
+			nextNoteIndex < preparedNotes.length
+			&& preparedNotes[nextNoteIndex].time - Conductor.songPosition < getSpawnWindow(preparedNotes[nextNoteIndex])
+		) {
+			spawnNote(preparedNotes[nextNoteIndex]);
+			nextNoteIndex++;
+		}
 	}
 
 	public dynamic function _onVoidTap(id:Int, strumLine:StrumLine):Void {}
@@ -284,12 +336,7 @@ class StrumLine extends FlxGroup {
 
 	override public function update(elapsed:Float):Void {
 
-		for (i in preparedNotes) {
-			var speed = i?.__scrollSpeed ?? scrollSpeed;
-			if (!i.destroyed && !notes.members.contains(i) && i.time - Conductor.songPosition < 1500 / speed) {
-				notes.add(i);
-			}
-		}
+		spawnPreparedNotes();
 
 		// auto hit and note miss
 		notes.forEachExists((note:Note) -> {
@@ -309,10 +356,28 @@ class StrumLine extends FlxGroup {
 		});
 
 		if (isPlayer) {
-			for (i => input in currentInputs)
-				if (input) for (sustain in Note.filterTail(sustains.members, i))
+			for (i => input in currentInputs) {
+				if (!input) continue;
+
+				final laneSustains = activeSustainsByLane[i];
+				var laneCursor = activeSustainLaneCursors[i];
+				while (laneCursor < laneSustains.length) {
+					final sustain = laneSustains[laneCursor];
+					if (sustain != null && sustain.exists && !sustain.wasHit && !sustain.wasMissed && !sustain.tooLate)
+						break;
+					laneCursor++;
+				}
+				activeSustainLaneCursors[i] = laneCursor;
+
+				var sustainIndex = laneCursor;
+				while (sustainIndex < laneSustains.length) {
+					final sustain = laneSustains[sustainIndex++];
+					if (sustain == null || !sustain.exists) continue;
+					if (!sustain.canHit || sustain.wasHit || sustain.wasMissed || sustain.tooLate) continue;
 					if ((sustain.time + sustain.parentNote.time) < Conductor.framePosition)
 						_onSustainHit(sustain);
+				}
+			}
 		}
 
 		super.update(elapsed);
@@ -326,7 +391,6 @@ class StrumLine extends FlxGroup {
 
 			var wasKilled:Bool = false;
 			if (note.tail.length != 0) {
-				note.tail.sort(Note.sortTail); // jic
 				final tailEnd:Sustain = note.tail[note.tail.length - 1];
 				if ((tailEnd.wasHit || tailEnd.wasMissed) && tailEnd.tooLate) {
 					note.kill();
@@ -344,37 +408,24 @@ class StrumLine extends FlxGroup {
 			var resultAngle:Float = 270;
 			if (note.__scrollSpeed < 0) resultAngle += 180;
 			final angleDir:Float = resultAngle * (Math.PI / 180);
+			final cosDir:Float = Math.cos(angleDir);
+			final sinDir:Float = Math.sin(angleDir);
 
 			final strum:Strum = note.parentStrum;
-			final pos:Array<Float> = [strum.x, strum.y];
 			var disPos:Float = 0.45 * (Conductor.framePosition - note.time) * Math.abs(note.__scrollSpeed) * Math.abs(scale.x / scale.y);
 
-			pos[0] += Math.cos(angleDir) * disPos;
 			// TODO: Figure out how to do this better, especially for sustains.
-			pos[0] -= note.width / 2;
-			pos[0] += strum.width / 2;
-
-			pos[1] += Math.sin(angleDir) * disPos;
-			pos[1] -= note.height / 2;
-			pos[1] += strum.height / 2;
-
-			note.setPosition(pos[0], pos[1]);
-			pos.resize(0);
+			var noteX:Float = strum.x + (cosDir * disPos) - (note.width * 0.5) + (strum.width * 0.5);
+			var noteY:Float = strum.y + (sinDir * disPos) - (note.height * 0.5) + (strum.height * 0.5);
+			note.setPosition(noteX, noteY);
 
 			for (sustain in note.tail) {
 				if (sustain == null) continue; if (!sustain.exists) continue;
-				final pos:Array<Float> = [strum.x, strum.y];
 				disPos = 0.45 * (Conductor.framePosition - (note.time + sustain.time)) * Math.abs(sustain.__scrollSpeed) * Math.abs(scale.x / scale.y);
 
-				pos[0] += Math.cos(angleDir) * disPos;
-				pos[0] -= sustain.width / 2;
-				pos[0] += strum.width / 2;
-
-				pos[1] += Math.sin(angleDir) * disPos;
-				pos[1] += strum.height / 2;
-
-				sustain.setPosition(pos[0], pos[1]);
-				pos.resize(0);
+				var sustainX:Float = strum.x + (cosDir * disPos) - (sustain.width * 0.5) + (strum.width * 0.5);
+				var sustainY:Float = strum.y + (sinDir * disPos) + (strum.height * 0.5);
+				sustain.setPosition(sustainX, sustainY);
 
 				if (sustain.wasHit) {
 					var t = FlxMath.bound((Conductor.framePosition - (note.time + sustain.time)) / sustain.height * 0.45 * sustain.__scrollSpeed, 0, 1);
@@ -402,6 +453,10 @@ class StrumLine extends FlxGroup {
 	}
 
 	final currentInputs:Array<Bool> = [];
+	final activeNotesByLane:Array<Array<Note>> = [];
+	final activeNoteLaneCursors:Array<Int> = [];
+	final activeSustainsByLane:Array<Array<Sustain>> = [];
+	final activeSustainLaneCursors:Array<Int> = [];
 	function _on_press(event:KeyboardEvent):Void {
 		if (FlxG.state.subState != null) return;
 		if (isComputer) return;
@@ -410,13 +465,26 @@ class StrumLine extends FlxGroup {
 		if (!FlxG.keys.checkStatus(event.keyCode, JUST_PRESSED)) return;
 		currentInputs[inputId] = true;
 
-		for (note in notes) {
-			var active = note.exists && note.canHit && !note.wasHit && !note.wasMissed && !note.tooLate && note.id == (inputId ?? note.id);
-			if (!active) continue;
+		final laneNotes = activeNotesByLane[inputId];
+		var laneCursor = activeNoteLaneCursors[inputId];
+		while (laneCursor < laneNotes.length) {
+			final note = laneNotes[laneCursor];
+			if (note != null && note.exists && !note.wasHit && !note.wasMissed && !note.tooLate)
+				break;
+			laneCursor++;
+		}
+		activeNoteLaneCursors[inputId] = laneCursor;
+
+		if (laneCursor < laneNotes.length) {
+			final note = laneNotes[laneCursor];
+			if (!note.canHit) {
+				_onVoidTap(inputId, this);
+				return;
+			}
 			_onNoteHit(note);
 			return;
 		}
-		 _onVoidTap(inputId, this);
+		_onVoidTap(inputId, this);
 
 	}
 

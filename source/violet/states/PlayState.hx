@@ -11,6 +11,7 @@ import violet.backend.utils.ParseUtil;
 import flixel.FlxCamera;
 import flixel.group.FlxGroup;
 import flixel.math.FlxMath;
+import flixel.util.FlxSort;
 
 import violet.backend.audio.Conductor;
 import violet.backend.objects.NovaCamera;
@@ -133,6 +134,8 @@ class PlayState extends violet.backend.StateBackend {
 
 	public var playAsOpponent:Bool = Options.data.playAsOpponent;
 	public var ghostTapping:Bool = Options.data.ghostTapping;
+	var sortedEvents:Array<ChartEvent> = [];
+	var nextEventIndex:Int = 0;
 
 	public var hasChangedPracticeMode(default, null):Bool = false;
 	public static var practiceMode(default, set):Bool = false;
@@ -191,8 +194,16 @@ class PlayState extends violet.backend.StateBackend {
 		SONG = ChartRegistry.getChart(song, difficulty, variation);
 		songData = SongRegistry.getSongByID(song);
 		variation = songData.variant;
+		sortedEvents = SONG.events;
+		var orderedEvents = [for (i => event in sortedEvents) {event: event, index: i}];
+		orderedEvents.sort((a, b) -> {
+			final byTime = FlxSort.byValues(FlxSort.ASCENDING, a.event.time, b.event.time);
+			return byTime != 0 ? byTime : FlxSort.byValues(FlxSort.ASCENDING, a.index, b.index);
+		});
+		sortedEvents = [for (entry in orderedEvents) entry.event];
+		nextEventIndex = 0;
 
-		for (i => data in SONG.events) {
+		for (i => data in sortedEvents) {
 			if (data.name == "Change Character") {
 				Cache.character(data.params[1]);
 			}
@@ -420,10 +431,9 @@ class PlayState extends violet.backend.StateBackend {
 		iconPlayer.updateFromHealth(health);
 		iconOpponent.updateFromHealth(health);
 
-		for (i in SONG.events) {
-			if (i.time <= Conductor.songPosition) {
-				handleEvent(i);
-			}
+		while (nextEventIndex < sortedEvents.length && sortedEvents[nextEventIndex].time <= Conductor.songPosition) {
+			handleEvent(sortedEvents[nextEventIndex]);
+			nextEventIndex++;
 		}
 
 		if (health == 0 || (Controls.reset && Options.data.developerMode)) {
@@ -925,7 +935,9 @@ class PlayState extends violet.backend.StateBackend {
 		instance = null;
 		Conductor.offset = 0;
 		super.destroy();
-		for (i in SONG.events) i.ran = false;
+		for (i in sortedEvents) i.ran = false;
+		sortedEvents.resize(0);
+		nextEventIndex = 0;
 		WindowUtil.suffix = '';
 	}
 

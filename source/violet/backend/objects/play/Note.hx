@@ -63,19 +63,14 @@ class Note extends NovaSprite {
 	/**
 	 * The sustains tied to this note.
 	 */
-	@:isVar public var tail(get, never):Array<Sustain> = [];
-	function get_tail():Array<Sustain> {
-		tail.sort(sortTail);
-		return tail;
-	}
+	public var tail(default, null):Array<Sustain> = [];
+	public var tailEndTime(default, null):Float = 0;
 	/**
 	 * The tail length in time.
 	 */
 	public var length(get, never):Float;
-	inline function get_length():Float {
-		tail.sort(sortTail); // jic
-		return tail.length != 0 ? tail[tail.length - 1].time : 0;
-	}
+	inline function get_length():Float
+		return tailEndTime;
 
 	/**
 	 * How much earlier the note can be hit before it's considered a miss.
@@ -134,6 +129,7 @@ class Note extends NovaSprite {
 			for (susNote in 0...roundedLength)
 				tail.push(new Sustain(this, (_stepLengthMs * susNote), susNote == (roundedLength - 1)));
 			tail.sort(sortTail);
+			tailEndTime = tail[tail.length - 1].time;
 		}
 
 		if (NoteStyleRegistry.doesNoteStyleExist(noteType) && noteType != null) style = noteType;
@@ -229,6 +225,7 @@ class Note extends NovaSprite {
 		for (sustain in tail)
 			sustain.destroy();
 		tail.resize(0);
+		tailEndTime = 0;
 		super.destroy();
 	}
 
