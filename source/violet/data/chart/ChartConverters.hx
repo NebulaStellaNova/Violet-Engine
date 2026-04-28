@@ -1,5 +1,7 @@
 package violet.data.chart;
 
+import flixel.util.typeLimit.OneOfTwo;
+import violet.data.character.CharacterRegistry;
 import sys.io.File;
 import violet.data.song.SongData;
 import sys.FileSystem;
@@ -129,12 +131,15 @@ class ChartConverters {
 			composer: meta.artist,
 			charter: meta.charter,
 
-			icon: meta.playData.characters.opponent,
+			icon: CharacterRegistry.characterDatas.get(meta.playData.characters.opponent).healthIcon,
 
 			variants: meta.playData.songVariations,
 			difficulties: meta.playData.difficulties,
 			ratings: meta.playData.ratings,
 			album: meta.playData.album,
+
+			gradient: meta.gradient,
+			freeplayCapsule: meta.freeplayCapsule,
 
 			instSuffix: meta.playData.characters.instrumental,
 
@@ -142,6 +147,7 @@ class ChartConverters {
 			beatsPerMeasure: meta.timeChanges[0].n,
 			stepsPerBeat: meta.timeChanges[0].d,
 		}
+
 		if (!FileSystem.exists('$path/charts' + (varient != null ? '/$varient' : '')))
 			FileSystem.createDirectory('$path/charts' + (varient != null ? '/$varient' : ''));
 
@@ -149,7 +155,7 @@ class ChartConverters {
 			var chartOut:ChartData = {
 				strumLines: [],
 				events: [],
-				stage: meta.playData.stage,
+				stage: aliasVSliceStage(meta.playData.stage),
 				noteStyle: meta.playData.noteStyle,
 				scrollSpeed: Reflect.field(chart.scrollSpeed, i),
 				noteTypes: []
@@ -218,15 +224,16 @@ class ChartConverters {
 		for (i in chart?.events ?? []) {
 			switch (i.e) {
 				case 'FocusCamera':
-					var target:Int = i.v.char;
-					var x:Float = i.v.x;
-					var y:Float = i.v.y;
-					var dur:Float = i.v.duration;
-					var ease:String = i.v.ease;
-					var easeDir:String = i.v.easeDir;
+					var e:Null<Int> = Std.parseInt(i.v.toString());
+					var target:Int = e != null ? e : i.v.char;
+					var x:Null<Float> = i.v.x;
+					var y:Null<Float> = i.v.y;
+					var dur:Null<Float> = i.v.duration;
+					var ease:Null<String> = i.v.ease;
+					var easeDir:Null<String> = i.v.easeDir;
 
 					if (target != -1) {
-						if (ease == 'CLASSIC') {
+						if (ease == 'CLASSIC' || ease == null) {
 							outEvents.events.push({
 								name: 'Camera Movement',
 								time: i.t,
@@ -313,6 +320,14 @@ class ChartConverters {
 			FileUtil.deleteFile('$path/meta$suffix.json');
 			FileUtil.deleteFile('$path/events$suffix.json');
 		});
+	}
+
+	public static function aliasVSliceStage(stageID:String):String {
+		var aliases:Map<String, String> = [
+			"limoRide" => "limo"
+		];
+		if (!aliases.exists(stageID)) return stageID;
+		return aliases.get(stageID);
 	}
 
 	// public static function fromImaginative(chartPath:String) {
