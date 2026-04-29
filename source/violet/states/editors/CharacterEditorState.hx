@@ -210,6 +210,7 @@ class CharacterEditorState extends StateBackend {
 			animationList = [];
 
 			ghost = new Character(characterDropdown.selectedOption.id);
+			ghost.debug = true;
 			ghost.allowOnComplete = false;
 			ghost.camera = charCamera;
 			ghost.updateHitbox();
@@ -222,6 +223,7 @@ class CharacterEditorState extends StateBackend {
 			add(ghost);
 
 			character = new Character(characterDropdown.selectedOption.id);
+			character.debug = true;
 			character.allowOnComplete = false;
 			character.camera = charCamera;
 			character.updateHitbox();

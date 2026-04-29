@@ -142,8 +142,10 @@ class Character extends violet.backend.objects.Bopper {
 			dance(true);
 	}
 
+	public var debug:Bool = false;
+
 	override function playAnim(name:String, forced:Bool = false, reversed:Bool = false, frame:Int = 0) {
-		if (this.flipX) {
+		if (this.flipX && !debug) {
 			if (name.startsWith('singLEFT')) name = name.replace('singLEFT', 'singRIGHT');
 			else if (name.startsWith('singRIGHT')) name = name.replace('singRIGHT', 'singLEFT');
 		}
