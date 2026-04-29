@@ -25,7 +25,7 @@
 	<SubTexture name="o0000" x="42" y="49" width="32" height="39"/>
 	<SubTexture name="one0000" x="79" y="93" width="32" height="39"/>
 	<SubTexture name="p0000" x="79" y="49" width="32" height="39"/>
-	<SubTexture name="percent0000" x="5" y="269" width="32" height="38"/>
+	<SubTexture name="percent0000" x="5" y="269" width="32" height="38" frameX="-5" frameY="0" frameWidth="32" frameHeight="38"/>
 	<SubTexture name="period0000" x="187" y="164" width="20" height="17" frameX="-5" frameY="-20" frameWidth="20" frameHeight="22"/>
 	<SubTexture name="plus0000" x="187" y="137" width="22" height="22"/>
 	<SubTexture name="q0000" x="116" y="49" width="32" height="39"/>

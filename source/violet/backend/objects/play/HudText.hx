@@ -63,7 +63,7 @@ class HudText extends FlxSpriteGroup {
 			off += l.width - 2;
 		}
 		for (i in letters) {
-			if (!active.contains(i)) remove(i);
+			if (!active.contains(i)) i.visible = false;
 		}
 		return text;
 	}

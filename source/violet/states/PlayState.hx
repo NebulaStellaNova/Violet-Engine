@@ -135,6 +135,7 @@ class PlayState extends violet.backend.StateBackend {
 	public var iconOpponent:HealthIcon;
 
 	public var scoreTxt:HudText;
+	public var accuracyTxt:HudText;
 	public var botplayText:FlxText;
 	public var botplayTextTweenAlpha:FlxTween;
 	public var botplayTextTweenScale:FlxTween;
@@ -332,6 +333,12 @@ class PlayState extends violet.backend.StateBackend {
 		scoreTxt.zIndex = 99;
 		add(scoreTxt);
 
+		accuracyTxt = new HudText();
+		accuracyTxt.y = healthBar.y + healthBar.height + 5;
+		accuracyTxt.camera = camHUD;
+		accuracyTxt.zIndex = 99;
+		add(accuracyTxt);
+
 		botplayText = new FlxText(0, 0, 0, 'BOTPLAY', 36);
 		botplayText.font = Paths.font('vcr.ttf');
 		botplayText.borderStyle = OUTLINE;
@@ -412,6 +419,7 @@ class PlayState extends violet.backend.StateBackend {
 		}
 	}
 
+	var accuracyLerp:Float = 100;
 	var healthLerp:Float = 0.5;
 	var scoreLerp:Float = 0;
 
@@ -464,10 +472,23 @@ class PlayState extends violet.backend.StateBackend {
 			pause();
 		}
 
-		scoreLerp = MathUtil.lerp(scoreLerp, score, 0.25);
+		scoreLerp = lerp(scoreLerp, score, 0.25);
 		scoreTxt.text = 'Score: ' + ScoreUtil.stringifyScore(Options.data.disableScoreLerping ? Math.round(score) : Math.round(scoreLerp), 8);
 		scoreTxt.x = healthBar.x + healthBar.width - scoreTxt.realWidth;
 		scoreTxt.refreshDisplay();
+
+		accuracyLerp = lerp(accuracyLerp, accuracy, 0.25);
+
+		var accT = '${Math.round(accuracyLerp*100)/100}';
+		var split = accT.split('.');
+		if (split[1].length == 1) split[1] = '0' + split[1];
+		if (Math.round(Std.parseFloat(accT)) == Std.parseFloat(accT)) split.push('00');
+		accuracyTxt.text = 'Accuracy: ${split.join('.')}%';
+		accuracyTxt.x = healthBar.x;
+		accuracyTxt.refreshDisplay();
+
+		scoreTxt.visible = !Options.data.hideScore;
+		accuracyTxt.visible = !Options.data.hideAccuracy;
 
 		health = FlxMath.bound(health, 0, 1);
 
@@ -1062,6 +1083,9 @@ class PlayState extends violet.backend.StateBackend {
 		if (iconPlayer._data.color != null && Options.data.coloredHealthBar)
 			healthBar.rightColor = iconPlayer._data.color;
 		else healthBar.rightColor = FlxColor.LIME;
+
+		scoreTxt.visible = !Options.data.hideScore;
+		accuracyTxt.visible = !Options.data.hideAccuracy;
 
 		runSongEvent('postUpdateOptions', event);
 	}

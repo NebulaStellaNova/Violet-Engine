@@ -154,6 +154,15 @@ menus:
     saveID: enableHoldCovers
     type: bool
 
+  - name: Hide Score
+    description: If checked, score text under the health bar will be hidden.
+    saveID: hideScore
+    type: bool
+  - name: Hide Accuracy
+    description: If checked, accuracy text under the health bar will be hidden.
+    saveID: hideAccuracy
+    type: bool
+
   # Lane Underlay
   - name: Enable Lane Underlay
     description: If checked, a black box will appear under the notes.
