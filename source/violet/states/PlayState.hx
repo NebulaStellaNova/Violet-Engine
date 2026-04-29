@@ -597,8 +597,11 @@ class PlayState extends violet.backend.StateBackend {
 		if (note.parent.isPlayer) score += Math.round(Scoring.missScore);
 		health -= Constants.DEFAULT_HEALTH_LOSS * (note.parent.isPlayer ? 1 : -1);
 
-		note.parentStrum.holdCover?.playAnim('end', true);
-		if (note.parent.isComputer) note.parentStrum.holdCover?.animation.finish();
+		final holdCover = note.parentStrum.holdCover;
+		if (holdCover != null) {
+			holdCover.playAnim('end', true);
+			if (note.parent.isComputer) holdCover.animation.finish();
+		}
 		note.parentStrum.holdCover = null;
 
 		runSongEvent('noteMissedPost', event);
@@ -622,17 +625,26 @@ class PlayState extends violet.backend.StateBackend {
 			health += Constants.DEFAULT_HEALTH_GAIN;
 
 		if (sustain.isEnd) {
-			if (!sustain.parentStrum.holdCover.extra.get('calledEnd')) {
-				sustain.parentStrum.holdCover.extra.set('calledEnd', true);
+			final holdCover = sustain.parentStrum.holdCover;
+			if (holdCover == null) {
+				FlxTimer.wait(0.025, () -> {
+					if (!sustain.parentNote.destroyed)
+						sustain.parentNote.destroy();
+				});
+			} else if (holdCover.extra.get('calledEnd') != true) {
+				holdCover.extra.set('calledEnd', true);
 				FlxTimer.wait(0.025, ()->{
-					sustain.parentStrum.holdCover?.playAnim('end', true);
-					if (sustain.parent.isComputer) sustain.parentStrum.holdCover?.animation.finish();
-					sustain.parentStrum.holdCover = null;
-					sustain.parentNote.destroy();
+					holdCover.playAnim('end', true);
+					if (sustain.parent.isComputer) holdCover.animation.finish();
+					if (sustain.parentStrum.holdCover == holdCover)
+						sustain.parentStrum.holdCover = null;
+					if (!sustain.parentNote.destroyed)
+						sustain.parentNote.destroy();
 				});
 			}
 		} else {
-			if (sustain.parentStrum.holdCover != null && sustain.parentStrum.holdCover.extra != null) sustain.parentStrum.holdCover.extra.set('calledEnd', false);
+			final holdCover = sustain.parentStrum.holdCover;
+			if (holdCover != null) holdCover.extra.set('calledEnd', false);
 		}
 
 		runSongEvent('sustainHitPost', event);
@@ -659,8 +671,11 @@ class PlayState extends violet.backend.StateBackend {
 		health -= Constants.DEFAULT_HEALTH_LOSS * (sustain.parent.isPlayer ? 1 : -1);
 		combo = 0;
 
-		sustain.parentStrum.holdCover?.playAnim('end', true);
-		if (sustain.parent.isComputer) sustain.parentStrum.holdCover?.animation.finish();
+		final holdCover = sustain.parentStrum.holdCover;
+		if (holdCover != null) {
+			holdCover.playAnim('end', true);
+			if (sustain.parent.isComputer) holdCover.animation.finish();
+		}
 		sustain.parentStrum.holdCover = null;
 
 		runSongEvent('sustainMissedPost', event);
