@@ -479,16 +479,18 @@ class PlayState extends violet.backend.StateBackend {
 
 		accuracyLerp = lerp(accuracyLerp, accuracy, 0.25);
 
-		var accT = '${Math.round(accuracyLerp*100)/100}';
-		var split = accT.split('.');
-		if (split[1].length == 1) split[1] = '0' + split[1];
-		if (Math.round(Std.parseFloat(accT)) == Std.parseFloat(accT)) split.push('00');
-		accuracyTxt.text = 'Accuracy: ${split.join('.')}%';
-		accuracyTxt.x = healthBar.x;
-		accuracyTxt.refreshDisplay();
-
 		scoreTxt.visible = !Options.data.hideScore;
 		accuracyTxt.visible = !Options.data.hideAccuracy;
+
+		if (accuracyTxt.visible) {
+			var accT = '${Math.round(accuracyLerp*100)/100}';
+			var split = accT.split('.');
+			if (split[1].length == 1) split[1] = '0' + split[1];
+			if (Math.round(Std.parseFloat(accT)) == Std.parseFloat(accT)) split.push('00');
+			accuracyTxt.text = 'Accuracy: ${split.join('.')}%';
+			accuracyTxt.x = healthBar.x;
+			accuracyTxt.refreshDisplay();
+		}
 
 		health = FlxMath.bound(health, 0, 1);
 
@@ -620,10 +622,17 @@ class PlayState extends violet.backend.StateBackend {
 			health += Constants.DEFAULT_HEALTH_GAIN;
 
 		if (sustain.isEnd) {
-			sustain.parentStrum.holdCover?.playAnim('end', true);
-			if (sustain.parent.isComputer) sustain.parentStrum.holdCover?.animation.finish();
-			sustain.parentStrum.holdCover = null;
-			sustain.parentNote.destroy();
+			if (!sustain.parentStrum.holdCover.extra.get('calledEnd')) {
+				sustain.parentStrum.holdCover.extra.set('calledEnd', true);
+				FlxTimer.wait(0.025, ()->{
+					sustain.parentStrum.holdCover?.playAnim('end', true);
+					if (sustain.parent.isComputer) sustain.parentStrum.holdCover?.animation.finish();
+					sustain.parentStrum.holdCover = null;
+					sustain.parentNote.destroy();
+				});
+			}
+		} else {
+			if (sustain.parentStrum.holdCover != null && sustain.parentStrum.holdCover.extra != null) sustain.parentStrum.holdCover.extra.set('calledEnd', false);
 		}
 
 		runSongEvent('sustainHitPost', event);
