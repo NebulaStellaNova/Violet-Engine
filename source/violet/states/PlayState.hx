@@ -1,5 +1,7 @@
 package violet.states;
 
+import haxe.xml.Access;
+import violet.backend.utils.FileUtil;
 import openfl.events.KeyboardEvent;
 import violet.backend.utils.StringUtil;
 import violet.backend.utils.WindowUtil;
@@ -19,7 +21,7 @@ import violet.backend.objects.NovaCamera;
 import violet.backend.objects.play.ComboGroup;
 import violet.backend.objects.play.HealthBar;
 import violet.backend.objects.play.Note;
-import violet.backend.objects.play.ScoreTxt;
+import violet.backend.objects.play.HudText;
 import violet.backend.objects.play.StrumLine;
 import violet.backend.objects.play.Sustain;
 import violet.backend.options.Options;
@@ -132,7 +134,7 @@ class PlayState extends violet.backend.StateBackend {
 	public var iconPlayer:HealthIcon;
 	public var iconOpponent:HealthIcon;
 
-	public var scoreTxt:ScoreTxt;
+	public var scoreTxt:HudText;
 	public var botplayText:FlxText;
 	public var botplayTextTweenAlpha:FlxTween;
 	public var botplayTextTweenScale:FlxTween;
@@ -168,6 +170,8 @@ class PlayState extends violet.backend.StateBackend {
 	public var camBopInterval:Int = 4;
 	public var camBopOffset:Int = 0;
 	public var camBopAmount:Float = 1;
+
+	public var cameraMovementSprite:FlxSprite;
 
 	/**
 	 * The amount of beats the countdown lasts for.
@@ -321,10 +325,11 @@ class PlayState extends violet.backend.StateBackend {
 			healthBar.rightColor = FlxColor.LIME;
 		}
 
-		scoreTxt = new ScoreTxt();
+		scoreTxt = new HudText();
 		scoreTxt.x = healthBar.x + healthBar.width - scoreTxt.width;
 		scoreTxt.y = healthBar.y + healthBar.height + 5;
 		scoreTxt.camera = camHUD;
+		scoreTxt.zIndex = 99;
 		add(scoreTxt);
 
 		botplayText = new FlxText(0, 0, 0, 'BOTPLAY', 36);
@@ -379,6 +384,32 @@ class PlayState extends violet.backend.StateBackend {
 		camFollowPoint.y = stage._data.cameraPosition[1];
 		camGame.followLerp = 0.075;
 		snapCamera();
+
+		if (Paths.fileExists('songs/${PlayState.song}/camera-movement.xml')) {
+			trace('found camera xml');
+			var data = Xml.parse(FileUtil.getFileContent(Paths.xml('songs/${PlayState.song}/camera-movement')));
+			var xmlAccess:Access = new Access(data);
+			var source = xmlAccess.node.Motion.node.source.node.Source;
+			var lastFrame = xmlAccess.node.Motion.nodes.Keyframe.copy().pop();
+			var lastFrameIndex:Int = Std.parseInt(lastFrame.att.index);
+
+			var offset:CameraOffset = new CameraOffset(0);
+			cameraOffsets.push(offset);
+
+			cameraMovementSprite = new FlxSprite(0, 0);
+			cameraMovementSprite.makeGraphic(32, 32, FlxColor.TRANSPARENT);
+			var frameIndices = [for (i in 0...lastFrameIndex) 0];
+			cameraMovementSprite.animation.add("emptyAnim", frameIndices, Std.parseInt(source.att.frameRate), false);
+			cameraMovementSprite.animation.onFrameChange.add((name, number, index)->{
+				for (i in xmlAccess.node.Motion.nodes.Keyframe) {
+					if (i.att.index == '$number') {
+						if (i.has.x) offset.x = Std.parseFloat(i.att.x);
+						if (i.has.y) offset.y = Std.parseFloat(i.att.y);
+					}
+				}
+			});
+			add(cameraMovementSprite);
+		}
 	}
 
 	var healthLerp:Float = 0.5;
@@ -434,7 +465,9 @@ class PlayState extends violet.backend.StateBackend {
 		}
 
 		scoreLerp = MathUtil.lerp(scoreLerp, score, 0.25);
-		scoreTxt.value = Options.data.disableScoreLerping ? Math.round(score) : Math.round(scoreLerp);
+		scoreTxt.text = 'Score: ' + ScoreUtil.stringifyScore(Options.data.disableScoreLerping ? Math.round(score) : Math.round(scoreLerp), 8);
+		scoreTxt.x = healthBar.x + healthBar.width - scoreTxt.realWidth;
+		scoreTxt.refreshDisplay();
 
 		health = FlxMath.bound(health, 0, 1);
 
@@ -809,6 +842,8 @@ class PlayState extends violet.backend.StateBackend {
 		var event = runSongEvent('startSong', runSongEvent('songStart', new EventBase()));
 
 		if (event.cancelled) return;
+
+		if (cameraMovementSprite != null) cameraMovementSprite.animation.play("emptyAnim");
 
 		songStarted = true;
 		Conductor.play(true, -Conductor.beatLengthMs * Math.abs(startDelay));
