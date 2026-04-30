@@ -551,12 +551,14 @@ class PlayState extends violet.backend.StateBackend {
 				char.playSingAnim(note.id, event.animationSuffix, true);
 			}
 
+
+		health += note.parent.isPlayer ? event.healthGain : -event.healthGain;
+
 		if (note.parent.isPlayer) {
 			final noteHitDelta = botplay ? 0 : note.time - Conductor.framePosition;
 			final judgement:Judgement = Scoring.judgeNoteHit(noteHitDelta);
 			if (judgement.splash && event.spawnSplash != false) note.parentStrum.spawnSplash(note);
 			score += Math.round(judgement.score);
-			health += Constants.DEFAULT_HEALTH_GAIN;
 			combo++;
 			comboGroup.popupRating(judgement.rating, combo);
 
@@ -1115,6 +1117,7 @@ class PlayState extends violet.backend.StateBackend {
 	}
 
 	override public function destroy():Void {
+		callSongScripts('destroy');
 		if (recordingMode) ReplaySystem.stopRecording();
 		if (recordingMode) ReplaySystem.saveRecording(SONG.id);
 		if (playbackMode) ReplaySystem.stopReplay();
@@ -1137,6 +1140,7 @@ class PlayState extends violet.backend.StateBackend {
 	public static var staticExit:Void->Void;
 
 	public dynamic function exitToMenu() {
+
 		var onComplete = ()->{
 			if (isStoryMode)
 				FlxG.switchState(new StoryMenu().build());

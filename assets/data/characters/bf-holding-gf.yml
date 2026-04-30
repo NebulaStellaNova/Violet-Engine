@@ -4,7 +4,7 @@ assetPath: characters/bfAndGF
 flipX: true
 singTime: 8
 healthIcon: bf
-offsets: [0, 50]
+offsets: [50, 150]
 cameraOffsets: [50, 50]
 animations:
   - name: singUP

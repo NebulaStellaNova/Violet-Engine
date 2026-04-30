@@ -84,7 +84,6 @@ class InitialState extends StateBackend { // for now
 			if (Controls.fullscreen) {
 				fullscreen = !fullscreen;
 				if (fullscreen) {
-
 					defaultParams.x = lime.app.Application.current.window.x;
 					defaultParams.y = lime.app.Application.current.window.y;
 					defaultParams.width = lime.app.Application.current.window.width;
