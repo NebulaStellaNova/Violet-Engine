@@ -131,7 +131,7 @@ class ChartConverters {
 			composer: meta.artist,
 			charter: meta.charter,
 
-			icon: CharacterRegistry.characterDatas.get(meta.playData.characters.opponent).healthIcon,
+			icon: meta?.icon != null ? meta.icon : CharacterRegistry.characterDatas.get(meta.playData.characters.opponent).healthIcon,
 
 			variants: meta.playData.songVariations,
 			difficulties: meta.playData.difficulties,
@@ -165,14 +165,14 @@ class ChartConverters {
 				position: 'dad',
 				type: OPPONENT,
 				notes: [],
-				vocalsSuffix: meta.playData.characters.opponentVocals[0]
+				vocalsSuffix: (meta.playData.characters?.opponentVocals ?? [])[0]
 			};
 			var play = {
 				characters: [meta.playData.characters.player],
 				position: 'boyfriend',
 				type: PLAYER,
 				notes: [],
-				vocalsSuffix: meta.playData.characters.playerVocals[0]
+				vocalsSuffix: (meta.playData.characters?.playerVocals ?? [])[0]
 			}
 			var spec = {
 				characters: [meta.playData.characters.girlfriend],
@@ -327,7 +327,8 @@ class ChartConverters {
 			"limoRide" => "limo",
 			"limoRideErect" => "limo-erect",
 			"tankmanBattlefield" => "tank",
-			"tankmanBattlefieldErect" => "tank-erect"
+			"tankmanBattlefieldErect" => "tank-erect",
+			"phillyStreets" => "philly-streets"
 		];
 		if (!aliases.exists(stageID)) return stageID;
 		return aliases.get(stageID);

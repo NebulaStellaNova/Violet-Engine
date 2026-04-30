@@ -15,8 +15,8 @@
 	],
 	"needsVoices": false,
 	"displayName": "Darnell",
-	"icon": "darnell",
 	"name": "darnell",
+	"icon": "darnell",
 	"freeplayCapsule": "streets",
 	"gradient": ["#6162FF", "#00FF48"],
 	"customValues": {

@@ -59,7 +59,7 @@ class Cache {
 
 		if (bitmap == null) {
 			trace('error:No bitmap data from path "$imagePath".');
-			return FlxGraphic.fromClass(HaxeLogo, 'flixel/images/logo/logo.png');
+			bitmap = BetterBitmapData.fromFile(Paths.image('zuko-here'));
 		}
 
 		var graphic:FlxGraphic = FlxGraphic.fromBitmapData(bitmap, imagePath, false);
