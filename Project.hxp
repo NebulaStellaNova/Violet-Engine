@@ -60,6 +60,7 @@ class Project extends HXProject {
 		new Lib('yaml'),
 
 		// -- Git Libs -- \\
+		new Lib('funkin.vis', 'https://github.com/FunkinCrew/funkVis'),
 		new Lib('moonchart', 'https://github.com/MaybeMaru/moonchart.git'),
 		new Lib('flxrhythmconductor', 'https://github.com/PurSnake/FlxRhythmConductor', ['--skip-dependencies']),
 		new Lib('lemon-ui', 'https://github.com/NebulaStellaNova/LemonUI', ['--skip-dependencies']),
