@@ -328,7 +328,9 @@ class ChartConverters {
 			"limoRideErect" => "limo-erect",
 			"tankmanBattlefield" => "tank",
 			"tankmanBattlefieldErect" => "tank-erect",
-			"phillyStreets" => "philly-streets"
+			"phillyStreets" => "philly-streets",
+			"phillyTrain" => "train",
+			"phillyTrainErect" => "train-erect"
 		];
 		if (!aliases.exists(stageID)) return stageID;
 		return aliases.get(stageID);
