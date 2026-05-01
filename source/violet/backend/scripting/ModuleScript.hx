@@ -1,5 +1,7 @@
 package violet.backend.scripting;
 
+import violet.backend.audio.Conductor;
+import haxe.io.Path;
 import violet.backend.utils.NovaUtils;
 import rulescript.types.ScriptedModule;
 import rulescript.scriptedClass.RuleScriptedClass.ScriptedClass;
@@ -16,64 +18,49 @@ class ModuleScript extends Script {
 
 	public var internalScript:RuleScript;
 
+	public static var importAliases:Map<String, String> = [
+		"funkin.modding.module.Module" => "violet.backend.scripting.hxc.Module"
+	];
+	public static function aliasImports(content:String):String {
+		for (i in importAliases.keys()) {
+			content = content.replace(i, importAliases.get(i));
+		}
+		return content;
+	}
+
+	// public var internalScript;
+
 	override public function new(path:String) {
 		super(path, false);
 
-		return;
+		ScriptedTypeUtil.resolveModule = function(path)
+		{
+			if (!FileSystem.exists(path))
+				return null;
 
-		ScriptedTypeUtil.resolveModule = resolveModule;
+			return new HxParser().parseModule(aliasImports(FileUtil.getFileContent(path)));
+		};
 
-		Typedefs.register("funkin.modding.module.Module", violet.backend.scripting.hxc.Module);
+		var contentSplit:Array<String> = FileUtil.getFileContent(path).replace('\n', ' ').split(' ');
 
-		var resolved = ScriptedTypeUtil.resolveScript(path);
-		var script:Access = new Access(resolved);
-
-		var module = cast (resolved, ScriptedModule);
-
-		var cl = RuleScript.resolveScriptedClass(path, FunkinScript.context);
-
-		if(cl  != null) {
-			var inst = cl.createInstance();
-			trace("yo");
+		var extension:String = null;
+		for (i=>word in contentSplit) {
+			if (word == 'extends') {
+				extension = contentSplit[i + 1];
+				break;
+			}
 		}
-
-
-
-		// /* internalScript = */ RuleScript.createScriptedInstance(path, FunkinScript.context);
-	}
-
-	public static function resolveModule(path:String):Array<ModuleDecl>
-	{
-		var parser = new HxParser();
-		parser.allowAll();
-		parser.mode = MODULE;
-
-		if (!FileSystem.exists(path))
-			return null;
-
-		var o = parser.parseModule(FileUtil.getFileContent(path));
-		return o;
-	}
-
-	/* override public function call<T>(funcName:String, ?args:Array<Dynamic>, ?def:T):T {
-		if (!internalScript.access.variableExists(funcName)) return def;
 		try {
-			var func = this.get(funcName);
-			if (func != null && Reflect.isFunction(func))
-				return Reflect.callMethod(null, func, args ?? []) ?? def;
-		} catch (e) {
-			// trace('error:${e.message}');
-			var data:Array<String> = e.message.split(":");
-			var scriptString = data.shift();
-			var lineNum = data.shift();
-			var errorMsg = data.join(':');
-			NovaUtils.addNotification('Novamod Script Exception!', 'Error executing "$fileName:$lineNum":$errorMsg', ERROR);
+			switch (extension) {
+				case 'Module':
+					var script = new violet.backend.scripting.hxc.Module(path);
+					// TODO: Implement the shit :D
+				default:
+					trace('warning:Unknown/Unimplemented V-Slice class "${extension.trim()}" in "${Path.withoutDirectory(path).trim()}", skipping hxc.');
+			}
+		} catch (e:Dynamic) {
+			trace('error:$e');
 		}
-		return def;
 	}
 
-	override public function set(variable:String, value:Dynamic):Void
-		internalScript.access.setVariable(variable, value);
-	override public function get<T>(variable:String, ?def:T):T
-		return internalScript.access.getVariable(variable) ?? def; */
 }

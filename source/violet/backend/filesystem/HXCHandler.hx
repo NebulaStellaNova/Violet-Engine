@@ -18,7 +18,7 @@ class HXCHandler extends flixel.FlxBasic {
 
 	public function addScript(path:String) {
 		var script = new violet.backend.scripting.ModuleScript(path);
-		hxcScripts.addScript(script);
+		// hxcScripts.addScript(script);
 	}
 
 	inline public function clear() {

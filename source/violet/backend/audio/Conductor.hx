@@ -1,5 +1,6 @@
 package violet.backend.audio;
 
+import flixel.util.FlxSignal;
 import flixel.addons.sound.FlxRhythmConductor;
 import flixel.addons.sound.MusicTimeChangeEvent;
 import violet.backend.utils.NovaUtils;
@@ -197,5 +198,4 @@ class Conductor {
 			i.stop();
 		}
 	}
-
 }

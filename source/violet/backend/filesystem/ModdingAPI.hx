@@ -127,6 +127,7 @@ class ModdingAPI {
 		// Main.threadCallacks.addOnce(reloadRegistries);
 		new HXCHandler();
 		reloadRegistries();
+		checkForHXC();
 	}
 
 	public static function reloadModList() {
