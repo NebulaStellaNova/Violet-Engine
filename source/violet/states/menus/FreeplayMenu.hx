@@ -210,6 +210,8 @@ class FreeplayMenu extends SubStateBackend {
 			}
 		}
 
+		ostText.y = bottomBar.y + bottomBar.height - 47;
+
 		snap = false;
 	}
 
