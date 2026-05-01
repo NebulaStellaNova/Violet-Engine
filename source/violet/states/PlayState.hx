@@ -1,5 +1,6 @@
 package violet.states;
 
+import violet.data.chart.ChartData.InternalChartEvent;
 import haxe.xml.Access;
 import violet.backend.utils.FileUtil;
 import openfl.events.KeyboardEvent;
@@ -144,7 +145,7 @@ class PlayState extends violet.backend.StateBackend {
 	public var ghostTapping:Bool = Options.data.ghostTapping;
 	public var botplay:Bool = false;
 	public var botplayScoreDiscarded(default, null):Bool = false;
-	public var sortedEvents:Array<ChartEvent> = [];
+	public var sortedEvents:Array<InternalChartEvent> = [];
 	public var nextEventIndex:Int = 0;
 
 	public var hasChangedPracticeMode(default, null):Bool = false;
@@ -206,7 +207,7 @@ class PlayState extends violet.backend.StateBackend {
 		SONG = ChartRegistry.getChart(song, difficulty, variation);
 		songData = SongRegistry.getSongByID(song);
 		variation = songData.variant;
-		sortedEvents = SONG.events;
+		sortedEvents = cast SONG.events;
 		var orderedEvents = [for (i => event in sortedEvents) {event: event, index: i}];
 		orderedEvents.sort((a, b) -> {
 			final byTime = FlxSort.byValues(FlxSort.ASCENDING, a.event.time, b.event.time);
@@ -753,7 +754,7 @@ class PlayState extends violet.backend.StateBackend {
 
 
 	var scrollTween:FlxTween;
-	function handleEvent(event:ChartEvent) {
+	function handleEvent(event:InternalChartEvent) {
 		if (event.ran) return;
 		event.ran = true;
 		var eventName = event.type != null ? [null, 'Camera Movement'][event.type] : event.name;
