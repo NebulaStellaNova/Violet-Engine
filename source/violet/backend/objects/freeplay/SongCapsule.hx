@@ -52,9 +52,9 @@ class SongCapsule extends Capsule {
 		iconBG.updateHitbox();
 		add(iconBG);
 
-		final outlinePathe = 'icons/outlines/${songData.icon}-outline'; // Typo but I'm not changing it now
-		final outlineAsset = Paths.image(outlinePathe);
-		var iconImage = new HealthIcon(songData.icon, false, false, outlineAsset != '' ? outlinePathe : null);
+		final outlinePath = 'icons/outlines/${songData.icon}-outline'; // Typo but I'm not changing it now
+		final outlineAsset = Paths.image(outlinePath);
+		var iconImage = new HealthIcon(songData.icon, false, false, outlineAsset != '' ? outlinePath : null);
 		iconImage.scaleOffset = 0.45;
 		iconImage.globalOffset.set(0, 0);
 		iconImage.canDance = false;
