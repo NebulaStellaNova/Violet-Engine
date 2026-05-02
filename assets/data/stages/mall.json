@@ -58,10 +58,11 @@
       "animations": [
         {
           "name": "idle",
-          "prefix": "Bottom Level Boppers",
+          "prefix": "Christmas Erect Background Assets V3(1)_TA-Export",
           "frameRate": 24,
           "flipX": false,
-          "flipY": false
+          "flipY": false,
+          "byLabel": false
         }
       ]
     },
