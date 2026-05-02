@@ -57,4 +57,4 @@ Friday Night Funkin' - For the game lol.
 # Asset Credits
 - [KadeDev](https://github.com/kadedev): Kade Engine popup graphics.
 - [ThatRozebudDude](https://github.com/ThatRozebudDude): Spirit's Sticker (Freeplay Menu)
-- [GoodieBag](https://gamebanana.com/members/1904855): Spooky-Kid's, Senpai', Tankman's, and Darnell's Sticker (Freeplay Menu)
+- [GoodieBag](https://gamebanana.com/members/1904855): Spooky-Kid's, Senpai's, Tankman's, and Darnell's Sticker (Freeplay Menu)
