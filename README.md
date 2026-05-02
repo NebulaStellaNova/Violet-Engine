@@ -47,7 +47,6 @@ Friday Night Funkin' - For the game lol.
 # Violet Engine Crew
 - [Nebula S. Nova](https://github.com/NebulaStellaNova): Main Coder.
 - [Rodney528](https://github.com/rodney528): Secondary Coder.
-- [GENZU](https://github.com/g3n-zu): Secondary Coder.
 - [PurSnake](https://github.com/PurSnake): Created and helped implement [FlxRhythmConductor](https://github.com/PurSnake/FlxRhythmConductor).
 - [ADA_Funni](https://github.com/ADA-Funni): Small code tweaks and fixes.
 - [LORAY-guy](https://open.spotify.com/artist/7hPljx3DXYez3j2UeswXsS): Menu Concept Designer.
