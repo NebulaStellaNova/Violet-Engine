@@ -57,7 +57,7 @@ typedef Condition = {
 
 class OptionsMenu extends SubStateBackend {
 
-	public var optionsData:OptionsData = ParseUtil.yaml('data/config/options');
+	public var optionsData:OptionsData = ParseUtil.jsonOrYaml('data/config/options');
 
 	public var menus:Array<Alphabet> = [];
 	public var options:Array<BaseOption> = [];

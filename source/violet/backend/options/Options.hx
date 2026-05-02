@@ -78,6 +78,13 @@ import lime.app.Application;
 
 	public var hideScore:Bool = false;
 	public var hideAccuracy:Bool = false;
+
+	public var accuracyCalculation:AccuracyBase = RATING; // 0 = Rating, 1 = Millisecond
+}
+
+enum abstract AccuracyBase(Int) {
+	var RATING;
+	var MILLISECOND;
 }
 
 class Options {

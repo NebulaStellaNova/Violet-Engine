@@ -339,6 +339,10 @@ class PlayState extends violet.backend.StateBackend {
 		accuracyTxt.zIndex = 99;
 		add(accuracyTxt);
 
+		accuracyTxt.text = 'Accuracy: 100.00%';
+		accuracyTxt.x = healthBar.x;
+		accuracyTxt.refreshDisplay();
+
 		botplayText = new FlxText(0, 0, 0, 'BOTPLAY', 36);
 		botplayText.font = Paths.font('vcr.ttf');
 		botplayText.borderStyle = OUTLINE;
@@ -419,7 +423,6 @@ class PlayState extends violet.backend.StateBackend {
 		}
 	}
 
-	var accuracyLerp:Float = 100;
 	var healthLerp:Float = 0.5;
 	var scoreLerp:Float = 0;
 
@@ -477,20 +480,8 @@ class PlayState extends violet.backend.StateBackend {
 		scoreTxt.x = healthBar.x + healthBar.width - scoreTxt.realWidth;
 		scoreTxt.refreshDisplay();
 
-		accuracyLerp = lerp(accuracyLerp, accuracy, 0.25);
-
 		scoreTxt.visible = !Options.data.hideScore;
 		accuracyTxt.visible = !Options.data.hideAccuracy;
-
-		if (accuracyTxt.visible) {
-			var accT = '${Math.round(accuracyLerp*100)/100}';
-			var split = accT.split('.');
-			if (split[1].length == 1) split[1] = '0' + split[1];
-			if (Math.round(Std.parseFloat(accT)) == Std.parseFloat(accT)) split.push('00');
-			accuracyTxt.text = 'Accuracy: ${split.join('.')}%';
-			accuracyTxt.x = healthBar.x;
-			accuracyTxt.refreshDisplay();
-		}
 
 		health = FlxMath.bound(health, 0, 1);
 
@@ -562,15 +553,33 @@ class PlayState extends violet.backend.StateBackend {
 			combo++;
 			comboGroup.popupRating(judgement.rating, combo);
 
-			var rawAcc = Math.abs(noteHitDelta) / Scoring.missThreshold;
-			var roundedAcc = Math.round(rawAcc*10000)/10000;
-			var acc = 100 - (roundedAcc * 100);
-			accuracies.push(acc);
+			switch (Options.data.accuracyCalculation) {
+				case RATING:
+					accuracies.push([
+						"sick" => 100,
+						"good" => 75,
+						"bad" => 50,
+						"shit" => 25
+					].get(judgement.rating));
+				case MILLISECOND:
+					var rawAcc = Math.abs(noteHitDelta) / Scoring.missThreshold;
+					var roundedAcc = Math.round(rawAcc*10000)/10000;
+					var acc = 100 - (roundedAcc * 100);
+					accuracies.push(acc);
+			}
 		} else if (event.spawnSplash == true) // on purpose ***do not touch***
 			note.parentStrum.spawnSplash(note);
 
 		if (event.spawnHoldCover)
 			note.parentStrum.spawnHoldCover();
+
+		var accT = '${Math.round(accuracy*100)/100}';
+		var split = accT.split('.');
+		if (split[1].length == 1) split[1] = '0' + split[1];
+		if (Math.round(Std.parseFloat(accT)) == Std.parseFloat(accT)) split.push('00');
+		accuracyTxt.text = 'Accuracy: ${split.join('.')}%';
+		accuracyTxt.x = healthBar.x;
+		accuracyTxt.refreshDisplay();
 
 		runSongEvent('noteHitPost', event);
 	}
