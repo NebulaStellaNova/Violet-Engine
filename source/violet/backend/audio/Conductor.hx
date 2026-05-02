@@ -146,8 +146,42 @@ class Conductor {
 		FlxRhythmConductor.instance.onMeasureHit.add((measure:Int, backward:Bool) -> if (SubStateBackend.instance != null) SubStateBackend.instance.measureHit(measure));
 	}
 
-	public static function setInitialBPM(bpm:Float, tsn:Int = 4, tsd:Int = 4):Void {
+	public static function setInitialBPM(bpm:Float = 100, tsn:Int = 4, tsd:Int = 4):Void {
 		FlxRhythmConductor.instance.loadMeta([new MusicTimeChangeEvent(0, bpm, tsn, tsd)]);
+	}
+
+	public static function setupBPMChanges(songMeta:violet.data.song.Song, events:Array<violet.data.chart.ChartData.ChartEvent>) {
+		var lastTimeChange:MusicTimeChangeEvent = new MusicTimeChangeEvent(0, songMeta.bpm, songMeta.stepsPerBeat, songMeta.beatsPerMeasure);
+		var songEvents = [lastTimeChange];
+		FlxRhythmConductor.instance.loadMeta(songEvents.concat([
+			for (event in events) {
+				switch (event.name) {
+					case 'BPM Change':
+						lastTimeChange = new MusicTimeChangeEvent(
+							event.time,
+							event.params[0] ?? lastTimeChange.bpm,
+							lastTimeChange.timeSignatureNum,
+							lastTimeChange.timeSignatureDen
+						);
+					case 'Continuous BPM Change':
+						lastTimeChange = new MusicTimeChangeEvent(
+							event.time,
+							event.params[0] ?? lastTimeChange.bpm,
+							lastTimeChange.timeSignatureNum,
+							lastTimeChange.timeSignatureDen,
+							(event.params[1] ?? 0) / lastTimeChange.timeSignatureNum
+						);
+					case 'Time Signature Change':
+						lastTimeChange = new MusicTimeChangeEvent(
+							event.time,
+							lastTimeChange.bpm,
+							event.params[0] ?? lastTimeChange.timeSignatureNum,
+							event.params[(event.params[2] ?? false) ? 0 : 1] ?? lastTimeChange.timeSignatureDen,
+						);
+					default: cast null; // fuck type defs
+				}
+			}
+		].filter(change -> return change != null)));
 	}
 
 	public static function pause():Void {

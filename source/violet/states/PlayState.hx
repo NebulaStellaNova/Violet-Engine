@@ -7,7 +7,6 @@ import openfl.events.KeyboardEvent;
 import violet.backend.utils.StringUtil;
 import violet.backend.utils.WindowUtil;
 import violet.backend.filesystem.HXCHandler;
-import flixel.FlxObject;
 import flixel.math.FlxPoint;
 import violet.backend.replay.ReplaySystem;
 import violet.backend.utils.ParseUtil;
@@ -45,7 +44,6 @@ import violet.data.song.SongRegistry;
 import violet.data.stage.Stage;
 import violet.states.menus.FreeplayMenu;
 import violet.states.menus.StoryMenu;
-import violet.states.menus.MainMenu;
 import violet.states.menus.PauseMenu;
 import violet.backend.objects.play.DialogueHandler;
 
@@ -205,7 +203,7 @@ class PlayState extends violet.backend.StateBackend {
 		FlxG.cameras.add(camHUD, false);
 
 		SONG = ChartRegistry.getChart(song, difficulty, variation);
-		songData = SongRegistry.getSongByID(song);
+		songData = SONG.meta;
 		variation = songData.variant;
 		sortedEvents = cast SONG.events;
 		var orderedEvents = [for (i => event in sortedEvents) {event: event, index: i}];
@@ -239,6 +237,7 @@ class PlayState extends violet.backend.StateBackend {
 		strumLines.z = 100;
 
 		Conductor.playSong(songData.songName, variation); Conductor.pause();
+		Conductor.setupBPMChanges(songData, sortedEvents);
 		Conductor.offset = (countdownLength) * Conductor.beatLengthMs;
 		if (SONG.meta.needsVoices) generalVocals = Conductor.addAdditionalTrack(FlxG.sound.load(Cache.sound(Paths.vocal(songData.songName, null, PlayState.variation), 'root', null, true), FlxG.sound.defaultMusicGroup));
 		else generalVocals = Conductor.addAdditionalTrack(new FlxSound());
