@@ -12,10 +12,13 @@ import violet.backend.utils.NovaUtils;
 import flixel.math.FlxPoint;
 import flixel.math.FlxMath;
 import violet.data.song.Song;
-import violet.backend.objects.freeplay.Capsule;
 import violet.data.song.SongRegistry;
+// import violet.data.level.LevelRegistry;
+import violet.backend.objects.freeplay.Capsule;
+// import violet.backend.objects.freeplay.LevelCapsule;
+import violet.backend.objects.freeplay.SongCapsule;
 import violet.backend.options.Options;
-import violet.backend.utils.ParseUtil.ParseColor;
+import violet.backend.utils.ParseUtil;
 import flixel.FlxCamera;
 import violet.backend.SubStateBackend;
 
@@ -23,6 +26,7 @@ class FreeplayMenu extends SubStateBackend {
 
 	public static var skipTransition:Bool = false;
 	public static var selectedSongIndex(default, set):Int = 0;
+	public var songList:Array<Song>;
 
 	public static var difficultyColors:Map<String, ParseColor> = [
 		"easy" => "#00FF00",
@@ -31,23 +35,6 @@ class FreeplayMenu extends SubStateBackend {
 		"erect" => "#FD579D",
 		"nightmare" => "#4E28FB"
 	];
-
-	/**
-	```haxe
-		songs = SongRegistry.getAllSongs().filter(song -> {
-			var conditions:Array<Bool> = [
-				Options.data.developerMode ? true : !song._data?.isDev ?? true,
-				song.playableCharacter == player.id,
-				song.variant == '' || song.variant == null || song.variant == playableID
-			];
-			var conditionsMet:Bool = true;
-			for (i in conditions)
-				if (!i)
-					conditionsMet = false;
-			return conditionsMet;
-		});
-	```
-	*/
 
 	public var albumMap:Map<String, Album> = [];
 
@@ -89,7 +76,8 @@ class FreeplayMenu extends SubStateBackend {
 		albumMap.set('placeholder', album);
 		add(album);
 
-		for (i => data in getSongList()) {
+		songList = getSongList();
+		for (i => data in songList) {
 			if (!albumMap.exists(data._data.album) && data._data.album != null) {
 				var album = new Album(data._data.album);
 				album.x = skipTransition ? 0 : -(FlxG.width/2);
@@ -99,7 +87,7 @@ class FreeplayMenu extends SubStateBackend {
 				FlxTween.tween(album, { x: 0 }, 0.5, { ease: FlxEase.expoOut, startDelay: 0.5 });
 			}
 
-			var cap = new Capsule(data);
+			var cap = new SongCapsule(data);
 			cap.x = FlxG.width;
 			cap.y = 100 * i + (FlxG.height/2) - (85/2);
 			add(cap);
@@ -175,7 +163,7 @@ class FreeplayMenu extends SubStateBackend {
 
 		if (Controls.back && !transitioning) close();
 
-		scoreLerp = lerp(scoreLerp, ScoreUtil.getSongScore(getSongList()[selectedSongIndex].id, difficultyText.text.toLowerCase()), 0.3);
+		scoreLerp = lerp(scoreLerp, ScoreUtil.getSongScore(songList[selectedSongIndex].id, difficultyText.text.toLowerCase()), 0.3);
 		scoreText.text = "SCORE: " + ScoreUtil.stringifyScore(scoreLerp, 8);
 
 		scoreText.y = topBar.y + 15;
@@ -200,7 +188,7 @@ class FreeplayMenu extends SubStateBackend {
 		if (Controls.uiDown) selectedSongIndex += 1;
 
 		if (FlxG.keys.justPressed.HOME) selectedSongIndex = 0;
-		if (FlxG.keys.justPressed.END) selectedSongIndex = getSongList().length-1;
+		if (FlxG.keys.justPressed.END) selectedSongIndex = songList.length-1;
 
 		if (FlxG.keys.justPressed.PAGEUP) selectedSongIndex -= 5;
 		if (FlxG.keys.justPressed.PAGEDOWN) selectedSongIndex += 5;
@@ -210,7 +198,7 @@ class FreeplayMenu extends SubStateBackend {
 
 		if (Controls.accept) selectSong();
 
-		var targetID:Null<String> = getSongList()[selectedSongIndex]._data.album;
+		var targetID:Null<String> = songList[selectedSongIndex]._data.album;
 		targetID ??= 'placeholder';
 		for (i in albumMap.keys()) {
 			var album = albumMap.get(i);
@@ -235,7 +223,7 @@ class FreeplayMenu extends SubStateBackend {
 		selectedSongIndex = FlxMath.wrap(value, 0, instance.songCapsules.length - 1);
 		instance.changeDiff(0);
 
-		var selectASong = new FlxText(0, 0, 0, instance.getSongList()[selectedSongIndex].displayName.toUpperCase() + " · ");
+		var selectASong = new FlxText(0, 0, 0, instance.songList[selectedSongIndex].displayName.toUpperCase() + " · ");
 		selectASong.setFormat(Paths.font("Nunito-Medium"), 65, FlxColor.WHITE, "center");
 		selectASong.antialiasing = true;
 		selectASong.scale.x = selectASong.scale.y = 0.5;
@@ -259,7 +247,7 @@ class FreeplayMenu extends SubStateBackend {
 
 	function changeDiff(amount:Int) {
 		if (transitioning) return;
-		var song = getSongList()[selectedSongIndex];
+		var song = songList[selectedSongIndex];
 		var currentDiffIndex = song.difficulties.indexOf(difficultyText.text.toLowerCase());
 		var newDiffIndex = FlxMath.wrap(currentDiffIndex + amount, 0, song.difficulties.length - 1);
 		difficultyText.text = song.difficulties[newDiffIndex].toUpperCase();
@@ -272,7 +260,7 @@ class FreeplayMenu extends SubStateBackend {
 
 	function onTimerEnd() {
 		if (transitioning) return;
-		var songData = getSongList()[selectedSongIndex];
+		var songData = songList[selectedSongIndex];
 		if (current == '${songData.songName}:${songData.variant}') return;
 		else current = '${songData.songName}:${songData.variant}';
 		Conductor.playSong(songData.songName, songData.variant);
@@ -289,7 +277,7 @@ class FreeplayMenu extends SubStateBackend {
 			if (index != selectedSongIndex) {
 				FlxTween.tween(text, {alpha: 0, x: text.x + 500}, 0.3, { ease: FlxEase.backIn});
 			} else {
-				var selectedSongMeta = getSongList()[selectedSongIndex];
+				var selectedSongMeta = songList[selectedSongIndex];
 				FlxFlicker.flicker(text, 1, 0.06, false, false, _->{
 					FlxG.sound.music.fadeOut(0.5);
 					camera.fade(FlxColor.BLACK, 0.5, ()->{
@@ -337,7 +325,29 @@ class FreeplayMenu extends SubStateBackend {
 		}
 	}
 
+	/**
+	```haxe
+		songs = SongRegistry.getAllSongs().filter(song -> {
+			var conditions:Array<Bool> = [
+				Options.data.developerMode ? true : !song._data?.isDev ?? true,
+				song.playableCharacter == player.id,
+				song.variant == '' || song.variant == null || song.variant == playableID
+			];
+			var conditionsMet:Bool = true;
+			for (i in conditions)
+				if (!i)
+					conditionsMet = false;
+			return conditionsMet;
+		});
+	```
+	**/
 	public function getSongList():Array<Song> {
+		/* var list:Array<String> = [];
+		for (level in LevelRegistry.getAllLevels()) {
+			list.push('WEEK:' + level.id);
+			list = list.concat([for (song in level.getSongs()) 'SONG:$song']);
+		} */
+
 		return SongRegistry.getAllSongs().filter(song -> {
 			var conditions:Array<Bool> = [
 				Options.data.developerMode ? true : !song._data?.isDev ?? true
@@ -349,4 +359,5 @@ class FreeplayMenu extends SubStateBackend {
 			return conditionsMet;
 		});
 	}
+
 }
