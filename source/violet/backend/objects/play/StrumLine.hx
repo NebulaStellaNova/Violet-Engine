@@ -290,7 +290,14 @@ class StrumLine extends FlxGroup {
 				existingNote.destroy();
 			}
 
-			preparedNotes.push(new Note(this, data.id, data.time, data.sLen, PlayState.SONG._data.noteTypes[data.type-1]));
+			var targetType:Null<String> = null;
+			if (data.type is String) {
+				targetType = data.type;
+			} else if (data.type != null) {
+				targetType = PlayState.SONG._data.noteTypes[data.type-1];
+			}
+
+			preparedNotes.push(new Note(this, data.id, data.time, data.sLen, targetType));
 		}
 		preparedNotes.sort(Note.sortNotes);
 		if (stackedNoteCount != 0) trace('warning:Found <cyan>$stackedNoteCount<reset> stacked note${stackedNoteCount == 1 ? '' : 's'} for strumline <cyan>$ID<reset>. (They where removed)');

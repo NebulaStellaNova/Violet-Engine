@@ -278,10 +278,6 @@ class PlayState extends violet.backend.StateBackend {
 		add(strumLines);
 		Conductor.onComplete = endSong;
 
-		for (i in SONG._data.noteTypes) {
-			ModdingAPI.checkForScripts('data/notetypes', i, songScripts);
-		}
-
 		if (playAsOpponent) {
 			for (strumLine in strumLines) {
 				if (strumLine.controllerType == PLAYER) strumLine.controllerType = OPPONENT;
@@ -370,6 +366,15 @@ class PlayState extends violet.backend.StateBackend {
 
 		for (strumLine in strumLines)
 			strumLine.generateNotes(Conductor.songPosition);
+
+		var typesChecked = [];
+		for (i in strumLines.members) {
+			for (note in i.preparedNotes) {
+				if (typesChecked.contains(note.noteType)) continue;
+				ModdingAPI.checkForScripts('data/notetypes', note.noteType, songScripts);
+				typesChecked.push(note.noteType);
+			}
+		}
 
 		callSongScripts('postCreate');
 
@@ -837,10 +842,9 @@ class PlayState extends violet.backend.StateBackend {
 
 				var duration:Float = scriptEvent.params[1];
 				var ease:String = scriptEvent.params[2];
-				var direction:String = scriptEvent.params[5];
-				var targetEase = null;
-				if (direction == null) targetEase = NovaUtils.easeFromString(ease, '');
-				else targetEase = NovaUtils.easeFromString(ease, direction);
+				var direction:String = scriptEvent.params[3];
+				var targetEase = NovaUtils.easeFromString(ease, direction ?? '');
+
 				scrollTween = FlxTween.tween(camFollowPoint, { x: x, y: y }, (Conductor.stepLengthMs / 1000) * duration, { ease: targetEase, onUpdate: _->{
 					snapCamera();
 				}});

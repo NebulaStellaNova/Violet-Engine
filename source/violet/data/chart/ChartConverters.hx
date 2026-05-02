@@ -192,10 +192,6 @@ class ChartConverters {
 				var kind = note.k;
 				var extra = note.p;
 
-				if (!chartOut.noteTypes.contains(kind)) {
-					chartOut.noteTypes.push(kind);
-				}
-
 				var dir = data % 4;
 				var strumlineID:Int = Math.floor(data / 4);
 
@@ -204,8 +200,11 @@ class ChartConverters {
 					id: dir,
 					sLen: length,
 					extra: extra,
-					type: chartOut.noteTypes.indexOf(kind)
+					type: kind
 				}
+				if (noteOut.type == null) Reflect.deleteField(noteOut, 'type');
+				if (noteOut.extra == null) Reflect.deleteField(noteOut, 'extra');
+
 				switch (strumlineID) {
 					case 0:
 						play.notes.push(noteOut);
@@ -308,6 +307,43 @@ class ChartConverters {
 
 			}
 		}
+
+		var numerator:Int = 4;
+		var denominator:Int = 4;
+		for (i=>timeChange in meta.timeChanges) {
+			if (timeChange.n != null) numerator = timeChange.n;
+			if (timeChange.d != null) denominator = timeChange.d;
+			if (i == 0) continue;
+			var data:{?n:Int, ?d:Int, b:Float, t:Float, bpm:Float} = timeChange;
+			if (data.b != 0) {
+				outEvents.events.push({
+					name: 'Continuous BPM Change',
+					time: data.t,
+					params: [
+						data.bpm,
+						data.b * denominator
+					]
+				});
+			} else {
+				outEvents.events.push({
+					name: "BPM Change",
+					time: data.t,
+					params: [ data.bpm ]
+				});
+			}
+			if (data.n != null || data.d != null) {
+				outEvents.events.push({
+					name: "Time Signature Change",
+					time: data.t,
+					params: [
+						numerator,
+						denominator,
+						false
+					]
+				});
+			}
+		}
+
 		File.saveContent('$path/events$suffix.json', Json.stringify(outEvents, null, '\t'));
 
 		File.saveContent('$path/meta$suffix.json', Json.stringify(metaOut, null, '\t'));
@@ -330,7 +366,10 @@ class ChartConverters {
 			"tankmanBattlefieldErect" => "tank-erect",
 			"phillyStreets" => "philly-streets",
 			"phillyTrain" => "train",
-			"phillyTrainErect" => "train-erect"
+			"phillyTrainErect" => "train-erect",
+			"mallXmas" => "mall",
+			"mallXmasErect" => "mall-erect",
+
 		];
 		if (!aliases.exists(stageID)) return stageID;
 		return aliases.get(stageID);
