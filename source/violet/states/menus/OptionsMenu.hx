@@ -46,6 +46,7 @@ typedef OptionsMenuOption = {
 	var ?min:Float;
 	var ?max:Float;
 	var ?step:Float;
+	var ?replacer:Array<{what:Int, with:String}>;
 }
 
 typedef Condition = {
@@ -214,6 +215,13 @@ class OptionsMenu extends SubStateBackend {
 					option.value = Options.get(optionData.saveID) ?? 0;
 					option.numberText.text = '< ${option.value} >';
 					option.onChange = (value:Float) -> set(optionData.saveID, value);
+					option.onChangePost = (value:Float) -> {
+						for (i in (optionData?.replacer ?? [])) {
+							if (value == i.what)
+								option.numberText.text = option.numberText.text.replace('${i.what}', i.with);
+						}
+					}
+					option.onChangePost(option.value);
 					option.updatePosition();
 					option.setEnabled(!optionData.disabled);
 					insert(0, option);

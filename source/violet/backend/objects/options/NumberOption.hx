@@ -10,6 +10,7 @@ class NumberOption extends BaseOption {
 	public var numberText:Alphabet;
 
 	public dynamic function onChange(value:Float) {}
+	public dynamic function onChangePost(value:Float) {}
 
 	public function new(title:String, description:String = "", ?min:Float, ?max:Float, step:Float = 1) {
 		super(title, description);
@@ -36,11 +37,15 @@ class NumberOption extends BaseOption {
 			if (usePress ? (Controls.uiLeftPress && time % 0.3 > 0.05) : Controls.uiLeft) {
 				value -= step;
 				if (min != null) value = Math.max(min, value);
+				value = Math.round(value/step)*step;
 				onChange(value); numberText.text = '< $value >';
+				onChangePost(value);
 			} else if (usePress ? (Controls.uiRightPress && time % 0.3 > 0.05) : Controls.uiRight) {
 				value += step;
 				if (max != null) value = Math.min(max, value);
+				value = Math.round(value/step)*step;
 				onChange(value); numberText.text = '< $value >';
+				onChangePost(value);
 			}
 		}
 

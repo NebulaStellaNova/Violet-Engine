@@ -108,11 +108,14 @@ menus:
     type: bool
     disabledInPlayState: true
   - name: Personal Scroll Speed
-    description: Set it to 0 to use the default scroll speed.
+    description: Will override all songs' scroll speed unless set to "DEF".
     saveID: personalScrollSpeed
     type: number
     min: 0
     step: 0.1
+    replacer:
+      - what: 0
+        with: DEF
   - name: Force Middle Scroll
     description: If enabled, middle scroll will be forced for songs that use default strumline positioning.
     saveID: forceMiddleScroll
