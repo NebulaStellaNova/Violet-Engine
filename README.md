@@ -53,3 +53,8 @@ Friday Night Funkin' - For the game lol.
 - [LORAY-guy](https://open.spotify.com/artist/7hPljx3DXYez3j2UeswXsS): Menu Concept Designer.
 - [vissafyre](https://github.com/harlow-sint): Helped code a LOT of LemonUI.
 - [Jake_Official](https://open.spotify.com/artist/7hPljx3DXYez3j2UeswXsS): Violet Engine Theme.
+
+# Asset Credits
+- [KadeDev](https://github.com/kadedev): Kade Engine popup graphics.
+- [ThatRozebudDude](https://github.com/ThatRozebudDude): Spirit's Sticker (Freeplay Menu)
+- [GoodieBag](https://gamebanana.com/members/1904855): Spooky-Kid's, Senpai', Tankman's, and Darnell's Sticker (Freeplay Menu)

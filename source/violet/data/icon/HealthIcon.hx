@@ -15,6 +15,7 @@ class HealthIcon extends Bopper {
 	public var cache:Bool = true;
 	public var scaleFromCenter:Bool = true;
 	public var assetPathOverride:Null<String>;
+	public var isPixel:Bool = false;
 
 	public function new(id:String, isOpponent:Bool = true, cache:Bool = true, ?assetPathOverride:String) {
 		this.id = id;
@@ -33,7 +34,8 @@ class HealthIcon extends Bopper {
 		this._data.flipX ??= false;
 		this._data.scale ??= 1;
 		this._data.offsets ??= [0, 0];
-		this._data.isPixel ??= false;
+		this.isPixel = this._data.isPixel ??= false;
+		if (assetPathOverride != null) isPixel = false;
 		this._data.assetPath ??= 'icons/$id';
 
 		final assetPath = assetPathOverride ?? this._data.assetPath;
@@ -48,7 +50,7 @@ class HealthIcon extends Bopper {
 			this.animation.addByPrefix('fromWinning', 'fromWinning', 24, false);
 			this.animation.addByPrefix('fromLosing', 'fromLosing', 24, false); */
 		} else {
-			var frameSize = this._data.isPixel ? 32 : 150;
+			var frameSize = this.isPixel ? 32 : 150;
 			this.loadGraphic(this.graphic, true, frameSize, frameSize);
 			this.animation.add('idle', [0], 1, false, false);
 			this.animation.add('losing', [1], 1, false, false);
@@ -58,9 +60,9 @@ class HealthIcon extends Bopper {
 		this.flipX = this._data.flipX;
 		this.globalOffset.x = this._data.offsets[0] ?? 0;
 		this.globalOffset.y = this._data.offsets[1] ?? 0;
-		if (this._data.isPixel) this.antialiasing = false;
+		if (this.isPixel) this.antialiasing = false;
 
-		this.scale.scale(this._data.scale);
+		if (assetPathOverride == null) this.scale.scale(this._data.scale);
 		this.updateHitbox();
 
 		if (!isOpponent) this.flipX = !this.flipX;
