@@ -22,7 +22,7 @@ import violet.backend.SubStateBackend;
 class FreeplayMenu extends SubStateBackend {
 
 	public static var skipTransition:Bool = false;
-	public static var selectedSongIndex:Int = 0;
+	public static var selectedSongIndex(default, set):Int = 0;
 
 	public static var difficultyColors:Map<String, ParseColor> = [
 		"easy" => "#00FF00",
@@ -65,6 +65,12 @@ class FreeplayMenu extends SubStateBackend {
 	public var difficultyText:NovaText;
 
 	public var selectASongText:FlxBackdrop;
+
+	public static var instance:FreeplayMenu;
+	override public function new() {
+		instance = this;
+		super();
+	}
 
 	override function create() {
 		super.create();
@@ -138,7 +144,7 @@ class FreeplayMenu extends SubStateBackend {
 			FlxTween.tween(topBar, {y: 0}, 0.5, { ease: FlxEase.expoOut, startDelay: 0.5 });
 		}
 
-		changeSelection(0);
+		selectedSongIndex = 0;
 
 		ostText = new NovaText(100, FlxG.height - 47, 500*2, "FIRE FIGHT P1");
 		ostText.setFormat(Paths.font("akira", null, "otf"), 50, FlxColor.WHITE, "center");
@@ -190,8 +196,14 @@ class FreeplayMenu extends SubStateBackend {
 			cap.backCase.x = lerp(cap.backCase.x, cap.frontCase.x + (index == selectedSongIndex ? -15 : -5), snap ? 1 : 0.2);
 		}
 
-		if (Controls.uiUp) changeSelection(-1);
-		if (Controls.uiDown) changeSelection(1);
+		if (Controls.uiUp) selectedSongIndex -= 1;
+		if (Controls.uiDown) selectedSongIndex += 1;
+
+		if (FlxG.keys.justPressed.HOME) selectedSongIndex = 0;
+		if (FlxG.keys.justPressed.END) selectedSongIndex = getSongList().length-1;
+
+		if (FlxG.keys.justPressed.PAGEUP) selectedSongIndex -= 5;
+		if (FlxG.keys.justPressed.PAGEDOWN) selectedSongIndex += 5;
 
 		if (Controls.uiLeft) changeDiff(-1);
 		if (Controls.uiRight) changeDiff(1);
@@ -217,31 +229,32 @@ class FreeplayMenu extends SubStateBackend {
 
 	var timer:FlxTimer;
 
-	function changeSelection(amount:Int) {
-		if (transitioning) return;
-		selectedSongIndex = FlxMath.wrap(selectedSongIndex + amount, 0, songCapsules.length - 1);
-		if (amount != 0) NovaUtils.playMenuSFX();
-		changeDiff(0);
+	static function set_selectedSongIndex(value:Int) {
+		if (instance.transitioning) return selectedSongIndex;
+		if (value != selectedSongIndex) NovaUtils.playMenuSFX();
+		selectedSongIndex = FlxMath.wrap(value, 0, instance.songCapsules.length - 1);
+		instance.changeDiff(0);
 
-		var selectASong = new FlxText(0, 0, 0, getSongList()[selectedSongIndex].displayName.toUpperCase() + " · ");
+		var selectASong = new FlxText(0, 0, 0, instance.getSongList()[selectedSongIndex].displayName.toUpperCase() + " · ");
 		selectASong.setFormat(Paths.font("Nunito-Medium"), 65, FlxColor.WHITE, "center");
 		selectASong.antialiasing = true;
 		selectASong.scale.x = selectASong.scale.y = 0.5;
 		selectASong.updateHitbox();
 		selectASong.drawFrame();
 
-		if (selectASongText != null) remove(selectASongText);
-		selectASongText = new FlxBackdrop(selectASong.pixels, X);
-		selectASongText.antialiasing = true;
-		selectASongText.y = -4;
-		selectASongText.scale.x = selectASongText.scale.y = topBar.scale.x;
-		selectASongText.updateHitbox();
-		selectASongText.alpha = 0.5;
-		selectASongText.velocity.set(100, 0);
-		insert(members.indexOf(topBar) - 1, selectASongText);
+		if (instance.selectASongText != null) instance.remove(instance.selectASongText);
+		instance.selectASongText = new FlxBackdrop(selectASong.pixels, X);
+		instance.selectASongText.antialiasing = true;
+		instance.selectASongText.y = -4;
+		instance.selectASongText.scale.x = instance.selectASongText.scale.y = instance.topBar.scale.x;
+		instance.selectASongText.updateHitbox();
+		instance.selectASongText.alpha = 0.5;
+		instance.selectASongText.velocity.set(100, 0);
+		instance.insert(instance.members.indexOf(instance.topBar) - 1, instance.selectASongText);
 
-		if (timer != null) timer.cancel();
-		timer = FlxTimer.wait(0.5, onTimerEnd);
+		if (instance.timer != null) instance.timer.cancel();
+		instance.timer = FlxTimer.wait(0.5, instance.onTimerEnd);
+		return value;
 	}
 
 	function changeDiff(amount:Int) {
