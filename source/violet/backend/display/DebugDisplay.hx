@@ -88,8 +88,8 @@ class DebugDisplay extends Sprite {
 
 			memories.push(FlxMath.roundDecimal(Memory.getProcessPhysicalMemoryUsage(), 2));
 			cpus.push(FlxMath.roundDecimal(CPU.getProcessCPUUsage(), 2));
-			if (memories.length > 100) memories.shift();
-			if (cpus.length > 100) cpus.shift();
+			while (memories.length > 50) memories.shift();
+			while (cpus.length > 50) cpus.shift();
 
 			memoryAvg = cpuAvg = 0;
 			for (m in memories) memoryAvg += m;
