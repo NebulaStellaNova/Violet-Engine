@@ -122,9 +122,6 @@ class StrumLine extends FlxGroup {
 		scrollSpeed = chartData.scrollSpeed;
 		super();
 
-
-		add(lanes = new FlxTypedSpriteGroup());
-
 		scale = new FlxCallbackPoint((point) -> @:privateAccess {
 			for (strum in strums) {
 				final daScale:Float = strum.styleMeta.strumProperties.scale;
@@ -145,6 +142,7 @@ class StrumLine extends FlxGroup {
 			}
 		});
 
+		add(lanes = new FlxTypedSpriteGroup<FlxBackdrop>());
 		add(strums = new FlxTypedGroup<Strum>());
 		add(sustains = new SustainGroup());
 		add(notes = new NoteGroup(this));
