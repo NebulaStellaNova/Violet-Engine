@@ -441,9 +441,9 @@ class StrumLine extends FlxGroup {
 			lane.alpha = MathUtil.lerp(lane.alpha, 0, 0.2);
 		}
 
-		notes.forEachExists((note:Note) -> {
-			if (note.destroyed) notes.remove(note);
-		});
+		for (note in notes)
+			if (note != null && note.destroyed)
+				notes.remove(note);
 
 		for (i => strum in strums.members) {
 			if (strum.animation.name == 'confirm') {
@@ -457,9 +457,9 @@ class StrumLine extends FlxGroup {
 			lane.alpha = MathUtil.lerp(lane.alpha, 0, 0.2);
 		}
 
-		notes.forEachExists((note:Note) -> {
-			if (note.destroyed) notes.remove(note);
-		});
+		for (note in notes)
+			if (note != null && note.destroyed)
+				notes.remove(note);
 
 		for (i => strum in strums.members) {
 			if (strum.animation.name == 'confirm') {
@@ -473,9 +473,9 @@ class StrumLine extends FlxGroup {
 			lane.alpha = MathUtil.lerp(lane.alpha, 0, 0.2);
 		}
 
-		notes.forEachExists((note:Note) -> {
-			if (note.destroyed) notes.remove(note);
-		});
+		for (note in notes)
+			if (note != null && note.destroyed)
+				notes.remove(note);
 	}
 
 	final currentInputs:Array<Bool> = [];
