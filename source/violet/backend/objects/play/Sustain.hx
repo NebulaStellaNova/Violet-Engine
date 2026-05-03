@@ -57,6 +57,12 @@ class Sustain extends NovaSprite {
 	public var __scrollSpeed(get, never):Float;
 	inline function get___scrollSpeed():Float
 		return parentNote.__scrollSpeed;
+	/**
+	 * The resulting scroll angle information.
+	 */
+	public var __scrollAngle(get, never):Float;
+	inline function get___scrollAngle():Float
+		return parentNote.__scrollAngle;
 
 	/**
 	 * If true the sustain can be hit.

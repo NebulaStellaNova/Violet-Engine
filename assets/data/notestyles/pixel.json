@@ -96,6 +96,7 @@
 		]
 	},
 	"notes": {
+		"offsets": [-5, 0],
 		"animations": [
 			{
 				"id": 0,
@@ -128,6 +129,7 @@
 		]
 	},
 	"sustains": {
+		"offsets": [-5, 0],
 		"animations": [
 			{
 				"id": 0,

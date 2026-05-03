@@ -52,15 +52,25 @@ class Note extends NovaSprite {
 	/**
 	 * The scroll speed of this note.
 	 */
-	public var scrollSpeed:Null<Float> = null;
+	public var scrollSpeed:Null<Float>;
 	/**
 	 * The resulting scroll speed information.
 	 */
 	public var __scrollSpeed(get, never):Float;
 	inline function get___scrollSpeed():Float {
 		if (Options.data.personalScrollSpeed != 0) return Options.data.personalScrollSpeed;
-		return scrollSpeed ?? parent.scrollSpeed ?? StrumLine.generalScrollSpeed;
+		return scrollSpeed ?? parentStrum.scrollSpeed ?? parent.scrollSpeed ?? StrumLine.generalScrollSpeed;
 	}
+	/**
+	 * The scroll angle of this note.
+	 */
+	public var scrollAngle:Null<Float>;
+	/**
+	 * The resulting scroll angle information.
+	 */
+	public var __scrollAngle(get, never):Float;
+	inline function get___scrollAngle():Float
+		return scrollAngle ?? parentStrum.scrollAngle ?? parent.scrollAngle ?? StrumLine.generalScrollAngle(parent);
 
 	/**
 	 * The sustains tied to this note.
@@ -167,19 +177,18 @@ class Note extends NovaSprite {
 		if (strum == null) return;
 		if (!exists || !strum.exists) return;
 
-		// note positioning code for now will be placed here
-		var resultAngle:Float = parent.downscroll ? 90 : 270;
-		if (__scrollSpeed < 0) resultAngle += 180;
-		final angleDir:Float = resultAngle * flixel.math.FlxAngle.TO_RAD;
+		var resultAngle:Float = __scrollAngle;
+		if (__scrollSpeed > 0) resultAngle += 180;
+		final angleDir:Float = (resultAngle + 90) * flixel.math.FlxAngle.TO_RAD;
 
 		final disPos:Float = (Conductor.framePosition - time) * 0.45 * Math.abs(__scrollSpeed);
 		_note_pos.set(FlxMath.fastCos(angleDir) * disPos, FlxMath.fastSin(angleDir) * disPos);
 		_note_pos -= origin; _note_pos += offset;
 		// _note_pos += animationOffset;
-
 		_note_pos.add(strum.x + (swagWidth / 2), strum.y + (swagWidth / 2));
 		setPosition(_note_pos.x, _note_pos.y);
 
+		// makes sense for sustains to always follow their parent note
 		for (sustain in tail) {
 			if (sustain == null) continue;
 			if (!sustain.exists) continue;
@@ -188,13 +197,10 @@ class Note extends NovaSprite {
 			_note_pos.set((_last_cos = FlxMath.fastCos(angleDir)) * disPos, (_last_sin = FlxMath.fastSin(angleDir)) * disPos);
 			_note_pos -= sustain.origin; _note_pos += sustain.offset;
 			// _note_pos += sustain.animationOffset;
-
-			final multi = sustain.height * -0.5;
-			_note_pos.add(_last_cos * multi, _last_sin * multi);
-
+			_note_pos.add(_last_cos * sustain.height * -0.5, _last_sin * sustain.height * -0.5);
 			_note_pos.add(strum.x + (swagWidth / 2), strum.y + (swagWidth / 2));
 			sustain.setPosition(_note_pos.x, _note_pos.y);
-			sustain.angle = resultAngle + 90;
+			sustain.angle = resultAngle + 180;
 		}
 	}
 

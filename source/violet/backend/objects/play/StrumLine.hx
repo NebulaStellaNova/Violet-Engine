@@ -67,8 +67,25 @@ class StrumLine extends FlxGroup {
 		return value;
 	}
 
+	/**
+	 * The general scroll speed of the entire game.
+	 */
 	public static var generalScrollSpeed:Float = 1;
+	/**
+	 * The general scroll angle of the entire game.
+	 */
+	inline public static function generalScrollAngle(?strumLine:StrumLine):Float {
+		return (strumLine?.downscroll ?? Options.data.downscroll) ? 180 : 0;
+	}
+
+	/**
+	 * The scroll speed of this strumLines notes.
+	 */
 	public var scrollSpeed:Null<Float>;
+	/**
+	 * The scroll angle of this strumLines notes.
+	 */
+	public var scrollAngle:Null<Float>;
 
 	public final chartData:_ChartStrumLine;
 	public var keyCount(default, null):Int;

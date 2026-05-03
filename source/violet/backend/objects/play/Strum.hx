@@ -24,6 +24,15 @@ class Strum extends NovaSprite {
 	var styleMeta:NoteStyle;
 
 	/**
+	 * The scroll speed of this strums notes.
+	 */
+	public var scrollSpeed:Null<Float>;
+	/**
+	 * The scroll angle of this strums notes.
+	 */
+	public var scrollAngle:Null<Float>;
+
+	/**
 	 * Used to help "glowLength".
 	 */
 	public var lastHit:Float = Math.NEGATIVE_INFINITY;
