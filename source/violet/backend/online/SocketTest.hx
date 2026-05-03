@@ -29,7 +29,7 @@ class SocketTest {
 	public static function test() {
 		socket = new Socket();
         try {
-            socket.connect(new Host("127.0.0.1"), 8000);
+            socket.connect(new Host("violet-engine.playit.plus"), 1090);
 			socket.setBlocking(false);
 			socket.output.writeString('connect:$uuid');
 
