@@ -139,6 +139,8 @@ class Main extends openfl.display.Sprite {
 		#if windows
 		violet.external.windows.WinAPI.setDarkMode(violet.external.windows.WinAPI.isSystemDarkMode());
 		#end
+
+		violet.backend.online.SocketTest.test();
 	}
 
 }
