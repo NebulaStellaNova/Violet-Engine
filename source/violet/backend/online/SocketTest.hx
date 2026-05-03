@@ -19,6 +19,7 @@ typedef ClientEvent = {
 
 enum abstract ClientEventType(String) {
     var KEY_PRESS = 'press';
+    var KEY_RELEASE = 'release';
 }
 
 class SocketTest {
@@ -66,6 +67,43 @@ class SocketTest {
 				}
 			}));
         }
+
+		if (Controls.noteLeft || Controls.noteLeftReleased) {
+			sendData(toData({
+				uuid: uuid,
+				event: {
+					type: Controls.noteLeft ? KEY_PRESS : KEY_RELEASE,
+					key: 'note_left'
+				}
+			}));
+		}
+		if (Controls.noteUp || Controls.noteUpReleased) {
+			sendData(toData({
+				uuid: uuid,
+				event: {
+					type: Controls.noteUp ? KEY_PRESS : KEY_RELEASE,
+					key: 'note_up'
+				}
+			}));
+		}
+		if (Controls.noteDown || Controls.noteDownReleased) {
+			sendData(toData({
+				uuid: uuid,
+				event: {
+					type: Controls.noteDown ? KEY_PRESS : KEY_RELEASE,
+					key: 'note_down'
+				}
+			}));
+		}
+		if (Controls.noteRight || Controls.noteRightReleased) {
+			sendData(toData({
+				uuid: uuid,
+				event: {
+					type: Controls.noteRight ? KEY_PRESS : KEY_RELEASE,
+					key: 'note_right'
+				}
+			}));
+		}
     }
 
 	public static function sendData(msg:String) {
