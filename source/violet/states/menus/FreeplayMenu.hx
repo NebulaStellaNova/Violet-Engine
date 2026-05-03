@@ -132,7 +132,7 @@ class FreeplayMenu extends SubStateBackend {
 			FlxTween.tween(topBar, {y: 0}, 0.5, { ease: FlxEase.expoOut, startDelay: 0.5 });
 		}
 
-		selectedSongIndex = 0;
+		selectedSongIndex = selectedSongIndex;
 
 		ostText = new NovaText(100, FlxG.height - 47, 500*2, "FIRE FIGHT P1");
 		ostText.setFormat(Paths.font("akira", null, "otf"), 50, FlxColor.WHITE, "center");
