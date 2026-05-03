@@ -189,7 +189,7 @@ class Note extends NovaSprite {
 			_note_pos -= sustain.origin; _note_pos += sustain.offset;
 			// _note_pos += sustain.animationOffset;
 
-			final multi = sustain.height / 2;
+			final multi = sustain.height * -0.5;
 			_note_pos.add(_last_cos * multi, _last_sin * multi);
 
 			_note_pos.add(strum.x + (swagWidth / 2), strum.y + (swagWidth / 2));
