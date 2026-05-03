@@ -443,6 +443,22 @@ class StrumLine extends FlxGroup {
 		notes.forEachExists((note:Note) -> {
 			if (note.destroyed) notes.remove(note);
 		});
+
+		for (i => strum in strums.members) {
+			if (strum.animation.name == 'confirm') {
+				if (strum.animation.curAnim.curFrame == 0 && dynamicLanesColored[i] != null) dynamicLanesColored[i].alpha = Options.data.laneFlashIntensity / 100;
+			} else if (strum.animation.name == 'press') {
+				if (dynamicLanesColored[i] != null) dynamicLanesColored[i].alpha = 0.25 * (Options.data.laneFlashIntensity / 100);
+			}
+		}
+
+		for (i => lane in dynamicLanesColored) {
+			lane.alpha = MathUtil.lerp(lane.alpha, 0, 0.2);
+		}
+
+		notes.forEachExists((note:Note) -> {
+			if (note.destroyed) notes.remove(note);
+		});
 	}
 
 	final currentInputs:Array<Bool> = [];
