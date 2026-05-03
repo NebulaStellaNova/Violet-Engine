@@ -517,7 +517,7 @@ class NoteGroup extends FlxTypedGroup<Note> {
 
 			shouldRender = true;
 			if ((note.time + note.length) < Conductor.framePosition - (Scoring.missThreshold * note.earlyWindow)) shouldRender = false;
-			if (note.time > Conductor.framePosition + (note.getDefaultCamera().height / note.getDefaultCamera().zoom / 0.45 / Math.min(note.__scrollSpeed, 1))) shouldRender = false;
+			if (note.time > Conductor.framePosition + (note.getDefaultCamera().height / note.getDefaultCamera().zoom / 0.45 / Math.min(Math.abs(note.__scrollSpeed), 1))) shouldRender = false;
 
 			if (shouldRender) {
 				note._beingRendered = true;

@@ -1,7 +1,7 @@
 package violet.backend.objects.play;
 
-import violet.backend.options.Options;
 import violet.backend.audio.Conductor;
+import violet.backend.options.Options;
 import violet.data.notestyles.NoteStyle;
 import violet.data.notestyles.NoteStyleRegistry;
 
@@ -104,7 +104,7 @@ class Strum extends NovaSprite {
 
 		if (holdCover == null) return;
 		if (holdCover.exists && holdCover.animation.name != 'end') {
-			holdCover.setPosition(this.x - (holdCover.width/2) + holdCoverOffsetX, this.y - (holdCover.height/2) + (holdCoverOffsetY + (parent.downscroll ? 7 : 0)));
+			holdCover.setPosition(this.x - (holdCover.width/2) + holdCoverOffsetX, this.y - (holdCover.height/2) + holdCoverOffsetY);
 		}
 	}
 

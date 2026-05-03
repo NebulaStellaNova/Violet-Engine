@@ -1,11 +1,11 @@
 package violet.backend.objects.play;
 
+import flixel.math.FlxMath;
 import flixel.math.FlxRect;
 import violet.backend.audio.Conductor;
 import violet.data.Scoring;
 import violet.data.notestyles.NoteStyle;
 import violet.data.notestyles.NoteStyleRegistry;
-import flixel.math.FlxMath;
 
 class Sustain extends NovaSprite {
 
@@ -118,20 +118,20 @@ class Sustain extends NovaSprite {
 		blend = styleMeta.sustainProperties.blendMode;
 	}
 
-	var lastScrollSpeed:Float = 0;
+	@:unreflective var lastScrollSpeed:Float = 0;
 	override public function update(elapsed:Float):Void {
 		super.update(elapsed);
 
 		if (!isEnd && lastScrollSpeed != __scrollSpeed) {
 			lastScrollSpeed = __scrollSpeed;
-			scale.y = (parentNote._stepLengthMs * 0.45 * Math.abs(lastScrollSpeed)) / frameHeight;
+			scale.y = (parentNote._stepLengthMs * 0.45 * Math.abs(__scrollSpeed)) / frameHeight;
 			updateHitbox();
 			if (styleMeta.getSustainGapFix() != 0)
 				scale.y += styleMeta.getSustainGapFix() / frameHeight;
 		}
 
 		if (wasHit) {
-			var t = FlxMath.bound((Conductor.framePosition - (parentNote.time + time)) / height * 0.45 * __scrollSpeed, 0, 1);
+			var t = FlxMath.bound((Conductor.framePosition - (parentNote.time + time)) / height * 0.45 * Math.abs(__scrollSpeed), 0, 1);
 			@:bypassAccessor {
 				if (clipRect == null) clipRect = FlxRect.get();
 				clipRect.set(0, frameHeight * t, frameWidth, frameHeight * (1 - t));

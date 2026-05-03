@@ -66,13 +66,10 @@ class Note extends NovaSprite {
 	 * The sustains tied to this note.
 	 */
 	public var tail(default, null):Array<Sustain> = [];
-	public var tailEndTime(default, null):Float = 0;
 	/**
 	 * The tail length in time.
 	 */
-	public var length(get, never):Float;
-	inline function get_length():Float
-		return tailEndTime;
+	public var length(default, null):Float;
 
 	/**
 	 * How much earlier the note can be hit before it's considered a miss.
@@ -122,23 +119,21 @@ class Note extends NovaSprite {
 		this.id = id;
 		this.time = time;
 		this.noteType = noteType;
-		style = null;
-		preventAutoStyleSet = false;
 
 		_stepLengthMs = flixel.addons.sound.FlxRhythmConductorUtil.getStepLengthMs(flixel.addons.sound.FlxRhythmConductor.instance.getCurrentTimeChangeBPMAccurate(time));
 
-		final roundedLength:Int = Math.round(tailLength / _stepLengthMs);
+		final roundedLength:Int = Math.floor(tailLength / _stepLengthMs);
 		if (roundedLength > 1) {
 			for (susNote in 0...roundedLength)
 				tail.push(new Sustain(this, (_stepLengthMs * susNote), susNote == (roundedLength - 1)));
 			tail.sort(sortTail);
-			tailEndTime = tail[tail.length - 1].time;
+			length = tail[tail.length - 1].time;
 		}
 
 		if (NoteStyleRegistry.doesNoteStyleExist(noteType) && noteType != null) style = noteType;
 
-		reloadStyle(style, true);
-		updateHitbox();
+		reloadStyle(style = null, true);
+		preventAutoStyleSet = false;
 	}
 
 	public function reloadStyle(?style:String, effectTail:Bool = false):Void {
@@ -168,6 +163,8 @@ class Note extends NovaSprite {
 	@:unreflective static var _last_sin:Float = 0;
 	public function updatePosition(?strum:Strum):Void {
 		strum ??= parentStrum;
+		if (strum == null) return;
+		if (!exists || !strum.exists) return;
 
 		// note positioning code for now will be placed here
 		var resultAngle:Float = parent.downscroll ? 90 : 270;
@@ -176,11 +173,10 @@ class Note extends NovaSprite {
 
 		final disPos:Float = (Conductor.framePosition - time) * 0.45 * Math.abs(__scrollSpeed);
 		_note_pos.set(FlxMath.fastCos(angleDir) * disPos, FlxMath.fastSin(angleDir) * disPos);
-		_note_pos.x += -origin.x + offset.x;
-		_note_pos.y += -origin.y + offset.y;
+		_note_pos -= origin; _note_pos += offset;
+		// _note_pos += animationOffset;
 
-		_note_pos.x += strum.x + swagWidth / 2;
-		_note_pos.y += strum.y + swagWidth / 2;
+		_note_pos.add(strum.x + (swagWidth / 2), strum.y + (swagWidth / 2));
 		setPosition(_note_pos.x, _note_pos.y);
 
 		for (sustain in tail) {
@@ -189,15 +185,13 @@ class Note extends NovaSprite {
 
 			final disPos:Float = (Conductor.framePosition - (time + sustain.time)) * 0.45 * Math.abs(__scrollSpeed);
 			_note_pos.set((_last_cos = FlxMath.fastCos(angleDir)) * disPos, (_last_sin = FlxMath.fastSin(angleDir)) * disPos);
-			_note_pos.x += -sustain.origin.x + sustain.offset.x;
-			_note_pos.y += -sustain.origin.y + sustain.offset.y;
+			_note_pos -= sustain.origin; _note_pos += sustain.offset;
+			// _note_pos += sustain.animationOffset;
 
-			final multi = (sustain.height * 0.5 * (__scrollSpeed < 0 ? -1 : 1));
-			_note_pos.x += _last_cos * multi;
-			_note_pos.y += _last_sin * multi;
+			final multi = sustain.height / 2;
+			_note_pos.add(_last_cos * multi, _last_sin * multi);
 
-			_note_pos.x += strum.x + swagWidth / 2;
-			_note_pos.y += strum.y + swagWidth / 2;
+			_note_pos.add(strum.x + (swagWidth / 2), strum.y + (swagWidth / 2));
 			sustain.setPosition(_note_pos.x, _note_pos.y);
 			sustain.angle = resultAngle + 90;
 		}
@@ -257,8 +251,8 @@ class Note extends NovaSprite {
 	override public function destroy():Void {
 		for (sustain in tail)
 			sustain.destroy();
+		length = 0;
 		tail.resize(0);
-		tailEndTime = 0;
 		super.destroy();
 	}
 
