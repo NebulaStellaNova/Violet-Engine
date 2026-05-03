@@ -1,4 +1,4 @@
-color: "#9271FD"
+gradient: ["#8385E9", "#CF3EE9"]
 customValues:
   ratings:
     nightmare: 10
@@ -16,6 +16,7 @@ icon: dad
 coopAllowed: false
 stepsPerBeat: 4
 displayName: DadBattle Erect
+freeplayCapsule: mainStageErect
 beatsPerMeasure: 4
 needsVoices: false
 vocalsSuffix: -erect

@@ -1,5 +1,7 @@
 package violet.backend.scripting.events;
 
+import violet.data.Constants;
+import violet.states.PlayState;
 import violet.backend.objects.play.Note;
 import violet.backend.objects.play.Strum;
 
@@ -27,11 +29,20 @@ class NoteHitEvent extends EventBase {
 	public var spawnSplash:Null<Bool> = null;
 	public var spawnHoldCover:Bool;
 
+	public var healthGain:Float = 0;
+
 	public function new(note:Note) {
 		super();
+		for (i=>strumLine in PlayState.instance.strumLines.members) {
+			if (strumLine == note.parent) {
+				animationSuffix = PlayState.instance.defaultSuffix[i];
+				break;
+			}
+		}
 		this.note = note;
 		this.strum = note.parentStrum;
 		this.spawnHoldCover = note.length > 10;
+		if (!isComputer) this.healthGain = Constants.DEFAULT_HEALTH_GAIN;
 	}
 
 	public function cancelAnim():Void {

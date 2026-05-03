@@ -93,7 +93,6 @@ class Sustain extends NovaSprite {
 		parentNote = parent;
 		this.time = time;
 		this.isEnd = isEnd;
-		this.parent.sustains.add(this);
 
 		final daScale:Float = Note.swagWidth * this.parent.strumScale;
 		scale.set(daScale, isEnd ? daScale : 0);

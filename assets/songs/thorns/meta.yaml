@@ -8,7 +8,8 @@ ratings:
   easy: 2
   normal: 3
   hard: 4
-color: "#FF78BF"
+gradient: ["#FF3883", "#5a49b6"]
+freeplayCapsule: school-evil
 coopAllowed: true
 stepsPerBeat: 4
 displayName: Thorns

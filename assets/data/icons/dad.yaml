@@ -1,3 +1,4 @@
 offsets: [40, -10]
+freeplayOffsets: [10, 2]
 color: '#AF66CE'
 assetPath: "icons/dad"

@@ -2,15 +2,15 @@ version: 1.0.0
 name: Pico
 assetPath: characters/Pico_Basic
 flipX: true
-offsets: [0, -150]
-cameraOffsets: [0, -150]
+offsets: [-75, -90]
+cameraOffsets: [-100, -50]
 animations:
   - name: idle
     prefix: Pico Idle Dance
     offsets:
       - 0
       - 0
-  - name: singRIGHT
+  - name: singLEFT
     prefix: Pico NOTE LEFT0
     offsets:
       - 86
@@ -25,7 +25,7 @@ animations:
     offsets:
       - 32
       - 28
-  - name: singLEFT
+  - name: singRIGHT
     prefix: Pico Note Right0
     offsets:
       - -55

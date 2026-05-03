@@ -1,3 +1,4 @@
 assetPath: "icons/tankman"
 offsets: [25, -8]
 color: '#FFFFFF'
+freeplayOffsets: [5, 2]

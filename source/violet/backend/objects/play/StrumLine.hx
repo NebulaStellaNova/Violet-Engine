@@ -1,16 +1,19 @@
 package violet.backend.objects.play;
 
 import flixel.FlxCamera;
+import flixel.addons.display.FlxBackdrop;
 import flixel.group.FlxGroup;
 import flixel.input.keyboard.FlxKey;
 import flixel.math.FlxPoint;
 import openfl.events.KeyboardEvent;
 import violet.backend.audio.Conductor;
 import violet.backend.options.Options;
+import violet.backend.utils.MathUtil;
 import violet.data.Scoring;
 import violet.data.character.Character;
 import violet.data.chart.Chart;
 import violet.data.chart.ChartData;
+import violet.data.notestyles.NoteStyleRegistry;
 import violet.states.PlayState;
 
 class StrumLine extends FlxGroup {
@@ -35,7 +38,7 @@ class StrumLine extends FlxGroup {
 	 */
 	public var isComputer(get, never):Bool;
 	function get_isComputer():Bool {
-		return !isPlayer; // like this for now, will be changed later
+		return !isPlayer || (isPlayer && PlayState.instance != null && PlayState.instance.botplay);
 	}
 
 	/**
@@ -46,6 +49,10 @@ class StrumLine extends FlxGroup {
 	public final strums:FlxTypedGroup<Strum>;
 	public final notes:NoteGroup;
 	public final sustains:SustainGroup;
+	public final lanes:FlxTypedSpriteGroup<FlxBackdrop>;
+
+	// TODO: allow this to be changed via noteStyle and noteType
+	public final flashColors:Array<FlxColor> = [0xFFc24b99, 0xFF00ffff, 0xFF12fa05, 0xFFf9393f];
 
 	public var splashes(get, never):Array<StrumElement>;
 	function get_splashes():Array<StrumElement> {
@@ -91,11 +98,15 @@ class StrumLine extends FlxGroup {
 
 	public final vocals:FlxSound;
 
+
 	public function new(chartData:_ChartStrumLine) {
 		this.chartData = chartData;
 		controllerType = chartData.type;
 		scrollSpeed = chartData.scrollSpeed;
 		super();
+
+
+		add(lanes = new FlxTypedSpriteGroup());
 
 		scale = new FlxCallbackPoint((point) -> @:privateAccess {
 			for (strum in strums) {
@@ -127,20 +138,96 @@ class StrumLine extends FlxGroup {
 		strumSpacing = chartData.strumSpacing;
 		scale.set(1, 1); setPosition(chartData.strumPosition[0], chartData.strumPosition[1], chartData.strumPosIsPure);
 
+		__on_release = _->_on_release(_);
 		FlxG.stage.addEventListener(KeyboardEvent.KEY_DOWN, _on_press);
-		FlxG.stage.addEventListener(KeyboardEvent.KEY_UP, _on_release);
+		FlxG.stage.addEventListener(KeyboardEvent.KEY_UP, __on_release);
 
 		// Rodney make this work thank.
 		/* if (Paths.fileExists(Paths.vocal(PlayState.song, characters[0].id, PlayState.variation)))
 			vocals = Conductor.addAdditionalTrack(FlxG.sound.load(Cache.sound(Paths.vocal(PlayState.song, characters[0].id, PlayState.variation), 'root', null, true), FlxG.sound.defaultMusicGroup));
-		else */ if (chartData.vocalsSuffix == null) vocals = Conductor.addAdditionalTrack(new FlxSound());
-		else vocals = Conductor.addAdditionalTrack(FlxG.sound.load(Cache.sound(Paths.vocal(PlayState.songData.songName, chartData.vocalsSuffix, PlayState.variation), 'root', null, true), FlxG.sound.defaultMusicGroup));
+		else */
+		if (chartData.vocalsSuffix == null || chartData.vocalsSuffix == "") vocals = Conductor.addAdditionalTrack(new FlxSound());
+		else {
+			var vocalPath = "";
+			if (vocalPath == "") vocalPath = Paths.vocal(PlayState.songData.songName, chartData.vocalsSuffix, PlayState.variation);
+			if (vocalPath == "") vocalPath = Paths.vocal(PlayState.songData.songName, chartData.vocalsSuffix, PlayState.variation, false);
+			if (vocalPath == "") vocalPath = Paths.vocal(PlayState.songData.songName, chartData.vocalsSuffix.substr(0), PlayState.variation);
+			if (vocalPath == "") vocalPath = Paths.vocal(PlayState.songData.songName, chartData.vocalsSuffix.substr(0), PlayState.variation, false);
+			if (vocalPath == "") vocalPath = Paths.vocal(PlayState.songData.songName, chartData.vocalsSuffix, '');
+			if (vocalPath == "") vocalPath = Paths.vocal(PlayState.songData.songName, chartData.vocalsSuffix, '', false);
+			if (vocalPath == "") vocalPath = Paths.vocal(PlayState.songData.songName, chartData.vocalsSuffix.substr(0), '');
+			if (vocalPath == "") vocalPath = Paths.vocal(PlayState.songData.songName, chartData.vocalsSuffix.substr(0), '', false);
+			if (vocalPath == "") vocalPath = Paths.vocal(PlayState.songData.songName, chartData.vocalsSuffix, '');
+			vocals = Conductor.addAdditionalTrack(FlxG.sound.load(Cache.sound(vocalPath, 'root', null, true), FlxG.sound.defaultMusicGroup));
+		}
 
 		noteStyle = chartData.noteStyle;
 
+		for (data in chartData.notes) {
+			var type = PlayState.SONG._data.noteTypes[data.type-1];
+			if (type == null || !NoteStyleRegistry.doesNoteStyleExist(type)) continue;
+			var noteStyle = NoteStyleRegistry.getNoteStyleByID(type);
+			Cache.image(noteStyle.getSplashAssetPath(), 'root');
+			Cache.image(noteStyle.getHoldCoverAssetPath(), 'root');
+		}
+
+		generateLanes();
+
+	}
+
+	public var dynamicLanes:Array<FlxBackdrop> = [];
+	public var dynamicLanesColored:Array<FlxBackdrop> = [];
+
+	public function generateLanes() {
+		for (i in lanes.members) {
+			if (dynamicLanes.contains(i)) dynamicLanes.remove(i);
+			if (dynamicLanesColored.contains(i)) dynamicLanesColored.remove(i);
+			lanes.remove(i);
+			i.destroy();
+		}
+		if (Options.data.laneUnderlay) {
+			if (Options.data.fancyLaneUnderlay) {
+				for (i=>strum in strums) {
+					var lane = new FlxBackdrop(Y);
+					lane.makeGraphic(Math.round(Note.swagWidth), FlxG.height, FlxColor.BLACK);
+					lane.x = Note.swagWidth * strumScale * strumSpacing * i;
+					lane.alpha = Options.data.underlayOpacity / 100;
+					dynamicLanes.push(lane);
+					lanes.add(lane);
+
+					var lane = new FlxBackdrop(Y);
+					lane.makeGraphic(Math.round(Note.swagWidth), FlxG.height, flashColors[i % 4]);
+					lane.x = Note.swagWidth * strumScale * strumSpacing * i;
+					lane.alpha = 0;
+					dynamicLanesColored.push(lane);
+					lanes.add(lane);
+
+				}
+			} else {
+				var width:Int = Math.round(Note.swagWidth * strumScale * strumSpacing * strums.length);
+				width += Math.round(Options.data.laneGrow) * 2;
+				var lane = new FlxBackdrop(Y);
+				lane.makeGraphic(width, FlxG.height, FlxColor.BLACK);
+				lane.alpha = Options.data.underlayOpacity / 100;
+				lanes.add(lane);
+			}
+		}
 	}
 
 	public function setPosition(x:Float = 0, y:Float = 0, purePos:Bool = true):Void {
+		if (Options.data.forceMiddleScroll && !purePos) {
+			if (isPlayer) x = 0.5;
+			else x = -1000;
+		}
+		if (purePos) {
+			lanes.x = x;
+		} else {
+			var width:Int = Math.round(Note.swagWidth * strumScale * strumSpacing * strums.length);
+			lanes.x = getDefaultCamera().width * x;
+			lanes.x -= width/2;
+			if (!Options.data.fancyLaneUnderlay) lanes.x -= Options.data.laneGrow;
+			lanes.x -= 8;
+		}
 		if (downscroll) y = getDefaultCamera().height - y - Note.swagWidth;
 		for (i => strum in strums) {
 			var _x:Float = x;
@@ -158,30 +245,92 @@ class StrumLine extends FlxGroup {
 		}
 		keyCount = mania;
 		currentInputs.resize(0);
+		activeNotesByLane.resize(0);
+		activeNoteLaneCursors.resize(0);
+		activeSustainsByLane.resize(0);
+		activeSustainLaneCursors.resize(0);
 		for (i in 0...keyCount) {
 			strums.add(new Strum(this, i));
 			currentInputs.push(false);
+			activeNotesByLane.push([]);
+			activeNoteLaneCursors.push(0);
+			activeSustainsByLane.push([]);
+			activeSustainLaneCursors.push(0);
 		}
 	}
+
+	public var preparedNotes:Array<Note> = [];
+	public var nextNoteIndex:Int = 0;
+	public var spawnLookaheadMs:Float = 1500;
+
 	public function generateNotes(?time:Float):Void {
 		var stackedNoteCount:Int = 0;
+		preparedNotes.resize(0);
+		nextNoteIndex = 0;
+
 		for (data in chartData.notes) {
-			if (data.time < time ?? Math.NEGATIVE_INFINITY) continue;
-			var note:Note = new Note(this, data.id, data.time, data.sLen, PlayState.SONG._data.noteTypes[data.type-1]);
-			var exists = false;
-			for (i in notes) {
-				if (i.time == data.time && i.id == data.id) exists = true;
-				if (exists && data.sLen > i.length) {
-					notes.remove(i);
-					i.destroy();
-					exists = false;
+			if (time != null && data.time < time) continue;
+
+			var existingNote:Note = null;
+			for (i in preparedNotes) {
+				if (i.time == data.time && i.id == data.id) {
+					existingNote = i;
+					break;
 				}
 			}
-			if (!exists) notes.add(note);
-			else note.destroy();
-			if (exists) stackedNoteCount++;
+
+			if (existingNote != null) {
+				stackedNoteCount++;
+				if (data.sLen <= existingNote.length)
+					continue;
+
+				preparedNotes.remove(existingNote);
+				existingNote.destroy();
+			}
+
+			var targetType:Null<String> = null;
+			if (data.type is String) {
+				targetType = data.type;
+			} else if (data.type != null) {
+				targetType = PlayState.SONG._data.noteTypes[data.type-1];
+			}
+
+			preparedNotes.push(new Note(this, data.id, data.time, data.sLen, targetType));
 		}
+		preparedNotes.sort(Note.sortNotes);
 		if (stackedNoteCount != 0) trace('warning:Found <cyan>$stackedNoteCount<reset> stacked note${stackedNoteCount == 1 ? '' : 's'} for strumline <cyan>$ID<reset>. (They where removed)');
+	}
+
+	inline function getSpawnWindow(note:Note):Float {
+		var speed:Float = Math.abs(note.__scrollSpeed);
+		if (speed < 0.001) speed = 0.001;
+		return spawnLookaheadMs / speed;
+	}
+
+	function spawnNote(note:Note):Void {
+		if (note.destroyed) return;
+
+		notes.add(note);
+		if (note.id >= 0 && note.id < activeNotesByLane.length)
+			activeNotesByLane[note.id].push(note);
+
+		for (sustain in note.tail) {
+			if (sustain != null && !sustain.destroyed) {
+				sustains.add(sustain);
+				if (sustain.id >= 0 && sustain.id < activeSustainsByLane.length)
+					activeSustainsByLane[sustain.id].push(sustain);
+			}
+		}
+	}
+
+	function spawnPreparedNotes():Void {
+		while (
+			nextNoteIndex < preparedNotes.length
+			&& preparedNotes[nextNoteIndex].time - Conductor.songPosition < getSpawnWindow(preparedNotes[nextNoteIndex])
+		) {
+			spawnNote(preparedNotes[nextNoteIndex]);
+			nextNoteIndex++;
+		}
 	}
 
 	public dynamic function _onVoidTap(id:Int, strumLine:StrumLine):Void {}
@@ -191,6 +340,9 @@ class StrumLine extends FlxGroup {
 	public dynamic function _onSustainMissed(sustain:Sustain):Void {}
 
 	override public function update(elapsed:Float):Void {
+
+		spawnPreparedNotes();
+
 		// auto hit and note miss
 		notes.forEachExists((note:Note) -> {
 			if (note.tooLate && !note.wasHit && !note.wasMissed)
@@ -209,19 +361,41 @@ class StrumLine extends FlxGroup {
 		});
 
 		if (isPlayer) {
-			for (i => input in currentInputs)
-				if (input) for (sustain in Note.filterTail(sustains.members, i))
+			for (i => input in currentInputs) {
+				if (!input) continue;
+
+				final laneSustains = activeSustainsByLane[i];
+				var laneCursor = activeSustainLaneCursors[i];
+				while (laneCursor < laneSustains.length) {
+					final sustain = laneSustains[laneCursor];
+					if (sustain != null && sustain.exists && !sustain.wasHit && !sustain.wasMissed && !sustain.tooLate)
+						break;
+					laneCursor++;
+				}
+				activeSustainLaneCursors[i] = laneCursor;
+
+				var sustainIndex = laneCursor;
+				while (sustainIndex < laneSustains.length) {
+					final sustain = laneSustains[sustainIndex++];
+					if (sustain == null || !sustain.exists) continue;
+					if (!sustain.canHit || sustain.wasHit || sustain.wasMissed || sustain.tooLate) continue;
 					if ((sustain.time + sustain.parentNote.time) < Conductor.framePosition)
 						_onSustainHit(sustain);
+				}
+			}
 		}
 
 		super.update(elapsed);
 
 		// checks when a note and its tail can be killed
 		notes.forEachExists((note:Note) -> {
+			if (note.time - Conductor.songPosition < (-Scoring.missThreshold)-10 && note.tail.length <= 1) {
+				note.destroy();
+				// notes.remove(note);
+			}
+
 			var wasKilled:Bool = false;
 			if (note.tail.length != 0) {
-				note.tail.sort(Note.sortTail); // jic
 				final tailEnd:Sustain = note.tail[note.tail.length - 1];
 				if ((tailEnd.wasHit || tailEnd.wasMissed) && tailEnd.tooLate) {
 					note.kill();
@@ -237,9 +411,29 @@ class StrumLine extends FlxGroup {
 
 			note.updatePosition();
 		});
+
+		for (i => strum in strums.members) {
+			if (strum.animation.name == 'confirm') {
+				if (strum.animation.curAnim.curFrame == 0 && dynamicLanesColored[i] != null) dynamicLanesColored[i].alpha = Options.data.laneFlashIntensity / 100;
+			} else if (strum.animation.name == 'press') {
+				if (dynamicLanesColored[i] != null) dynamicLanesColored[i].alpha = 0.25 * (Options.data.laneFlashIntensity / 100);
+			}
+		}
+
+		for (i => lane in dynamicLanesColored) {
+			lane.alpha = MathUtil.lerp(lane.alpha, 0, 0.2);
+		}
+
+		notes.forEachExists((note:Note) -> {
+			if (note.destroyed) notes.remove(note);
+		});
 	}
 
 	final currentInputs:Array<Bool> = [];
+	final activeNotesByLane:Array<Array<Note>> = [];
+	final activeNoteLaneCursors:Array<Int> = [];
+	final activeSustainsByLane:Array<Array<Sustain>> = [];
+	final activeSustainLaneCursors:Array<Int> = [];
 	function _on_press(event:KeyboardEvent):Void {
 		if (FlxG.state.subState != null) return;
 		if (isComputer) return;
@@ -248,28 +442,39 @@ class StrumLine extends FlxGroup {
 		if (!FlxG.keys.checkStatus(event.keyCode, JUST_PRESSED)) return;
 		currentInputs[inputId] = true;
 
-		final activeNotes:Array<Note> = Note.filterNotes(notes.members, inputId);
-		if (activeNotes.length != 0) {
-			var frontNote:Note = activeNotes[0]; // took from psych, fixes a dumb issue where it eats up jacks
-			if (activeNotes.length > 2) {
-				final backNote:Note = activeNotes[1];
-				if (Math.abs(backNote.time - frontNote.time) < 1.0) {
-					final liveNote:Note = backNote.length < frontNote.length ? backNote : frontNote;
-					final deadNote:Note = backNote.length < frontNote.length ? frontNote : backNote;
-					deadNote.destroy(); // shouldn't need to keep existing
-					frontNote = liveNote;
-				} else if (backNote.time < frontNote.time)
-					frontNote = backNote;
+		final laneNotes = activeNotesByLane[inputId];
+		var laneCursor = activeNoteLaneCursors[inputId];
+		while (laneCursor < laneNotes.length) {
+			final note = laneNotes[laneCursor];
+			if (note != null && note.exists && !note.wasHit && !note.wasMissed && !note.tooLate)
+				break;
+			laneCursor++;
+		}
+		activeNoteLaneCursors[inputId] = laneCursor;
+
+		if (laneCursor < laneNotes.length) {
+			final note = laneNotes[laneCursor];
+			if (!note.canHit) {
+				_onVoidTap(inputId, this);
+				return;
 			}
-			_onNoteHit(frontNote);
-		} else _onVoidTap(inputId, this);
+			_onNoteHit(note);
+			return;
+		}
+		_onVoidTap(inputId, this);
+
 	}
-	function _on_release(event:KeyboardEvent):Void {
+
+	var __on_release:KeyboardEvent->Void;
+
+	function _on_release(event:KeyboardEvent, force:Bool = false):Void {
 		if (FlxG.state.subState != null) return;
 		if (isComputer) return;
 		final inputId:Int = getKeyFromEvent(['note_left', 'note_down', 'note_up', 'note_right'], event.keyCode);
-		if (inputId < 0 || inputId >= strums.length) return;
-		if (!FlxG.keys.checkStatus(event.keyCode, JUST_RELEASED)) return;
+		if (!force) {
+			if (inputId < 0 || inputId >= strums.length) return;
+			if (!FlxG.keys.checkStatus(event.keyCode, JUST_RELEASED)) return;
+		}
 		currentInputs[inputId] = false;
 
 		final strum:Strum = strums.members[inputId];
@@ -292,7 +497,7 @@ class StrumLine extends FlxGroup {
 	override public function destroy():Void {
 		scale.put();
 		FlxG.stage.removeEventListener(KeyboardEvent.KEY_DOWN, _on_press);
-		FlxG.stage.removeEventListener(KeyboardEvent.KEY_UP, _on_release);
+		FlxG.stage.removeEventListener(KeyboardEvent.KEY_UP, __on_release);
 		super.destroy();
 	}
 

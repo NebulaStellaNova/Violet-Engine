@@ -1,0 +1,1 @@
+Capsule background resolution MUST be 829x85 for it to look right

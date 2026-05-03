@@ -48,4 +48,10 @@ class BaseOption extends FlxGroup {
 
 	public function updatePosition() {}
 
+	public var enabled:Bool = true;
+	public function setEnabled(enabled:Bool) {
+		this.color = enabled ? FlxColor.WHITE : FlxColor.interpolate(FlxColor.WHITE, FlxColor.BLACK, 0.5);
+		this.enabled = enabled;
+	}
+
 }

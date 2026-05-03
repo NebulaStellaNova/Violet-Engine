@@ -6,7 +6,8 @@ difficulties:
 icon: darnell
 coopAllowed: true
 name: lit up
-color: -10394881
+freeplayCapsule: streets-erect
+gradient: ["#6162FF", "#00FF48"]
 customValues:
 stepsPerBeat: 4
 displayName: Lit Up (BF Mix)

@@ -3,18 +3,14 @@ package violet.backend.options;
 import flixel.util.FlxSave;
 import flixel.FlxG;
 import flixel.FlxSprite;
-import flixel.text.FlxText;
-import flixel.group.FlxGroup;
-import flixel.FlxBasic;
-import flixel.FlxState;
 import lime.app.Application;
-import Std;
 
 @:structInit class OptionsData {
 
 	public var fps:Int = 60;
 	public var ghostTapping:Bool = true;
 	public var downscroll:Bool = false;
+	public var disableHoldJitter:Bool = false;
 	public var coloredHealthBar:Bool = true;
 	public var developerMode:Bool = false;
 	public var mouseControls:Bool = #if mobile false #else true #end;
@@ -22,9 +18,13 @@ import Std;
 	public var debugDisplayOnStart:Bool = false;
 	public var personalScrollSpeed:Float = 0;
 	public var disableScoreLerping:Bool = false;
+	public var kadePopups:Bool = false;
+	public var playMissSound:Bool = true;
+	public var botplayFlashingText:Bool = true;
 	public var playAsOpponent:Bool = false;
 	public var gpuCaching:Bool = false;
 	public var antialiasTextures:Bool = true;
+	public var forceMiddleScroll:Bool = false;
 	public var vsync:Bool = #if linux false #else true #end;
 	public var controls:Map<String, Array<String>> = [
 		'note_left' => ['A', 'LEFT'],
@@ -63,6 +63,28 @@ import Std;
 
 	public var savedLevelScores:Map<String, Int> = [];
 
+	public var modOptions:Dynamic = {};
+
+	// -- Lane Underlays -- \\
+	public var laneUnderlay:Bool = false;
+	public var laneGrow:Float = 20; // px
+	public var underlayOpacity:Float = 25; // %
+
+	public var fancyLaneUnderlay:Bool = false;
+	public var laneFlashIntensity:Float = 100; // %
+
+	public var enableNoteSplashes:Bool = true;
+	public var enableHoldCovers:Bool = true;
+
+	public var hideScore:Bool = false;
+	public var hideAccuracy:Bool = false;
+
+	public var accuracyCalculation:AccuracyBase = RATING; // 0 = Rating, 1 = Millisecond
+}
+
+enum abstract AccuracyBase(Int) {
+	var RATING;
+	var MILLISECOND;
 }
 
 class Options {

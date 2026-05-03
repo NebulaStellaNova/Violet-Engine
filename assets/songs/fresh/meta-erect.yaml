@@ -1,4 +1,4 @@
-color: "#9271FD"
+gradient: ["#8385E9", "#CF3EE9"]
 ratings:
   nightmare: 7
   erect: 6
@@ -11,6 +11,7 @@ icon: dad
 coopAllowed: false
 stepsPerBeat: 4
 displayName: Fresh Erect
+freeplayCapsule: mainStageErect
 beatsPerMeasure: 4
 needsVoices: false
 vocalsSuffix: -erect

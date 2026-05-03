@@ -77,7 +77,7 @@ class GameOverState extends StateBackend {
 			}
 		}
 		if (Controls.back) {
-			PlayState.instance.exitToMenu();
+			PlayState.staticExit();
 		}
 
 		if (Controls.resetState || Controls.reloadGame) {

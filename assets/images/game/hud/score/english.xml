@@ -1,0 +1,46 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TextureAtlas imagePath="english-score.png">
+	<!-- Created with Adobe Animate version 24.0.12.3 -->
+	<!-- http://www.adobe.com/products/animate.html -->
+	<SubTexture name="a0000" x="5" y="5" width="32" height="39"/>
+	<SubTexture name="b0000" x="42" y="5" width="32" height="39"/>
+	<SubTexture name="c0000" x="42" y="269" width="31" height="38"/>
+	<SubTexture name="colon0000" x="150" y="269" width="20" height="38"/>
+	<SubTexture name="d0000" x="79" y="5" width="32" height="39"/>
+	<SubTexture name="dash0000" x="175" y="269" width="32" height="22" frameX="0" frameY="-6" frameWidth="32" frameHeight="22"/>
+	<SubTexture name="e0000" x="116" y="5" width="32" height="39"/>
+	<SubTexture name="eight0000" x="5" y="137" width="32" height="39"/>
+	<SubTexture name="f0000" x="153" y="5" width="32" height="39"/>
+	<SubTexture name="five0000" x="5" y="181" width="32" height="39"/>
+	<SubTexture name="four0000" x="5" y="225" width="32" height="39"/>
+	<SubTexture name="g0000" x="78" y="269" width="31" height="38"/>
+	<SubTexture name="h0000" x="190" y="5" width="31" height="39"/>
+	<SubTexture name="i0000" x="190" y="49" width="31" height="39"/>
+	<SubTexture name="j0000" x="114" y="269" width="31" height="38"/>
+	<SubTexture name="k0000" x="190" y="93" width="31" height="39"/>
+	<SubTexture name="l0000" x="5" y="49" width="32" height="39"/>
+	<SubTexture name="m0000" x="79" y="137" width="31" height="39"/>
+	<SubTexture name="n0000" x="115" y="137" width="31" height="39"/>
+	<SubTexture name="nine0000" x="42" y="93" width="32" height="39"/>
+	<SubTexture name="o0000" x="42" y="49" width="32" height="39"/>
+	<SubTexture name="one0000" x="79" y="93" width="32" height="39"/>
+	<SubTexture name="p0000" x="79" y="49" width="32" height="39"/>
+	<SubTexture name="percent0000" x="5" y="269" width="32" height="38" frameX="-5" frameY="0" frameWidth="32" frameHeight="38"/>
+	<SubTexture name="period0000" x="187" y="164" width="20" height="17" frameX="-5" frameY="-20" frameWidth="20" frameHeight="22"/>
+	<SubTexture name="plus0000" x="187" y="137" width="22" height="22"/>
+	<SubTexture name="q0000" x="116" y="49" width="32" height="39"/>
+	<SubTexture name="r0000" x="153" y="49" width="32" height="39"/>
+	<SubTexture name="s0000" x="151" y="137" width="31" height="39"/>
+	<SubTexture name="seven0000" x="116" y="93" width="32" height="39"/>
+	<SubTexture name="six0000" x="153" y="93" width="32" height="39"/>
+	<SubTexture name="t0000" x="5" y="93" width="32" height="39"/>
+	<SubTexture name="three0000" x="42" y="137" width="32" height="39"/>
+	<SubTexture name="two0000" x="42" y="181" width="32" height="39"/>
+	<SubTexture name="u0000" x="79" y="181" width="31" height="39"/>
+	<SubTexture name="v0000" x="79" y="225" width="31" height="39"/>
+	<SubTexture name="w0000" x="115" y="181" width="31" height="39"/>
+	<SubTexture name="x0000" x="151" y="181" width="31" height="39"/>
+	<SubTexture name="y0000" x="115" y="225" width="31" height="39"/>
+	<SubTexture name="z0000" x="151" y="225" width="31" height="39"/>
+	<SubTexture name="zero0000" x="42" y="225" width="32" height="39"/>
+</TextureAtlas>

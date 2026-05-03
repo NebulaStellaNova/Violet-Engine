@@ -1,3 +1,9 @@
+# Get The Engine
+Here's direct downloads for each platform:<br>
+- [Violet Engine Windows Build](https://nightly.link/NebulaStellaNova/Violet-Engine/workflows/debug/main/Violet%20Windows%20Build.zip)<br>
+- [Violet Engine Linux Build](https://nightly.link/NebulaStellaNova/Violet-Engine/workflows/debug/main/Violet%20Linux%20Build.zip)<br>
+- [Violet Engine MacOS Build](https://nightly.link/NebulaStellaNova/Violet-Engine/workflows/debug/main/Violet%20macOS%20Build.zip)<br>
+
 # About
 A brand new fnf engine coded entirely from the ground up, NO it's not a fork of Psych Engine.<br>
 And if you think Psych forks are engines you should be ashamed, they are FORKS...<br>
@@ -14,27 +20,40 @@ https://youtu.be/iwcN0Sr3S3A
 
 # What I hope to accomplish with this engine:
 ### Main Focuses
-- Almost full mod support for V-Slice, Codename, and Psych mods. With some additions of my own.
+- Easy to use mod system with data compatibility for other engines.
 - Super sleek menus, with seamless transitions.
-- Make modding easier so people can bring their creations to life, but if you post slop I'll blacklist your mod negl.
+- Make modding easier so people can bring their creations to life.
 
 ### Back Burner
 - Full online multiplayer.
 - In-Game Mod Downloader/Updater.
 
 # How to contribute?
-Well for one, the engine is being coded on the dev branch.
-
-But please, make PR's to help if you want to :D<br>
+Please make PR's to help if you want to :D<br>
 I would greatly appreciate it.
 
 # Compilation
 
-You MUST run `setup.bat` before compiling or it will not work<br>
-Once you run that simply open the console in this folder and type `lime test windows`
+You MUST run the setup script before compiling or it will not work.<br>
+Use `setup.bat` on Windows, or `sh setup.sh` on Linux/macOS.<br>
+Once you run that, open the console in this folder and type `lime test windows`, `lime test linux`, or `lime test mac`.
 
 
 # Credits
-Violet Engine Crew
-Codename Engine Crew - For console and sustain code
+Violet Engine Crew<br>
+Codename Engine Crew - For console and sustain code.<br>
 Friday Night Funkin' - For the game lol.
+
+# Violet Engine Crew
+- [Nebula S. Nova](https://github.com/NebulaStellaNova): Main Coder.
+- [Rodney528](https://github.com/rodney528): Secondary Coder.
+- [PurSnake](https://github.com/PurSnake): Created and helped implement [FlxRhythmConductor](https://github.com/PurSnake/FlxRhythmConductor).
+- [ADA_Funni](https://github.com/ADA-Funni): Small code tweaks and fixes.
+- [LORAY-guy](https://open.spotify.com/artist/7hPljx3DXYez3j2UeswXsS): Menu Concept Designer.
+- [vissafyre](https://github.com/harlow-sint): Helped code a LOT of LemonUI.
+- [Jake_Official](https://open.spotify.com/artist/7hPljx3DXYez3j2UeswXsS): Violet Engine Theme.
+
+# Asset Credits
+- [KadeDev](https://github.com/kadedev): Kade Engine popup graphics.
+- [ThatRozebudDude](https://github.com/ThatRozebudDude): Spirit's Sticker (Freeplay Menu)
+- [GoodieBag](https://gamebanana.com/members/1904855): Spooky-Kid's, Senpai's, Tankman's, and Darnell's Sticker (Freeplay Menu)

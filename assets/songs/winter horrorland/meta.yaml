@@ -8,7 +8,7 @@ ratings:
   easy: 1
   normal: 2
   hard: 2
-color: "#A0D1FF"
+gradient: ["#d273b1", "#de2d77"]
 coopAllowed: true
 stepsPerBeat: 4
 displayName: Winter Horrorland
@@ -16,3 +16,4 @@ beatsPerMeasure: 4
 needsVoices: true
 bpm: 159
 album: volume2
+freeplayCapsule: mall-evil

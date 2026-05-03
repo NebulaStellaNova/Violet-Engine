@@ -1,5 +1,8 @@
 package violet.backend.utils;
 
+import haxe.xml.Access;
+import haxe.io.Path;
+
 class AnimationUtil {
 
 	/**
@@ -56,6 +59,20 @@ class AnimationUtil {
 		}
 
 		return out.join(', ');
+	}
+
+	public static function getAnimListFromXML(path:String):Array<String> {
+		var xmlPath:String = Path.withoutExtension(path) + '.xml';
+		var xmlData:Xml = Xml.parse(FileUtil.getFileContent(xmlPath));
+		var xmlAccess:Access = new Access(xmlData);
+		var out:Array<String> = [];
+		for (i in xmlAccess.node.TextureAtlas.nodes.SubTexture) {
+			var frameName = i.att.name;
+			if (frameName.endsWith('0000')) {
+				out.push(frameName.replace('0000', ''));
+			}
+		}
+		return out;
 	}
 
 }

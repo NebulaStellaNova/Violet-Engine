@@ -1,0 +1,221 @@
+{
+  "events": [
+    {
+      "params": [
+        1
+      ],
+      "time": 3200,
+      "name": "Camera Movement"
+    },
+    {
+      "params": [
+        0
+      ],
+      "time": 6400,
+      "name": "Camera Movement"
+    },
+    {
+      "params": [
+        1
+      ],
+      "time": 9600,
+      "name": "Camera Movement"
+    },
+    {
+      "params": [
+        0
+      ],
+      "time": 12800,
+      "name": "Camera Movement"
+    },
+    {
+      "params": [
+        1
+      ],
+      "time": 14400,
+      "name": "Camera Movement"
+    },
+    {
+      "params": [
+        0
+      ],
+      "time": 16000,
+      "name": "Camera Movement"
+    },
+    {
+      "params": [
+        1
+      ],
+      "time": 17600,
+      "name": "Camera Movement"
+    },
+    {
+      "params": [
+        0
+      ],
+      "time": 19200,
+      "name": "Camera Movement"
+    },
+    {
+      "params": [
+        1
+      ],
+      "time": 20800,
+      "name": "Camera Movement"
+    },
+    {
+      "params": [
+        0
+      ],
+      "time": 22400,
+      "name": "Camera Movement"
+    },
+    {
+      "params": [
+        1
+      ],
+      "time": 24000,
+      "name": "Camera Movement"
+    },
+    {
+      "params": [
+        0
+      ],
+      "time": 25600,
+      "name": "Camera Movement"
+    },
+    {
+      "params": [
+        1
+      ],
+      "time": 28800,
+      "name": "Camera Movement"
+    },
+    {
+      "params": [
+        0
+      ],
+      "time": 32000,
+      "name": "Camera Movement"
+    },
+    {
+      "params": [
+        1
+      ],
+      "time": 35200,
+      "name": "Camera Movement"
+    },
+    {
+      "params": [
+        0
+      ],
+      "time": 38400,
+      "name": "Camera Movement"
+    },
+    {
+      "params": [
+        1
+      ],
+      "time": 41600,
+      "name": "Camera Movement"
+    },
+    {
+      "params": [
+        0
+      ],
+      "time": 44800,
+      "name": "Camera Movement"
+    },
+    {
+      "params": [
+        1
+      ],
+      "time": 48000,
+      "name": "Camera Movement"
+    },
+    {
+      "params": [
+        0
+      ],
+      "time": 51200,
+      "name": "Camera Movement"
+    },
+    {
+      "params": [
+        1
+      ],
+      "time": 57600,
+      "name": "Camera Movement"
+    },
+    {
+      "params": [
+        0
+      ],
+      "time": 64000,
+      "name": "Camera Movement"
+    },
+    {
+      "params": [
+        1
+      ],
+      "time": 70400,
+      "name": "Camera Movement"
+    },
+    {
+      "params": [
+        0
+      ],
+      "time": 76800,
+      "name": "Camera Movement"
+    },
+    {
+      "params": [
+        1
+      ],
+      "time": 80000,
+      "name": "Camera Movement"
+    },
+    {
+      "params": [
+        0
+      ],
+      "time": 83200,
+      "name": "Camera Movement"
+    },
+    {
+      "params": [
+        1
+      ],
+      "time": 86400,
+      "name": "Camera Movement"
+    },
+    {
+      "params": [
+        0
+      ],
+      "time": 89600,
+      "name": "Camera Movement"
+    },
+    {
+      "params": [
+        1
+      ],
+      "time": 92800,
+      "name": "Camera Movement"
+    },
+    {
+      "params": [
+        0
+      ],
+      "time": 96000,
+      "name": "Camera Movement"
+    },
+    {
+      "params": [
+        1
+      ],
+      "time": 99200,
+      "name": "Camera Movement"
+    }
+  ]
+}

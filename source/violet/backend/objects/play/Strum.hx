@@ -1,5 +1,6 @@
 package violet.backend.objects.play;
 
+import violet.backend.options.Options;
 import violet.backend.audio.Conductor;
 import violet.data.notestyles.NoteStyle;
 import violet.data.notestyles.NoteStyleRegistry;
@@ -40,6 +41,8 @@ class Strum extends NovaSprite {
 	public final splashes:Array<StrumElement> = [];
 	public final holdCovers:Array<StrumElement> = [];
 	public var holdCover:StrumElement;
+	var holdCoverOffsetX:Float = 0;
+	var holdCoverOffsetY:Float = 0;
 
 	public function new(parent:StrumLine, id:Int) {
 		super();
@@ -47,6 +50,9 @@ class Strum extends NovaSprite {
 		ID = id;
 		style = null;
 		this.styleMeta = NoteStyleRegistry.getNoteStyleByID(parent.noteStyle ?? 'default');
+		final holdCoverOffsets:Array<Float> = styleMeta.getHoldCoverOffsets();
+		holdCoverOffsetX = holdCoverOffsets[0];
+		holdCoverOffsetY = holdCoverOffsets[1];
 
 		final daScale:Float = styleMeta.strumProperties.scale;
 		scale.set(daScale, daScale);
@@ -73,6 +79,9 @@ class Strum extends NovaSprite {
 			addAnimFromData(data);
 		final partOffsets:Array<Float> = styleMeta.getStrumOffsets();
 		globalOffset.set(partOffsets[0], partOffsets[1]);
+		final holdCoverOffsets:Array<Float> = styleMeta.getHoldCoverOffsets();
+		holdCoverOffsetX = holdCoverOffsets[0];
+		holdCoverOffsetY = holdCoverOffsets[1];
 		this.antialiasing = styleMeta.isStrumPixel();
 
 		playAnim(lastAnim, true, wasReversed);
@@ -95,8 +104,7 @@ class Strum extends NovaSprite {
 
 		if (holdCover == null) return;
 		if (holdCover.exists && holdCover.animation.name != 'end') {
-			final partOffsets:Array<Float> = styleMeta.getHoldCoverOffsets();
-			holdCover.setPosition(this.x - (holdCover.width/2) + partOffsets[0], this.y - (holdCover.height/2) + partOffsets[1]);
+			holdCover.setPosition(this.x - (holdCover.width/2) + holdCoverOffsetX, this.y - (holdCover.height/2) + (holdCoverOffsetY + (parent.downscroll ? 7 : 0)));
 		}
 	}
 
@@ -111,61 +119,102 @@ class Strum extends NovaSprite {
 		}
 	}
 
+	public var splashBin:Map<String, Array<StrumElement>> = [];
+	public var splashBinIndex:Map<String, Int> = [];
+	public var holdCoverBin:Map<String, Array<StrumElement>> = [];
+
 	public function spawnSplash(?note:Note):Void {
+		if (!Options.data.enableNoteSplashes) return;
 		var finalMeta;
 		if (note?.style != null) {
 			finalMeta = NoteStyleRegistry.getNoteStyleByID(note.style);
 		} else {
 			finalMeta = styleMeta;
 		}
-		final splash:StrumElement = new StrumElement(this, finalMeta.getSplashAssetPath());
-		for (data in finalMeta.getSplashAnimations(ID, parent.keyCount))
-			splash.addAnimFromData(data);
+
+		if (!splashBin.exists(finalMeta.id)) splashBin.set(finalMeta.id, []);
+		if (!splashBinIndex.exists(finalMeta.id)) splashBinIndex.set(finalMeta.id, 0);
+
+		var index:Int = splashBinIndex.get(finalMeta.id) % 3;
+		var bin:Array<StrumElement> = splashBin.get(finalMeta.id);
+
+		var splash:StrumElement = null;
+
+		if (bin[index] == null) {
+			splash = new StrumElement(this, finalMeta.getSplashAssetPath());
+			for (data in finalMeta.getSplashAnimations(ID, parent.keyCount))
+				splash.addAnimFromData(data);
+			bin[index] = splash;
+			this.splashes.push(splash);
+			this.parent.add(splash);
+		} else {
+			splash = bin[index];
+		}
 
 		splash.playAnim(FlxG.random.getObject(splash.animationList), true);
 		splash.setScale(finalMeta.splashProperties.scale);
-		splash.animation.onFinish.add(name -> {
-			this.splashes.remove(splash);
-			splash.destroy();
+		splash.animation.onFinish.addOnce(name -> {
+			splash.visible = false;
 		});
 		final partOffsets:Array<Float> = finalMeta.getSplashOffsets();
 		splash.setPosition(this.x - (splash.width/2) + partOffsets[0], this.y - (splash.height/2) + partOffsets[1]);
 		splash.antialiasing = finalMeta.isSplashPixel();
 		splash.alpha = finalMeta.splashProperties.alpha;
 		splash.blend = finalMeta.splashProperties.blendMode;
-		this.splashes.push(splash);
-		this.parent.add(splash);
+		splash.visible = true;
+
+		splashBin.set(finalMeta.id, bin);
+		splashBinIndex.set(finalMeta.id, index + 1);
 	}
 
 
 	public function spawnHoldCover():Void {
+		if (!Options.data.enableHoldCovers) return;
 		if (holdCover != null) {
 			holdCover.playAnim('end', true);
 			holdCover.animation.finish();
 		}
-		final holdCover:StrumElement = holdCover = new StrumElement(this, styleMeta.getHoldCoverAssetPath());
-		for (data in styleMeta.getHoldCoverAnimations(ID, parent.keyCount))
-			holdCover.addAnimFromData(data);
 
+		final styleID:String = styleMeta.id;
+		if (!holdCoverBin.exists(styleID)) holdCoverBin.set(styleID, []);
+		final bin:Array<StrumElement> = holdCoverBin.get(styleID);
+
+		var holdCover:StrumElement = null;
+		for (element in bin) {
+			if (!element.exists) {
+				holdCover = element;
+				break;
+			}
+		}
+
+		if (holdCover == null) {
+			holdCover = new StrumElement(this, styleMeta.getHoldCoverAssetPath());
+			for (data in styleMeta.getHoldCoverAnimations(ID, parent.keyCount))
+				holdCover.addAnimFromData(data);
+
+			holdCover.animation.onFinish.add(name -> {
+				switch (name) {
+					case 'start':
+						holdCover.playAnim('hold', true);
+					case 'end':
+						if (this.holdCover == holdCover)
+							this.holdCover = null;
+						holdCover.kill();
+				}
+			});
+			bin.push(holdCover);
+			this.holdCovers.push(holdCover);
+			this.parent.add(holdCover);
+		}
+
+		this.holdCover = holdCover;
+		holdCover.revive();
 		holdCover.playAnim('start', true);
 		holdCover.setScale(styleMeta.holdCoverProperties.scale);
-		holdCover.animation.onFinish.add(name -> {
-			switch (name) {
-				case 'start':
-					holdCover.playAnim('hold', true);
-				case 'end':
-					this.parent.remove(holdCover);
-					this.holdCovers.remove(holdCover);
-					holdCover.destroy();
-			}
-		});
-		final partOffsets:Array<Float> = styleMeta.getHoldCoverOffsets();
-		holdCover.setPosition(this.x - (holdCover.width/2) + partOffsets[0], this.y - (holdCover.height/2) + partOffsets[1]);
+		holdCover.setPosition(this.x - (holdCover.width/2) + holdCoverOffsetX, this.y - (holdCover.height/2) + holdCoverOffsetY);
 		holdCover.antialiasing = styleMeta.isHoldCoverPixel();
 		holdCover.alpha = styleMeta.holdCoverProperties.alpha;
 		holdCover.blend = styleMeta.holdCoverProperties.blendMode;
-		this.holdCovers.push(holdCover);
-		this.parent.add(holdCover);
 	}
 
 }

@@ -49,4 +49,21 @@ class StringUtil {
 		return finalString;
 	}
 
+	public static function formatTime(time:Float, format:String) {
+		time /= 1000;
+		var hour:Float = Math.floor(time / 3600);
+		var min:Int = Math.floor(time / 60);
+		var sec:Int = Math.floor(time % 60);
+		var milli:Int = Math.floor((time * 1000) % 1000);
+		format = format.toLowerCase();
+		format = format.replace('hh', ScoreUtil.stringifyScore(hour, 2));
+		format = format.replace('mm', ScoreUtil.stringifyScore(min, 2));
+		format = format.replace('ss', ScoreUtil.stringifyScore(sec, 2));
+		format = format.replace('h', '$hour');
+		format = format.replace('m', '$min');
+		format = format.replace('s', '$sec');
+		format = format.replace('l', '$milli');
+		return format;
+	}
+
 }

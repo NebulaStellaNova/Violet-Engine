@@ -1,5 +1,6 @@
 package violet.states.menus;
 
+import openfl.events.KeyboardEvent;
 import violet.backend.objects.Alphabet;
 import violet.backend.utils.NovaUtils;
 import flixel.text.FlxText;
@@ -50,8 +51,21 @@ class PauseMenu extends EditorListBackend {
 				Conductor.instrumental.time = 0;
 				FlxG.resetState();
 			}},
-			{ title: 'CHANGE DIFFICULTY', disabled: true, onClick: ()->{
-
+			{ title: 'CHANGE DIFFICULTY', disabled: false, onClick: ()->{
+				var event:EventBase = PlayState.instance.songScripts.event('openDifficultyPicker', new EventBase());
+				// event = subStateScripts.event('openOptions', event);
+				if (!event.cancelled) {
+					FlxTween.tween(optionBg, { alpha: 1 }, 0.5, { ease: FlxEase.expoOut });
+					var diffSelectMenu = new EditorListBackend([for (i in PlayState.songData.difficulties) { title: i.toUpperCase()	}]);
+					diffSelectMenu.onClick = (title:String)->{
+						PlayState.difficulty = title.toLowerCase();
+						Conductor.stop();
+						Conductor.offset = 0;
+						Conductor.instrumental.time = 0;
+						FlxG.resetState();
+					}
+					openSubState(diffSelectMenu);
+				}
 			}},
 			{ title: 'CHANGE OPTIONS', disabled: false, onClick: ()->{
 				var event:EventBase = PlayState.instance.songScripts.event('openOptions', new EventBase());
@@ -60,6 +74,12 @@ class PauseMenu extends EditorListBackend {
 					FlxTween.tween(optionBg, { alpha: 1 }, 0.5, { ease: FlxEase.expoOut });
 					openSubState(new OptionsMenu());
 				}
+			}},
+			{ title: 'ENABLE BOTPLAY', description: 'ENABLING BOTPLAY DISCARDS YOUR SCORE FOR THE ENTIRE LEVEL!', onClick: ()->{
+				var event:EventBase = PlayState.instance.songScripts.event('enableBotplay', new EventBase());
+				if (event.cancelled) return;
+				PlayState.instance.enableBotplay();
+				close();
 			}},
 			{ title: (PlayState.practiceMode ? 'DISABLE' : 'ENABLE') + ' PRACTICE MODE', disabled: PlayState.isStoryMode, onClick: ()->{
 				var event:EventBase = PlayState.instance.songScripts.event('changePracticeMode', new EventBase());
@@ -83,6 +103,9 @@ class PauseMenu extends EditorListBackend {
 			}}
 		];
 
+		if (PlayState.instance.botplay)
+			pauseMenuOptions = pauseMenuOptions.filter((option) -> option.title != 'ENABLE BOTPLAY');
+
 		if (PlayState.instance.inCutscene) {
 			pauseMenuOptions[1].title = pauseMenuOptions[1].title.replace('SONG', 'CUTSCENE');
 			pauseMenuOptions.insert(1, { title: 'SKIP CUTSCENE', disabled: false, onClick: ()->PlayState.instance.callSongScripts('onSkipCutscene')});
@@ -97,6 +120,7 @@ class PauseMenu extends EditorListBackend {
 		super.create();
 
 		pauseMusicSound = FlxG.sound.play(Cache.sound(pauseMusic), 0);
+		pauseMusicSound.looped = true;
 		pauseMusicSound.fadeIn(1, 0, 0.5);
 
 		FlxTween.num(0, 0.6, 0.5, { ease: FlxEase.sineOut }, (v)->{ subCamera.bgColor.alphaFloat = v; });
@@ -140,7 +164,10 @@ class PauseMenu extends EditorListBackend {
 
 	override function close() {
 		super.close();
-		if (PlayState.instance.songStarted) Conductor.play();
+		if (PlayState.instance.songStarted) {
+			Conductor.instrumental.time = PlayState.instance.pauseTime;
+			Conductor.play();
+		}
 		FlxG.state.persistentUpdate = true;
 		FlxTween.globalManager.forEach((tween:FlxTween)->{
 			tween.active = true;

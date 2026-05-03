@@ -1,12 +1,13 @@
 package violet.data.chart;
 
+import flixel.util.typeLimit.OneOfTwo;
 import violet.data.song.SongData;
 
 typedef ChartData = {
 	var strumLines:Array<ChartStrumLine>;
 	var events:Array<ChartEvent>;
-	var meta:SongData;
-	var codenameChart:Bool;
+	var ?meta:SongData; // Used internally
+	var ?codenameChart:Bool;
 	var stage:String;
 	var scrollSpeed:Float;
 	var noteTypes:Array<String>;
@@ -37,18 +38,23 @@ typedef ChartNote = {
 	var time:Float;
 	var id:Int;
 	var sLen:Float;
-	var ?type:Int;
+	var extra:Dynamic;
+	var ?type:OneOfTwo<Int, String>;
 }
 
 typedef ChartEvent = {
 	var name:Null<String>;
 	var time:Float;
 	var params:Array<Dynamic>;
-	var ran:Bool; // TODO: make it not use this
 
 	var ?global:Bool; // Used for the chart editor.
 
-	var type:Null<Int>; // DEPRECTATED: please use name.
+	var ?type:Null<Int>; // DEPRECTATED: please use name.
+}
+
+typedef InternalChartEvent = {
+	> ChartEvent,
+	var ?ran:Bool;
 }
 
 enum abstract ChartStrumLineType(Int) from Int to Int {

@@ -1,0 +1,26 @@
+{
+	"beatsPerMeasure": 4,
+	"opponentModeAllowed": true,
+	"coopAllowed": true,
+	"stepsPerBeat": 4,
+	"bpm": 155,
+	"difficulties": [
+		"easy",
+		"normal",
+		"hard"
+	],
+	"variants": [
+		"erect",
+		"bf"
+	],
+	"needsVoices": false,
+	"displayName": "Darnell",
+	"name": "darnell",
+	"icon": "darnell",
+	"freeplayCapsule": "streets",
+	"gradient": ["#6162FF", "#00FF48"],
+	"customValues": {
+		"stickerPack": "bonus-weekend1",
+		"album": "volume4"
+	}
+}

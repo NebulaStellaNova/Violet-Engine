@@ -35,16 +35,8 @@ class NoteStyleRegistry {
 	}
 
 	public static function registerNoteStyle(newStyle:NoteStyle) {
-		for (noteStyle in noteStyles) {
-			if (noteStyle.id == newStyle.id) {
-				trace('warning:Level with ID "${newStyle.id}" is already registered. Skipping duplicate registration.');
-				return;
-			}
-		}
-
-		trace('debug:<cyan>Found and registered note style with ID "<magenta>${newStyle.id}<cyan>"');
-
 		noteStyles.push(newStyle);
+		trace('debug:<cyan>Found and registered note style with ID "<magenta>${newStyle.id}<cyan>"');
 	}
 
 	public static function getAllNoteStyleIDs():Iterator<String> {

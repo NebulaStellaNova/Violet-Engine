@@ -37,9 +37,15 @@ typedef HealthIconData = {
 
 	/**
 	 * The offset of the health icon, in pixels.
-	 * @default [0, 25]
+	 * @default [0, 0]
 	 */
 	var ?offsets:Array<Float>;
+
+	/**
+	 * The offset of the health icon in the freeplay menu, in pixels.
+	 * @default [0, 0]
+	 */
+	var ?freeplayOffsets:Array<Float>;
 
 	/**
 	 * The color of the icon's side of the health bar.

@@ -1,20 +1,25 @@
 package violet.backend.shaders;
 
-/**
- * Note... not actually gaussian!
- */
-class GaussianBlurShader extends FlxRuntimeShader {
+import violet.backend.objects.ModShader;
 
-	public var amount:Float = 1;
+class GaussianBlurShader extends ModShader {
 
-	public function new(amount:Float = 1.0) {
-		super(FileUtil.getFileContent(Paths.frag("gaussianBlur")));
-		setAmount(amount);
+	public var intensity(default, set):Float;
+	function set_intensity(value:Float):Float {
+		setFloat("intensity", value);
+		return intensity = value;
 	}
 
-	public function setAmount(value:Float):Void {
-		this.amount = value;
-		this.setFloat("_amount", amount);
+	public var quality(default, set):Float;
+	function set_quality(value:Float):Float {
+		setFloat("quality", value);
+		return quality = value;
+	}
+
+	public function new(intensity:Float = 1.0) {
+		super("gaussianBlur");
+		this.intensity = intensity;
+		this.quality = 12;
 	}
 
 }

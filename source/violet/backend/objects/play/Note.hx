@@ -1,13 +1,13 @@
 package violet.backend.objects.play;
 
+import flixel.math.FlxMath;
+import flixel.math.FlxPoint;
 import flixel.util.FlxSort;
 import violet.backend.audio.Conductor;
 import violet.backend.options.Options;
 import violet.data.Scoring;
 import violet.data.notestyles.NoteStyle;
 import violet.data.notestyles.NoteStyleRegistry;
-import flixel.math.FlxMath;
-import flixel.math.FlxPoint;
 
 class Note extends NovaSprite {
 
@@ -65,19 +65,14 @@ class Note extends NovaSprite {
 	/**
 	 * The sustains tied to this note.
 	 */
-	@:isVar public var tail(get, never):Array<Sustain> = [];
-	function get_tail():Array<Sustain> {
-		tail.sort(sortTail);
-		return tail;
-	}
+	public var tail(default, null):Array<Sustain> = [];
+	public var tailEndTime(default, null):Float = 0;
 	/**
 	 * The tail length in time.
 	 */
 	public var length(get, never):Float;
-	inline function get_length():Float {
-		tail.sort(sortTail); // jic
-		return tail.length != 0 ? tail[tail.length - 1].time : 0;
-	}
+	inline function get_length():Float
+		return tailEndTime;
 
 	/**
 	 * How much earlier the note can be hit before it's considered a miss.
@@ -132,22 +127,12 @@ class Note extends NovaSprite {
 
 		_stepLengthMs = flixel.addons.sound.FlxRhythmConductorUtil.getStepLengthMs(flixel.addons.sound.FlxRhythmConductor.instance.getCurrentTimeChangeBPMAccurate(time));
 
-		/* final roundedLength:Int = Math.round(tailLength / _stepLengthMs);
+		final roundedLength:Int = Math.round(tailLength / _stepLengthMs);
 		if (roundedLength > 1) {
 			for (susNote in 0...roundedLength)
 				tail.push(new Sustain(this, (_stepLengthMs * susNote), susNote == (roundedLength - 1)));
 			tail.sort(sortTail);
-		} */
-
-		if (tailLength > _stepLengthMs * 0.75) {
-			var len:Float = tailLength;
-			var curLen:Float = 0;
-			while (len > 10) {
-				curLen = Math.min(len, _stepLengthMs);
-				tail.push(new Sustain(this, curLen + (tailLength - len), len == curLen));
-				len -= curLen;
-			}
-			tail.sort(sortTail);
+			tailEndTime = tail[tail.length - 1].time;
 		}
 
 		if (NoteStyleRegistry.doesNoteStyleExist(noteType) && noteType != null) style = noteType;
@@ -273,6 +258,7 @@ class Note extends NovaSprite {
 		for (sustain in tail)
 			sustain.destroy();
 		tail.resize(0);
+		tailEndTime = 0;
 		super.destroy();
 	}
 

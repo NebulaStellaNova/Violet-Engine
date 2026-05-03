@@ -1,5 +1,6 @@
 package violet.data.character;
 
+import violet.backend.options.Options;
 import violet.backend.audio.Conductor;
 import violet.backend.scripting.ScriptPack;
 import violet.backend.utils.NovaUtils;
@@ -96,8 +97,13 @@ class Character extends violet.backend.objects.Bopper {
 	}
 
 	public static var singAnimations:Array<String> = ['singLEFT', 'singDOWN', 'singUP', 'singRIGHT'];
-	public function playSingAnim(direction:Int, isMiss:Bool = false, ?suffix:String) {
-		if (canSing) this.playAnim('${singAnimations[direction % singAnimations.length]}${isMiss ? 'miss' : ''}${suffix != null ? '-$suffix' : ''}', true);
+	public function playSingAnim(direction:Int, isMiss:Bool = false, ?suffix:String, noteJustHit:Bool = false) {
+		if (canSing) {
+			var targetAnim:String = '${singAnimations[direction % singAnimations.length]}${isMiss ? 'miss' : ''}${suffix != null ? '-$suffix' : ''}';
+			var force:Bool = !Options.data.disableHoldJitter;
+			if (this.animation.name != targetAnim || noteJustHit) force = true;
+			this.playAnim(targetAnim, force);
+		}
 		this.lastHit = Conductor.songPosition;
 		this.isSinging = true;
 	}
@@ -114,6 +120,8 @@ class Character extends violet.backend.objects.Bopper {
 
 	public var canDance:Bool = true; // For play animation event;
 
+	public var hasNeitherAnims:Bool = false;
+
 	override public function dance(force:Bool = false) {
 		if (!canDance) return;
 		final suffix:String = idleSuffix != null ? '-$idleSuffix' : '';
@@ -121,15 +129,27 @@ class Character extends violet.backend.objects.Bopper {
 			if (this.animation.name != 'danceLeft$suffix' && this.animation.name != 'danceRight$suffix' && !force) return;
 			this.playAnim(alternator ? 'danceLeft$suffix' : 'danceRight$suffix', true);
 			alternator = !alternator;
-		} else {
+		} else if (this.animationList.contains('idle$suffix')) {
 			if (this.animation.name != 'idle$suffix' && !force) return;
 			this.playAnim('idle$suffix', true);
 		}
+
+		hasNeitherAnims = !this.animationList.contains('idle$suffix') && !this.animationList.contains('danceLeft$suffix');
 	}
 
 	override function beatHit(beat:Int) {
 		if (beat % danceEvery == 0 && !isSinging && canDance)
 			dance(true);
+	}
+
+	public var debug:Bool = false;
+
+	override function playAnim(name:String, forced:Bool = false, reversed:Bool = false, frame:Int = 0) {
+		if (this.flipX && !debug) {
+			if (name.startsWith('singLEFT')) name = name.replace('singLEFT', 'singRIGHT');
+			else if (name.startsWith('singRIGHT')) name = name.replace('singRIGHT', 'singLEFT');
+		}
+		super.playAnim(name, forced, reversed, frame);
 	}
 
 	public function cloneData():Dynamic {

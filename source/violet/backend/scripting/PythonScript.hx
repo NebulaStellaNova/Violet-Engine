@@ -68,7 +68,7 @@ class PythonScript extends Script {
 		return interp.getVar(variable) ?? def;
 
 	override public function call<T>(funcName:String, ?args:Array<Dynamic>, ?def:T):T {
-		try { return interp.calldef(funcName, args); } catch (_) {}
+		try { return interp.callDef(funcName, args); } catch (_) {}
 		return null;
 	}
 

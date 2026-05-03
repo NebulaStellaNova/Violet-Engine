@@ -75,9 +75,8 @@ class Main extends openfl.display.Sprite {
 		super();
 		instance = this;
 
-		lemonui.themes.ThemeManager.currentTheme = lemonui.themes.Theme.DarkTheme.instance;
-		lemonui.themes.ThemeManager.currentTheme.styles.fontRegular = Paths.font('Inconsolata-Medium.ttf');
-		lemonui.themes.ThemeManager.currentTheme.styles.fontBold = Paths.font('Inconsolata-Bold.ttf');
+		lemonui.Constants.FONT_REGULAR = Paths.font('Inconsolata-Medium.ttf');
+		lemonui.Constants.FONT_BOLD = Paths.font('Inconsolata-Bold.ttf');
 
 		moonchart.Moonchart.DEFAULT_DIFF = 'normal';
 		moonchart.Moonchart.CASE_SENSITIVE_DIFFS = moonchart.Moonchart.SPACE_SENSITIVE_DIFFS = false;

@@ -1,5 +1,7 @@
 package violet.states.editors;
 
+import lemonui.elements.Text;
+import lemonui.elements.Slider;
 import violet.data.character.Character;
 import lemonui.utils.ElementUtil;
 import lemonui.elements.MenuBar;
@@ -64,6 +66,14 @@ class ChartEditorState extends StateBackend {
 
 		var barRoot = ElementUtil.buildFromXML(Paths.xml('data/ui/chart-editor/menubar')).root;
 		menuBar = barRoot.findElement('menubar');
+
+		var instSlider:Slider = menuBar.findElement('instVolume');
+		instSlider.onChange = value -> {
+			var instLabel:Text = menuBar.findElement('instLabel');
+			instLabel.text = 'Instrumental - ${Math.round(value * 100)}%';
+			Conductor.instrumental.volume = value;
+		}
+
 
 		var bg = new NovaSprite(Paths.image('menus/mainmenu/menuBGdesat'));
 		bg.setGraphicSize(FlxG.width, FlxG.height);
@@ -200,10 +210,11 @@ class ChartEditorState extends StateBackend {
 		// noteToPlace.extra.set('strumLine', strumlineToPlaceOn);
 
 		noteToPlace.visible = !(delta < 0 || delta > 200 * grids.length);
+		if (ElementUtil.anythingOpened) noteToPlace.visible = false;
 
 		var placeOffset = (FlxG.height/2) - noteToPlace.y;
 
-		if (FlxG.mouse.justPressed && noteToPlace.visible) {
+		if (FlxG.mouse.justPressed && noteToPlace.visible && !ElementUtil.anythingOpened) {
 			var noteToAdd = new NovaSprite(Paths.image('game/notes/default/notes'));
 			for (i in 0...5) {
 				noteToAdd.addAnim('$i', 'note' + ['Left', 'Down', 'Up', 'Right'][i]);
@@ -257,7 +268,7 @@ class ChartEditorState extends StateBackend {
 			note.y = (time / Conductor.stepLengthMs) * 25 * 4;
 			note.y *= 0.5;
 			note.y += FlxG.height/2;
-			note.alpha = noteData.time < Conductor.framePosition ? 0.5 : 1;
+			if (!note.extra.get('toRemove')) note.alpha = noteData.time < Conductor.framePosition ? 0.5 : 1;
 			note.x = grids[note.extra.get('strumLine')].x + (50 * noteData.id);
 
 			if (note.alpha == 1) note.extra.set('hit', false);
@@ -274,9 +285,24 @@ class ChartEditorState extends StateBackend {
 			overlay.x = note.x;
 			overlay.y = note.y;
 			overlay.alpha = note.alpha;
-			overlay.visible = FlxG.mouse.overlaps(note);
+			overlay.visible = FlxG.mouse.overlaps(note) && !note.extra.get('toRemove');
 
-			note.color = overlay.visible ? FlxColor.interpolate(FlxColor.BLACK, FlxColor.WHITE, 0.5) : FlxColor.WHITE;
+			if (!note.extra.get('toRemove')) note.color = overlay.visible ? FlxColor.interpolate(FlxColor.BLACK, FlxColor.WHITE, 0.5) : FlxColor.WHITE;
+			else note.color = FlxColor.RED;
+
+			if (FlxG.mouse.overlaps(note) && noteToPlace.y - note.y == 0) {
+				noteToPlace.visible = false;
+			}
+			if (FlxG.mouse.overlaps(note) && FlxG.mouse.pressedRight && !note.extra.get('toRemove')) {
+				note.extra.set('toRemove', true);
+				note.color = FlxColor.RED;
+				FlxTween.tween(note, { alpha: 0 }, 0.25, { onComplete: _->{
+					notes.remove(note);
+					remove(note);
+					remove(note.extra.get('overlay'));
+				}});
+			}
+
 
 		}
 
@@ -311,7 +337,6 @@ class ChartEditorState extends StateBackend {
 			}
 		}
 
-		if (ElementUtil.anythingOpened) return;
 
 		if (FlxG.mouse.justPressed) {
 			selectionStart.x = FlxG.mouse.x;

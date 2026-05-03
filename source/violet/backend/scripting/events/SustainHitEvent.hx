@@ -1,5 +1,6 @@
 package violet.backend.scripting.events;
 
+import violet.states.PlayState;
 import violet.backend.objects.play.Strum;
 import violet.backend.objects.play.Sustain;
 
@@ -26,6 +27,12 @@ class SustainHitEvent extends EventBase {
 
 	public function new(sustain:Sustain) {
 		super();
+		for (i=>strumLine in PlayState.instance.strumLines.members) {
+			if (strumLine == sustain.parent) {
+				animationSuffix = PlayState.instance.defaultSuffix[i];
+				break;
+			}
+		}
 		this.sustain = sustain;
 		this.strum = sustain.parentStrum;
 	}

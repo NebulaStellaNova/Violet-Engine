@@ -29,6 +29,7 @@ typedef OptionsMenuData = {
 	var title:String;
 	var ?description:String;
 	var ?options:Array<OptionsMenuOption>;
+	var ?saveID:String; // Used for modded options.
 }
 
 typedef OptionsMenuOption = {
@@ -39,16 +40,24 @@ typedef OptionsMenuOption = {
 	var ?platform:String; // Used to have platform specific settings
 	var ?disabled:Bool;
 	var ?disabledInPlayState:Bool;
+
+	var ?conditions:Array<Condition>;
 	// for number option
 	var ?min:Float;
 	var ?max:Float;
 	var ?step:Float;
+	var ?replacer:Array<{what:Int, with:String}>;
+}
+
+typedef Condition = {
+	var id:String;
+	var ?state:Dynamic;
 }
 
 
 class OptionsMenu extends SubStateBackend {
 
-	public var optionsData:OptionsData = ParseUtil.yaml('data/config/options');
+	public var optionsData:OptionsData = ParseUtil.jsonOrYaml('data/config/options');
 
 	public var menus:Array<Alphabet> = [];
 	public var options:Array<BaseOption> = [];
@@ -131,7 +140,20 @@ class OptionsMenu extends SubStateBackend {
 			option.y = MathUtil.lerp(option.y, (FlxG.height/2) + ((i-optionCurSelected) * 100) - (option.alphabet.height/2), 0.2);
 			option.x += optionsListOffset;
 			option.updatePosition();
+
+			var data = optionsData.menus[menuCurSelected].options[i];
+			if (data.conditions != null) {
+				var enabled = true;
+				for (i in data.conditions) {
+					i.state ??= true;
+					if (Reflect.field(Options.data, i.id) != i.state) enabled = false;
+				}
+				option.setEnabled(enabled);
+			}
+			optionsData.menus[menuCurSelected].options[i].disabled = !option.enabled;
 		}
+
+		if (options.length != 0 && enableInput) optionsScroll(0);
 
 		if (Controls.accept && enableInput) {
 			selectMenu();
@@ -180,9 +202,9 @@ class OptionsMenu extends SubStateBackend {
 					option.x = optionsListOffset;
 					option.y = (FlxG.height/2) + ((i-optionCurSelected) * 100) - (option.alphabet.height/2);
 					option.checkbox.value = Options.get(optionData.saveID) ?? false; option.checkbox.animation.finish();
-					option.onChange = (value:Bool) -> Options.set(optionData.saveID, value);
+					option.onChange = (value:Bool) -> set(optionData.saveID, value);
 					option.updatePosition();
-					if (optionData.disabled) option.checkbox.color = option.color = FlxColor.interpolate(FlxColor.WHITE, FlxColor.BLACK, 0.5);
+					option.setEnabled(!optionData.disabled);
 					insert(0, option);
 					options.push(option);
 
@@ -192,9 +214,16 @@ class OptionsMenu extends SubStateBackend {
 					option.y = (FlxG.height/2) + ((i-optionCurSelected) * 100) - (option.alphabet.height/2);
 					option.value = Options.get(optionData.saveID) ?? 0;
 					option.numberText.text = '< ${option.value} >';
-					option.onChange = (value:Float) -> Options.set(optionData.saveID, value);
+					option.onChange = (value:Float) -> set(optionData.saveID, value);
+					option.onChangePost = (value:Float) -> {
+						for (i in (optionData?.replacer ?? [])) {
+							if (value == i.what)
+								option.numberText.text = option.numberText.text.replace('${i.what}', i.with);
+						}
+					}
+					option.onChangePost(option.value);
 					option.updatePosition();
-					if (optionData.disabled) option.color = FlxColor.interpolate(FlxColor.WHITE, FlxColor.BLACK, 0.5);
+					option.setEnabled(!optionData.disabled);
 					insert(0, option);
 					options.push(option);
 
@@ -204,7 +233,7 @@ class OptionsMenu extends SubStateBackend {
 					option.y = (FlxG.height/2) + ((i-optionCurSelected) * 100) - (option.alphabet.height/2);
 					option.updatePosition();
 					option.controlArray = Options.data.controls.get(optionData.saveID);
-					if (optionData.disabled) option.color = FlxColor.interpolate(FlxColor.WHITE, FlxColor.BLACK, 0.5);
+					option.setEnabled(!optionData.disabled);
 					insert(0, option);
 					options.push(option);
 			}
@@ -212,6 +241,11 @@ class OptionsMenu extends SubStateBackend {
 		optionsScroll(0);
 		enableInput = true;
 		FlxTween.tween(this, { optionsListOffset: 0 }, 0.5, { ease: FlxEase.expoOut });
+	}
+
+	function set(what, value:Dynamic) {
+		Options.set(what, value);
+		Options.flush();
 	}
 
 	function closeOptions() {
@@ -255,7 +289,7 @@ class OptionsMenu extends SubStateBackend {
 	}
 
 	function updateDesc(data:Dynamic) {
-		descriptionTxt.text = data.description ?? '';
+		descriptionTxt.text = (data.description ?? '').replace('\\n', '\n');
 		descriptionTxt.updateHitbox();
 		descriptionTxt.screenCenter();
 		descriptionTxt.y += FlxG.height * 0.35;

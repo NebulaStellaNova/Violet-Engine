@@ -23,20 +23,6 @@
 			"color": "#ff4242"
 		},
 		{
-			"id": "online",
-			"item": "online",
-			"animations": {
-				"idle": "basic",
-				"selected": "white",
-				"offsets": {
-					"selected": [ 0, -20 ]
-				}
-			},
-			"disabled": true,
-			"state": "source:OnlineMenu",
-			"color": "#5542FF"
-		},
-		{
 			"id": "mods",
 			"item": "mods",
 			"scale": 1,
@@ -51,19 +37,20 @@
 			"color": "#ffff00"
 		},
 		{
-			"id": "jukebox",
-			"item": "jukebox",
-			"scale": 0.9,
+			"id": "motw",
+			"item": "motw",
+			"scale": 0.8,
+			"transition": false,
 			"animations": {
 				"idle": "basic",
 				"selected": "white",
 				"offsets": {
-					"idle": [ -10, -10 ],
-					"selected": [ -20, -20 ]
+					"selected": [ 0, -20 ],
+					"idle": [ 0, -20 ]
 				}
 			},
-			"state": "source:JukeBox",
-			"color": "#6600FF"
+			"state": "source:ModOfTheWeekMenu",
+			"color": "#00FF11"
 		},
 		{
 			"id": "credits",

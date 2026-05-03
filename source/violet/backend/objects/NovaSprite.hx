@@ -1,5 +1,7 @@
 package violet.backend.objects;
 
+import violet.backend.utils.FileUtil;
+import haxe.io.Path;
 import flixel.FlxCamera;
 import flixel.graphics.FlxGraphic;
 import flixel.graphics.frames.FlxAtlasFrames;
@@ -105,6 +107,9 @@ class NovaSprite extends #if ANIMATE_SUPPORT FlxAnimate #else FlxSprite #end {
 				this.animated = true;
 				this.frames = NovaUtils.getSparrowFrames(path);
 				this.onLoaded();
+			} else if (Paths.fileExists(Path.withoutExtension(path) + '/0.png')) {
+				var files = Paths.readFolder(Path.withoutExtension(path), true, v -> return FileUtil.hasExt(v, 'png'));
+				for (i in files) addFrames(Path.withoutExtension(path) + '/$i');
 			} else if (Paths.fileExists(path.replace(".png", ".txt"), true)) {
 				this.filePath = path;
 				this.fileName = Paths.getFileName(path, true);
@@ -112,7 +117,7 @@ class NovaSprite extends #if ANIMATE_SUPPORT FlxAnimate #else FlxSprite #end {
 				this.frames = FlxAtlasFrames.fromSpriteSheetPacker(path, path.replace(".png", ".txt"));
 				this.onLoaded();
 			} else {
-				this.loadGraphic(useCache ? Cache.image(path, 'root', null) : path);
+				this.loadGraphic(Cache.image(path, 'root', null, useCache));
 				this.updateHitbox();
 				this.onLoaded();
 			}
@@ -120,7 +125,7 @@ class NovaSprite extends #if ANIMATE_SUPPORT FlxAnimate #else FlxSprite #end {
 		return this;
 	}
 
-	dynamic function onLoaded():Void {}
+	public dynamic function onLoaded():Void {}
 
 	@:unreflective var prevUrl:String = "";
 	@:unreflective function fromWeb(url:String):NovaSprite @:privateAccess {
@@ -170,10 +175,10 @@ class NovaSprite extends #if ANIMATE_SUPPORT FlxAnimate #else FlxSprite #end {
 		updateHitbox();
 	}
 
+	public var prevPlayedAnim:String;
+
 	public function playAnim(name:String, forced:Bool = false, reversed:Bool = false, frame:Int = 0):Void {
-		/* if (this.animation.exists(name)) {
-			this.animation.play(name, forced, reversed, frame);
-		} */
+		prevPlayedAnim = name;
 		if (this.anim.exists(name)) {
 			this.anim.play(name, forced, reversed, frame);
 		}
@@ -235,31 +240,39 @@ class NovaSprite extends #if ANIMATE_SUPPORT FlxAnimate #else FlxSprite #end {
 
 	public function addFrames(path:String):Void {
 		var newFrames:FlxAtlasFrames = null;
-		if (@:privateAccess Paths._checkExists('${haxe.io.Path.withoutExtension(path)}/Animation.json')) {
+		if (Path.extension(path) == 'json') {
 			#if ANIMATE_SUPPORT
-			newFrames = NovaUtils.getAtlasFrames(path);
+			newFrames = NovaUtils.getAtlasFrames(Path.directory(path));
 			#else
 			trace('warning:Atlas\'s aren\'t supported in this build of Violet Engine.');
 			#end
+			if (newFrames != null) {
+				#if ANIMATE_SUPPORT
+				this.frames = animate.FlxAnimateFrames.combineAtlas(cast this.frames, newFrames);
+				#else
+				if (this.frames is FlxAtlasFrames)
+					this.frames = newFrames.addAtlas(cast(this.frames, FlxAtlasFrame));
+				#end
+			}
 		} else {
 			if (Paths.fileExists(path.replace(".png", ".xml"), true))
 				newFrames = NovaUtils.getSparrowFrames(path);
+			if (newFrames != null) {
+				for (i in newFrames.frames) this.frames.pushFrame(i);
+			}
 		}
-		if (newFrames != null) {
-			#if ANIMATE_SUPPORT
-			this.frames = animate.FlxAnimateFrames.combineAtlas(newFrames, cast this.frames);
-			#else
-			if (this.frames is FlxAtlasFrames)
-				this.frames = newFrames.addAtlas(cast(this.frames, FlxAtlasFrame));
-			#end
-		}
+
 	}
 
+	var __characterFlip:Bool = false;
 	var __baseFlipped:Bool = false;
 	var __offsetFlipX:Bool = false;
 	var __offsetFlipY:Bool = false;
 	override public function draw():Void {
 		// TODO: Add __baseFlipped check.
+
+		var softFlipX = flipX != __baseFlipped;
+
 		final xFlip:Bool = flipX;
 		final yFlip:Bool = flipY;
 		if (xFlip) {
@@ -274,11 +287,19 @@ class NovaSprite extends #if ANIMATE_SUPPORT FlxAnimate #else FlxSprite #end {
 		}
 
 		// Fuck my fat chud life - Nebula D:
-		if (!currentByLabel) this.x -= (__baseFlipped ? animationOffset.x : -animationOffset.x) ?? 0;
-		if (!currentByLabel) this.y -= (flipY ? -animationOffset.y : animationOffset.y) ?? 0;
+		if (globalIsAtlas) {
+			this.x -= (xFlip ? animationOffset.x : -animationOffset.x) ?? 0;
+			this.y -= (yFlip ? -animationOffset.y : animationOffset.y) ?? 0;
+			this.x += globalOffset.x;
+			this.y += globalOffset.y;
+		}
 		super.draw();
-		if (!currentByLabel) this.x += (__baseFlipped ? animationOffset.x : -animationOffset.x) ?? 0;
-		if (!currentByLabel) this.y += (flipY ? -animationOffset.y : animationOffset.y) ?? 0;
+		if (globalIsAtlas) {
+			this.x += (xFlip ? animationOffset.x : -animationOffset.x) ?? 0;
+			this.y += (yFlip ? -animationOffset.y : animationOffset.y) ?? 0;
+			this.x -= globalOffset.x;
+			this.y -= globalOffset.y;
+		}
 		if (xFlip) {
 			__offsetFlipX = false;
 			flipX = !flipX;
@@ -325,7 +346,7 @@ class NovaSprite extends #if ANIMATE_SUPPORT FlxAnimate #else FlxSprite #end {
 	}
 
 	override function drawComplex(camera:FlxCamera):Void {
-		if (!currentByLabel) {
+		if (globalIsAtlas) {
 			super.drawComplex(camera);
 			return;
 		}
@@ -361,10 +382,13 @@ class NovaSprite extends #if ANIMATE_SUPPORT FlxAnimate #else FlxSprite #end {
 		return returner;
 	}
 
+	public var destroyed:Bool = false;
+
 	override public function destroy() {
 		globalOffset.put();
 		animationOffset.put();
 		_scaledFrameOffset.put();
+		destroyed = true;
 		super.destroy();
 	}
 

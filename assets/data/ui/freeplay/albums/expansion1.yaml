@@ -4,8 +4,8 @@ artists:
   - Kawai Sprite
   - Saruky
   - nuphory
-albumArtAsset: menus/freeplay/albums/expansion1
-albumTitleAsset: menus/freeplay/albums/expansion1-text
+albumArtAsset: menus/freeplaymenu/albums/expansion1
+albumTitleAsset: menus/freeplaymenu/albums/expansion1-text
 albumTitleOffsets:
   - -22
   - -3

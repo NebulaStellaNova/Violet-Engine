@@ -2,6 +2,8 @@ version: 1.0.0
 name: Volume 1
 artists:
   - Kawai Sprite
-albumArtAsset: menus/freeplay/albums/volume1
-albumTitleAsset: menus/freeplay/albums/volume1-text
-albumTitleOffsets: [8, 0]
+albumArtAsset: menus/freeplaymenu/albums/volume1
+albumTitleAsset: menus/freeplaymenu/albums/volume1-text
+albumTitleOffsets:
+  - 8
+  - 0

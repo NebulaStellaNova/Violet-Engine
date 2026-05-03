@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TextureAtlas imagePath="motw.png">
+	<!-- Created with Adobe Animate version 24.0.12.3 -->
+	<!-- http://www.adobe.com/products/animate.html -->
+	<SubTexture name="motw basic0000" x="1045" y="173" width="353" height="162" frameX="0" frameY="-1" frameWidth="353" frameHeight="163"/>
+	<SubTexture name="motw basic0001" x="1045" y="173" width="353" height="162" frameX="0" frameY="-1" frameWidth="353" frameHeight="163"/>
+	<SubTexture name="motw basic0002" x="1045" y="173" width="353" height="162" frameX="0" frameY="-1" frameWidth="353" frameHeight="163"/>
+	<SubTexture name="motw basic0003" x="1045" y="5" width="353" height="163"/>
+	<SubTexture name="motw basic0004" x="1045" y="5" width="353" height="163"/>
+	<SubTexture name="motw basic0005" x="1045" y="5" width="353" height="163"/>
+	<SubTexture name="motw basic0006" x="528" y="5" width="353" height="162" frameX="0" frameY="-1" frameWidth="353" frameHeight="163"/>
+	<SubTexture name="motw basic0007" x="528" y="5" width="353" height="162" frameX="0" frameY="-1" frameWidth="353" frameHeight="163"/>
+	<SubTexture name="motw basic0008" x="528" y="5" width="353" height="162" frameX="0" frameY="-1" frameWidth="353" frameHeight="163"/>
+	<SubTexture name="motw white0000" x="525" y="227" width="515" height="216" frameX="-1" frameY="0" frameWidth="518" frameHeight="217"/>
+	<SubTexture name="motw white0001" x="5" y="5" width="518" height="217"/>
+	<SubTexture name="motw white0002" x="5" y="227" width="515" height="217" frameX="-2" frameY="0" frameWidth="518" frameHeight="217"/>
+</TextureAtlas>

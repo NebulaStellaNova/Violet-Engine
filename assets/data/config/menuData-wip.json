@@ -1,0 +1,90 @@
+{
+	"directory": "menus/mainmenu",
+	"background": "menuBGdesat-unblur",
+	"items": [
+		{
+			"id": "storymode",
+			"item": "story mode",
+			"animations": {
+				"idle": "basic",
+				"selected": "white"
+			},
+			"state": "source:StoryMenu",
+			"color": "#FF00FF"
+		},
+		{
+			"id": "freeplay",
+			"item": "freeplay",
+			"animations": {
+				"idle": "basic",
+				"selected": "white"
+			},
+			"state": "source:FreeplayMenu",
+			"color": "#ff4242"
+		},
+		/* {
+			"id": "online",
+			"item": "online",
+			"animations": {
+				"idle": "basic",
+				"selected": "white",
+				"offsets": {
+					"selected": [ 0, -20 ]
+				}
+			},
+			"disabled": true,
+			"state": "source:OnlineMenu",
+			"color": "#5542FF"
+		}, */
+		{
+			"id": "mods",
+			"item": "mods",
+			"scale": 1,
+			"animations": {
+				"idle": "basic",
+				"selected": "white",
+				"offsets": {
+					"selected": [ 0, -10 ]
+				}
+			},
+			"state": "source:ModMenu",
+			"color": "#ffff00"
+		},
+			/* {
+				"id": "jukebox",
+				"item": "jukebox",
+				"scale": 0.9,
+				"animations": {
+					"idle": "basic",
+					"selected": "white",
+					"offsets": {
+						"idle": [ -10, -10 ],
+						"selected": [ -20, -20 ]
+					}
+				},
+				"state": "source:JukeBox",
+				"color": "#6600FF"
+			}, */
+		{
+			"id": "credits",
+			"item": "credits",
+			"animations": {
+				"idle": "basic",
+				"selected": "white"
+			},
+			"state": "source:CreditsMenu",
+			"color": "#42b7ff"
+		},
+		{
+			"id": "options",
+			"item": "options",
+			"animations": {
+				"idle": "basic",
+				"selected": "white"
+			},
+			"disabled": false,
+			"state": "source:OptionsMenu",
+			"color": "#FFFFFF"
+		}
+	]
+}

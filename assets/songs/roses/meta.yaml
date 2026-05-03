@@ -1,5 +1,5 @@
 opponentModeAllowed: true
-icon: senpai
+icon: senpai-angry
 difficulties:
   - easy
   - normal
@@ -8,7 +8,8 @@ ratings:
   easy: 2
   normal: 3
   hard: 4
-color: "#FF78BF"
+gradient: ["#FF78BF", "#afeafa"]
+freeplayCapsule: school
 coopAllowed: true
 stepsPerBeat: 4
 displayName: Roses

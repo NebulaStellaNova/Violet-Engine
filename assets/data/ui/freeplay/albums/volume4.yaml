@@ -13,8 +13,8 @@ artists:
   - Saster
   - That Andy Guy
   - Xploshi
-albumArtAsset: menus/freeplay/albums/volume4
-albumTitleAsset: menus/freeplay/albums/volume4-text
+albumArtAsset: menus/freeplaymenu/albums/volume4
+albumTitleAsset: menus/freeplaymenu/albums/volume4-text
 albumTitleOffsets:
   - 8
   - -7

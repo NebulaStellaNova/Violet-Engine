@@ -10,7 +10,7 @@ class ClassData {
 	public var target:Dynamic;
 	public var isSubState:Bool = false;
 
-	public function new(string:String) {
+	public function new(string:String, ?subStateTarget:Bool = false) {
 		this.type = string.split(":")[0];
 		this.name = string.split(":")[1];
 		this.target = new MainMenu();
@@ -29,6 +29,9 @@ class ClassData {
 				case "OptionsMenu":
 					this.target = new OptionsMenu();
 					this.isSubState = true;
+				case "MoTW" | "ModOfTheWeekMenu":
+					this.target = new ModOfTheWeekMenu();
+					this.isSubState = true;
 				/* case "CreditsState":
 					this.target = new CreditsState();
 				case "PlayState":
@@ -43,7 +46,7 @@ class ClassData {
 					trace('error:Unknown State "${string.split(":")[1]}" returning to the Main Menu');
 			}
 		} else if (this.type == "mod") {
-			this.target = new ModState(string.split(":")[1]);
+			this.target = subStateTarget ? new ModSubState(string.split(":")[1]) : new ModState(string.split(":")[1]);
 		}
 	}
 

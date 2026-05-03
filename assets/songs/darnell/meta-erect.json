@@ -1,0 +1,22 @@
+{
+	"opponentModeAllowed": true,
+	"icon": "darnell",
+	"name": "darnell",
+	"gradient": ["#6162FF", "#00FF48"],
+	"coopAllowed": true,
+	"difficulties": [
+		"erect",
+		"nightmare"
+	],
+	"customValues": {
+		"stickerPack": "bonus-weekend1",
+		"album": "expansion2"
+	},
+	"stepsPerBeat": 4,
+	"displayName": "Darnell Erect",
+	"beatsPerMeasure": 4,
+	"bpm": 155,
+	"instSuffix": "-erect",
+	"freeplayCapsule": "streets-erect",
+	"needsVoices": false
+}

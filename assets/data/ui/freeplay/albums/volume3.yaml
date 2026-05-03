@@ -6,8 +6,8 @@ artists:
   - Kohta Takahashi
   - Saster
   - MtH
-albumArtAsset: menus/freeplay/albums/volume3
-albumTitleAsset: menus/freeplay/albums/volume3-text
+albumArtAsset: menus/freeplaymenu/albums/volume3
+albumTitleAsset: menus/freeplaymenu/albums/volume3-text
 albumTitleOffsets:
   - 8
   - -7

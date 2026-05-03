@@ -11,19 +11,35 @@ class HealthIcon extends Bopper {
 	public var isOpponent:Bool = false;
 	public var canDance:Bool = true;
 	public var bopAmount:Float = 1;
+	public var scaleOffset:Float = 1;
+	public var cache:Bool = true;
+	public var scaleFromCenter:Bool = true;
+	public var assetPathOverride:Null<String>;
+	public var isPixel:Bool = false;
 
-	public function new(id:String) {
+	public function new(id:String, isOpponent:Bool = true, cache:Bool = true, ?assetPathOverride:String) {
 		this.id = id;
+		this.isOpponent = isOpponent;
+		this.cache = cache;
+		super();
+		setIcon(id, assetPathOverride);
+	}
+
+	public function setIcon(id:String, ?assetPathOverride:String) {
+		this.id = id;
+		this.assetPathOverride = assetPathOverride;
 		var defaultData = HealthIconRegistry.healthIconDatas.get(Constants.DEFAULT_HEALTH_ICON);
 		this._data = HealthIconRegistry.healthIconDatas.get(id) ?? defaultData;
 
 		this._data.flipX ??= false;
 		this._data.scale ??= 1;
 		this._data.offsets ??= [0, 0];
-		this._data.isPixel ??= false;
+		this.isPixel = this._data.isPixel ??= false;
+		if (assetPathOverride != null) isPixel = false;
 		this._data.assetPath ??= 'icons/$id';
 
-		super(Paths.image(this._data.assetPath) != '' ? Paths.image(this._data.assetPath) : Paths.image(defaultData.assetPath));
+		final assetPath = assetPathOverride ?? this._data.assetPath;
+		loadSprite(Paths.image(assetPath) != '' ? Paths.image(assetPath) : Paths.image(defaultData.assetPath), cache);
 
 		if (this.animated) {
 			this.addAnim('idle', 'idle', 24, true);
@@ -34,7 +50,7 @@ class HealthIcon extends Bopper {
 			this.animation.addByPrefix('fromWinning', 'fromWinning', 24, false);
 			this.animation.addByPrefix('fromLosing', 'fromLosing', 24, false); */
 		} else {
-			var frameSize = this._data.isPixel ? 32 : 150;
+			var frameSize = this.isPixel ? 32 : 150;
 			this.loadGraphic(this.graphic, true, frameSize, frameSize);
 			this.animation.add('idle', [0], 1, false, false);
 			this.animation.add('losing', [1], 1, false, false);
@@ -44,10 +60,12 @@ class HealthIcon extends Bopper {
 		this.flipX = this._data.flipX;
 		this.globalOffset.x = this._data.offsets[0] ?? 0;
 		this.globalOffset.y = this._data.offsets[1] ?? 0;
-		if (this._data.isPixel) this.antialiasing = false;
+		if (this.isPixel) this.antialiasing = false;
 
-		this.scale.scale(this._data.scale);
+		if (assetPathOverride == null) this.scale.scale(this._data.scale);
 		this.updateHitbox();
+
+		if (!isOpponent) this.flipX = !this.flipX;
 	}
 
 	public function updateFromHealth(value:Float) {
@@ -69,7 +87,8 @@ class HealthIcon extends Bopper {
 		if (this.flipX) this.globalOffset.x *= -1;
 		// if (this._data.isPixel) this.antialiasing = false;
 		if (sillyBop) this.angle = MathUtil.lerp(this.angle, 0, 0.2);
-		this.scale.x = this.scale.y = MathUtil.lerp(this.scale.y, this._data.scale, 0.2);
+		this.scale.x = this.scale.y = MathUtil.lerp(this.scale.y, this._data.scale * this.scaleOffset, 0.2);
+		if (!scaleFromCenter) this.updateHitbox();
 	}
 
 	public var sillyBop(default, set):Bool = false; // Silly Icon Bop :3
@@ -86,6 +105,7 @@ class HealthIcon extends Bopper {
 			this.angle = alt ? 20 : -20;
 		}
 		this.scale.x = this.scale.y = this._data.scale * (1.2 * bopAmount);
+		this.updateHitbox();
 	}
 
 }

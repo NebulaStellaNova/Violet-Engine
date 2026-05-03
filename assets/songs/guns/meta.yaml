@@ -8,7 +8,8 @@ ratings:
   easy: 3
   normal: 4
   hard: 5
-color: "#F6B604"
+gradient: ["#F6B604", "#FFFFFF"]
+freeplayCapsule: battlefield
 coopAllowed: true
 stepsPerBeat: 4
 displayName: Guns

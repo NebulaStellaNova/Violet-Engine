@@ -61,7 +61,8 @@ class DebugDisplay extends Sprite {
 
 		addEventListener(Event.ENTER_FRAME, onEnterFrame);
 
-		if (violet.backend.options.Options.data.debugDisplayOnStart)
+		var options = violet.backend.options.Options.data;
+		if (options.debugDisplayOnStart && options.developerMode)
 			shown = true;
 	}
 
@@ -87,8 +88,8 @@ class DebugDisplay extends Sprite {
 
 			memories.push(FlxMath.roundDecimal(Memory.getProcessPhysicalMemoryUsage(), 2));
 			cpus.push(FlxMath.roundDecimal(CPU.getProcessCPUUsage(), 2));
-			if (memories.length > 100) memories.shift();
-			if (cpus.length > 100) cpus.shift();
+			while (memories.length > 50) memories.shift();
+			while (cpus.length > 50) cpus.shift();
 
 			memoryAvg = cpuAvg = 0;
 			for (m in memories) memoryAvg += m;
@@ -126,7 +127,7 @@ class DebugDisplay extends Sprite {
 
 		if (OptionsMenu.instance != null)
 			if (!OptionsMenu.instance.canSelectMenu) return;
-		if (Controls.debugDisplay)
+		if (Controls.debugDisplay && violet.backend.options.Options.data.developerMode)
 			shown = !shown;
 	}
 

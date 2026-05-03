@@ -68,7 +68,7 @@
 				"id": 1,
 				"mania": 4,
 				"name": "confirm",
-				"offsets": [4, -1],
+				"offsets": [2, 3],
 				"prefix": "confirmDown"
 			},
 			{

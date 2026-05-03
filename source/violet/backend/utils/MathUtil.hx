@@ -28,4 +28,8 @@ class MathUtil {
 		);
 	}
 
+	// for `using MathUtil;`
+	public static function round(v:Float):Int
+		return Math.round(v);
+
 }

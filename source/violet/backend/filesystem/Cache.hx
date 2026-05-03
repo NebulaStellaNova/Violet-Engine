@@ -2,6 +2,7 @@ package violet.backend.filesystem;
 
 import violet.states.PlayState;
 import violet.data.character.Character;
+import violet.data.stage.Stage;
 import flixel.graphics.FlxGraphic;
 import openfl.display.BitmapData;
 import openfl.media.Sound;
@@ -40,12 +41,13 @@ class Cache {
 				FlxG.bitmap.removeByKey(key);
 			}
 		}
+		cachedCharacters.clear();
 		cache.clear();
 	}
 
-	public static function image(path:String, directory:String = '', ?ext:String = 'png'):FlxGraphic {
+	public static function image(path:String, directory:String = '', ?ext:String = 'png', doCache:Bool = true):FlxGraphic {
 		var imagePath:String = Paths.image(path, directory, ext);
-		if (cache.exists(imagePath)) {
+		if (cache.exists(imagePath) && doCache) {
 			var graphic:FlxGraphic = cache.get(imagePath);
 			if (!graphic.isDestroyed)
 				return graphic;
@@ -57,7 +59,7 @@ class Cache {
 
 		if (bitmap == null) {
 			trace('error:No bitmap data from path "$imagePath".');
-			return FlxGraphic.fromClass(HaxeLogo, 'flixel/images/logo/logo.png');
+			bitmap = BetterBitmapData.fromFile(Paths.image('zuko-here'));
 		}
 
 		var graphic:FlxGraphic = FlxGraphic.fromBitmapData(bitmap, imagePath, false);
@@ -93,17 +95,16 @@ class Cache {
 	// -- In Prep for Change Character Event -- \\
 
 	public static var cachedCharacters:Map<String, Character> = [];
-
-	public static function getCharacter(id:String) {
-		return cachedCharacters.get(id);
-	}
+	public static var cachedStages:Map<String, Stage> = [];
 
 	public static function character(id:String) {
 		if (cachedCharacters.exists(id)) return;
 		cachedCharacters.set(id, new Character(id));
-		if (Std.isOfType(FlxG.state, PlayState)) {
-			PlayState.instance.characters.push(cachedCharacters.get('id'));
-		}
+	}
+
+	public static function stage(id:String) {
+		if (cachedStages.exists(id)) return;
+		cachedStages.set(id, new Stage(id));
 	}
 
 }

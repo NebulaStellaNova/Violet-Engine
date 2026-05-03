@@ -3,8 +3,8 @@ name: Volume 2
 artists:
   - Kawai Sprite
   - Bassetfilms
-albumArtAsset: menus/freeplay/albums/volume2
-albumTitleAsset: menus/freeplay/albums/volume2-text
+albumArtAsset: menus/freeplaymenu/albums/volume2
+albumTitleAsset: menus/freeplaymenu/albums/volume2-text
 albumTitleOffsets:
   - 8
   - -7

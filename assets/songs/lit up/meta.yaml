@@ -8,7 +8,8 @@ variants:
 icon: darnell
 coopAllowed: true
 name: lit up
-color: -10394881
+freeplayCapsule: streets
+gradient: ["#6162FF", "#00FF48"]
 customValues:
   stickerPack: bonus-weekend1
   album: volume4

@@ -22,11 +22,14 @@ class Stage extends flixel.group.FlxGroup {
 	public var id:String;
 	public var _data:StageData;
 
+	public var stage:Stage; // for cne compat.
+
 	public function new(id:String) {
 		super();
 		this.id = StageRegistry.stageDatas.get(id) != null ? id : 'default';
 		this._data = StageRegistry.stageDatas.get(id) ?? StageRegistry.stageDatas.get('default');
-		this._data.cameraPosition ??= [0, 0];
+		this._data.basicCharPos ??= false;
+		this.stage = this;
 
 		ModdingAPI.checkForScripts('data/stages', id, stageScripts);
 		stageScripts.set('directory', this._data.directory);
@@ -48,6 +51,7 @@ class Stage extends flixel.group.FlxGroup {
 			i.scale ??= [1, 1];
 			i.position ??= [0, 0];
 			i.alpha ??= 1;
+			i.angle ??= 0;
 			i.visible ??= true;
 			i.color ??= FlxColor.WHITE;
 			i.zIndex ??= members.length-1;
@@ -76,6 +80,7 @@ class Stage extends flixel.group.FlxGroup {
 					prop.updateHitbox();
 					prop.z = i.zIndex;
 					prop.alpha = i.alpha;
+					prop.angle = i.angle;
 					add(prop);
 					stageScripts.set(i?.id ?? i.name, prop);
 					applyProperties(prop, i.properties ?? {});
@@ -92,7 +97,8 @@ class Stage extends flixel.group.FlxGroup {
 					prop.color = i.color;
 					prop.alpha = i.alpha;
 					prop.antialiasing = !i.isPixel;
-					prop.updateHitbox();
+					prop.angle = i.angle;
+					if (!_data.basicCharPos) prop.updateHitbox();
 					for (i in i?.animations ?? []) {
 						prop.addAnimFromData(i);
 					}
@@ -106,8 +112,10 @@ class Stage extends flixel.group.FlxGroup {
 					for (char in characters) {
 						if (positionalArrays.get(i.id).contains(char.stagePosition.toLowerCase()) || i.id == char.id) {
 							if (i.id == 'player') char.flipX = !char.flipX;
-							char.x = i.position[0] - (char.width/2);
-							char.y = i.position[1] - (char.height);
+							if (i.flipX) char.flipX = !char.flipX;
+							if (i.flipY) char.flipY = !char.flipY;
+							char.x = i.position[0] - (_data.basicCharPos ? 0 : (char.width/2));
+							char.y = i.position[1] - (_data.basicCharPos ? 0 : char.height);
 							char.z = i.zIndex;
 							char.scrollFactor.set(i.scroll[0] ?? 1, i.scroll[1] ?? 1);
 							char.alpha = i.alpha;
@@ -115,8 +123,17 @@ class Stage extends flixel.group.FlxGroup {
 							char.cameraOffsets[0] += i.cameraOffsets[0];
 							char.cameraOffsets[1] += i.cameraOffsets[1];
 							char.color = i.color;
+							char.scale.x *= i.scale[0];
+							char.scale.y *= i.scale[1];
+							char.angle = i.angle;
 							applyProperties(char, i.properties ?? {});
 							add(char);
+							if (i.id == 'opponent' && this._data.cameraPosition == null) {
+								this._data.cameraPosition = [
+									char.getMidpoint().x + char.cameraOffsets[0],
+									char.getMidpoint().y + char.cameraOffsets[1]
+								];
+							}
 						}
 					}
 			}
@@ -130,6 +147,15 @@ class Stage extends flixel.group.FlxGroup {
 			var piece = Reflect.field(object, i);
 			Reflect.setProperty(object, i, Reflect.field(array, i));
 		}
+	}
+
+	public function getSprite(id:String):Null<StageProp> {
+		for (i in this.members) {
+			if (Std.isOfType(i, StageProp)) {
+				if (cast (i, StageProp).name == id) return cast i;
+			}
+		}
+		return null;
 	}
 
 	public function reload(characters:Array<Character>) { load(characters); }

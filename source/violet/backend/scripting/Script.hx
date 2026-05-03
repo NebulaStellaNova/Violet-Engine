@@ -44,6 +44,8 @@ class Script implements IFlxDestroyable {
 		'FlxSpriteGroup' => FlxSpriteGroup,
 		'FlxTypedSpriteGroup' => FlxTypedSpriteGroup,
 
+		'Conductor' => violet.backend.audio.Conductor,
+
 		// Engine
 		'Paths' => Paths,
 		'FlxText' => NovaText,

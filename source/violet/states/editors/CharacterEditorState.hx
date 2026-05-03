@@ -117,6 +117,10 @@ class CharacterEditorState extends StateBackend {
 		super();
 
 		instance = this;
+	}
+
+	override function create() {
+		super.create();
 
 		newList = [];
 
@@ -206,6 +210,7 @@ class CharacterEditorState extends StateBackend {
 			animationList = [];
 
 			ghost = new Character(characterDropdown.selectedOption.id);
+			ghost.debug = true;
 			ghost.allowOnComplete = false;
 			ghost.camera = charCamera;
 			ghost.updateHitbox();
@@ -218,6 +223,7 @@ class CharacterEditorState extends StateBackend {
 			add(ghost);
 
 			character = new Character(characterDropdown.selectedOption.id);
+			character.debug = true;
 			character.allowOnComplete = false;
 			character.camera = charCamera;
 			character.updateHitbox();
@@ -521,6 +527,12 @@ class CharacterEditorState extends StateBackend {
 		var zoomAmt = (movement/250)/cameraTarget.zoom;
 		cameraTarget.zoom += FlxG.keys.pressed.Q ? -zoomAmt : FlxG.keys.pressed.E ? zoomAmt : 0;
 		cameraTarget.zoom = FlxMath.bound(cameraTarget.zoom, 0.1, 50);
+
+		if (FlxG.keys.justPressed.LEFT) xOffsetStepper.onChange(xOffsetStepper.value += FlxG.keys.pressed.SHIFT ? 1 : 10);
+		if (FlxG.keys.justPressed.RIGHT) xOffsetStepper.onChange(xOffsetStepper.value -= FlxG.keys.pressed.SHIFT ? 1 : 10);
+
+		if (FlxG.keys.justPressed.UP) yOffsetStepper.onChange(yOffsetStepper.value += FlxG.keys.pressed.SHIFT ? 1 : 10);
+		if (FlxG.keys.justPressed.DOWN) yOffsetStepper.onChange(yOffsetStepper.value -= FlxG.keys.pressed.SHIFT ? 1 : 10);
 
 		if (FlxG.keys.justPressed.SPACE) character.playAnim(characterAnim, true);
 

@@ -1,5 +1,7 @@
 package violet.states;
 
+import violet.backend.utils.WindowUtil;
+import violet.backend.options.Options;
 import flixel.util.FlxStringUtil;
 import violet.backend.utils.ParseUtil;
 import violet.backend.scripting.GlobalPack;
@@ -9,11 +11,6 @@ import violet.backend.StateBackend;
 import violet.backend.audio.Conductor;
 import openfl.system.Capabilities;
 import violet.backend.objects.ClassData;
-
-typedef RedirectPiece = {
-	var state:String;
-	var target:String;
-}
 
 class InitialState extends StateBackend { // for now
 
@@ -52,10 +49,12 @@ class InitialState extends StateBackend { // for now
 		FlxG.signals.postStateSwitch.add(()->{
 			if (!Std.isOfType(FlxG.state, PlayState)) {
 				PlayState.hasSeenCutscene = false;
+				PlayState.hasSeenDialogue = false;
 				PlayState.isStoryMode = false;
 				@:bypassAccessor PlayState.practiceMode = false;
 				PlayState.playlist.resize(0);
 				PlayState.storyScore = 0;
+				PlayState.storyScoreDiscarded = false;
 				PlayState.curStoryLevel = null;
 			}
 		});
@@ -68,6 +67,13 @@ class InitialState extends StateBackend { // for now
 					break;
 				}
 			}
+			var title:String = "Friday Night Funkin': Violet Engine";
+			for (i in ModdingAPI.getActiveMods()) {
+				if (i.windowTitle != null) {
+					title = i.windowTitle;
+				}
+			}
+			WindowUtil.title = title;
 		});
 
 		FlxG.signals.preUpdate.add(() -> {
@@ -78,7 +84,6 @@ class InitialState extends StateBackend { // for now
 			if (Controls.fullscreen) {
 				fullscreen = !fullscreen;
 				if (fullscreen) {
-
 					defaultParams.x = lime.app.Application.current.window.x;
 					defaultParams.y = lime.app.Application.current.window.y;
 					defaultParams.width = lime.app.Application.current.window.width;
@@ -95,6 +100,8 @@ class InitialState extends StateBackend { // for now
 				}
 			}
 
+			if (!Options.data.developerMode) return;
+
 			if (FlxG.keys.justPressed.F2/* Controls.console // Doesn't work for some reason, crashes when I try to add setting for it. */) {
 				#if windows
 				violet.external.windows.WinAPI.allocConsole();
@@ -104,11 +111,9 @@ class InitialState extends StateBackend { // for now
 
 			if (Controls.reloadGame) {
 				Conductor.pause();
-				ModdingAPI.reloadModList();
-				ModdingAPI.reloadRegistries();
-				ModdingAPI.checkForHXC();
-				GlobalPack.init();
-				refreshRedirects();
+				FlxG.sound.music.stop();
+				for (i in FlxG.sound.list.members) i.stop();
+				reloadEverything();
 				resetState();
 			}
 			if (Controls.resetState) resetState();
@@ -134,6 +139,14 @@ class InitialState extends StateBackend { // for now
 		// FlxG.camera.visible = false;
 	}
 
+	public static function reloadEverything() {
+		ModdingAPI.reloadModList();
+		ModdingAPI.reloadRegistries();
+		ModdingAPI.checkForHXC();
+		GlobalPack.init();
+		refreshRedirects();
+	}
+
 	public function resetState() {
 		if (Std.isOfType(FlxG.state, ModState)) {
 			var state:ModState = cast FlxG.state;
@@ -146,10 +159,9 @@ class InitialState extends StateBackend { // for now
 	public static function refreshRedirects() {
 		stateRedirects.resize(0);
 		for (i in ModdingAPI.getActiveMods()) {
-			var thisOne:Array<RedirectPiece> = ParseUtil.jsonOrYaml('${ModdingAPI.MOD_FOLDER}/${i.folder}/data/config/stateRedirects', 'root', 'null');
-			if (thisOne != null) {
-				stateRedirects = stateRedirects.concat(thisOne);
-			}
+			var thisOne:Array<RedirectPiece> = ParseUtil.jsonOrYaml('${ModdingAPI.MOD_FOLDER}/${i.folder}/data/config/stateRedirects', 'root', 'null') ?? (cast []); // bs mane
+			if (i.stateRedirects != null) thisOne = thisOne.concat(i.stateRedirects);
+			stateRedirects = stateRedirects.concat(thisOne);
 		}
 	}
 

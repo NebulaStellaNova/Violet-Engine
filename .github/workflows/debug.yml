@@ -89,239 +89,166 @@ jobs:
             export/debug/windows/obj/
           restore-keys: windows-debug-cache
 
-  # android:
-  #   permissions: write-all
-  #   runs-on: android-latest
+  linux:
+    permissions: write-all
+    runs-on: ubuntu-latest
 
-  #   steps:
-  #     - name: Checking Latest Commit
-  #       uses: actions/checkout@main
-  #       fetch-depth: 0
-  #       with:
-  #         submodules: true
+    steps:
+      - name: Checking Latest Commit
+        uses: actions/checkout@main
+        with:
+          fetch-depth: 0
+          submodules: true
 
-  #     - name: Setup Haxe
-  #       uses: krdlab/setup-haxe@master
-  #       with:
-  #         haxe-version: 4.3.7
+      - name: Setup Haxe
+        uses: krdlab/setup-haxe@master
+        with:
+          haxe-version: 4.3.7
 
-  #     - name: Run Cache
-  #       uses: actions/cache@v4.3.0
-  #       with:
-  #         # not caching the bin folder to prevent asset duplication and stuff like that
-  #         key: android-debug-cache
-  #         path: |
-  #           .haxelib/
-  #           export/debug/android/haxe/
-  #           export/debug/android/obj/
-  #         restore-keys: android-debug-cache
+      - name: Run Cache
+        uses: actions/cache@v4.3.0
+        with:
+          key: linux-debug-cache
+          path: |
+            .haxelib/
+            export/debug/linux/haxe/
+            export/debug/linux/obj/
+          restore-keys: linux-debug-cache
 
-  #     - name: Run Setup
-  #       run: .\"install-libraries.bat"
+      - name: Run Setup
+        run: bash .github/libs.sh
 
-  #     - name: Building HXCPP
-  #       run: |
-  #         cd ./.haxelib/hxcpp/git/tools/hxcpp
-  #         haxe compile.hxml
-  #         cd ../../../../../
+      - name: Install VLC (Linux)
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libvlc-dev libvlccore-dev
 
-  #     - name: Compile Engine
-  #       run: haxelib run lime build android -debug
+      - name: Building HXCPP
+        run: |
+          cd ./.haxelib/hxcpp/git/tools/hxcpp
+          haxe compile.hxml
+          cd ../../../../../
 
-  #     - name: Upload Artifact
-  #       uses: actions/upload-artifact@main
-  #       with:
-  #         name: Violet Android Build
-  #         path: export/debug/android/bin/app/build/outputs/apk/debug/Violet Engine-debug.apk
-  #         overwrite: true
-  #         include-hidden-files: true
-  #         if-no-files-found: error
+      - name: Compile Engine
+        run: haxelib run lime build linux -debug -Daction -Dbranch-dev
 
-  #     - name: Clearing Cache
-  #       uses: actions/github-script@v6
-  #       with:
-  #         script: |
-  #           const caches = await github.rest.actions.getActionsCacheList({
-  #             owner: context.repo.owner,
-  #             repo: context.repo.repo,
-  #           })
-  #           for (const cache of caches.data.actions_caches) {
-  #             if (cache.key == 'android-debug-cache') {
-  #               console.log('Clearing ' + cache.key + '...')
-  #               await github.rest.actions.deleteActionsCacheById({
-  #                 owner: context.repo.owner,
-  #                 repo: context.repo.repo,
-  #                 cache_id: cache.id,
-  #               })
-  #               console.log('Cache cleared.')
-  #             }
-  #           }
+      - name: Upload Artifact
+        uses: actions/upload-artifact@main
+        with:
+          name: Violet Linux Build
+          path: export/debug/linux/bin
+          overwrite: true
+          include-hidden-files: true
+          if-no-files-found: error
 
-  #     - name: Run New Cache
-  #       uses: actions/cache@v4.3.0
-  #       with:
-  #         # not caching the bin folder to prevent asset duplication and stuff like that
-  #         key: android-debug-cache
-  #         path: |
-  #           .haxelib/
-  #           export/debug/android/haxe/
-  #           export/debug/android/obj/
-  #         restore-keys: android-debug-cache
+      - name: Clearing Cache
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const caches = await github.rest.actions.getActionsCacheList({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+            })
+            for (const cache of caches.data.actions_caches) {
+              if (cache.key == 'linux-debug-cache') {
+                console.log('Clearing ' + cache.key + '...')
+                await github.rest.actions.deleteActionsCacheById({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  cache_id: cache.id,
+                })
+                console.log('Cache cleared.')
+              }
+            }
 
-  # mac:
-  #   permissions: write-all
-  #   runs-on: macos-15
+      - name: Run New Cache
+        uses: actions/cache@v4.3.0
+        with:
+          key: linux-debug-cache
+          path: |
+            .haxelib/
+            export/debug/linux/haxe/
+            export/debug/linux/obj/
+          restore-keys: linux-debug-cache
 
-  #   steps:
-  #     - name: Checking Latest Commit
-  #       uses: actions/checkout@main
-  #       with:
-  #         submodules: true
+  macos:
+    permissions: write-all
+    runs-on: macos-latest
 
-  #     - name: Setup Haxe
-  #       uses: krdlab/setup-haxe@master
-  #       with:
-  #         haxe-version: 4.3.7
+    steps:
+      - name: Checking Latest Commit
+        uses: actions/checkout@main
+        with:
+          fetch-depth: 0
+          submodules: true
 
-  #     - name: Run Cache
-  #       uses: actions/cache@v4.3.0
-  #       with:
-  #         # not caching the bin folder to prevent asset duplication and stuff like that
-  #         key: mac-debug-cache
-  #         path: |
-  #           .haxelib/
-  #           export/debug/mac/haxe/
-  #           export/debug/mac/obj/
-  #         restore-keys: mac-debug-cache
+      - name: Setup Haxe
+        uses: krdlab/setup-haxe@master
+        with:
+          haxe-version: 4.3.7
 
-  #     - name: Run Setup
-  #       run: .\"install-libraries.bat"
+      - name: Run Cache
+        uses: actions/cache@v4.3.0
+        with:
+          key: mac-debug-cache
+          path: |
+            .haxelib/
+            export/debug/macos/haxe/
+            export/debug/macos/obj/
+          restore-keys: mac-debug-cache
 
-  #     - name: Building HXCPP
-  #       run: |
-  #         cd ./.haxelib/hxcpp/git/tools/hxcpp
-  #         haxe compile.hxml
-  #         cd ../../../../../
+      - name: Run Setup
+        run: bash .github/libs.sh
 
-  #     - name: Building the game
-  #       run: haxelib run lime build mac -debug
+      - name: Install VLC (macOS)
+        run: |
+          brew update
+          brew install --cask vlc
 
-  #     - name: Upload Artifact
-  #       uses: actions/upload-artifact@main
-  #       with:
-  #         name: Violet Mac Build
-  #         path: export/debug/macos/bin
-  #         overwrite: true
-  #         include-hidden-files: true
-  #         if-no-files-found: error
+      - name: Building HXCPP
+        run: |
+          cd ./.haxelib/hxcpp/git/tools/hxcpp
+          haxe compile.hxml
+          cd ../../../../../
 
-  #     - name: Clearing Cache
-  #       uses: actions/github-script@v6
-  #       with:
-  #         script: |
-  #           const caches = await github.rest.actions.getActionsCacheList({
-  #             owner: context.repo.owner,
-  #             repo: context.repo.repo,
-  #           })
-  #           for (const cache of caches.data.actions_caches) {
-  #             if (cache.key == 'mac-debug-cache') {
-  #               console.log('Clearing ' + cache.key + '...')
-  #               await github.rest.actions.deleteActionsCacheById({
-  #                 owner: context.repo.owner,
-  #                 repo: context.repo.repo,
-  #                 cache_id: cache.id,
-  #               })
-  #               console.log('Cache cleared.')
-  #             }
-  #           }
+      - name: Compile Engine
+        run: haxelib run lime build mac -debug -Daction -Dbranch-dev
 
-  #     - name: Run New Cache
-  #       uses: actions/cache@v4.3.0
-  #       with:
-  #         # not caching the bin folder to prevent asset duplication and stuff like that
-  #         key: mac-debug-cache
-  #         path: |
-  #           .haxelib/
-  #           export/debug/mac/haxe/
-  #           export/debug/mac/obj/
-  #         restore-keys: mac-debug-cache
+      - name: Upload Artifact
+        uses: actions/upload-artifact@main
+        with:
+          name: Violet macOS Build
+          path: export/debug/macos/bin
+          overwrite: true
+          include-hidden-files: true
+          if-no-files-found: error
 
-  # linux:
-  #   permissions: write-all
-  #   runs-on: ubuntu-latest
+      - name: Clearing Cache
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const caches = await github.rest.actions.getActionsCacheList({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+            })
+            for (const cache of caches.data.actions_caches) {
+              if (cache.key == 'mac-debug-cache') {
+                console.log('Clearing ' + cache.key + '...')
+                await github.rest.actions.deleteActionsCacheById({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  cache_id: cache.id,
+                })
+                console.log('Cache cleared.')
+              }
+            }
 
-  #   steps:
-  #     - name: Checking Latest Commit
-  #       uses: actions/checkout@main
-  #       with:
-  #         submodules: true
-
-  #     - name: Setup Haxe
-  #       uses: krdlab/setup-haxe@master
-  #       with:
-  #         haxe-version: 4.3.7
-
-  #     - name: Run Cache
-  #       uses: actions/cache@v4.3.0
-  #       with:
-  #         # not caching the bin folder to prevent asset duplication and stuff like that
-  #         key: linux-debug-cache
-  #         path: |
-  #           .haxelib/
-  #           export/debug/linux/haxe/
-  #           export/debug/linux/obj/
-  #         restore-keys: linux-debug-cache
-
-  #     - name: Installing Dependencies
-  #       run: sudo apt-get update && sudo apt-get upgrade && sudo apt-get install libvlc-dev libvlccore-dev vlc-bin vlc libxrandr-dev
-
-  #     - name: Run Setup
-  #       run: .\"install-libraries.sh"
-
-  #     - name: Building HXCPP
-  #       run: |
-  #         cd ./.haxelib/hxcpp/git/tools/hxcpp
-  #         haxe compile.hxml
-  #         cd ../../../../../
-
-  #     - name: Building the game
-  #       run: haxelib run lime build linux -debug
-
-  #     - name: Upload Artifact
-  #       uses: actions/upload-artifact@main
-  #       with:
-  #         name: Violet Linux Build
-  #         path: export/debug/linux/bin
-  #         overwrite: true
-  #         include-hidden-files: true
-  #         if-no-files-found: error
-
-  #     - name: Clearing Cache
-  #       uses: actions/github-script@v6
-  #       with:
-  #         script: |
-  #           const caches = await github.rest.actions.getActionsCacheList({
-  #             owner: context.repo.owner,
-  #             repo: context.repo.repo,
-  #           })
-  #           for (const cache of caches.data.actions_caches) {
-  #             if (cache.key == 'linux-debug-cache') {
-  #               console.log('Clearing ' + cache.key + '...')
-  #               await github.rest.actions.deleteActionsCacheById({
-  #                 owner: context.repo.owner,
-  #                 repo: context.repo.repo,
-  #                 cache_id: cache.id,
-  #               })
-  #               console.log('Cache cleared.')
-  #             }
-  #           }
-  #     - name: Run New Cache
-  #       uses: actions/cache@v4.3.0
-  #       with:
-  #         # not caching the bin folder to prevent asset duplication and stuff like that
-  #         key: linux-debug-cache
-  #         path: |
-  #           .haxelib/
-  #           export/debug/linux/haxe/
-  #           export/debug/linux/obj/
-  #         restore-keys: linux-debug-cache
+      - name: Run New Cache
+        uses: actions/cache@v4.3.0
+        with:
+          key: mac-debug-cache
+          path: |
+            .haxelib/
+            export/debug/macos/haxe/
+            export/debug/macos/obj/
+          restore-keys: mac-debug-cache

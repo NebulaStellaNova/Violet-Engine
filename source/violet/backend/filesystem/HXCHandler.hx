@@ -9,10 +9,6 @@ class HXCHandler extends flixel.FlxBasic {
 
 	public static var instance:HXCHandler;
 
-	public static var importRedirects:Map<String, String> = [
-		'funkin.modding.module.Module' => 'violet.backend.scripting.hxc.Module'
-	];
-
 	public var hxcScripts:ScriptPack = new ScriptPack();
 
 	override public function new() {
@@ -21,17 +17,8 @@ class HXCHandler extends flixel.FlxBasic {
 	}
 
 	public function addScript(path:String) {
-		var scriptCode:String = FileUtil.getFileContent(path);
-		for (i in importRedirects.keys())
-			scriptCode = scriptCode.replace(i, importRedirects.get(i));
-
-		var script = new violet.backend.scripting.FunkinScript(scriptCode, true, true, path);
-		script.fullPath = path;
-		var filePath = path.split("/");
-		script.fileName = filePath.pop();
-		if (filePath.getFirstOf() == "mods") script.folderName = filePath[1];
-		else script.folderName = filePath.getFirstOf();
-		hxcScripts.addScript(script);
+		var script = new violet.backend.scripting.ModuleScript(path);
+		// hxcScripts.addScript(script);
 	}
 
 	inline public function clear() {

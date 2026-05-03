@@ -43,10 +43,8 @@ class FunkinScript extends Script {
 	override function setPublicVars(vars:Map<String, Dynamic>):Void
 		internalScript.context.publicVariables = vars;
 
-	public var isHXC:Bool = false;
-	public function new(path:String, isCode:Bool = false, isHXC:Bool = false, ?extraPath:String):Void {
+	public function new(path:String, isCode:Bool = false, ?extraPath:String):Void {
 		super(path, isCode);
-		this.isHXC = isHXC;
 		this.fullPath = path;
 		if (extraPath != null) {
 			this.fullPath = extraPath;
@@ -55,11 +53,12 @@ class FunkinScript extends Script {
 		internalScript = new RuleScript(context);
 		internalScript.scriptName = '$folderName/$fileName';
 		initVars();
-		if (!isHXC) for (i in violet.backend.filesystem.ModdingAPI.getActiveMods()) {
+		for (i in violet.backend.filesystem.ModdingAPI.getActiveMods()) {
 			if (Paths.fileExists('${ModdingAPI.MOD_FOLDER}/${i.folder}/data/scripts/import.hx', true))
 				scriptCode += '\n' + FileUtil.getFileContent('${ModdingAPI.MOD_FOLDER}/${i.folder}/data/scripts/import.hx');
 		}
 		checkForBlacklistedImports();
+		execute();
 	}
 
 	override function initVars():Void {
@@ -101,7 +100,6 @@ class FunkinScript extends Script {
 	 */
 	override public function execute():Void {
 		if (executed) return;
-		if (isHXC) internalScript.getParser(HxParser).mode = MODULE;
 		internalScript.getParser(HxParser).allowAll();
 		internalScript.tryExecute(scriptCode, (exception:haxe.Exception) -> {
 			var data:Array<String> = exception.message.split(":");

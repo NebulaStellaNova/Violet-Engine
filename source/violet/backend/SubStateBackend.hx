@@ -1,5 +1,8 @@
 package violet.backend;
 
+import flixel.FlxSubState;
+import violet.states.InitialState;
+import flixel.util.FlxStringUtil;
 import violet.backend.scripting.GlobalPack;
 import lemonui.utils.MathUtil;
 import flixel.FlxBasic;
@@ -107,6 +110,27 @@ class SubStateBackend extends flixel.FlxSubState {
 	override public function destroy():Void {
 		instance = null;
 		super.destroy();
+	}
+
+	override function openSubState(subState:FlxSubState) {
+		var subStateID = FlxStringUtil.getClassName(Type.getClass(subState), true);
+		var targetSubState:Null<ClassData> = null;
+		for (data in @:privateAccess InitialState.stateRedirects) {
+			if (data.state == subStateID) {
+				targetSubState = new ClassData(data.target, true);
+				break;
+			}
+		}
+		if (targetSubState != null) {
+			if (targetSubState.isSubState) {
+				subState = targetSubState.target;
+				super.openSubState(subState);
+			} else {
+				FlxG.switchState(targetSubState.target);
+			}
+		} else {
+			super.openSubState(subState);
+		}
 	}
 
 }
