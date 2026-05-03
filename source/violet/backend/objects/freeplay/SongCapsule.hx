@@ -35,13 +35,6 @@ class SongCapsule extends Capsule {
 
 		backCase.makeGraphic(FlxG.width, 85, gradient[0]);
 
-		blackGradient = new FlxSkewedSprite(14, 0);
-		blackGradient.loadGraphic(FlxGradient.createGradientFlxSprite(Math.round(frontCase.width/2), Math.round(frontCase.height), [FlxColor.BLACK, FlxColor.BLACK, FlxColor.TRANSPARENT], 1, 0).pixels);
-		blackGradient.antialiasing = true;
-		blackGradient.skew.set(-30, 0);
-		blackGradient.alpha = 0.6;
-		add(blackGradient);
-
 		var iconScale = 0.425;
 		var iconBG = new FlxSkewedSprite(-25, 8);
 		iconBG.makeGraphic(Math.round(68/iconScale), Math.round(68/iconScale), gradient[0]);

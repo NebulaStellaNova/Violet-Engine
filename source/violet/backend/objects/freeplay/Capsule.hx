@@ -1,6 +1,7 @@
 package violet.backend.objects.freeplay;
 
 import flixel.addons.effects.FlxSkewedSprite;
+import flixel.util.FlxGradient;
 import openfl.display.BitmapData;
 import openfl.geom.Matrix;
 import openfl.geom.Point;
@@ -47,6 +48,13 @@ class Capsule extends FlxSpriteGroup {
 
 		capsuleBackground.shader = angleCropShader;
 		add(capsuleBackground);
+
+		blackGradient = new FlxSkewedSprite(14, 0);
+		blackGradient.loadGraphic(FlxGradient.createGradientFlxSprite(Math.round(frontCase.width/2), Math.round(frontCase.height), [FlxColor.BLACK, FlxColor.BLACK, FlxColor.TRANSPARENT], 1, 0).pixels);
+		blackGradient.antialiasing = true;
+		blackGradient.skew.set(-30, 0);
+		blackGradient.alpha = 0.6;
+		add(blackGradient);
 	}
 
 	function skewPixels(sprite:FlxSprite, xSkew:Float = 0, ySkew:Float = 0) {
