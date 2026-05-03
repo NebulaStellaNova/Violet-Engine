@@ -119,6 +119,8 @@ class Note extends NovaSprite {
 		this.id = id;
 		this.time = time;
 		this.noteType = noteType;
+		style = null
+		preventAutoStyleSet = false;
 
 		_stepLengthMs = flixel.addons.sound.FlxRhythmConductorUtil.getStepLengthMs(flixel.addons.sound.FlxRhythmConductor.instance.getCurrentTimeChangeBPMAccurate(time));
 
@@ -132,8 +134,7 @@ class Note extends NovaSprite {
 
 		if (NoteStyleRegistry.doesNoteStyleExist(noteType) && noteType != null) style = noteType;
 
-		reloadStyle(style = null, true);
-		preventAutoStyleSet = false;
+		reloadStyle(style, true);
 	}
 
 	public function reloadStyle(?style:String, effectTail:Bool = false):Void {
