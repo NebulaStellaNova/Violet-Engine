@@ -1,5 +1,6 @@
 package violet.data.notestyles;
 
+import flixel.math.FlxPoint;
 import openfl.display.BlendMode;
 import violet.data.animation.NoteAnimationData;
 import violet.data.notestyles.NoteStyleData.NoteStyleProperties;
@@ -39,6 +40,19 @@ class NoteStyle {
 		sustainProperties = new _NoteStyleProperties(_data.sustains?.properties, _data?.properties, {scale: 0.7});
 		splashProperties = new _NoteStyleProperties(_data?.splashes?.properties, _data?.properties);
 		holdCoverProperties = new _NoteStyleProperties(_data?.holdcovers?.properties, _data?.properties);
+
+		final global:Array<Float> = this._data.offsets ?? [0, 0];
+		globalOffset = new FlxReadOnlyPoint(global[0], global[1]);
+		final offset:Array<Float> = this._data.strums?.offsets ?? [0, 0];
+		strumOffset = new FlxReadOnlyPoint(globalOffset.x + offset[0], globalOffset.y + offset[1]);
+		final offset:Array<Float> = this._data.notes?.offsets ?? [0, 0];
+		noteOffset = new FlxReadOnlyPoint(globalOffset.x + offset[0], globalOffset.y + offset[1]);
+		final offset:Array<Float> = this._data.sustains?.offsets ?? [0, 0];
+		sustainOffset = new FlxReadOnlyPoint(globalOffset.x + offset[0], globalOffset.y + offset[1]);
+		final offset:Array<Float> = this._data?.splashes?.offsets ?? [0, 0];
+		splashOffset = new FlxReadOnlyPoint(globalOffset.x + offset[0], globalOffset.y + offset[1]);
+		final offset:Array<Float> = this._data?.holdcovers?.offsets ?? [0, 0];
+		holdcoverOffset = new FlxReadOnlyPoint(globalOffset.x + offset[0], globalOffset.y + offset[1]);
 	}
 
 	public function getName():String {
@@ -75,31 +89,12 @@ class NoteStyle {
 		return !(_data?.holdcovers?.isPixel ?? _data?.isPixel ?? false);
 	}
 
-	public function getStrumOffsets():Array<Float> {
-		final offsets:Array<Float> = _data.offsets ?? [0, 0];
-		final partOffsets:Array<Float> = _data.strums?.offsets ?? [0, 0];
-		return [offsets[0] + partOffsets[0], offsets[1] + partOffsets[1]];
-	}
-	public function getNoteOffsets():Array<Float> {
-		final offsets:Array<Float> = _data.offsets ?? [0, 0];
-		final partOffsets:Array<Float> = _data.notes?.offsets ?? [0, 0];
-		return [offsets[0] + partOffsets[0], offsets[1] + partOffsets[1]];
-	}
-	public function getSustainOffsets():Array<Float> {
-		final offsets:Array<Float> = _data.offsets ?? [0, 0];
-		final partOffsets:Array<Float> = _data.sustains?.offsets ?? [0, 0];
-		return [offsets[0] + partOffsets[0], offsets[1] + partOffsets[1]];
-	}
-	public function getSplashOffsets():Array<Float> {
-		final offsets:Array<Float> = _data.offsets ?? [0, 0];
-		final partOffsets:Array<Float> = _data?.splashes?.offsets ?? [0, 0];
-		return [offsets[0] + partOffsets[0], offsets[1] + partOffsets[1]];
-	}
-	public function getHoldCoverOffsets():Array<Float> {
-		final offsets:Array<Float> = _data.offsets ?? [0, 0];
-		final partOffsets:Array<Float> = _data?.holdcovers?.offsets ?? [0, 0];
-		return [offsets[0] + partOffsets[0], offsets[1] + partOffsets[1]];
-	}
+	public final globalOffset:FlxReadOnlyPoint;
+	public final strumOffset:FlxReadOnlyPoint;
+	public final noteOffset:FlxReadOnlyPoint;
+	public final sustainOffset:FlxReadOnlyPoint;
+	public final splashOffset:FlxReadOnlyPoint;
+	public final holdcoverOffset:FlxReadOnlyPoint;
 
 	public function getStrumAssetPath():String {
 		final nullCheck:String = _data.strums?.assetPath ?? _data?.assetPath ?? 'strums';

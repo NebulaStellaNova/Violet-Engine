@@ -155,8 +155,7 @@ class Note extends NovaSprite {
 		loadSprite(styleMeta.getNoteAssetPath());
 		for (data in styleMeta.getNoteAnimations(id, parent.keyCount))
 			addAnimFromData(data);
-		var lol:Array<Float> = styleMeta.getNoteOffsets();
-		globalOffset.set(lol[0], lol[1]);
+		globalOffset.set(styleMeta.noteOffset.x, styleMeta.noteOffset.y);
 		this.antialiasing = styleMeta.isNotePixel();
 		if (effectTail) for (sustain in tail) sustain.reloadStyle(style);
 
