@@ -50,8 +50,6 @@ class Strum extends NovaSprite {
 	public final splashes:Array<StrumElement> = [];
 	public final holdCovers:Array<StrumElement> = [];
 	public var holdCover:StrumElement;
-	var holdCoverOffsetX:Float = 0;
-	var holdCoverOffsetY:Float = 0;
 
 	public function new(parent:StrumLine, id:Int) {
 		super();
@@ -59,9 +57,6 @@ class Strum extends NovaSprite {
 		ID = id;
 		style = null;
 		this.styleMeta = NoteStyleRegistry.getNoteStyleByID(parent.noteStyle ?? 'default');
-		final holdCoverOffsets:Array<Float> = styleMeta.getHoldCoverOffsets();
-		holdCoverOffsetX = holdCoverOffsets[0];
-		holdCoverOffsetY = holdCoverOffsets[1];
 
 		final daScale:Float = styleMeta.strumProperties.scale;
 		scale.set(daScale, daScale);
@@ -90,11 +85,7 @@ class Strum extends NovaSprite {
 		loadSprite(styleMeta.getStrumAssetPath());
 		for (data in styleMeta.getStrumAnimations(ID, parent.keyCount))
 			addAnimFromData(data);
-		final partOffsets:Array<Float> = styleMeta.getStrumOffsets();
-		globalOffset.set(partOffsets[0], partOffsets[1]);
-		final holdCoverOffsets:Array<Float> = styleMeta.getHoldCoverOffsets();
-		holdCoverOffsetX = holdCoverOffsets[0];
-		holdCoverOffsetY = holdCoverOffsets[1];
+		globalOffset.set(styleMeta.strumOffset.x, styleMeta.strumOffset.y);
 		this.antialiasing = styleMeta.isStrumPixel();
 
 		playAnim(lastAnim, true, wasReversed);
@@ -117,7 +108,7 @@ class Strum extends NovaSprite {
 
 		if (holdCover == null) return;
 		if (holdCover.exists && holdCover.animation.name != 'end') {
-			holdCover.setPosition(this.x - (holdCover.width/2) + holdCoverOffsetX, this.y - (holdCover.height/2) + holdCoverOffsetY);
+			holdCover.setPosition(this.x - (holdCover.width/2) + styleMeta.holdcoverOffset.x, this.y - (holdCover.height/2) + styleMeta.holdcoverOffset.y);
 		}
 	}
 
@@ -166,11 +157,8 @@ class Strum extends NovaSprite {
 
 		splash.playAnim(FlxG.random.getObject(splash.animationList), true);
 		splash.setScale(finalMeta.splashProperties.scale);
-		splash.animation.onFinish.addOnce(name -> {
-			splash.visible = false;
-		});
-		final partOffsets:Array<Float> = finalMeta.getSplashOffsets();
-		splash.setPosition(this.x - (splash.width/2) + partOffsets[0], this.y - (splash.height/2) + partOffsets[1]);
+		splash.animation.onFinish.addOnce(name -> splash.visible = false);
+		splash.setPosition(this.x - (splash.width/2) + finalMeta.splashOffset.x, this.y - (splash.height/2) + finalMeta.splashOffset.y);
 		splash.antialiasing = finalMeta.isSplashPixel();
 		splash.alpha = finalMeta.splashProperties.alpha;
 		splash.blend = finalMeta.splashProperties.blendMode;
@@ -224,7 +212,7 @@ class Strum extends NovaSprite {
 		holdCover.revive();
 		holdCover.playAnim('start', true);
 		holdCover.setScale(styleMeta.holdCoverProperties.scale);
-		holdCover.setPosition(this.x - (holdCover.width/2) + holdCoverOffsetX, this.y - (holdCover.height/2) + holdCoverOffsetY);
+		holdCover.setPosition(this.x - (holdCover.width/2) + styleMeta.holdcoverOffset.x, this.y - (holdCover.height/2) + styleMeta.holdcoverOffset.y);
 		holdCover.antialiasing = styleMeta.isHoldCoverPixel();
 		holdCover.alpha = styleMeta.holdCoverProperties.alpha;
 		holdCover.blend = styleMeta.holdCoverProperties.blendMode;
