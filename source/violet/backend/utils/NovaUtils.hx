@@ -22,6 +22,7 @@ enum abstract MenuSFX(Int) {
 enum NotificationType {
 	ERROR;
 	DEFAULT;
+	SUCCESS;
 }
 
 class NovaUtils {
@@ -49,6 +50,8 @@ class NovaUtils {
 		if (type == ERROR) {
 			notification.elementColor = 0xFF591818;
 			violet.backend.console.Logs.log(body.replace('\n', ' '), ErrorMessage, infos);
+		} else if (type == SUCCESS) {
+			notification.elementColor = 0xFF18591D;
 		}
 	}
 

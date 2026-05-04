@@ -1,3 +1,8 @@
+import violet.backend.online.SocketHandler;
+
+function create() {
+    // SocketHandler.joinRoom('Global', 'globalPassword');
+}
 
 function update(?elapsed:Float) {
     FlxG.autoPause = false;

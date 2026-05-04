@@ -1,6 +1,5 @@
 package violet.states.menus;
 
-import violet.backend.online.SocketTest;
 import flixel.FlxCamera;
 import violet.backend.options.Options;
 import violet.data.Constants;
@@ -107,16 +106,6 @@ class MainMenu extends StateBackend {
 	override public function create()
 	{
 		super.create();
-
-		SocketTest.onDataRecieved.add((data:ClientOutput)->{
-			switch (data.event.key) {
-				case 'uiUp':
-					changeSelection(-1);
-				case 'uiDown':
-					changeSelection(1);
-			}
-		});
-		// instance = this;
 
 		NovaUtils.playMenuMusic();
 

@@ -1,8 +1,8 @@
 package violet.states;
 
-import violet.backend.online.SocketTest;
+import violet.backend.online.SocketHandler;
 import flixel.input.keyboard.FlxKey;
-import violet.backend.online.SocketTest.ClientOutput;
+import violet.backend.online.SocketHandler.ClientOutput;
 import violet.data.chart.ChartData.InternalChartEvent;
 import haxe.xml.Access;
 import violet.backend.utils.FileUtil;
@@ -429,7 +429,7 @@ class PlayState extends violet.backend.StateBackend {
 			});
 			add(cameraMovementSprite);
 		}
-		SocketTest.onDataRecieved.add(handleSocketEvent);
+		SocketHandler.onDataRecieved.add(handleSocketEvent);
 	}
 
 	var healthLerp:Float = 0.5;
@@ -605,7 +605,7 @@ class PlayState extends violet.backend.StateBackend {
 		combo = 0;
 
 		note.wasMissed = true; note.alpha *= 0.6;
-		generalVocals.pause(); note.parent.vocals.pause();
+		if (note.parent.controllerType == PLAYER) { generalVocals.pause(); note.parent.vocals.pause(); }
 		playMissSound();
 
 		for (sustain in Note.filterTail(note.tail, true)) {
@@ -1156,7 +1156,7 @@ class PlayState extends violet.backend.StateBackend {
 
 	override public function destroy():Void {
 		callSongScripts('destroy');
-		SocketTest.onDataRecieved.remove(handleSocketEvent);
+		SocketHandler.onDataRecieved.remove(handleSocketEvent);
 		if (recordingMode) ReplaySystem.stopRecording();
 		if (recordingMode) ReplaySystem.saveRecording(SONG.id);
 		if (playbackMode) ReplaySystem.stopReplay();

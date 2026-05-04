@@ -80,6 +80,9 @@ import lime.app.Application;
 	public var hideAccuracy:Bool = false;
 
 	public var accuracyCalculation:AccuracyBase = RATING; // 0 = Rating, 1 = Millisecond
+
+	// -- Online Mode -- \\
+	public var displayName:String = "Guest";
 }
 
 enum abstract AccuracyBase(Int) {
