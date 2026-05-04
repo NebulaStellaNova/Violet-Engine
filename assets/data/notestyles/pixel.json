@@ -4,7 +4,7 @@
 	"offsets": [54, 6],
 	"isPixel": true,
 	"properties": {"scale": 6},
-	"underlay": { "offset": -4, "colors": { "4": ["#E276FF", "#3DCAFF", "#71E300", "#FF884E"] } },
+	"underlay": {"offset": -4, "colors": {"4": ["#E276FF", "#3DCAFF", "#71E300", "#FF884E"]}},
 	"strums": {
 		"assetPath": "notes",
 		"animations": [
