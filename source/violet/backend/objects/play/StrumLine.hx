@@ -1,7 +1,6 @@
 package violet.backend.objects.play;
 
 import flixel.FlxCamera;
-import flixel.addons.display.FlxBackdrop;
 import flixel.group.FlxGroup;
 import flixel.input.keyboard.FlxKey;
 import flixel.math.FlxPoint;
@@ -9,7 +8,6 @@ import openfl.events.KeyboardEvent;
 import violet.backend.audio.Conductor;
 import violet.backend.objects.play.underlay.StrumLineUnderlay;
 import violet.backend.options.Options;
-import violet.backend.utils.MathUtil;
 import violet.data.Scoring;
 import violet.data.character.Character;
 import violet.data.chart.Chart;
@@ -51,9 +49,6 @@ class StrumLine extends FlxGroup {
 	public final strums:FlxTypedGroup<Strum>;
 	public final notes:NoteGroup;
 	public final sustains:SustainGroup;
-
-	// TODO: allow this to be changed via noteStyle and noteType
-	public final flashColors:Array<FlxColor> = [0xFFc24b99, 0xFF00ffff, 0xFF12fa05, 0xFFf9393f];
 
 	public var splashes(get, never):Array<StrumElement>;
 	function get_splashes():Array<StrumElement> {
@@ -115,7 +110,6 @@ class StrumLine extends FlxGroup {
 	}
 
 	public final vocals:FlxSound;
-
 
 	public function new(chartData:_ChartStrumLine) {
 		this.chartData = chartData;

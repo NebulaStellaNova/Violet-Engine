@@ -7,6 +7,8 @@ import violet.backend.options.Options;
 
 class StrumLineUnderlay extends FlxBackdrop {
 
+	public var enabled:Bool = true;
+
 	public final parent:StrumLine;
 	public final lanes:FlxTypedGroup<StrumUnderlay>;
 
@@ -29,7 +31,9 @@ class StrumLineUnderlay extends FlxBackdrop {
 	}
 
 	override public function update(elapsed:Float):Void {
-		if (Options.data.laneUnderlay) {
+		if (!enabled) {}
+		else if (Options.data.underlayOnlyForPlayer && !parent.isPlayer) {}
+		else if (Options.data.laneUnderlay) {
 			if (!Options.data.fancyLaneUnderlay) {
 				this.alpha = Options.data.underlayOpacity / 100;
 				this.x = getMinXStrums() + (getStrumsWidth() / 2);
@@ -39,7 +43,9 @@ class StrumLineUnderlay extends FlxBackdrop {
 	}
 
 	override public function draw():Void {
-		if (Options.data.laneUnderlay) {
+		if (!enabled) {}
+		else if (Options.data.underlayOnlyForPlayer && !parent.isPlayer) {}
+		else if (Options.data.laneUnderlay) {
 			if (Options.data.fancyLaneUnderlay)
 				lanes.draw();
 			else super.draw();
