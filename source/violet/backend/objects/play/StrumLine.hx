@@ -1,21 +1,19 @@
 package violet.backend.objects.play;
 
-import violet.backend.utils.MathUtil;
-import flixel.addons.display.FlxBackdrop;
-import violet.data.notestyles.NoteStyleRegistry;
 import flixel.FlxCamera;
+import flixel.addons.display.FlxBackdrop;
 import flixel.group.FlxGroup;
 import flixel.input.keyboard.FlxKey;
-import flixel.math.FlxMath;
 import flixel.math.FlxPoint;
-import flixel.math.FlxRect;
 import openfl.events.KeyboardEvent;
 import violet.backend.audio.Conductor;
 import violet.backend.options.Options;
+import violet.backend.utils.MathUtil;
 import violet.data.Scoring;
 import violet.data.character.Character;
 import violet.data.chart.Chart;
 import violet.data.chart.ChartData;
+import violet.data.notestyles.NoteStyleRegistry;
 import violet.states.PlayState;
 
 class StrumLine extends FlxGroup {
@@ -69,8 +67,25 @@ class StrumLine extends FlxGroup {
 		return value;
 	}
 
+	/**
+	 * The general scroll speed of the entire game.
+	 */
 	public static var generalScrollSpeed:Float = 1;
+	/**
+	 * The general scroll angle of the entire game.
+	 */
+	inline public static function generalScrollAngle(?strumLine:StrumLine):Float {
+		return (strumLine?.downscroll ?? Options.data.downscroll) ? 180 : 0;
+	}
+
+	/**
+	 * The scroll speed of this strumLines notes.
+	 */
 	public var scrollSpeed:Null<Float>;
+	/**
+	 * The scroll angle of this strumLines notes.
+	 */
+	public var scrollAngle:Null<Float>;
 
 	public final chartData:_ChartStrumLine;
 	public var keyCount(default, null):Int;
@@ -411,35 +426,7 @@ class StrumLine extends FlxGroup {
 			}
 			if (wasKilled) return;
 
-			// note positioning code for now will be placed here
-			var resultAngle:Float = 270;
-			if (note.__scrollSpeed < 0) resultAngle += 180;
-			final angleDir:Float = resultAngle * (Math.PI / 180);
-			final cosDir:Float = Math.cos(angleDir);
-			final sinDir:Float = Math.sin(angleDir);
-
-			final strum:Strum = note.parentStrum;
-			var disPos:Float = 0.45 * (Conductor.framePosition - note.time) * Math.abs(note.__scrollSpeed) * Math.abs(scale.x / scale.y);
-
-			// TODO: Figure out how to do this better, especially for sustains.
-			var noteX:Float = strum.x + (cosDir * disPos) - (note.width * 0.5) + (strum.width * 0.5);
-			var noteY:Float = strum.y + (sinDir * disPos) - (note.height * 0.5) + (strum.height * 0.5);
-			note.setPosition(noteX, noteY);
-
-			for (sustain in note.tail) {
-				if (sustain == null) continue; if (!sustain.exists) continue;
-				disPos = 0.45 * (Conductor.framePosition - (note.time + sustain.time)) * Math.abs(sustain.__scrollSpeed) * Math.abs(scale.x / scale.y);
-
-				var sustainX:Float = strum.x + (cosDir * disPos) - (sustain.width * 0.5) + (strum.width * 0.5);
-				var sustainY:Float = strum.y + (sinDir * disPos) + (strum.height * 0.5);
-				sustain.setPosition(sustainX, sustainY);
-
-				if (sustain.wasHit) {
-					var t = FlxMath.bound((Conductor.framePosition - (note.time + sustain.time)) / sustain.height * 0.45 * sustain.__scrollSpeed, 0, 1);
-					var rect = sustain.clipRect == null ? FlxRect.get() : sustain.clipRect;
-					sustain.clipRect = rect.set(0, sustain.frameHeight * t, sustain.frameWidth, sustain.frameHeight * (1 - t));
-				}
-			}
+			note.updatePosition();
 		});
 
 		for (i => strum in strums.members) {
@@ -454,9 +441,41 @@ class StrumLine extends FlxGroup {
 			lane.alpha = MathUtil.lerp(lane.alpha, 0, 0.2);
 		}
 
-		notes.forEachExists((note:Note) -> {
-			if (note.destroyed) notes.remove(note);
-		});
+		for (note in notes)
+			if (note != null && note.destroyed)
+				notes.remove(note);
+
+		for (i => strum in strums.members) {
+			if (strum.animation.name == 'confirm') {
+				if (strum.animation.curAnim.curFrame == 0 && dynamicLanesColored[i] != null) dynamicLanesColored[i].alpha = Options.data.laneFlashIntensity / 100;
+			} else if (strum.animation.name == 'press') {
+				if (dynamicLanesColored[i] != null) dynamicLanesColored[i].alpha = 0.25 * (Options.data.laneFlashIntensity / 100);
+			}
+		}
+
+		for (i => lane in dynamicLanesColored) {
+			lane.alpha = MathUtil.lerp(lane.alpha, 0, 0.2);
+		}
+
+		for (note in notes)
+			if (note != null && note.destroyed)
+				notes.remove(note);
+
+		for (i => strum in strums.members) {
+			if (strum.animation.name == 'confirm') {
+				if (strum.animation.curAnim.curFrame == 0 && dynamicLanesColored[i] != null) dynamicLanesColored[i].alpha = Options.data.laneFlashIntensity / 100;
+			} else if (strum.animation.name == 'press') {
+				if (dynamicLanesColored[i] != null) dynamicLanesColored[i].alpha = 0.25 * (Options.data.laneFlashIntensity / 100);
+			}
+		}
+
+		for (i => lane in dynamicLanesColored) {
+			lane.alpha = MathUtil.lerp(lane.alpha, 0, 0.2);
+		}
+
+		for (note in notes)
+			if (note != null && note.destroyed)
+				notes.remove(note);
 	}
 
 	final currentInputs:Array<Bool> = [];
@@ -547,7 +566,7 @@ class NoteGroup extends FlxTypedGroup<Note> {
 
 			shouldRender = true;
 			if ((note.time + note.length) < Conductor.framePosition - (Scoring.missThreshold * note.earlyWindow)) shouldRender = false;
-			if (note.time > Conductor.framePosition + (note.getDefaultCamera().height / note.getDefaultCamera().zoom / 0.45 / Math.min(note.__scrollSpeed, 1))) shouldRender = false;
+			if (note.time > Conductor.framePosition + (note.getDefaultCamera().height / note.getDefaultCamera().zoom / 0.45 / Math.min(Math.abs(note.__scrollSpeed), 1))) shouldRender = false;
 
 			if (shouldRender) {
 				note._beingRendered = true;

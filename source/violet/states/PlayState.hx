@@ -1101,9 +1101,16 @@ class PlayState extends violet.backend.StateBackend {
 		ghostTapping = Options.data.ghostTapping;
 		for (i=>strumLine in strumLines) {
 			if (!strumLine.disableOptionsAffect) {
+				// var prevScroll:Bool = strumLine.downscroll;
 				strumLine.downscroll = Options.data.downscroll;
+				/* if (strumLine.scrollAngle != null)
+					if (strumLine.downscroll != prevScroll)
+						strumLine.scrollAngle += 180; */
 				strumLine.generateLanes();
-				strumLine.setPosition(SONG.strumLines[i].strumPosition[0], SONG.strumLines[i].strumPosition[1], SONG.strumLines[i].strumPosIsPure);
+				strumLine.setPosition(strumLine.chartData.strumPosition[0], strumLine.chartData.strumPosition[1], strumLine.chartData.strumPosIsPure);
+
+				// allow notes to update
+				strumLine.update(0);
 			}
 		}
 		updateBotplayText();

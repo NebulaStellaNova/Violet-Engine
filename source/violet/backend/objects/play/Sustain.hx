@@ -1,5 +1,6 @@
 package violet.backend.objects.play;
 
+import flixel.math.FlxMath;
 import flixel.math.FlxRect;
 import violet.backend.audio.Conductor;
 import violet.data.Scoring;
@@ -56,6 +57,12 @@ class Sustain extends NovaSprite {
 	public var __scrollSpeed(get, never):Float;
 	inline function get___scrollSpeed():Float
 		return parentNote.__scrollSpeed;
+	/**
+	 * The resulting scroll angle information.
+	 */
+	public var __scrollAngle(get, never):Float;
+	inline function get___scrollAngle():Float
+		return parentNote.__scrollAngle;
 
 	/**
 	 * If true the sustain can be hit.
@@ -117,36 +124,40 @@ class Sustain extends NovaSprite {
 		blend = styleMeta.sustainProperties.blendMode;
 	}
 
-	var lastScrollSpeed:Float = 0;
+	@:unreflective var lastScrollSpeed:Float = 0;
 	override public function update(elapsed:Float):Void {
 		super.update(elapsed);
+
 		if (!isEnd && lastScrollSpeed != __scrollSpeed) {
 			lastScrollSpeed = __scrollSpeed;
-			scale.y = (parentNote._stepLengthMs * 0.45 * Math.abs(lastScrollSpeed)) / frameHeight;
+			scale.y = (parentNote._stepLengthMs * 0.45 * Math.abs(__scrollSpeed)) / frameHeight;
 			updateHitbox();
 			if (styleMeta.getSustainGapFix() != 0)
 				scale.y += styleMeta.getSustainGapFix() / frameHeight;
 		}
+
+		if (wasHit) {
+			var t = FlxMath.bound((Conductor.framePosition - (parentNote.time + time)) / height * 0.45 * Math.abs(__scrollSpeed), 0, 1);
+			@:bypassAccessor {
+				if (clipRect == null) clipRect = FlxRect.get();
+				clipRect.set(0, frameHeight * t, frameWidth, frameHeight * (1 - t));
+			}
+			@:privateAccess
+				if (frame != null && _frame != null)
+					_frame = frame.clipTo(clipRect, _frame);
+		}
 	}
 
-	override public function draw():Void {
-		if (parent.downscroll) {
-			final prevY:Float = y;
-			y = getDefaultCamera().height - y - height + (getDefaultCamera().height / 2 + (parentNote.height / 2) + parentNote.height) - 10;
-			// flipping the x too so visuals aren't flipped
-			flipX = !flipX; flipY = !flipY;
-			globalOffset.y *= -1;
-			super.draw();
-			globalOffset.y *= -1;
-			flipX = !flipX; flipY = !flipY;
-			y = prevY;
-		} else super.draw();
-	}
-
-	override function set_clipRect(value:FlxRect):FlxRect {
-		clipRect = value;
-		if (frames != null) frame = frames.frames[animation.frameIndex];
-		return value;
+	override function set_clipRect(rect:FlxRect):FlxRect {
+		@:bypassAccessor clipRect = rect;
+		@:privateAccess if (frame != null) {
+			if (rect != null && _frame != null)
+				_frame = frame.clipTo(rect, _frame);
+			else if (_frame != null)
+				_frame = frame.copyTo(_frame);
+			dirty = true;
+		}
+		return rect;
 	}
 
 	override public function destroy():Void {
