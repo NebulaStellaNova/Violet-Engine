@@ -386,6 +386,17 @@
 			]
 		},
 		{
+			"title": "Online",
+			"options": [
+				{
+					"name": "Display Name",
+					"description": "What name to show when online",
+					"saveID": "displayName",
+					"type": "input"
+				}
+			]
+		},
+		{
 			"title": "Miscellaneous",
 			"options": [
 				{

@@ -99,14 +99,13 @@ class MainMenu extends StateBackend {
 	public var fadeIn:Bool = true;
 
 	override public function new() {
-		instance = this;
 		super();
+		instance = this;
 	}
 
 	override public function create()
 	{
 		super.create();
-		instance = this;
 
 		NovaUtils.playMenuMusic();
 

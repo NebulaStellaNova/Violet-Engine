@@ -1,5 +1,8 @@
 package violet.states;
 
+import violet.backend.online.SocketHandler;
+import flixel.input.keyboard.FlxKey;
+import violet.backend.online.SocketHandler.ClientOutput;
 import violet.data.chart.ChartData.InternalChartEvent;
 import haxe.xml.Access;
 import violet.backend.utils.FileUtil;
@@ -426,6 +429,7 @@ class PlayState extends violet.backend.StateBackend {
 			});
 			add(cameraMovementSprite);
 		}
+		SocketHandler.onDataRecieved.add(handleSocketEvent);
 	}
 
 	var healthLerp:Float = 0.5;
@@ -443,6 +447,8 @@ class PlayState extends violet.backend.StateBackend {
 		super.update(elapsed);
 
 		if (!songStarted) Conductor.setSongPosition(0);
+
+		if (FlxG.keys.justPressed.SPACE) startCountdown(true);
 
 		staticExit = exitToMenu;
 
@@ -599,7 +605,7 @@ class PlayState extends violet.backend.StateBackend {
 		combo = 0;
 
 		note.wasMissed = true; note.alpha *= 0.6;
-		generalVocals.pause(); note.parent.vocals.pause();
+		if (note.parent.controllerType == PLAYER) { generalVocals.pause(); note.parent.vocals.pause(); }
 		playMissSound();
 
 		for (sustain in Note.filterTail(note.tail, true)) {
@@ -673,7 +679,7 @@ class PlayState extends violet.backend.StateBackend {
 		if (event.cancelled) return;
 
 		sustain.wasMissed = true; sustain.alpha *= 0.6;
-		generalVocals.pause(); sustain.parent.vocals.pause();
+		if (sustain.parent.controllerType == PLAYER) { generalVocals.pause(); sustain.parent.vocals.pause(); }
 		playMissSound();
 		for (sustain in Note.filterTail(sustain.parentNote.tail, true)) {
 			sustain.wasMissed = true;
@@ -700,8 +706,8 @@ class PlayState extends violet.backend.StateBackend {
 	var countdownTick = 0;
 
 
-	function startCountdown():Void {
-
+	function startCountdown(bypass:Bool = false):Void {
+		if (!bypass) return;
 		// Start Dialogue
 		if (!hasSeenDialogue) {
 			var sD:Array<ConverstationPiece> = ParseUtil.jsonOrYaml('songs/$song/start-dialogue', null, 'null');
@@ -1136,8 +1142,28 @@ class PlayState extends violet.backend.StateBackend {
 		runSongEvent('postUpdateOptions', event);
 	}
 
+	public function handleSocketEvent(data:ClientOutput) {
+		if (data.event.key == 'SPACE' && data.event.type == KEY_PRESS) {
+			startCountdown(true);
+		}
+		if (['note_left', 'note_down', 'note_up', 'note_right'].contains(data.event.key)) {
+			for (i in strumLines) {
+				if (i.controllerType == OPPONENT) {
+					var key = FlxKey.fromString(Options.data.controls.get(data.event.key)[0]);
+					if (data.event.type == KEY_PRESS) {
+						@:privateAccess i._on_press(new KeyboardEvent('keyDown', key, key), true);
+					} else {
+						@:privateAccess i._on_release(new KeyboardEvent('keyUp', key, key), true);
+					}
+
+				}
+			}
+		}
+	}
+
 	override public function destroy():Void {
 		callSongScripts('destroy');
+		SocketHandler.onDataRecieved.remove(handleSocketEvent);
 		if (recordingMode) ReplaySystem.stopRecording();
 		if (recordingMode) ReplaySystem.saveRecording(SONG.id);
 		if (playbackMode) ReplaySystem.stopReplay();

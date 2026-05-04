@@ -156,7 +156,8 @@ class StrumLine extends FlxGroup {
 		scale.set(1, 1); setPosition(chartData.strumPosition[0], chartData.strumPosition[1], chartData.strumPosIsPure);
 
 		__on_release = _->_on_release(_);
-		FlxG.stage.addEventListener(KeyboardEvent.KEY_DOWN, _on_press);
+		__on_press = _->_on_press(_);
+		FlxG.stage.addEventListener(KeyboardEvent.KEY_DOWN, __on_press);
 		FlxG.stage.addEventListener(KeyboardEvent.KEY_UP, __on_release);
 
 		// Rodney make this work thank.
@@ -364,20 +365,20 @@ class StrumLine extends FlxGroup {
 		notes.forEachExists((note:Note) -> {
 			if (note.tooLate && !note.wasHit && !note.wasMissed)
 				_onNoteMissed(note);
-			if (isComputer)
+			/* if (isComputer)
 				if (note.time < Conductor.framePosition && !note.tooLate && !note.wasHit && !note.wasMissed)
-					_onNoteHit(note);
+					_onNoteHit(note); */
 		});
 		// auto hit and sustain miss
 		sustains.forEachExists((sustain:Sustain) -> {
 			if (sustain.tooLate && !sustain.wasHit && !sustain.wasMissed)
 				_onSustainMissed(sustain);
-			if (isComputer)
+			/* if (isComputer)
 				if ((sustain.time + sustain.parentNote.time) < Conductor.framePosition && !sustain.tooLate && !sustain.wasHit && !sustain.wasMissed)
-					_onSustainHit(sustain);
+					_onSustainHit(sustain); */
 		});
 
-		if (isPlayer) {
+		// if (isPlayer) {
 			for (i => input in currentInputs) {
 				if (!input) continue;
 
@@ -400,7 +401,7 @@ class StrumLine extends FlxGroup {
 						_onSustainHit(sustain);
 				}
 			}
-		}
+		// }
 
 		super.update(elapsed);
 
@@ -483,12 +484,14 @@ class StrumLine extends FlxGroup {
 	final activeNoteLaneCursors:Array<Int> = [];
 	final activeSustainsByLane:Array<Array<Sustain>> = [];
 	final activeSustainLaneCursors:Array<Int> = [];
-	function _on_press(event:KeyboardEvent):Void {
+	function _on_press(event:KeyboardEvent, force:Bool = false):Void {
 		if (FlxG.state.subState != null) return;
-		if (isComputer) return;
+		if (isComputer && !force) return;
 		final inputId:Int = getKeyFromEvent(['note_left', 'note_down', 'note_up', 'note_right'], event.keyCode);
-		if (inputId < 0 || inputId >= strums.length) return;
-		if (!FlxG.keys.checkStatus(event.keyCode, JUST_PRESSED)) return;
+		if (!force) {
+			if (inputId < 0 || inputId >= strums.length) return;
+			if (!FlxG.keys.checkStatus(event.keyCode, JUST_PRESSED)) return;
+		}
 		currentInputs[inputId] = true;
 
 		final laneNotes = activeNotesByLane[inputId];
@@ -514,11 +517,13 @@ class StrumLine extends FlxGroup {
 
 	}
 
+
+	var __on_press:KeyboardEvent->Void;
 	var __on_release:KeyboardEvent->Void;
 
 	function _on_release(event:KeyboardEvent, force:Bool = false):Void {
 		if (FlxG.state.subState != null) return;
-		if (isComputer) return;
+		if (isComputer && !force) return;
 		final inputId:Int = getKeyFromEvent(['note_left', 'note_down', 'note_up', 'note_right'], event.keyCode);
 		if (!force) {
 			if (inputId < 0 || inputId >= strums.length) return;
@@ -545,7 +550,7 @@ class StrumLine extends FlxGroup {
 
 	override public function destroy():Void {
 		scale.put();
-		FlxG.stage.removeEventListener(KeyboardEvent.KEY_DOWN, _on_press);
+		FlxG.stage.removeEventListener(KeyboardEvent.KEY_DOWN, __on_press);
 		FlxG.stage.removeEventListener(KeyboardEvent.KEY_UP, __on_release);
 		super.destroy();
 	}

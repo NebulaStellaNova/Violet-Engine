@@ -1,5 +1,6 @@
 package violet.states.menus;
 
+import violet.backend.objects.options.InputOption;
 import flixel.FlxCamera;
 import flixel.math.FlxMath;
 import flixel.text.FlxText;
@@ -19,6 +20,7 @@ enum abstract OptionsType(String) {
 	var BOOL = 'bool';
 	var NUMBER = 'number';
 	var CONTROL = 'control';
+	var INPUT = 'input';
 }
 
 typedef OptionsData = {
@@ -186,7 +188,6 @@ class OptionsMenu extends SubStateBackend {
 
 	function generateOptions() {
 		for (i=>optionData in optionsData.menus[menuCurSelected].options) {
-
 			switch (optionData.type) {
 				case SECTION:
 					var option:BaseOption = new BaseOption('${optionData.name}', optionData.description);
@@ -233,6 +234,16 @@ class OptionsMenu extends SubStateBackend {
 					option.y = (FlxG.height/2) + ((i-optionCurSelected) * 100) - (option.alphabet.height/2);
 					option.updatePosition();
 					option.controlArray = Options.data.controls.get(optionData.saveID);
+					option.setEnabled(!optionData.disabled);
+					insert(0, option);
+					options.push(option);
+
+				case INPUT:
+					var option:InputOption = new InputOption('${optionData.name}:', optionData.description);
+					option.x = optionsListOffset;
+					option.y = (FlxG.height/2) + ((i-optionCurSelected) * 100) - (option.alphabet.height/2);
+					option.updatePosition();
+					option.field.text = Options.get(optionData.saveID);
 					option.setEnabled(!optionData.disabled);
 					insert(0, option);
 					options.push(option);
