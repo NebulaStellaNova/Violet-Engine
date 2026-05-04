@@ -2,6 +2,7 @@ package violet.data.notestyles;
 
 import flixel.math.FlxPoint;
 import openfl.display.BlendMode;
+import violet.backend.utils.ParseUtil;
 import violet.data.animation.NoteAnimationData;
 import violet.data.notestyles.NoteStyleData.NoteStyleProperties;
 
@@ -41,8 +42,23 @@ class NoteStyle {
 		splashProperties = new _NoteStyleProperties(_data?.splashes?.properties, _data?.properties);
 		holdCoverProperties = new _NoteStyleProperties(_data?.holdcovers?.properties, _data?.properties);
 
+		if (this._data?.underlay?.colors != null) {
+			final invalidList:Array<String> = [];
+			for (field in Reflect.fields(this._data.underlay.colors)) {
+				final mania:Null<Int> = Std.parseInt(field);
+				if (mania != null) {
+					final colors:Array<ParseColor> = Reflect.getProperty(this._data.underlay.colors, field);
+					noteColors.set(mania, [for (color in colors) color.toFlxColor()]);
+				} else invalidList.push(field);
+			}
+			if (invalidList.length != 0)
+				trace('error:Fields in colors map "${invalidList.join('", "')}" are not valid integers.');
+			invalidList.resize(0);
+		}
+
 		final global:Array<Float> = this._data.offsets ?? [0, 0];
 		globalOffset = new FlxReadOnlyPoint(global[0], global[1]);
+		underlayOffset = globalOffset.x + this._data?.underlay?.offset ?? 0;
 		final offset:Array<Float> = this._data.strums?.offsets ?? [0, 0];
 		strumOffset = new FlxReadOnlyPoint(globalOffset.x + offset[0], globalOffset.y + offset[1]);
 		final offset:Array<Float> = this._data.notes?.offsets ?? [0, 0];
@@ -69,6 +85,15 @@ class NoteStyle {
 	public final splashProperties:_NoteStyleProperties;
 	public final holdCoverProperties:_NoteStyleProperties;
 
+	public final noteColors:Map<Int, Array<FlxColor>> = new Map<Int, Array<FlxColor>>();
+	public function getNoteColor(id:Int, mania:Int = 4):FlxColor {
+		if (mania < 1) return [0xFFC24B99, 0xFF00FFFF, 0xFF12FA05, 0xFFF9393F][id % 4];
+		final colors:Array<FlxColor> = noteColors.get(mania) ?? [];
+		if (colors.length == 0)
+			return getNoteColor(id, mania - 1);
+		return colors[id % mania];
+	}
+
 	public function getSustainGapFix():Float {
 		return _data.sustains?.gapFixAmount ?? 0;
 	}
@@ -90,6 +115,7 @@ class NoteStyle {
 	}
 
 	public final globalOffset:FlxReadOnlyPoint;
+	public final underlayOffset:Float;
 	public final strumOffset:FlxReadOnlyPoint;
 	public final noteOffset:FlxReadOnlyPoint;
 	public final sustainOffset:FlxReadOnlyPoint;

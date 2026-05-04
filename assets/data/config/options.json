@@ -343,6 +343,12 @@
 							"state": true
 						}
 					]
+				},
+				{
+					"name": "Underlay For Player Only",
+					"description": "If checked, the underlay will only appear for player strumLines.",
+					"saveID": "underlayOnlyForPlayer",
+					"type": "bool"
 				}
 			]
 		},

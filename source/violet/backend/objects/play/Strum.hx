@@ -69,6 +69,10 @@ class Strum extends NovaSprite {
 		for (element in holdCovers) element.animation.finish();
 	}
 
+	public function applyUnderlayColor():Void
+		if (parent.underlay.lanes.length != 0) // jic
+			parent.underlay.lanes.members[ID % parent.underlay.lanes.length].setColor(styleMeta.getNoteColor(ID, parent.keyCount));
+
 	public function reloadStyle(?style:String):Void {
 		final lastAnim:String = animation?.name ?? 'static';
 		final wasReversed:Bool = animation?.curAnim?.reversed ?? false;

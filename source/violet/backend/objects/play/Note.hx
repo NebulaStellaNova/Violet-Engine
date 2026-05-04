@@ -147,6 +147,12 @@ class Note extends NovaSprite {
 		reloadStyle(style, true);
 	}
 
+	public function applyUnderlayColor():Void {
+		// TODO: Add notetype stuff later.
+		if (parent.underlay.lanes.length != 0) // jic
+			parent.underlay.lanes.members[id % parent.underlay.lanes.length].setColor(styleMeta.getNoteColor(id, parent.keyCount));
+	}
+
 	public function reloadStyle(?style:String, effectTail:Bool = false):Void {
 		this.anims.clear();
 		animation.destroyAnimations();
