@@ -679,7 +679,7 @@ class PlayState extends violet.backend.StateBackend {
 		if (event.cancelled) return;
 
 		sustain.wasMissed = true; sustain.alpha *= 0.6;
-		generalVocals.pause(); sustain.parent.vocals.pause();
+		if (sustain.parent.controllerType == PLAYER) { generalVocals.pause(); sustain.parent.vocals.pause(); }
 		playMissSound();
 		for (sustain in Note.filterTail(sustain.parentNote.tail, true)) {
 			sustain.wasMissed = true;
