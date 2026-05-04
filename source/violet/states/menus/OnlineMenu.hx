@@ -13,6 +13,8 @@ class OnlineMenu extends SubStateBackend {
 
 	public var posOffset:Float = 0;
 
+	public var bubbles:Array<NovaSprite> = [];
+
 	override function create() {
 		super.create();
 
@@ -24,6 +26,28 @@ class OnlineMenu extends SubStateBackend {
 		gradient.scale.set(FlxG.width, 1);
 		gradient.alpha = 0;
 		add(gradient);
+
+		for (i in 0...10) {
+			var tempBubble:NovaSprite = new NovaSprite(Paths.image('menus/onlinemenu/bubble2'));
+			tempBubble.y = FlxG.height + FlxG.random.int(0, FlxG.height);
+			tempBubble.x = FlxG.random.int(0, FlxG.width);
+			tempBubble.velocity.y = -FlxG.random.int(100, 300);
+			tempBubble.scale.x = tempBubble.scale.y = FlxG.random.float(0.5, 1.5);
+			tempBubble.alpha = 0.5;
+			tempBubble.blend = ADD;
+			add(tempBubble);
+			bubbles.push(tempBubble);
+
+			var tempBubble:NovaSprite = new NovaSprite(Paths.image('menus/onlinemenu/bubble1'));
+			tempBubble.y = FlxG.height + FlxG.random.int(0, FlxG.height);
+			tempBubble.x = FlxG.random.int(0, FlxG.width);
+			tempBubble.velocity.y = -FlxG.random.int(100, 300);
+			tempBubble.scale.x = tempBubble.scale.y = FlxG.random.float(0.5, 1.5);
+			tempBubble.alpha = 0.5;
+			tempBubble.blend = ADD;
+			add(tempBubble);
+			bubbles.push(tempBubble);
+		}
 
 		joinButton = new NovaSprite(Paths.image('menus/onlinemenu/join'));
 		joinButton.x = FlxG.width;
@@ -58,14 +82,22 @@ class OnlineMenu extends SubStateBackend {
 			FlxTween.tween(this, { posOffset: -FlxG.width*2 }, 0.5, { ease: FlxEase.smootherStepIn });
 			if (FlxG.mouse.overlaps(joinButton, camera)) {
 				FlxTimer.wait(0.5, ()->openSubState(new JoinMenu()));
+				persistentUpdate = true;
 			} else {
 				FlxTimer.wait(0.5, ()->openSubState(new HostMenu()));
+				persistentUpdate = true;
 			}
 		}
 
-		if (Controls.back) {
+		if (Controls.back && subState == null) {
 			if (Std.isOfType(_parentState, MainMenu)) cast(_parentState, MainMenu).bg.x = 0;
 			close();
+		}
+
+		for (i in bubbles) {
+			if (i.y < -100) {
+				i.y += FlxG.height + 100;
+			}
 		}
 	}
 
