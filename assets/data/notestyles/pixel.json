@@ -1,9 +1,10 @@
 {
 	"name": "Pixel (Week 6)",
 	"fallback": "default",
-	"offsets": [57.5, 6],
+	"offsets": [54, 6],
 	"isPixel": true,
 	"properties": {"scale": 6},
+	"underlay": { "offset": -4, "colors": { "4": ["#E276FF", "#3DCAFF", "#71E300", "#FF884E"] } },
 	"strums": {
 		"assetPath": "notes",
 		"animations": [
