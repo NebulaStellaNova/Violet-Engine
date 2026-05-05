@@ -57,18 +57,18 @@ class NoteStyle {
 		}
 
 		final global:Array<Float> = this._data.offsets ?? [0, 0];
-		globalOffset = new FlxReadOnlyPoint(global[0], global[1]);
-		underlayOffset = globalOffset.x + this._data?.underlay?.offset ?? 0;
+		globalOffsets = new FlxReadOnlyPoint(global[0], global[1]);
+		underlayOffset = globalOffsets.x + (this._data?.underlay?.offset ?? 0);
 		final offset:Array<Float> = this._data.strums?.offsets ?? [0, 0];
-		strumOffset = new FlxReadOnlyPoint(globalOffset.x + offset[0], globalOffset.y + offset[1]);
+		strumOffsets = new FlxReadOnlyPoint(globalOffsets.x + offset[0], globalOffsets.y + offset[1]);
 		final offset:Array<Float> = this._data.notes?.offsets ?? [0, 0];
-		noteOffset = new FlxReadOnlyPoint(globalOffset.x + offset[0], globalOffset.y + offset[1]);
+		noteOffsets = new FlxReadOnlyPoint(globalOffsets.x + offset[0], globalOffsets.y + offset[1]);
 		final offset:Array<Float> = this._data.sustains?.offsets ?? [0, 0];
-		sustainOffset = new FlxReadOnlyPoint(globalOffset.x + offset[0], globalOffset.y + offset[1]);
+		sustainOffsets = new FlxReadOnlyPoint(globalOffsets.x + offset[0], globalOffsets.y + offset[1]);
 		final offset:Array<Float> = this._data?.splashes?.offsets ?? [0, 0];
-		splashOffset = new FlxReadOnlyPoint(globalOffset.x + offset[0], globalOffset.y + offset[1]);
+		splashOffsets = new FlxReadOnlyPoint(globalOffsets.x + offset[0], globalOffsets.y + offset[1]);
 		final offset:Array<Float> = this._data?.holdcovers?.offsets ?? [0, 0];
-		holdcoverOffset = new FlxReadOnlyPoint(globalOffset.x + offset[0], globalOffset.y + offset[1]);
+		holdcoverOffsets = new FlxReadOnlyPoint(globalOffsets.x + offset[0], globalOffsets.y + offset[1]);
 	}
 
 	public function getName():String {
@@ -114,13 +114,13 @@ class NoteStyle {
 		return !(_data?.holdcovers?.isPixel ?? _data?.isPixel ?? false);
 	}
 
-	public final globalOffset:FlxReadOnlyPoint;
+	public final globalOffsets:FlxReadOnlyPoint;
 	public final underlayOffset:Float;
-	public final strumOffset:FlxReadOnlyPoint;
-	public final noteOffset:FlxReadOnlyPoint;
-	public final sustainOffset:FlxReadOnlyPoint;
-	public final splashOffset:FlxReadOnlyPoint;
-	public final holdcoverOffset:FlxReadOnlyPoint;
+	public final strumOffsets:FlxReadOnlyPoint;
+	public final noteOffsets:FlxReadOnlyPoint;
+	public final sustainOffsets:FlxReadOnlyPoint;
+	public final splashOffsets:FlxReadOnlyPoint;
+	public final holdcoverOffsets:FlxReadOnlyPoint;
 
 	public function getStrumAssetPath():String {
 		final nullCheck:String = _data.strums?.assetPath ?? _data?.assetPath ?? 'strums';

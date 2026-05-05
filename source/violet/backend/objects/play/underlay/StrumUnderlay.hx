@@ -24,7 +24,6 @@ class StrumUnderlay extends FlxTypedGroup<FlxBackdrop> {
 		for (bg in [bg, flashBg]) {
 			bg.makeGraphic(1, FlxG.height, bg == flashBg ? FlxColor.WHITE : FlxColor.BLACK);
 			bg.scale.x = Note.swagWidth;
-			bg.antialiasing = false;
 			bg.updateHitbox();
 			add(bg);
 		}
@@ -39,14 +38,16 @@ class StrumUnderlay extends FlxTypedGroup<FlxBackdrop> {
 	override public function update(elapsed:Float) {
 		super.update(elapsed);
 
-		bg.x = flashBg.x = parent.x + @:privateAccess parent.styleMeta.getUnderlayOffset();
+		bg.x = flashBg.x = parent.x + @:privateAccess parent.styleMeta.underlayOffset;
+		bg.y = flashBg.y = parent.y + (parent.height / 2) - (bg.height / 2);
+		// bg.angle = flashBg.angle = parent.scrollAngle ?? parent.parent.scrollAngle ?? StrumLine.generalScrollAngle(parent.parent);
 		bg.alpha = Options.data.underlayOpacity / 100;
 
 		if (parent.animation.name == 'confirm') {
 			if (parent.animation.curAnim.curFrame == 0)
-				flashBg.alpha = Options.data.laneFlashIntensity / 100;
+				flashBg.alpha = bg.alpha;
 		} else if (parent.animation.name == 'press')
-			flashBg.alpha = 0.25 * (Options.data.laneFlashIntensity / 100);
+			flashBg.alpha = 0.25 * bg.alpha;
 
 		flashBg.alpha = MathUtil.lerp(flashBg.alpha, 0, 0.2);
 	}

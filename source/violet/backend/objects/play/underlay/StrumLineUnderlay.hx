@@ -17,7 +17,6 @@ class StrumLineUnderlay extends FlxBackdrop {
 		super(Y);
 		makeGraphic(1, FlxG.height, FlxColor.BLACK);
 		lanes = new FlxTypedGroup<StrumUnderlay>();
-		antialiasing = false;
 	}
 
 	public function generateIndividualLanes():Void {
@@ -65,7 +64,7 @@ class StrumLineUnderlay extends FlxBackdrop {
 			if (!strum.visible) continue;
 			if (strum.alpha <= 0) continue;
 
-			var minX:Float = strum.x + @:privateAccess strum.styleMeta.getUnderlayOffset();
+			var minX:Float = strum.x + @:privateAccess strum.styleMeta.underlayOffset;
 			if (minX < value) value = minX;
 		}
 
@@ -79,7 +78,7 @@ class StrumLineUnderlay extends FlxBackdrop {
 			if (!strum.visible) continue;
 			if (strum.alpha <= 0) continue;
 
-			var maxX:Float = strum.x + Note.swagWidth + @:privateAccess strum.styleMeta.getUnderlayOffset();
+			var maxX:Float = strum.x + Note.swagWidth + @:privateAccess strum.styleMeta.underlayOffset;
 			if (maxX > value) value = maxX;
 		}
 
