@@ -16,13 +16,13 @@
 			"opponent": "senpai-angry",
 			"altInstrumentals": ["pico"],
 			"opponentVocals": ["senpai"],
-			"playerVocals": ["bf"],
-			"hudStyle": "pixel"
+			"playerVocals": ["bf"]
 		},
 		"stage": "school",
 		"noteStyle": "pixel",
 		"ratings": { "easy": 2, "normal": 3, "hard": 4 },
-		"album": "volume2"
+		"album": "volume2",
+    "hudStyle": "pixel"
 	},
 	"generatedBy": "Friday Night Funkin' - v0.8.1",
 	"timeChanges": [{ "t": 0, "b": 0, "bpm": 120, "bt": [4, 4, 4, 4] }],
