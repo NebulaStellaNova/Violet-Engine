@@ -1,5 +1,6 @@
 package violet.backend.filesystem;
 
+import flixel.util.FlxStringUtil;
 import violet.states.PlayState;
 import violet.data.character.Character;
 import violet.data.stage.Stage;
@@ -23,8 +24,11 @@ class Cache {
 			}
 		}
 
-		FlxG.signals.preStateCreate.add(_->clear());
-
+		FlxG.signals.preStateSwitch.add(()-> {
+			var nextStateID = FlxStringUtil.getClassName(Type.getClass(@:privateAccess FlxG.game._nextState.createInstance()), true);
+			var previousStateID = FlxStringUtil.getClassName(FlxG.state, true);
+			if (nextStateID != previousStateID) clear();
+		});
 	}
 
 	static final cache:Map<String, Dynamic> = new Map<String, Dynamic>();
