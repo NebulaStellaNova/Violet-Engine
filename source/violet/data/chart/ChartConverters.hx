@@ -369,7 +369,9 @@ class ChartConverters {
 			"phillyTrainErect" => "train-erect",
 			"mallXmas" => "mall",
 			"mallXmasErect" => "mall-erect",
-
+			"schoolErect" => "school-erect",
+			"schoolEvil" => "school-evil",
+			"schoolEvilErect" => "school-evil-erect"
 		];
 		if (!aliases.exists(stageID)) return stageID;
 		return aliases.get(stageID);
