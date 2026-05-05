@@ -143,6 +143,8 @@ class ChartConverters {
 
 			instSuffix: meta.playData.characters.instrumental,
 
+			hudStyle: meta.playData.hudStyle,
+
 			bpm: meta.timeChanges[0].bpm,
 			beatsPerMeasure: meta.timeChanges[0].n,
 			stepsPerBeat: meta.timeChanges[0].d,

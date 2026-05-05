@@ -300,7 +300,7 @@ class PlayState extends violet.backend.StateBackend {
 			add(comboGroup);
 		}
 
-		healthBar = new HealthBar();
+		healthBar = new HealthBar(songData._data.hudStyle);
 		healthBar.y = Options.data.downscroll ? FlxG.height * 0.1 : FlxG.height * 0.9;
 		healthBar.camera = camHUD;
 		healthBar.screenCenter(X);

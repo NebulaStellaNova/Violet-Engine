@@ -17,7 +17,8 @@
     "stage": "schoolEvilErect",
     "noteStyle": "pixel",
     "ratings": { "erect": 9, "nightmare": 10 },
-    "album": "volume3"
+    "album": "volume3",
+    "hudStyle": "pixel"
   },
   "generatedBy": "Friday Night Funkin' - v0.8.1",
   "timeChanges": [{ "t": 0, "b": 0, "bpm": 190, "bt": [4, 4, 4, 4] }],

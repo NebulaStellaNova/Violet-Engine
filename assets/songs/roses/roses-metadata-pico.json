@@ -12,7 +12,8 @@
       "opponent": "senpai-angry",
       "instrumental": "pico",
       "opponentVocals": ["senpai-angry"],
-      "playerVocals": ["pico-pixel"]
+      "playerVocals": ["pico-pixel"],
+      "hudStyle": "pixel"
     },
     "stage": "schoolErect",
     "noteStyle": "pixel",
