@@ -197,6 +197,22 @@ class Macro {
 			default:
 		}
 
+		var loadGraphicFunc = classFields.filter(field -> return field.name == 'loadGraphic')[0];
+		switch (loadGraphicFunc.kind) {
+			case FFun(f):
+				var initExpr:Expr = f.expr;
+				f.expr = macro {
+					if (graphic is String) {
+						if (graphic != "flixel/images/logo/default.png") {
+							graphic = violet.backend.filesystem.Cache.image(graphic, 'root', null, true);
+						}
+					}
+					$initExpr;
+				}
+				loadGraphicFunc.kind = FFun(f);
+			default:
+		}
+
 		// I hate that I hate to do this twice.
 		var onScreenFunc = classFields.filter(field -> return field.name == 'isOnScreen')[0];
 		switch (onScreenFunc.kind) {
