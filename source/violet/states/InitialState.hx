@@ -63,7 +63,7 @@ class InitialState extends StateBackend { // for now
 			var nextStateID = FlxStringUtil.getClassName(Type.getClass(@:privateAccess FlxG.game._nextState.createInstance()), true);
 			for (data in stateRedirects) {
 				if (data.state == nextStateID) {
-					@:privateAccess FlxG.game._nextState = new ClassData(data.target).target;
+					@:privateAccess FlxG.game._nextState = new ModState(data.target);
 					break;
 				}
 			}
@@ -159,9 +159,14 @@ class InitialState extends StateBackend { // for now
 	public static function refreshRedirects() {
 		stateRedirects.resize(0);
 		for (i in ModdingAPI.getActiveMods()) {
-			var thisOne:Array<RedirectPiece> = ParseUtil.jsonOrYaml('${ModdingAPI.MOD_FOLDER}/${i.folder}/data/config/stateRedirects', 'root', 'null') ?? (cast []); // bs mane
-			if (i.stateRedirects != null) thisOne = thisOne.concat(i.stateRedirects);
-			stateRedirects = stateRedirects.concat(thisOne);
+			if (i.stateRedirects != null) {
+				for (field in i.stateRedirects.keys()) {
+					stateRedirects.push({
+						state: field,
+						target: i.stateRedirects.get(field)
+					});
+				}
+			}
 		}
 	}
 

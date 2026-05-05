@@ -15,6 +15,7 @@ import thx.semver.Version;
 import violet.backend.scripting.ScriptPack;
 import violet.backend.utils.FileUtil;
 import violet.backend.utils.ParseUtil;
+import haxe.DynamicAccess;
 
 typedef RedirectPiece = {
 	var state:String;
@@ -43,7 +44,19 @@ typedef ModMeta = {
 	var mod_version:String; // Version is being weird /shrug
 
 	var ?hideBaseSongs:Bool;
-	var ?stateRedirects:Array<RedirectPiece>;
+
+	/**
+		Used to redirect a source state to a scripted state.
+
+		Example Usage:
+		```json
+		{
+			"TitleState": "MyCustomTitleState",
+			"PlayState": "MyCustomPlayState"
+		}
+	*/
+	var ?stateRedirects:DynamicAccess<String>;
+
 	var ?windowTitle:String;
 }
 
