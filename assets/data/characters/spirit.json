@@ -1,0 +1,43 @@
+{
+  "version": "1.0.0",
+  "name": "Spirit",
+  "assetPath": "characters/spirit",
+  "singTime": 8.0,
+  "renderType": "sparrow",
+  "isPixel": true,
+  "scale": 6,
+  "offsets": [231, 240],
+  "cameraOffsets": [-31, -40],
+  "animations": [
+    {
+      "name": "idle",
+      "prefix": "idle spirit",
+      "frameIndices": [],
+      "offsets": [0, 0]
+    },
+    {
+      "name": "singLEFT",
+      "prefix": "left",
+      "frameIndices": [],
+      "offsets": [2, -2]
+    },
+    {
+      "name": "singDOWN",
+      "prefix": "spirit down",
+      "frameIndices": [],
+      "offsets": [65, 64]
+    },
+    {
+      "name": "singUP",
+      "prefix": "up",
+      "frameIndices": [],
+      "offsets": [0, 9]
+    },
+    {
+      "name": "singRIGHT",
+      "prefix": "right",
+      "frameIndices": [],
+      "offsets": [-3, 1]
+    }
+  ]
+}

@@ -9,6 +9,7 @@ class HealthBar extends FlxSpriteGroup {
 
 	public var left:NovaSprite;
 	public var right:NovaSprite;
+	public var overlay:NovaSprite;
 
 	public var position(default, set):Float;
 	function set_position(value:Float) {
@@ -28,16 +29,23 @@ class HealthBar extends FlxSpriteGroup {
 	function set_rightColor(value:FlxColor) return right.color = value;
 
 
-	public function new(x = 0, y = 0) {
+	public function new(x = 0, y = 0, ?style:String) {
 		super(x, y);
 
-		left = new NovaSprite(Paths.image("game/hud/healthBar"));
-		left.antialiasing = true;
+		left = new NovaSprite(Paths.image("game/hud/healthBar" + (style != null ? '-$style' : '')));
+		left.antialiasing = style != 'pixel';
 		add(left);
 
-		right = new NovaSprite(Paths.image("game/hud/healthBar"));
-		right.antialiasing = true;
+		right = new NovaSprite(Paths.image("game/hud/healthBar" + (style != null ? '-$style' : '')));
+		right.antialiasing = style != 'pixel';
 		add(right);
+
+		var overlayPath = Paths.image("game/hud/healthBar" + (style != null ? '-$style' : '') + "-overlay");
+		if (overlayPath != '') {
+			overlay = new NovaSprite(overlayPath);
+			overlay.antialiasing = style != 'pixel';
+			add(overlay);
+		}
 
 		defaultWidth = left.width;
 

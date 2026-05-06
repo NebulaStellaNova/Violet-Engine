@@ -143,6 +143,8 @@ class ChartConverters {
 
 			instSuffix: meta.playData.characters.instrumental,
 
+			hudStyle: meta.playData.hudStyle,
+
 			bpm: meta.timeChanges[0].bpm,
 			beatsPerMeasure: meta.timeChanges[0].n,
 			stepsPerBeat: meta.timeChanges[0].d,
@@ -369,7 +371,9 @@ class ChartConverters {
 			"phillyTrainErect" => "train-erect",
 			"mallXmas" => "mall",
 			"mallXmasErect" => "mall-erect",
-
+			"schoolErect" => "school-erect",
+			"schoolEvil" => "school-evil",
+			"schoolEvilErect" => "school-evil-erect"
 		];
 		if (!aliases.exists(stageID)) return stageID;
 		return aliases.get(stageID);
