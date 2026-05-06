@@ -1,8 +1,6 @@
 package violet.backend.options;
 
 import flixel.util.FlxSave;
-import flixel.FlxG;
-import flixel.FlxSprite;
 import lime.app.Application;
 
 @:structInit class OptionsData {
@@ -72,6 +70,7 @@ import lime.app.Application;
 
 	public var fancyLaneUnderlay:Bool = false;
 	public var laneFlashIntensity:Float = 100; // %
+	public var underlayOnlyForPlayer:Bool = true;
 
 	public var enableNoteSplashes:Bool = true;
 	public var enableHoldCovers:Bool = true;
@@ -146,7 +145,7 @@ class Options {
 	 */
 	private static function load() {
 		for (field in Reflect.fields(save.data)) {
-			if (Reflect.hasField(data, field)) continue;
+			if (Reflect.getProperty(data, field) == null) continue;
 			var value = Reflect.getProperty(save.data, field);
 
 			if (value == null) {

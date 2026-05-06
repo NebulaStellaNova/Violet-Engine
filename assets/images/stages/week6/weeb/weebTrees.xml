@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TextureAtlas imagePath="weebTrees.png">
+	<SubTexture name="trees_0000" x="0" y="0" width="512" height="512" />
+	<SubTexture name="trees_0001" x="513" y="0" width="512" height="512" />
+	<SubTexture name="trees_0002" x="1539" y="1026" width="512" height="512" />
+	<SubTexture name="trees_0003" x="2052" y="513" width="512" height="512" />
+	<SubTexture name="trees_0004" x="2565" y="0" width="512" height="512" />
+	<SubTexture name="trees_0005" x="3078" y="0" width="512" height="512" />
+	<SubTexture name="trees_0006" x="2565" y="513" width="512" height="512" />
+	<SubTexture name="trees_0007" x="2052" y="1026" width="512" height="512" />
+	<SubTexture name="trees_0008" x="2565" y="1026" width="512" height="512" />
+	<SubTexture name="trees_0009" x="3078" y="513" width="512" height="512" />
+	<SubTexture name="trees_0010" x="1026" y="0" width="512" height="512" />
+	<SubTexture name="trees_0011" x="0" y="513" width="512" height="512" />
+	<SubTexture name="trees_0012" x="513" y="513" width="512" height="512" />
+	<SubTexture name="trees_0013" x="0" y="1026" width="512" height="512" />
+	<SubTexture name="trees_0014" x="513" y="1026" width="512" height="512" />
+	<SubTexture name="trees_0015" x="1026" y="513" width="512" height="512" />
+	<SubTexture name="trees_0016" x="1026" y="1026" width="512" height="512" />
+	<SubTexture name="trees_0017" x="1539" y="0" width="512" height="512" />
+	<SubTexture name="trees_0018" x="1539" y="513" width="512" height="512" />
+	<SubTexture name="trees_0019" x="2052" y="0" width="512" height="512" />
+</TextureAtlas>

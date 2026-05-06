@@ -6,12 +6,16 @@ import hxdiscord_rpc.Types;
 
 class DiscordRPC {
 
+	public static var id(default, set):String;
+	static function set_id(value:String):String {
+		setRPC(value);
+		return value;
+	}
+
+	public static var discordPresence:DiscordRichPresence = new DiscordRichPresence();
+
 	public static function init() {
-		final handlers:DiscordEventHandlers = new DiscordEventHandlers();
-		handlers.ready = cpp.Function.fromStaticFunction(onReady);
-		handlers.disconnected = cpp.Function.fromStaticFunction(onDisconnected);
-		handlers.errored = cpp.Function.fromStaticFunction(onError);
-		Discord.Initialize("1481604217335713814", cpp.RawPointer.addressOf(handlers), false, null);
+		setRPC('1481604217335713814');
 
 		Main.threadCallacks.add(() -> {
 			#if DISCORD_DISABLE_IO_THREAD
@@ -21,6 +25,15 @@ class DiscordRPC {
 		});
 	}
 
+	private static function setRPC(id:String) {
+		Discord.Shutdown();
+		final handlers:DiscordEventHandlers = new DiscordEventHandlers();
+		handlers.ready = cpp.Function.fromStaticFunction(onReady);
+		handlers.disconnected = cpp.Function.fromStaticFunction(onDisconnected);
+		handlers.errored = cpp.Function.fromStaticFunction(onError);
+		Discord.Initialize(id, cpp.RawPointer.addressOf(handlers), false, null);
+	}
+
 	private static function onReady(request:cpp.RawConstPointer<DiscordUser>) {
 		final username:String = request[0].username;
 		final globalName:String = request[0].globalName;
@@ -28,16 +41,24 @@ class DiscordRPC {
 
 		trace('sys:Discord: Connected to user! $username${discriminator != 0 ? '#$discriminator' : ''} ($globalName)');
 
-		final discordPresence:DiscordRichPresence = new DiscordRichPresence();
 		discordPresence.type = DiscordActivityType_Playing;
 		discordPresence.details = "In the menus";
 		discordPresence.largeImageKey = "https://files.catbox.moe/mp8wja.png";
 
 		final button:DiscordButton = new DiscordButton();
-		button.label = "Violet Engine Discord";
-		button.url = "https://discord.gg/A3Hjgsp37r";
+		button.label = "Source Code";
+		button.url = "https://github.com/NebulaStellaNova/Violet-Engine";
 		discordPresence.buttons[0] = button;
 
+		final button:DiscordButton = new DiscordButton();
+		button.label = "Community Discord";
+		button.url = "https://discord.gg/A3Hjgsp37r";
+		discordPresence.buttons[1] = button;
+
+		confirmChanges();
+	}
+
+	public static function confirmChanges() {
 		Discord.UpdatePresence(cpp.RawConstPointer.addressOf(discordPresence));
 	}
 

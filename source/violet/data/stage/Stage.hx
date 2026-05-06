@@ -102,7 +102,7 @@ class Stage extends flixel.group.FlxGroup {
 					for (i in i?.animations ?? []) {
 						prop.addAnimFromData(i);
 					}
-					if (i?.animations?.length > 0) prop.playAnim(i.startingAnimation ??= prop.animationList[0], true);
+					if (prop.animationList.length != 0) prop.playAnim(i.startingAnimation ?? prop.animationList[0], true);
 					add(prop);
 					stageScripts.set(i?.id ?? i.name, prop);
 					applyProperties(prop, i.properties ?? {});

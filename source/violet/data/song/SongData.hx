@@ -38,4 +38,6 @@ typedef SongData = {
 	public var ?needsVoices:Bool;
 
 	public var ?isDev:Bool; // Hides the song in freeplay if developer is disabled.
+
+	public var ?hudStyle:String;
 }

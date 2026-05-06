@@ -3,7 +3,6 @@ package violet.states;
 import violet.backend.online.SocketHandler;
 import flixel.input.keyboard.FlxKey;
 import violet.backend.online.SocketHandler.ClientOutput;
-import violet.data.chart.ChartData.InternalChartEvent;
 import haxe.xml.Access;
 import violet.backend.utils.FileUtil;
 import openfl.events.KeyboardEvent;
@@ -25,6 +24,7 @@ import violet.backend.objects.play.ComboGroup;
 import violet.backend.objects.play.HealthBar;
 import violet.backend.objects.play.Note;
 import violet.backend.objects.play.HudText;
+import violet.backend.objects.play.Strum;
 import violet.backend.objects.play.StrumLine;
 import violet.backend.objects.play.Sustain;
 import violet.backend.options.Options;
@@ -39,11 +39,10 @@ import violet.data.Constants;
 import violet.data.Scoring;
 import violet.data.character.Character;
 import violet.data.chart.Chart;
-import violet.data.chart.ChartData.ChartEvent;
+import violet.data.chart.ChartData;
 import violet.data.chart.ChartRegistry;
 import violet.data.icon.HealthIcon;
 import violet.data.song.Song;
-import violet.data.song.SongRegistry;
 import violet.data.stage.Stage;
 import violet.states.menus.FreeplayMenu;
 import violet.states.menus.StoryMenu;
@@ -229,7 +228,9 @@ class PlayState extends violet.backend.StateBackend {
 		}
 
 		ModdingAPI.checkForScripts('songs', songScripts);
+		ModdingAPI.checkForScripts('data/events', songScripts);
 		ModdingAPI.checkForScripts('data/scripts/songs', songScripts);
+		ModdingAPI.checkForScripts('data/scripts/events', songScripts);
 		ModdingAPI.checkForScripts('songs/$song/scripts', songScripts);
 		ModdingAPI.checkForScripts('songs/$song/scripts/$difficulty', songScripts);
 		songScripts.parent = this;
@@ -303,7 +304,7 @@ class PlayState extends violet.backend.StateBackend {
 			add(comboGroup);
 		}
 
-		healthBar = new HealthBar();
+		healthBar = new HealthBar(songData._data.hudStyle);
 		healthBar.y = Options.data.downscroll ? FlxG.height * 0.1 : FlxG.height * 0.9;
 		healthBar.camera = camHUD;
 		healthBar.screenCenter(X);
@@ -523,7 +524,9 @@ class PlayState extends violet.backend.StateBackend {
 	}
 
 	function onVoidTap(id:Int, strumLine:StrumLine) {
-		strumLine.strums.members[id].playStrumAnim('press', ghostTapping);
+		final strum:Strum = strumLine.strums.members[id];
+		strum.playStrumAnim('press', ghostTapping);
+		strum.applyUnderlayColor();
 		if (!ghostTapping) {
 			playMissSound();
 			for (char in strumLine.characters)
@@ -547,6 +550,7 @@ class PlayState extends violet.backend.StateBackend {
 		note.wasHit = true; note.visible = false;
 		generalVocals.resume(); note.parent.vocals.resume();
 		if (event.playStrumAnim) note.parentStrum.playStrumAnim('confirm', true);
+		note.applyUnderlayColor();
 
 		if (!event.animCancelled)
 			for (i=>char in note.parent.characters) {
@@ -638,6 +642,7 @@ class PlayState extends violet.backend.StateBackend {
 		sustain.wasHit = true;
 		generalVocals.resume(); sustain.parent.vocals.resume();
 		if (event.playStrumAnim) sustain.parentStrum.playStrumAnim('confirm', true);
+		sustain.parentNote.applyUnderlayColor();
 
 		if (!event.animCancelled)
 			for (char in sustain.parent.characters)
@@ -1112,7 +1117,6 @@ class PlayState extends violet.backend.StateBackend {
 				/* if (strumLine.scrollAngle != null)
 					if (strumLine.downscroll != prevScroll)
 						strumLine.scrollAngle += 180; */
-				strumLine.generateLanes();
 				strumLine.setPosition(strumLine.chartData.strumPosition[0], strumLine.chartData.strumPosition[1], strumLine.chartData.strumPosIsPure);
 
 				// allow notes to update

@@ -143,6 +143,7 @@ class Main extends openfl.display.Sprite {
 		#end
 
 		SocketHandler.connect();
+		FlxG.mouse.visible = false;
 	}
 
 }

@@ -25,7 +25,7 @@ function postCreate() {
 		i.shader = colorShader;
 	}
 
-    mist1 = createMist('stages/week4/erect/mistMid');
+    mist1 = new FlxBackdrop(Paths.image('stages/week4/erect/mistMid'), X);
     mist1.setPosition(-650, -100);
     mist1.scrollFactor.set(1.1, 1.1);
     mist1.zIndex = 400;
@@ -35,7 +35,7 @@ function postCreate() {
     mist1.velocity.x = 1700;
     add(mist1);
 
-    mist2 = createMist('stages/week4/erect/mistBack');
+    mist2 = new FlxBackdrop(Paths.image('stages/week4/erect/mistBack'), X);
     mist2.setPosition(-650, -100);
     mist2.scrollFactor.set(1.2, 1.2);
     mist2.zIndex = 401;
@@ -46,7 +46,7 @@ function postCreate() {
     mist1.scale.set(1.3, 1.3);
     add(mist2);
 
-    mist3 = createMist('stages/week4/erect/mistMid');
+    mist3 = new FlxBackdrop(Paths.image('stages/week4/erect/mistMid'), X);
     mist3.setPosition(-650, -100);
     mist3.scrollFactor.set(0.8, 0.8);
     mist3.zIndex = 99;
@@ -57,7 +57,7 @@ function postCreate() {
     mist3.scale.set(1.5, 1.5);
     add(mist3);
 
-    mist4 = createMist('stages/week4/erect/mistBack');
+    mist4 = new FlxBackdrop(Paths.image('stages/week4/erect/mistBack'), X);
     mist4.setPosition(-650, -380);
     mist4.scrollFactor.set(0.6, 0.6);
     mist4.zIndex = 98;
@@ -68,7 +68,7 @@ function postCreate() {
     mist4.scale.set(1.5, 1.5);
     add(mist4);
 
-    mist5 = createMist('stages/week4/erect/mistMid');
+    mist5 = new FlxBackdrop(Paths.image('stages/week4/erect/mistMid'), X);
     mist5.setPosition(-650, -400);
     mist5.scrollFactor.set(0.2, 0.2);
     mist5.zIndex = 15;
@@ -78,10 +78,6 @@ function postCreate() {
     mist5.velocity.x = 100;
     mist5.scale.set(1.5, 1.5);
     add(mist5);
-}
-
-function createMist(path:String):FlxBackdrop {
-    return new FlxBackdrop(Cache.image(path), X);
 }
 
 var _timer:Float = 0;
