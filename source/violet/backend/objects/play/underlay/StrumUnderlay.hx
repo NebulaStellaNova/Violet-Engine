@@ -45,9 +45,9 @@ class StrumUnderlay extends FlxTypedGroup<FlxBackdrop> {
 
 		if (parent.animation.name == 'confirm') {
 			if (parent.animation.curAnim.curFrame == 0)
-				flashBg.alpha = bg.alpha;
+				flashBg.alpha = Options.data.laneFlashIntensity / 100;
 		} else if (parent.animation.name == 'press')
-			flashBg.alpha = 0.25 * bg.alpha;
+			flashBg.alpha = 0.25 * (Options.data.laneFlashIntensity / 100);
 
 		flashBg.alpha = MathUtil.lerp(flashBg.alpha, 0, 0.2);
 	}

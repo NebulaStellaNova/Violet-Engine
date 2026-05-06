@@ -149,8 +149,7 @@ class Note extends NovaSprite {
 
 	public function applyUnderlayColor():Void {
 		// TODO: Add notetype stuff later.
-		if (parent.underlay.lanes.length != 0) // jic
-			parent.underlay.lanes.members[id % parent.underlay.lanes.length].setColor(styleMeta.getNoteColor(id, parent.keyCount));
+		parentStrum.underlay.setColor(styleMeta.getNoteColor(id, parent.keyCount));
 	}
 
 	public function reloadStyle(?style:String, effectTail:Bool = false):Void {

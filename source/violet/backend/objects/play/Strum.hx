@@ -1,6 +1,7 @@
 package violet.backend.objects.play;
 
 import violet.backend.audio.Conductor;
+import violet.backend.objects.play.underlay.StrumUnderlay;
 import violet.backend.options.Options;
 import violet.data.notestyles.NoteStyle;
 import violet.data.notestyles.NoteStyleRegistry;
@@ -11,6 +12,12 @@ class Strum extends NovaSprite {
 	 * The parent strumline.
 	 */
 	public final parent:StrumLine;
+	/**
+	 * The underlay lane the strum owns.
+	 */
+	public var underlay(get, never):StrumUnderlay;
+	inline function get_underlay():StrumUnderlay
+		return parent.underlay.lanes.members[ID];
 
 	/**
 	 * The style the strum will use.
@@ -70,8 +77,7 @@ class Strum extends NovaSprite {
 	}
 
 	public function applyUnderlayColor():Void
-		if (parent.underlay.lanes.length != 0) // jic
-			parent.underlay.lanes.members[ID % parent.underlay.lanes.length].setColor(styleMeta.getNoteColor(ID, parent.keyCount));
+		this.underlay.setColor(styleMeta.getNoteColor(ID, parent.keyCount));
 
 	public function reloadStyle(?style:String):Void {
 		final lastAnim:String = animation?.name ?? 'static';
