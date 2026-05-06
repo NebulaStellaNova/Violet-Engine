@@ -113,7 +113,7 @@ class Sustain extends NovaSprite {
 		loadSprite(styleMeta.getSustainAssetPath());
 		for (data in styleMeta.getSustainAnimations(id, parent.keyCount))
 			addAnimFromData(data);
-		globalOffset.set(styleMeta.sustainOffset.x, styleMeta.sustainOffset.y);
+		globalOffset.set(styleMeta.sustainOffsets.x, styleMeta.sustainOffsets.y);
 		this.antialiasing = styleMeta.isSustainPixel();
 
 		playAnim(isEnd ? 'end' : 'tail', true);
