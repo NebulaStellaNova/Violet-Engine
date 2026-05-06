@@ -147,6 +147,11 @@ class Note extends NovaSprite {
 		reloadStyle(style, true);
 	}
 
+	public function applyUnderlayColor():Void {
+		// TODO: Add notetype stuff later.
+		parentStrum.underlay.setColor(styleMeta.getNoteColor(id, parent.keyCount));
+	}
+
 	public function reloadStyle(?style:String, effectTail:Bool = false):Void {
 		this.anims.clear();
 		animation.destroyAnimations();
@@ -155,8 +160,7 @@ class Note extends NovaSprite {
 		loadSprite(styleMeta.getNoteAssetPath());
 		for (data in styleMeta.getNoteAnimations(id, parent.keyCount))
 			addAnimFromData(data);
-		var lol:Array<Float> = styleMeta.getNoteOffsets();
-		globalOffset.set(lol[0], lol[1]);
+		globalOffset.set(styleMeta.noteOffsets.x, styleMeta.noteOffsets.y);
 		this.antialiasing = styleMeta.isNotePixel();
 		if (effectTail) for (sustain in tail) sustain.reloadStyle(style);
 

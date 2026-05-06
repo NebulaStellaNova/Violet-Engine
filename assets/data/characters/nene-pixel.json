@@ -5,6 +5,7 @@
   "startingAnimation": "danceRight",
   "isPixel": true,
   "scale": 6,
+  "renderType": "sparrow",
   "offsets": [-7, -23],
   "cameraOffsets": [-7, -107],
   "animations": [
