@@ -20,7 +20,7 @@ typedef SongData = {
 	public var ?stepsPerBeat:Int;
 
 	public var ?difficulties:Array<String>;
-	public var ?variants:Array<String>;
+	public var ?variants:Array<Variation>;
 	public var ?customValues:Dynamic;
 
 	public var ?freeplayText:String;

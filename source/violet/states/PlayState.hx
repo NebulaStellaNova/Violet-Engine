@@ -238,10 +238,10 @@ class PlayState extends violet.backend.StateBackend {
 		strumLines = new FlxTypedGroup<StrumLine>();
 		strumLines.z = 100;
 
-		Conductor.playSong(songData.songName, variation); Conductor.pause();
+		Conductor.playSong(songData.id, variation); Conductor.pause();
 		Conductor.setupBPMChanges(songData, sortedEvents);
 		Conductor.offset = (countdownLength) * Conductor.beatLengthMs;
-		if (SONG.meta.needsVoices) generalVocals = Conductor.addAdditionalTrack(FlxG.sound.load(Cache.sound(Paths.vocal(songData.songName, null, PlayState.variation), 'root', null, true), FlxG.sound.defaultMusicGroup));
+		if (SONG.meta.needsVoices) generalVocals = Conductor.addAdditionalTrack(FlxG.sound.load(Cache.sound(Paths.vocal(songData.id, null, PlayState.variation), 'root', null, true), FlxG.sound.defaultMusicGroup));
 		else generalVocals = Conductor.addAdditionalTrack(new FlxSound());
 
 		StrumLine.generalScrollSpeed = SONG.scrollSpeed ?? 1;
@@ -1002,8 +1002,8 @@ class PlayState extends violet.backend.StateBackend {
 		var event:EventBase = runSongEvent('endSong', runSongEvent('songEnd', new EventBase()));
 		if (event.cancelled) return;
 		songEnded = true;
-		if (!hasChangedPracticeMode && !practiceMode && !botplayScoreDiscarded) ScoreUtil.saveSongScore(songData.songName, difficulty, songData.variant, score);
-		if (!hasChangedPracticeMode && !practiceMode && !botplayScoreDiscarded) ScoreUtil.saveSongAccuracy(songData.songName, difficulty, songData.variant, accuracy);
+		if (!hasChangedPracticeMode && !practiceMode && !botplayScoreDiscarded) ScoreUtil.saveSongScore(songData.id, difficulty, songData.variant, score);
+		if (!hasChangedPracticeMode && !practiceMode && !botplayScoreDiscarded) ScoreUtil.saveSongAccuracy(songData.id, difficulty, songData.variant, accuracy);
 		if (!botplayScoreDiscarded && !storyScoreDiscarded) storyScore += score;
 		if (playlist.length == 0 || !isStoryMode) {
 			exitToMenu();

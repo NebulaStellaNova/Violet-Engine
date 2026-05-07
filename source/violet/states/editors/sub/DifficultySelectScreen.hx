@@ -1,6 +1,5 @@
 package violet.states.editors.sub;
 
-import violet.backend.utils.NovaUtils;
 import violet.backend.EditorListBackend;
 
 class DifficultySelectScreen extends EditorListBackend {

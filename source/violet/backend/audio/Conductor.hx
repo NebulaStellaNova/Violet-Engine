@@ -217,7 +217,7 @@ class Conductor {
 	public static function playSong(id:String, ?variation:Variation, threaded:Bool = false):Void {
 		inline function result() {
 			NovaUtils.playMusic('$id/song/Inst${variation.isNone() ? '' : '-$variation'}', 'songs');
-			final songMetaData = violet.data.song.SongRegistry.getSongByID(id);
+			final songMetaData = violet.data.song.SongRegistry.getSongByID(id, variation);
 			Conductor.setInitialBPM(songMetaData.bpm, songMetaData.stepsPerBeat, songMetaData.beatsPerMeasure);
 			instrumental.looped = false;
 		}

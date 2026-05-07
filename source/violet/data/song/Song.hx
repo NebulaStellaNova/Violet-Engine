@@ -5,11 +5,6 @@ class Song {
 	public final id:String;
 	public final variant:Variation;
 
-	public var songName(get, never):String;
-	function get_songName():String {
-		return _data?.name ?? id.split(':')[0];
-	}
-
 	public var playableCharacter(get, never):String;
 	function get_playableCharacter():String {
 		return _data?.playableCharacter ?? 'bf';
@@ -17,7 +12,7 @@ class Song {
 
 	public var displayName(get, never):String;
 	function get_displayName():String {
-		return _data?.displayName ?? songName;
+		return _data?.displayName ?? id;
 	}
 
 	public var bpm(get, never):Float;
@@ -43,6 +38,10 @@ class Song {
 	public var variants(get, never):Array<Song>;
 	function get_variants():Array<Song> {
 		return [for (diff in _data?.variants ?? []) SongRegistry.getSongByID(id, diff)];
+	}
+	public var variantsList(get, never):Array<Variation>;
+	function get_variantsList():Array<Variation> {
+		return [for (diff in _data?.variants ?? []) diff];
 	}
 
 	public var customValues(get, never):Dynamic;

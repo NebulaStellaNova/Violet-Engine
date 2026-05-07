@@ -1,7 +1,6 @@
 import flixel.FlxCamera;
-import violet.states.PlayState;
-import lime.media.openal.AL;
 import hxvlc.flixel.FlxVideoSprite;
+import violet.states.PlayState;
 
 public var cutsceneCamera:FlxCamera;
 
@@ -13,7 +12,7 @@ function postCreate() {
 }
 
 function onStartCountdown(event) {
-    if (!PlayState.hasSeenCutscene && PlayState.isStoryMode && Paths.fileExists('songs/${PlayState.songData.songName}/start-cutscene.mp4')) {
+    if (!PlayState.hasSeenCutscene && PlayState.isStoryMode && Paths.fileExists('songs/${PlayState.songData.id}/start-cutscene.mp4')) {
         event.cancel();
         inCutscene = true;
 
@@ -32,7 +31,7 @@ function onStartCountdown(event) {
             }
         });
 
-        video.load(Paths.file('songs/${PlayState.songData.songName}/start-cutscene.mp4'));
+        video.load(Paths.file('songs/${PlayState.songData.id}/start-cutscene.mp4'));
 
         FlxTimer.wait(0.0001, ()->{
             video.play();

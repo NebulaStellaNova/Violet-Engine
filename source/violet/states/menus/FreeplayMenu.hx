@@ -13,6 +13,7 @@ import flixel.math.FlxPoint;
 import flixel.math.FlxMath;
 import violet.data.song.Song;
 import violet.data.song.SongRegistry;
+import violet.data.song.Variation;
 // import violet.data.level.LevelRegistry;
 import violet.backend.objects.freeplay.Capsule;
 // import violet.backend.objects.freeplay.LevelCapsule;
@@ -263,7 +264,7 @@ class FreeplayMenu extends SubStateBackend {
 		var songData = songList[selectedSongIndex];
 		if (current == Song.setupId(songData.id, null, songData.variant)) return;
 		else current = Song.setupId(songData.id, null, songData.variant);
-		Conductor.playSong(songData.songName, songData.variant);
+		Conductor.playSong(songData.id, songData.variant);
 	}
 
 	function selectSong() {
@@ -327,7 +328,7 @@ class FreeplayMenu extends SubStateBackend {
 
 	/**
 	```haxe
-		songs = SongRegistry.getAllSongs().filter(song -> {
+		songs = SongRegistry.getAllSongs(Variation.NO_VARIANT).filter(song -> {
 			var conditions:Array<Bool> = [
 				Options.data.developerMode ? true : !song._data?.isDev ?? true,
 				song.playableCharacter == player.id,
@@ -348,7 +349,7 @@ class FreeplayMenu extends SubStateBackend {
 			list = list.concat([for (song in level.getSongs()) 'SONG:$song']);
 		} */
 
-		return SongRegistry.getAllSongs().filter(song -> {
+		return SongRegistry.getAllSongs(Variation.NO_VARIANT).filter(song -> {
 			var conditions:Array<Bool> = [
 				Options.data.developerMode ? true : !song._data?.isDev ?? true
 			];

@@ -24,13 +24,20 @@ class SongRegistry {
 				trace('warning:Could not find meta file for song with ID "$songID". Skipping registration.');
 				continue;
 			} else {
+				parsed.name = songID;
 				songDatas.set(songID, parsed);
 				registerSong(new Song(songID));
 			}
 			for (i in parsed?.variants ?? []) {
-				final variantMeta:SongData = ParseUtil.jsonOrYaml('songs/$songID/meta-$i');
-				songDatas.set(Song.setupId(songID, null, i), variantMeta);
-				registerSong(new Song(songID, i));
+				final parsed:SongData = ParseUtil.jsonOrYaml('songs/$songID/meta-$i');
+				if (parsed == null) {
+					trace('warning:Could not find meta file for song with ID "$songID:$i". Skipping registration.');
+					continue;
+				} else {
+					parsed.name = songID;
+					songDatas.set(Song.setupId(songID, null, i), parsed);
+					registerSong(new Song(songID, i));
+				}
 			}
 		}
 	}
@@ -45,12 +52,12 @@ class SongRegistry {
 	}
 
 	public static function registerSong(song:Song) {
-		trace('debug:<cyan>Found and registered song with ID "<magenta>${song.id}<cyan>" and variant of "<magenta>${song.variant.isNone() ? Variation.NO_VARIANT : song.variant}<cyan>"');
+		trace('debug:<cyan>Found and registered song with ID "<magenta>${song.id}<cyan>" and variant of "<magenta>${song.variant.isNone() ? Variation.NO_VARIANT : song.variant.toString()}<cyan>"');
 		songs.push(song);
 	}
 
-	public static function getAllSongs(?variantFilter:Variation = NO_VARIANT):Array<Song> {
-		if (variantFilter == NO_VARIANT) return songs.copy(); // we need to be able to all variations too
+	public static function getAllSongs(?variantFilter:String):Array<Song> {
+		if (variantFilter == Variation.NO_VARIANT) return songs.copy(); // we need to be able to do all variations too
 		return songs.filter(song -> return song.variant == variantFilter);
 	}
 
@@ -63,8 +70,8 @@ class SongRegistry {
 		return null;
 	}
 
-	public static function getAllSongIDs(?variantFilter:Variation = NO_VARIANT):Array<String> {
-		if (variantFilter == NO_VARIANT) // we need to be able to all variations too
+	public static function getAllSongIDs(?variantFilter:String):Array<String> {
+		if (variantFilter == Variation.NO_VARIANT) // we need to be able to do all variations too
 			return [for (song in songs) song.id];
 		return [
 			for (song in songs)
