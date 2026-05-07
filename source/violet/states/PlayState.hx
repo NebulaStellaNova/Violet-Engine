@@ -1,5 +1,8 @@
 package violet.states;
 
+import flixel.util.typeLimit.OneOfTwo;
+import violet.backend.online.NetworkManager;
+import flixel.input.keyboard.FlxKey;
 import haxe.xml.Access;
 import violet.backend.utils.FileUtil;
 import openfl.events.KeyboardEvent;
@@ -427,6 +430,38 @@ class PlayState extends violet.backend.StateBackend {
 			});
 			add(cameraMovementSprite);
 		}
+
+		NetworkManager.keyPressSignal.add(netKeyPress);
+		NetworkManager.keyReleaseSignal.add(netKeyRelease);
+	}
+
+	function netKeyPress(key:OneOfTwo<FlxKey, String>) {
+		if (key is String) {
+			trace('yo');
+			for (i in strumLines) {
+				if (i.controllerType == OPPONENT) {
+					var it:String = cast key;
+					var flxKey = FlxKey.fromString(Options.data.controls.get(it)[0]);
+					@:privateAccess i._on_press(new KeyboardEvent('keyDown', flxKey, flxKey), true);
+				}
+			}
+		} else {
+			if (key == FlxKey.SPACE) {
+				startCountdown(true);
+			}
+		}
+	}
+
+	function netKeyRelease(key:OneOfTwo<FlxKey, String>) {
+		if (key is String) {
+			for (i in strumLines) {
+				if (i.controllerType == OPPONENT) {
+					var it:String = cast key;
+					var flxKey = FlxKey.fromString(Options.data.controls.get(it)[0]);
+					@:privateAccess i._on_release(new KeyboardEvent('keyUp', flxKey, flxKey), true);
+				}
+			}
+		} else {}
 	}
 
 	var healthLerp:Float = 0.5;
@@ -444,6 +479,8 @@ class PlayState extends violet.backend.StateBackend {
 		super.update(elapsed);
 
 		if (!songStarted) Conductor.setSongPosition(0);
+
+		if (FlxG.keys.justPressed.SPACE) startCountdown(true);
 
 		staticExit = exitToMenu;
 
@@ -603,7 +640,7 @@ class PlayState extends violet.backend.StateBackend {
 		combo = 0;
 
 		note.wasMissed = true; note.alpha *= 0.6;
-		generalVocals.pause(); note.parent.vocals.pause();
+		if (note.parent.controllerType == PLAYER) { generalVocals.pause(); note.parent.vocals.pause(); }
 		playMissSound();
 
 		for (sustain in Note.filterTail(note.tail, true)) {
@@ -678,7 +715,7 @@ class PlayState extends violet.backend.StateBackend {
 		if (event.cancelled) return;
 
 		sustain.wasMissed = true; sustain.alpha *= 0.6;
-		generalVocals.pause(); sustain.parent.vocals.pause();
+		if (sustain.parent.controllerType == PLAYER) { generalVocals.pause(); sustain.parent.vocals.pause(); }
 		playMissSound();
 		for (sustain in Note.filterTail(sustain.parentNote.tail, true)) {
 			sustain.wasMissed = true;
@@ -705,8 +742,8 @@ class PlayState extends violet.backend.StateBackend {
 	var countdownTick = 0;
 
 
-	function startCountdown():Void {
-
+	function startCountdown(bypass:Bool = false):Void {
+		if (!bypass) return;
 		// Start Dialogue
 		if (!hasSeenDialogue) {
 			var sD:Array<ConverstationPiece> = ParseUtil.jsonOrYaml('songs/$song/start-dialogue', null, 'null');
@@ -1140,8 +1177,13 @@ class PlayState extends violet.backend.StateBackend {
 		runSongEvent('postUpdateOptions', event);
 	}
 
+
 	override public function destroy():Void {
 		callSongScripts('destroy');
+
+		NetworkManager.keyPressSignal.remove(netKeyPress);
+		NetworkManager.keyReleaseSignal.remove(netKeyRelease);
+
 		if (recordingMode) ReplaySystem.stopRecording();
 		if (recordingMode) ReplaySystem.saveRecording(SONG.id);
 		if (playbackMode) ReplaySystem.stopReplay();

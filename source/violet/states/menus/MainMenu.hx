@@ -11,6 +11,7 @@ import violet.backend.utils.MathUtil;
 import violet.backend.utils.NovaUtils;
 import violet.backend.utils.ParseUtil;
 import violet.backend.scripting.events.SelectionEvent;
+import violet.backend.online.RoomTestState;
 
 import thx.semver.Version;
 
@@ -99,14 +100,13 @@ class MainMenu extends StateBackend {
 	public var fadeIn:Bool = true;
 
 	override public function new() {
-		instance = this;
 		super();
+		instance = this;
 	}
 
 	override public function create()
 	{
 		super.create();
-		instance = this;
 
 		NovaUtils.playMenuMusic();
 
@@ -258,6 +258,14 @@ class MainMenu extends StateBackend {
 	override public function update(elapsed:Float)
 	{
 		super.update(elapsed);
+
+		if (FlxG.keys.justPressed.F1) {
+			if (Options.data.displayName != "Guest") {
+				FlxG.switchState(new RoomTestState());
+			} else {
+				NovaUtils.addNotification("Wait!!!!", "Please set your display name in the options menu before entering online playroom.", ERROR);
+			}
+		}
 
 		if (doReload) {
 			doReload = false;

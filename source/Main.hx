@@ -140,7 +140,10 @@ class Main extends openfl.display.Sprite {
 		violet.external.windows.WinAPI.setDarkMode(violet.external.windows.WinAPI.isSystemDarkMode());
 		#end
 
+		violet.backend.online.NetworkManager.init();
+
 		FlxG.mouse.visible = false;
+		FlxG.autoPause = false;
 	}
 
 }

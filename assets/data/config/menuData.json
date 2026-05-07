@@ -23,6 +23,20 @@
 			"color": "#ff4242"
 		},
 		{
+			"id": "online",
+			"item": "online",
+			"animations": {
+				"idle": "basic",
+				"selected": "white",
+				"offsets": {
+					"selected": [ 0, -20 ]
+				}
+			},
+			"disabled": false,
+			"state": "source:OnlineMenu",
+			"color": "#006de2"
+		},
+		{
 			"id": "mods",
 			"item": "mods",
 			"scale": 1,
@@ -60,7 +74,7 @@
 				"selected": "white"
 			},
 			"state": "source:CreditsMenu",
-			"color": "#42b7ff"
+			"color": "#5542FF"
 		},
 		{
 			"id": "options",
