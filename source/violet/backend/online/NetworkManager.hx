@@ -1,5 +1,7 @@
 package violet.backend.online;
 
+import flixel.text.FlxText;
+import violet.backend.options.Options;
 import violet.data.character.Character;
 import violet.backend.display.BetterBitmapData;
 import openfl.display.Bitmap;
@@ -16,8 +18,10 @@ import io.colyseus.serializer.schema.Callbacks;
 class NetworkManager {
 	private var client:Client;
 	private var room:Room<MyRoomState>;
+    private var ms:Float = 0;
 
 	private var cats:Map<String, Character> = new Map();
+    private var names:Map<String, FlxText> = new Map();
 
 	public function new() {
 		// this.client = new Client("ws://192.168.0.5:2567");
@@ -30,7 +34,7 @@ class NetworkManager {
 		FlxG.stage.addEventListener(KeyboardEvent.KEY_DOWN, onKeyDown);
 		FlxG.stage.addEventListener(KeyboardEvent.KEY_UP, onKeyUp);
 
-		// stage.addEventListener(Event.ENTER_FRAME, onUpdate);
+		FlxG.stage.addEventListener(Event.ENTER_FRAME, onUpdate);
 	}
 
     private function joinRoom():Void {
@@ -52,28 +56,46 @@ class NetworkManager {
                 var cat = new Character('bf');
                 cat.flipX = true;
                 this.cats.set(key, cat);
-                // cat.scaleX = 0.3;
-                // cat.scaleY = 0.3;
                 cat.x = player.x;
                 cat.y = player.y;
                 FlxG.state.add(cat);
 
+                var displayNameText = new FlxText(0, 0, 0, 'Loading...');
+                this.names.set(key, displayNameText);
+                displayNameText.y = player.y - 50;
+                displayNameText.antialiasing = false;
+                displayNameText.size = 25;
+                cat.updateHitbox();
+                displayNameText.updateHitbox();
+                displayNameText.extra.set('offsetX', (cat.width/2)  - (displayNameText.width/2));
+                displayNameText.x = player.x + displayNameText.extra.get('offsetX');
+                FlxG.state.add(displayNameText);
+                this.room.send('updateUser', { who: this.room.sessionId, displayName: Options.data.displayName });
+
 				callbacks.onChange(player, () -> {
 				});
+
+                /* callbacks.listen(player, "displayName", (value, previousValue) -> {
+                    trace("PLAYER displayName CHANGED: " + value + " => " + previousValue);
+                }); */
 
                 callbacks.listen(player, "x", (value, previousValue) -> {
                     trace("PLAYER X CHANGED: " + value + " => " + previousValue);
 					this.cats.get(key).x = player.x;
+					this.names.get(key).x = player.x + this.names.get(key).extra.get('offsetX');
                 });
 
                 callbacks.listen(player, "y", (value, previousValue) -> {
                     trace("PLAYER Y CHANGED: " + value + " => " + previousValue);
 					this.cats.get(key).y = player.y;
+					this.names.get(key).y = player.y - 50;
+					this.names.get(key).y += this.cats.get(key)._data.offsets[1];
                 });
 
                 callbacks.listen(player, "disconnected", (value, previousValue) -> {
                     // flag disconnecting players with alpha 0.5
                     this.cats.get(key).alpha = (value) ? 0.5 : 1;
+					this.names.get(key).text = "Disconnected...";
                 });
 
                 callbacks.onAdd(player, "items", (item, key) -> {
@@ -83,12 +105,15 @@ class NetworkManager {
                 callbacks.onRemove(player, "items", (item, key) -> {
                     trace("ITEM REMOVED AT: " + key + " => " + item);
                 });
+
             });
 
             callbacks.onRemove("players", (player, key) -> {
                 trace("PLAYER REMOVED AT: ", key);
                 FlxG.state.remove(this.cats.get(key));
+                FlxG.state.remove(this.names.get(key));
                 this.cats.remove(key);
+                this.names.remove(key);
             });
 
             callbacks.listen("currentTurn", (turn, previousValue) -> {
@@ -97,6 +122,10 @@ class NetworkManager {
 
             this.room.onMessage('playAnim', (data)->{
                 this.cats.get(data.who).playSingAnim(data.direction, false, true);
+            });
+
+            this.room.onMessage('updateUser', (data)->{
+                this.names.get(data.who).text = data.displayName;
             });
 
             this.room.onStateChange += (state) -> {
@@ -113,7 +142,7 @@ class NetworkManager {
             var pingTimer = new haxe.Timer(2000); // 2 seconds delay
             pingTimer.run = () -> {
                 this.room.ping((latency: Float) -> {
-                    trace("[MyRoom] ping: " + latency + "ms");
+                    ms = latency;
                 });
             };
 
@@ -198,29 +227,29 @@ class NetworkManager {
         });
     }
 
-	/* private function update(elapsed):Void {
-		// Your update function...
-	} */
+	private function onUpdate(e:Event):Void {
+        this.room.send('updateUser', { who: this.room.sessionId, displayName: Options.data.displayName + '\nPing: ${ms}ms' });
+	}
 
 	private function onKeyDown(evt:KeyboardEvent):Void {
         if (this.room == null) return;
-
+        if (this.cats.get(this.room.sessionId) == null) return;
         var move = {
 			x: this.cats.get(this.room.sessionId).x,
 			y: this.cats.get(this.room.sessionId).y,
         };
 
 		if (evt.keyCode == Keyboard.UP) {
-			move.y -= 5;
+			move.y -= 50;
 
 		} else if (evt.keyCode == Keyboard.DOWN) {
-			move.y += 5;
+			move.y += 50;
 
 		} else if (evt.keyCode == Keyboard.LEFT) {
-			move.x -= 5;
+			move.x -= 50;
 
 		} else if (evt.keyCode == Keyboard.RIGHT) {
-			move.x += 5;
+			move.x += 50;
 		}
 
         var stuff = [Keyboard.A, Keyboard.S, Keyboard.W, Keyboard.D].indexOf(evt.keyCode);

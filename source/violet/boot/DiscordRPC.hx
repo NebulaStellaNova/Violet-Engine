@@ -12,6 +12,8 @@ class DiscordRPC {
 		return value;
 	}
 
+	public static var username(default, null):String = "";
+
 	public static var discordPresence:DiscordRichPresence = new DiscordRichPresence();
 
 	public static function init() {
@@ -38,6 +40,8 @@ class DiscordRPC {
 		final username:String = request[0].username;
 		final globalName:String = request[0].globalName;
 		final discriminator:Int = Std.parseInt(request[0].discriminator);
+
+		DiscordRPC.username = username;
 
 		trace('sys:Discord: Connected to user! $username${discriminator != 0 ? '#$discriminator' : ''} ($globalName)');
 

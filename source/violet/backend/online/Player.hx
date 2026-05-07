@@ -23,6 +23,9 @@ class Player extends Schema {
 	@:type("boolean")
 	public var disconnected: Bool = false;
 
+	@:type("string")
+	public var displayName: String = "";
+
 	@:type("array", Item)
 	public var items: ArraySchema<Item> = new ArraySchema<Item>();
 

@@ -244,6 +244,7 @@ class OptionsMenu extends SubStateBackend {
 					option.y = (FlxG.height/2) + ((i-optionCurSelected) * 100) - (option.alphabet.height/2);
 					option.updatePosition();
 					option.field.text = Options.get(optionData.saveID);
+					option.onChange = (value:String) -> set(optionData.saveID, value);
 					option.setEnabled(!optionData.disabled);
 					insert(0, option);
 					options.push(option);

@@ -4,7 +4,6 @@ import violet.backend.StateBackend;
 import violet.backend.filesystem.Paths;
 import violet.backend.utils.NovaUtils;
 import violet.states.menus.MainMenu;
-import violet.backend.online.RoomTestState;
 
 class TitleState extends StateBackend {
 
@@ -80,7 +79,7 @@ class TitleState extends StateBackend {
 		super.update(elapsed);
 
 		if (accept() && allowSwitch)
-			FlxG.switchState(RoomTestState.new /* MainMenu.new */);
+			FlxG.switchState(MainMenu.new);
 		if (accept() && skippedIntro) {
 			titleEnter.playAnim('pressed', true);
 			FlxG.sound.play(Cache.sound('menu/confirm'));
@@ -89,7 +88,7 @@ class TitleState extends StateBackend {
 				FlxTween.tween(titleEnter, { y: FlxG.height }, 1, { ease: FlxEase.backIn });
 				FlxTween.tween(logoFull, { x: -logoFull.width }, 1, { ease: FlxEase.backIn });
 				FlxTween.tween(titleGirlfriend, { x: FlxG.width }, 1, { ease: FlxEase.smoothStepIn, onComplete: (_)->{
-					FlxG.switchState(RoomTestState.new /* MainMenu.new */);
+					FlxG.switchState(MainMenu.new);
 				}});
 			});
 		} else if (!skippedIntro && accept()) {
