@@ -13,7 +13,6 @@ haxelib install hxWindowColorMode
 haxelib install thx.core
 haxelib install thx.semver
 haxelib install yaml
-haxelib install colyseus
 printf INSTALL GIT LIBS
 haxelib git moonchart https://github.com/MaybeMaru/moonchart.git
 haxelib git flxrhythmconductor https://github.com/PurSnake/FlxRhythmConductor --skip-dependencies
@@ -26,3 +25,4 @@ haxelib git lscript https://github.com/SrtHero278/lscript
 haxelib git rulescript https://github.com/Kriptel/RuleScript dev
 haxelib git flixel-animate https://github.com/NebulaStellaNova/flixel-animate bullshity-fix --skip-dependencies
 haxelib git hython https://github.com/Paopun20/hython.git legacy
+haxelib git colyseus https://github.com/NebulaStellaNova/colyseus-websocket-hx

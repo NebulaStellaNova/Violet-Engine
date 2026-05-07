@@ -58,7 +58,6 @@ class Project extends HXProject {
 		new Lib('thx.core'),
 		new Lib('thx.semver'),
 		new Lib('yaml'),
-		new Lib('colyseus'),
 
 		// -- Git Libs -- \\
 		new Lib('funkin.vis', 'https://github.com/FunkinCrew/funkVis'),
@@ -71,6 +70,7 @@ class Project extends HXProject {
 		new Lib('lscript', 'https://github.com/SrtHero278/lscript', ['--skip-dependencies']),
 		new Lib('rulescript', 'https://github.com/Kriptel/RuleScript', ['dev']),
 		new Lib('flixel-animate', 'https://github.com/NebulaStellaNova/flixel-animate', ['bullshity-fix', '--skip-dependencies']),
+		new Lib('colyseus', 'https://github.com/NebulaStellaNova/colyseus-websocket-hx'),
 		new Lib('hython', 'https://github.com/Paopun20/hython', ['legacy'])
 	];
 

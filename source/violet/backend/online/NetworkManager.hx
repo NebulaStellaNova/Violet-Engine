@@ -19,6 +19,7 @@ class NetworkManager {
 	private var client:Client;
 	private var room:Room<MyRoomState>;
     private var ms:Float = 0;
+    private var canUpdate:Bool = false;
 
 	private var cats:Map<String, Character> = new Map();
     private var names:Map<String, FlxText> = new Map();
@@ -34,7 +35,12 @@ class NetworkManager {
 		FlxG.stage.addEventListener(KeyboardEvent.KEY_DOWN, onKeyDown);
 		FlxG.stage.addEventListener(KeyboardEvent.KEY_UP, onKeyUp);
 
-		FlxG.stage.addEventListener(Event.ENTER_FRAME, onUpdate);
+		FlxG.signals.preUpdate.add(onUpdate);
+        FlxG.signals.focusLost.add(()->{
+            if (canUpdate && frame > 10)
+                this.room.send('updateUser', { who: this.room.sessionId, displayName: Options.data.displayName + '\nTabbed Out' });
+
+        });
 	}
 
     private function joinRoom():Void {
@@ -70,7 +76,6 @@ class NetworkManager {
                 displayNameText.extra.set('offsetX', (cat.width/2)  - (displayNameText.width/2));
                 displayNameText.x = player.x + displayNameText.extra.get('offsetX');
                 FlxG.state.add(displayNameText);
-                this.room.send('updateUser', { who: this.room.sessionId, displayName: Options.data.displayName });
 
 				callbacks.onChange(player, () -> {
 				});
@@ -99,6 +104,7 @@ class NetworkManager {
                 });
 
                 callbacks.onAdd(player, "items", (item, key) -> {
+                    FlxTimer.wait(1, ()->canUpdate = true);
                     trace("ITEM ADDED AT: " + key + " => " + item);
                 });
 
@@ -132,7 +138,7 @@ class NetworkManager {
             };
 
             this.room.onMessage("weather", (message) -> {
-                trace("[MyRoom] weather => " + message.weather);
+                // trace("[MyRoom] weather => " + message.weather);
             });
 
             this.room.onError += (code: Int, message: String) -> {
@@ -227,9 +233,12 @@ class NetworkManager {
         });
     }
 
-	private function onUpdate(e:Event):Void {
-        this.room.send('updateUser', { who: this.room.sessionId, displayName: Options.data.displayName + '\nPing: ${ms}ms' });
-	}
+    var frame = 0;
+	private function onUpdate():Void {
+        if (canUpdate && frame > 10)
+            this.room.send('updateUser', { who: this.room.sessionId, displayName: Options.data.displayName + '\nPing: ${ms}ms' });
+        frame++;
+    }
 
 	private function onKeyDown(evt:KeyboardEvent):Void {
         if (this.room == null) return;
