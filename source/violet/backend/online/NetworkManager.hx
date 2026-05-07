@@ -131,6 +131,7 @@ class NetworkManager {
             });
 
             this.room.onMessage('updateUser', (data)->{
+                if (!canUpdate) return;
                 this.names.get(data.who).text = data.displayName;
             });
 
@@ -235,7 +236,7 @@ class NetworkManager {
 
     var frame = 0;
 	private function onUpdate():Void {
-        if (canUpdate && frame > 10)
+        if (canUpdate)
             this.room.send('updateUser', { who: this.room.sessionId, displayName: Options.data.displayName + '\nPing: ${ms}ms' });
         frame++;
     }

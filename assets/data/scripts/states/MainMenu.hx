@@ -1,6 +1,7 @@
 import violet.backend.online.NetworkManager;
 import violet.backend.options.Options;
-import violet.backend.online.RoomTestState;
+import flixel.text.FlxTextBorderStyle;
+import violet.backend.utils.NotificationType;
 //
 function create() {
 
@@ -8,16 +9,20 @@ function create() {
     // SocketHandler.joinRoom('Global', 'globalPassword');
 }
 
+function postCreate() {
+    var leftWatermark2 = new NovaText(10, 10, 0, 'Press F1 to enter the online playroom.', 20);
+    leftWatermark2.setFormat(Paths.font('vcr.ttf'), 40);
+    leftWatermark2.scrollFactor.set();
+    leftWatermark2.alignment = watermarkAlignment;
+    leftWatermark2.borderStyle = FlxTextBorderStyle.OUTLINE;
+    leftWatermark2.borderColor = FlxColor.BLACK;
+    leftWatermark2.borderSize = 3;
+    leftWatermark2.updateHitbox();
+    add(leftWatermark2);
+}
+
 function update(?elapsed:Float) {
     // FlxG.autoPause = false;
-
-    if (FlxG.keys.justPressed.F12) {
-        if (Options.data.displayName != "Guest") {
-            FlxG.switchState(new RoomTestState());
-        } else {
-            NovaUtils.addNotification("Wait!!!!", "Please set your display name in the options menu before entering online playroom.");
-        }
-    }
 }
 
 @:alias("changeSelection")
