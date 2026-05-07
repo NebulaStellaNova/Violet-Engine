@@ -58,6 +58,7 @@ class Project extends HXProject {
 		new Lib('thx.core'),
 		new Lib('thx.semver'),
 		new Lib('yaml'),
+		new Lib('colyseus'),
 
 		// -- Git Libs -- \\
 		new Lib('funkin.vis', 'https://github.com/FunkinCrew/funkVis'),
@@ -328,6 +329,8 @@ class Project extends HXProject {
 		// json parsing
 		addHaxelib('flxrhythmconductor', 'git');
 		addHaxelib('yaml');
+
+		addHaxelib('colyseus');
 
 		// debugging
 		if (isDesktop() && isDebug())

@@ -1,11 +1,13 @@
-import violet.backend.online.SocketHandler;
-
+// import violet.backend.online.NetworkManager;
+//
 function create() {
+
+    // new NetworkManager();
     // SocketHandler.joinRoom('Global', 'globalPassword');
 }
 
 function update(?elapsed:Float) {
-    FlxG.autoPause = false;
+    // FlxG.autoPause = false;
 }
 
 @:alias("changeSelection")

@@ -1,6 +1,5 @@
 package violet.states.menus.online;
 
-import violet.backend.online.SocketHandler;
 import flixel.FlxCamera;
 import violet.backend.SubStateBackend;
 
@@ -50,7 +49,7 @@ class JoinMenu extends SubStateBackend {
 	}
 
 	function onClickDone() {
-		SocketHandler.joinRoom(nameField.text, passwordField.text);
+
 	}
 
 	override function update(elapsed:Float) {

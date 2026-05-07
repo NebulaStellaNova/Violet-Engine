@@ -1,6 +1,5 @@
 package violet.states.menus.online;
 
-import violet.backend.online.SocketHandler;
 import flixel.FlxCamera;
 import violet.backend.SubStateBackend;
 
@@ -50,8 +49,7 @@ class HostMenu extends SubStateBackend {
 	}
 
 	function onClickDone() {
-		SocketHandler.createRoom(nameField.text, passwordField.text);
-		close();
+		// close();
 	}
 
 	override function update(elapsed:Float) {

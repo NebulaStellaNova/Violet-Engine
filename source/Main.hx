@@ -1,4 +1,3 @@
-import violet.backend.online.SocketHandler;
 import flixel.FlxState;
 import flixel.util.FlxStringUtil;
 import lime.app.Application;
@@ -136,13 +135,11 @@ class Main extends openfl.display.Sprite {
 		});
 
 		Application.current.onExit.add(_ -> ModdingAPI.powerDown());
-		Application.current.onExit.add(_ -> SocketHandler.disconnect());
 
 		#if windows
 		violet.external.windows.WinAPI.setDarkMode(violet.external.windows.WinAPI.isSystemDarkMode());
 		#end
 
-		SocketHandler.connect();
 		FlxG.mouse.visible = false;
 	}
 

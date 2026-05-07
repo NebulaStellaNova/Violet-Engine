@@ -1,8 +1,6 @@
 package violet.states;
 
-import violet.backend.online.SocketHandler;
 import flixel.input.keyboard.FlxKey;
-import violet.backend.online.SocketHandler.ClientOutput;
 import haxe.xml.Access;
 import violet.backend.utils.FileUtil;
 import openfl.events.KeyboardEvent;
@@ -430,7 +428,6 @@ class PlayState extends violet.backend.StateBackend {
 			});
 			add(cameraMovementSprite);
 		}
-		SocketHandler.onDataRecieved.add(handleSocketEvent);
 	}
 
 	var healthLerp:Float = 0.5;
@@ -1146,28 +1143,9 @@ class PlayState extends violet.backend.StateBackend {
 		runSongEvent('postUpdateOptions', event);
 	}
 
-	public function handleSocketEvent(data:ClientOutput) {
-		if (data.event.key == 'SPACE' && data.event.type == KEY_PRESS) {
-			startCountdown(true);
-		}
-		if (['note_left', 'note_down', 'note_up', 'note_right'].contains(data.event.key)) {
-			for (i in strumLines) {
-				if (i.controllerType == OPPONENT) {
-					var key = FlxKey.fromString(Options.data.controls.get(data.event.key)[0]);
-					if (data.event.type == KEY_PRESS) {
-						@:privateAccess i._on_press(new KeyboardEvent('keyDown', key, key), true);
-					} else {
-						@:privateAccess i._on_release(new KeyboardEvent('keyUp', key, key), true);
-					}
-
-				}
-			}
-		}
-	}
 
 	override public function destroy():Void {
 		callSongScripts('destroy');
-		SocketHandler.onDataRecieved.remove(handleSocketEvent);
 		if (recordingMode) ReplaySystem.stopRecording();
 		if (recordingMode) ReplaySystem.saveRecording(SONG.id);
 		if (playbackMode) ReplaySystem.stopReplay();
