@@ -11,6 +11,7 @@ haxelib install hxWindowColorMode
 haxelib install thx.core
 haxelib install thx.semver
 haxelib install yaml
+haxelib install colyseus
 @REM INSTALL GIT LIBS
 haxelib git moonchart https://github.com/MaybeMaru/moonchart.git
 haxelib git flxrhythmconductor https://github.com/PurSnake/FlxRhythmConductor --skip-dependencies
