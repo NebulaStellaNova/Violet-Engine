@@ -1,5 +1,8 @@
 package violet.backend.online;
 
+import flixel.util.typeLimit.OneOfTwo;
+import flixel.input.keyboard.FlxKey;
+import flixel.util.FlxSignal.FlxTypedSignal;
 import flixel.text.FlxText;
 import violet.backend.options.Options;
 import violet.data.character.Character;
@@ -16,6 +19,10 @@ import io.colyseus.Room;
 import io.colyseus.serializer.schema.Callbacks;
 
 class NetworkManager {
+
+    private static var instance:NetworkManager;
+    public static function init() instance = new NetworkManager();
+
 	private var client:Client;
 	private var room:Room<MyRoomState>;
     private var ms:Float = 0;
@@ -23,6 +30,9 @@ class NetworkManager {
 
 	private var cats:Map<String, Character> = new Map();
     private var names:Map<String, FlxText> = new Map();
+
+    public static var keyPressSignal:FlxTypedSignal<OneOfTwo<FlxKey, String>->Void> = new FlxTypedSignal();
+    public static var keyReleaseSignal:FlxTypedSignal<OneOfTwo<FlxKey, String>->Void> = new FlxTypedSignal();
 
 	public function new() {
 		// this.client = new Client("ws://192.168.0.5:2567");
@@ -59,7 +69,7 @@ class NetworkManager {
             callbacks.onAdd("players", (player, key) -> {
                 trace("PLAYER ADDED AT: ", key);
 
-                var cat = new Character('bf');
+                /* var cat = new Character('bf');
                 cat.flipX = true;
                 this.cats.set(key, cat);
                 cat.x = player.x;
@@ -75,7 +85,7 @@ class NetworkManager {
                 displayNameText.updateHitbox();
                 displayNameText.extra.set('offsetX', (cat.width/2)  - (displayNameText.width/2));
                 displayNameText.x = player.x + displayNameText.extra.get('offsetX');
-                FlxG.state.add(displayNameText);
+                FlxG.state.add(displayNameText); */
 
 				callbacks.onChange(player, () -> {
 				});
@@ -84,7 +94,7 @@ class NetworkManager {
                     trace("PLAYER displayName CHANGED: " + value + " => " + previousValue);
                 }); */
 
-                callbacks.listen(player, "x", (value, previousValue) -> {
+                /* callbacks.listen(player, "x", (value, previousValue) -> {
                     trace("PLAYER X CHANGED: " + value + " => " + previousValue);
 					this.cats.get(key).x = player.x;
 					this.names.get(key).x = player.x + this.names.get(key).extra.get('offsetX');
@@ -95,16 +105,16 @@ class NetworkManager {
 					this.cats.get(key).y = player.y;
 					this.names.get(key).y = player.y - 50;
 					this.names.get(key).y += this.cats.get(key)._data.offsets[1];
-                });
+                }); */
 
                 callbacks.listen(player, "disconnected", (value, previousValue) -> {
                     // flag disconnecting players with alpha 0.5
-                    this.cats.get(key).alpha = (value) ? 0.5 : 1;
-					this.names.get(key).text = "Disconnected...";
+                    /* this.cats.get(key).alpha = (value) ? 0.5 : 1;
+					this.names.get(key).text = "Disconnected..."; */
                 });
 
                 callbacks.onAdd(player, "items", (item, key) -> {
-                    FlxTimer.wait(1, ()->canUpdate = true);
+                    // FlxTimer.wait(1, ()->canUpdate = true);
                     trace("ITEM ADDED AT: " + key + " => " + item);
                 });
 
@@ -116,23 +126,34 @@ class NetworkManager {
 
             callbacks.onRemove("players", (player, key) -> {
                 trace("PLAYER REMOVED AT: ", key);
-                FlxG.state.remove(this.cats.get(key));
+                /* FlxG.state.remove(this.cats.get(key));
                 FlxG.state.remove(this.names.get(key));
                 this.cats.remove(key);
-                this.names.remove(key);
+                this.names.remove(key); */
             });
 
             callbacks.listen("currentTurn", (turn, previousValue) -> {
                 trace("CURRENT TURN: " + turn);
             });
 
+            this.room.onMessage('keyState', (data)->{
+                if (data.who != this.room.sessionId) {
+                    switch (data.state) {
+                        case "down":
+                            keyPressSignal.dispatch(data.key);
+                        case "up":
+                            keyReleaseSignal.dispatch(data.key);
+                    }
+                }
+            });
+
             this.room.onMessage('playAnim', (data)->{
-                this.cats.get(data.who).playSingAnim(data.direction, false, true);
+                // this.cats.get(data.who).playSingAnim(data.direction, false, true);
             });
 
             this.room.onMessage('updateUser', (data)->{
                 if (!canUpdate) return;
-                this.names.get(data.who).text = data.displayName;
+                // this.names.get(data.who).text = data.displayName;
             });
 
             this.room.onStateChange += (state) -> {
@@ -243,24 +264,25 @@ class NetworkManager {
 
 	private function onKeyDown(evt:KeyboardEvent):Void {
         if (this.room == null) return;
-        if (this.cats.get(this.room.sessionId) == null) return;
-        var move = {
-			x: this.cats.get(this.room.sessionId).x,
-			y: this.cats.get(this.room.sessionId).y,
-        };
+        if (!FlxG.keys.checkStatus(evt.keyCode, JUST_PRESSED)) return;
 
-		if (evt.keyCode == Keyboard.UP) {
-			move.y -= 50;
+        this.room.send('keyState', {
+            who: this.room.sessionId,
+            key: evt.keyCode,
+            state: "down"
+        });
 
-		} else if (evt.keyCode == Keyboard.DOWN) {
-			move.y += 50;
-
-		} else if (evt.keyCode == Keyboard.LEFT) {
-			move.x -= 50;
-
-		} else if (evt.keyCode == Keyboard.RIGHT) {
-			move.x += 50;
-		}
+        for (group in ['note_left', 'note_down', 'note_up', 'note_right']) {
+            for (i in Options.data.controls.get(group)) {
+                if (FlxG.keys.checkStatus(FlxKey.fromString(i), JUST_PRESSED)) {
+                    this.room.send('keyState', {
+                        who: this.room.sessionId,
+                        key: group,
+                        state: "down"
+                    });
+                }
+            }
+        }
 
         var stuff = [Keyboard.A, Keyboard.S, Keyboard.W, Keyboard.D].indexOf(evt.keyCode);
         if (stuff != -1) {
@@ -269,9 +291,27 @@ class NetworkManager {
                 who: this.room.sessionId
             });
         }
-
-		this.room.send("move", move);
 	}
 
-	private function onKeyUp(evt:KeyboardEvent):Void {}
+	private function onKeyUp(evt:KeyboardEvent):Void {
+        if (this.room == null) return;
+        if (!FlxG.keys.checkStatus(evt.keyCode, JUST_RELEASED)) return;
+        this.room.send('keyState', {
+            who: this.room.sessionId,
+            key: evt.keyCode,
+            state: "up"
+        });
+
+        for (group in ['note_left', 'note_down', 'note_up', 'note_right']) {
+            for (i in Options.data.controls.get(group)) {
+                if (FlxG.keys.checkStatus(FlxKey.fromString(i), JUST_RELEASED)) {
+                    this.room.send('keyState', {
+                        who: this.room.sessionId,
+                        key: group,
+                        state: "up"
+                    });
+                }
+            }
+        }
+    }
 }

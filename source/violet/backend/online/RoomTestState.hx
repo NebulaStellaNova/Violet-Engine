@@ -13,7 +13,7 @@ class RoomTestState extends StateBackend {
 	override function create() {
 		super.create();
 		new Stage('mainStage').load([]);
-		new NetworkManager();
+
 
 		textCam.bgColor = FlxColor.TRANSPARENT;
 		FlxG.cameras.add(textCam, false);

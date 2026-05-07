@@ -1,5 +1,7 @@
 package violet.states;
 
+import flixel.util.typeLimit.OneOfTwo;
+import violet.backend.online.NetworkManager;
 import flixel.input.keyboard.FlxKey;
 import haxe.xml.Access;
 import violet.backend.utils.FileUtil;
@@ -428,6 +430,38 @@ class PlayState extends violet.backend.StateBackend {
 			});
 			add(cameraMovementSprite);
 		}
+
+		NetworkManager.keyPressSignal.add(netKeyPress);
+		NetworkManager.keyReleaseSignal.add(netKeyRelease);
+	}
+
+	function netKeyPress(key:OneOfTwo<FlxKey, String>) {
+		if (key is String) {
+			trace('yo');
+			for (i in strumLines) {
+				if (i.controllerType == OPPONENT) {
+					var it:String = cast key;
+					var flxKey = FlxKey.fromString(Options.data.controls.get(it)[0]);
+					@:privateAccess i._on_press(new KeyboardEvent('keyDown', flxKey, flxKey), true);
+				}
+			}
+		} else {
+			if (key == FlxKey.SPACE) {
+				startCountdown(true);
+			}
+		}
+	}
+
+	function netKeyRelease(key:OneOfTwo<FlxKey, String>) {
+		if (key is String) {
+			for (i in strumLines) {
+				if (i.controllerType == OPPONENT) {
+					var it:String = cast key;
+					var flxKey = FlxKey.fromString(Options.data.controls.get(it)[0]);
+					@:privateAccess i._on_release(new KeyboardEvent('keyUp', flxKey, flxKey), true);
+				}
+			}
+		} else {}
 	}
 
 	var healthLerp:Float = 0.5;
@@ -1146,6 +1180,10 @@ class PlayState extends violet.backend.StateBackend {
 
 	override public function destroy():Void {
 		callSongScripts('destroy');
+
+		NetworkManager.keyPressSignal.remove(netKeyPress);
+		NetworkManager.keyReleaseSignal.remove(netKeyRelease);
+
 		if (recordingMode) ReplaySystem.stopRecording();
 		if (recordingMode) ReplaySystem.saveRecording(SONG.id);
 		if (playbackMode) ReplaySystem.stopReplay();
