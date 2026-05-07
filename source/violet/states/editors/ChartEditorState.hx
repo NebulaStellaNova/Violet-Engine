@@ -1,23 +1,24 @@
 package violet.states.editors;
 
-import lemonui.elements.Text;
-import lemonui.elements.Slider;
-import violet.data.character.Character;
-import lemonui.utils.ElementUtil;
-import lemonui.elements.MenuBar;
-import violet.data.icon.HealthIcon;
-import violet.data.character.CharacterRegistry;
+import flixel.addons.display.FlxBackdrop;
 import flixel.math.FlxPoint;
-import violet.backend.scripting.events.NoteHitEvent;
+import lemonui.elements.MenuBar;
+import lemonui.elements.Slider;
+import lemonui.elements.Text;
+import lemonui.utils.ElementUtil;
+import violet.backend.StateBackend;
+import violet.backend.audio.Conductor;
 import violet.backend.scripting.events.EventBase;
+import violet.backend.scripting.events.NoteHitEvent;
 import violet.backend.utils.NovaUtils;
+import violet.data.character.Character;
+import violet.data.character.CharacterRegistry;
+import violet.data.chart.Chart;
+import violet.data.chart.ChartRegistry;
+import violet.data.icon.HealthIcon;
 import violet.data.song.Song;
 import violet.data.song.SongRegistry;
-import violet.data.chart.ChartRegistry;
-import violet.data.chart.Chart;
-import flixel.addons.display.FlxBackdrop;
-import violet.backend.audio.Conductor;
-import violet.backend.StateBackend;
+import violet.data.song.Variation;
 
 using violet.backend.utils.ArrayUtil;
 
@@ -25,7 +26,7 @@ class ChartEditorState extends StateBackend {
 
 	public static var songID:String = 'test';
 	public static var difficulty:String = 'normal';
-	public static var variant:Null<String> = null;
+	public static var variant:Variation = null;
 
 	public var noteToPlace:NovaSprite;
 

@@ -6,6 +6,7 @@ import moonchart.backend.Util as MoonUtil;
 import violet.backend.utils.FileUtil;
 import violet.backend.utils.NovaUtils;
 import violet.backend.utils.StringUtil;
+import violet.data.song.Variation;
 #if ANIMATE_SUPPORT
 import animate.FlxAnimateAssets;
 
@@ -125,13 +126,13 @@ class Paths {
 			'$path${ext == null || path.endsWith('.$ext') ? '' : '.$ext'}'
 		]).join('/'), directory == 'root');
 
-	#if release inline #end public static function vocal(song:String, suffix:String = '', ?variant:String, dashes:Bool = true):String {
+	#if release inline #end public static function vocal(song:String, suffix:String = '', ?variant:Variation, dashes:Bool = true):String {
 		var prefix = dashes ? '-' : '';
-		return root('songs/$song/song/Voices${suffix != '' ? '$prefix$suffix' : ''}${variant != '' ? '$prefix$variant' : ''}.ogg');
+		return root('songs/$song/song/Voices${suffix != '' ? '$prefix$suffix' : ''}${!variant.isNone() ? '$prefix$variant' : ''}.ogg');
 	}
 
-	#if release inline #end public static function inst(song:String, ?variant:String):String
-		return root('songs/$song/song/${variant != null ? '$variant/' : ''}Inst.ogg');
+	#if release inline #end public static function inst(song:String, ?variant:Variation):String
+		return root('songs/$song/song/${!variant.isNone() ? '$variant/' : ''}Inst.ogg');
 
 	#if release inline #end public static function fileExists(path:String, startFromRoot:Bool = false):Bool {
 		return path != "" ? _checkExists(root(path, startFromRoot)) : false;

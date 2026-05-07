@@ -2,6 +2,8 @@ package violet.backend.options;
 
 import flixel.util.FlxSave;
 import lime.app.Application;
+import violet.data.song.Song;
+import violet.data.song.Variation;
 
 @:structInit class OptionsData {
 
@@ -176,28 +178,23 @@ class Options {
 		}
 	}
 
-	private static function getSongAccuracy(id:String, difficulty:String, ?variation:String) {
-		var saveID:String = [ id, variation != '' && variation != null ? ':$variation' : '', ':$difficulty' ].join('');
-		return data.savedAccuracies.get(saveID) ?? 0;
+	private static function getSongAccuracy(id:String, difficulty:String, ?variation:Variation) {
+		return data.savedAccuracies.get(Song.setupId(id, difficulty, variation)) ?? 0;
 	}
 
-	private static function saveSongAccuracy(id:String, difficulty:String, ?variation:String, accuracy:Float, force:Bool = false) {
-		if (accuracy > getSongAccuracy(id, difficulty, variation) || force) {
-			var saveID:String = [ id, variation != '' && variation != null ? ':$variation' : '', ':$difficulty' ].join('');
-			data.savedAccuracies.set(saveID, accuracy);
-		}
+	private static function saveSongAccuracy(id:String, difficulty:String, ?variation:Variation, accuracy:Float, force:Bool = false) {
+		if (accuracy > getSongAccuracy(id, difficulty, variation) || force)
+			data.savedAccuracies.set(Song.setupId(id, difficulty, variation), accuracy);
 		flush();
 	}
 
-	private static function getSongScore(id:String, difficulty:String, ?variation:String) {
-		var saveID:String = [ id, variation != '' && variation != null ? ':$variation' : '', ':$difficulty' ].join('');
-		return data.savedScores.get(saveID) ?? 0;
+	private static function getSongScore(id:String, difficulty:String, ?variation:Variation) {
+		return data.savedScores.get(Song.setupId(id, difficulty, variation)) ?? 0;
 	}
 
-	private static function saveSongScore(id:String, difficulty:String, ?variation:String, score:Int, force:Bool = false) {
+	private static function saveSongScore(id:String, difficulty:String, ?variation:Variation, score:Int, force:Bool = false) {
 		if (score > getSongScore(id, difficulty, variation) || force) {
-			var saveID:String = [ id, variation != '' && variation != null ? ':$variation' : '', ':$difficulty' ].join('');
-			data.savedScores.set(saveID, score);
+			data.savedScores.set(Song.setupId(id, difficulty, variation), score);
 		}
 		flush();
 	}

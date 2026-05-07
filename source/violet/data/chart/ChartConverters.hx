@@ -1,26 +1,22 @@
 package violet.data.chart;
 
-import flixel.util.typeLimit.OneOfTwo;
-import violet.data.character.CharacterRegistry;
-import sys.io.File;
-import violet.data.song.SongData;
-import sys.FileSystem;
-import haxe.io.Path;
-import moonchart.formats.fnf.FNFKade;
-import moonchart.formats.fnf.legacy.FNFPsych;
-import moonchart.formats.fnf.FNFVSlice;
-import yaml.Renderer.RenderOptions;
-import yaml.Parser.ParserOptions;
-import yaml.Yaml;
-import violet.data.chart.ChartRegistry.ChartCache;
-import violet.backend.utils.FileUtil;
-import violet.data.chart.ChartData;
-import violet.backend.utils.ParseUtil;
 import haxe.Json;
-import Xml;
-import yaml.Renderer;
+import haxe.io.Path;
+import sys.FileSystem;
+import sys.io.File;
 import moonchart.formats.fnf.FNFCodename;
-
+import moonchart.formats.fnf.FNFKade;
+import moonchart.formats.fnf.FNFVSlice;
+import moonchart.formats.fnf.legacy.FNFPsych;
+import yaml.Parser;
+import yaml.Yaml;
+import violet.backend.utils.FileUtil;
+import violet.backend.utils.ParseUtil;
+import violet.data.character.CharacterRegistry;
+import violet.data.chart.ChartData;
+import violet.data.chart.ChartRegistry.ChartCache;
+import violet.data.song.SongData;
+import violet.data.song.Variation;
 
 enum FileType {
 	NONE;
@@ -41,17 +37,14 @@ enum ChartFormat {
 
 class ChartConverters {
 
-	public static var blankChart(get, never):ChartData;
-	static function get_blankChart() {
-		return {
-			strumLines: [],
-			events: [],
-			meta: { name: 'Unknown Song' },
-			scrollSpeed: 1,
-			noteTypes: [],
-			stage: 'default',
-			codenameChart: true
-		};
+	public static final blankChart:ChartData = {
+		strumLines: [],
+		events: [],
+		meta: { name: 'Unknown Song' },
+		scrollSpeed: 1,
+		noteTypes: [],
+		stage: 'default',
+		codenameChart: true
 	}
 
 	public static function convertChart(chartCache:ChartCache):ChartData {
@@ -114,10 +107,10 @@ class ChartConverters {
 		return cast new FNFCodename().fromFormat(new FNFKade().fromJson(Json.stringify(parsed))).data;
 	}
 
-	public static function convertVSliceSong(songID, ?varient:String) {
+	public static function convertVSliceSong(songID, ?variant:Variation) {
 		var suffix = '';
-		if (varient != null) {
-			suffix = '-$varient';
+		if (!variant.isNone()) {
+			suffix = '-$variant';
 		}
 		var path = Path.directory(Paths.json('songs/$songID/$songID-metadata$suffix'));
 		var meta = ParseUtil.jsonDirect('songs/$songID/$songID-metadata$suffix');
@@ -131,7 +124,7 @@ class ChartConverters {
 			composer: meta.artist,
 			charter: meta.charter,
 
-			icon: meta?.icon != null ? meta.icon : CharacterRegistry.characterDatas.get(meta.playData.characters.opponent).healthIcon,
+			icon: meta?.icon ?? CharacterRegistry.characterDatas.get(meta.playData.characters.opponent).healthIcon,
 
 			variants: meta.playData.songVariations,
 			difficulties: meta.playData.difficulties,
@@ -150,8 +143,8 @@ class ChartConverters {
 			stepsPerBeat: meta.timeChanges[0].d,
 		}
 
-		if (!FileSystem.exists('$path/charts' + (varient != null ? '/$varient' : '')))
-			FileSystem.createDirectory('$path/charts' + (varient != null ? '/$varient' : ''));
+		if (!FileSystem.exists('$path/charts' + (!variant.isNone() ? '/$variant' : '')))
+			FileSystem.createDirectory('$path/charts' + (!variant.isNone() ? '/$variant' : ''));
 
 		for (i in metaOut.difficulties) {
 			var chartOut:ChartData = {
@@ -162,21 +155,21 @@ class ChartConverters {
 				scrollSpeed: Reflect.field(chart.scrollSpeed, i),
 				noteTypes: []
 			}
-			var opp = {
+			var opp:ChartStrumLine = {
 				characters: [meta.playData.characters.opponent],
 				position: 'dad',
 				type: OPPONENT,
 				notes: [],
 				vocalsSuffix: (meta.playData.characters?.opponentVocals ?? [])[0]
 			};
-			var play = {
+			var play:ChartStrumLine = {
 				characters: [meta.playData.characters.player],
 				position: 'boyfriend',
 				type: PLAYER,
 				notes: [],
 				vocalsSuffix: (meta.playData.characters?.playerVocals ?? [])[0]
 			}
-			var spec = {
+			var spec:ChartStrumLine = {
 				characters: [meta.playData.characters.girlfriend],
 				position: 'girlfriend',
 				type: ADDITIONAL,
@@ -215,7 +208,7 @@ class ChartConverters {
 				}
 			}
 
-			var sub = varient != null ? '/$varient' : '';
+			var sub = !variant.isNone() ? '/$variant' : '';
 			File.saveContent('$path/charts$sub/$i.json', Json.stringify(chartOut, null, '\t'));
 		}
 
@@ -354,7 +347,7 @@ class ChartConverters {
 		}
 
 		ModdingAPI.onRegistryFinishReload.addOnce(()->{
-			if (varient == null) FileUtil.deleteDirectory('$path/charts');
+			if (variant.isNone()) FileUtil.deleteDirectory('$path/charts');
 			FileUtil.deleteFile('$path/meta$suffix.json');
 			FileUtil.deleteFile('$path/events$suffix.json');
 		});

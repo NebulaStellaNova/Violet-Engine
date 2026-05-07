@@ -3,6 +3,7 @@ package violet.data.chart;
 import violet.data.chart.ChartData;
 import violet.data.song.Song;
 import violet.data.song.SongRegistry;
+import violet.data.song.Variation;
 
 class Chart {
 
@@ -26,16 +27,16 @@ class Chart {
 
 	public var meta(get, never):Song;
 	function get_meta():Song {
-		return SongRegistry.getSongByID(id);
+		return SongRegistry.getSongByID(id, chartVariant);
 	}
 
 	public final stage:String;
 
 	public final chartDifficulty:String;
-	public final chartVariant:Null<String>;
+	public final chartVariant:Variation;
 
-	public function new(id:String, diff:String, ?variant:String) {
-		this._data = ChartRegistry.fetchChart('$id:$diff${variant == null ? '' : ':${variant}'}');
+	public function new(id:String, diff:String, ?variant:Variation) {
+		this._data = ChartRegistry.fetchChart(Song.setupId(id, diff, variant));
 		this.id = id;
 
 		stage = _data.stage;

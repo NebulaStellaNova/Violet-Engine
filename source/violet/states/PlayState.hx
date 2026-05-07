@@ -40,6 +40,7 @@ import violet.data.chart.ChartData;
 import violet.data.chart.ChartRegistry;
 import violet.data.icon.HealthIcon;
 import violet.data.song.Song;
+import violet.data.song.Variation;
 import violet.data.stage.Stage;
 import violet.states.menus.FreeplayMenu;
 import violet.states.menus.StoryMenu;
@@ -75,7 +76,7 @@ class PlayState extends violet.backend.StateBackend {
 	public static var songData:Song;
 	public static var song:String;
 	public static var difficulty:String;
-	public static var variation:Null<String>;
+	public static var variation:Variation;
 	public static var playlist:Array<String> = [];
 	public static var doFadeOut:Bool = false;
 	public static var hasSeenCutscene:Bool = false;
@@ -388,7 +389,7 @@ class PlayState extends violet.backend.StateBackend {
 		}
 
 		#if debug
-		DebugDisplay.registerVariable('Current Song', () -> return '$song:$difficulty');
+		DebugDisplay.registerVariable('Current Song', () -> return Song.setupId(song, difficulty, variation));
 		DebugDisplay.registerVariable('Is Story Mode', () -> return isStoryMode);
 		DebugDisplay.registerVariable('Misses & Accuracy', () -> return '$misses - $accuracy');
 		if (playlist.length != 0) DebugDisplay.registerVariable('Playlist Items', () -> return playlist);

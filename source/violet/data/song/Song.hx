@@ -2,7 +2,8 @@ package violet.data.song;
 
 class Song {
 
-	public var id:String;
+	public final id:String;
+	public final variant:Variation;
 
 	public var songName(get, never):String;
 	function get_songName():String {
@@ -17,11 +18,6 @@ class Song {
 	public var displayName(get, never):String;
 	function get_displayName():String {
 		return _data?.displayName ?? songName;
-	}
-
-	public var variant(get, never):String;
-	function get_variant():String {
-		return id.split(':')[1] ?? '';
 	}
 
 	public var bpm(get, never):Float;
@@ -44,9 +40,9 @@ class Song {
 		return [for (diff in _data?.difficulties ?? []) diff.toLowerCase()];
 	}
 
-	public var variants(get, never):Array<String>;
-	function get_variants():Array<String> {
-		return [for (diff in _data?.variants ?? []) diff.toLowerCase()];
+	public var variants(get, never):Array<Song>;
+	function get_variants():Array<Song> {
+		return [for (diff in _data?.variants ?? []) SongRegistry.getSongByID(id, diff)];
 	}
 
 	public var customValues(get, never):Dynamic;
@@ -76,9 +72,17 @@ class Song {
 
 	public var _data:SongData;
 
-	public function new(id:String) {
-		this._data = SongRegistry.songDatas.get(id);
+	public function new(id:String, ?variant:Variation) {
+		this._data = SongRegistry.songDatas.get(setupId(id, null, variant));
 		this.id = id;
+		this.variant = variant;
+	}
+
+	inline public static function setupId(id:String, ?difficulty:String, ?variant:Variation):String {
+		var fixedId = id;
+		if (!(difficulty == null || difficulty.trim() == '')) fixedId += ':$difficulty';
+		if (!variant.isNone()) fixedId += ':$variant';
+		return fixedId;
 	}
 
 }

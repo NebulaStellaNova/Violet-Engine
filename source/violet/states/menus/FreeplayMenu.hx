@@ -261,8 +261,8 @@ class FreeplayMenu extends SubStateBackend {
 	function onTimerEnd() {
 		if (transitioning) return;
 		var songData = songList[selectedSongIndex];
-		if (current == '${songData.songName}:${songData.variant}') return;
-		else current = '${songData.songName}:${songData.variant}';
+		if (current == Song.setupId(songData.id, null, songData.variant)) return;
+		else current = Song.setupId(songData.id, null, songData.variant);
 		Conductor.playSong(songData.songName, songData.variant);
 	}
 

@@ -1,11 +1,11 @@
 package violet.backend.audio;
 
-import flixel.util.FlxSignal;
 import flixel.addons.sound.FlxRhythmConductor;
 import flixel.addons.sound.MusicTimeChangeEvent;
+import flixel.util.FlxSignal;
 import violet.backend.utils.NovaUtils;
+import violet.data.song.Variation;
 
-using StringTools;
 using flixel.addons.sound.FlxRhythmConductorUtil;
 
 class Conductor {
@@ -214,9 +214,9 @@ class Conductor {
 			track.time = position;
 	}
 
-	public static function playSong(id:String, variation:String = '', threaded:Bool = false):Void {
+	public static function playSong(id:String, ?variation:Variation, threaded:Bool = false):Void {
 		inline function result() {
-			NovaUtils.playMusic('$id/song/Inst${variation == '' ? '' : '-$variation'}', 'songs');
+			NovaUtils.playMusic('$id/song/Inst${variation.isNone() ? '' : '-$variation'}', 'songs');
 			final songMetaData = violet.data.song.SongRegistry.getSongByID(id);
 			Conductor.setInitialBPM(songMetaData.bpm, songMetaData.stepsPerBeat, songMetaData.beatsPerMeasure);
 			instrumental.looped = false;

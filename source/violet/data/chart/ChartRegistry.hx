@@ -1,8 +1,8 @@
 package violet.data.chart;
 
 import violet.data.song.Song;
-import violet.backend.utils.ParseUtil;
 import violet.data.song.SongRegistry;
+import violet.data.song.Variation;
 
 typedef ChartCache = {
 	var filePath:String;
@@ -23,24 +23,47 @@ class ChartRegistry {
 		chartDatas.clear();
 		chartCache.clear();
 		var chartList:Array<String> = [];
-		for (song in SongRegistry.getAllSongs()) {
+		for (song in SongRegistry.getAllSongs(null)) {
 			for (diff in song.difficulties) {
-				var sub = song.variant != '' ? '/${song.variant}' : '';
-				final yamlPath = Paths.yaml('songs/${song.songName}/charts$sub/$diff');
-				final jsonPath = Paths.json('songs/${song.songName}/charts$sub/$diff');
-				final eventsYamlPath = song.variant != '' ? Paths.yaml('songs/${song.songName}/events-${song.variant}') : Paths.yaml('songs/${song.songName}/events');
-				final eventsJsonPath = song.variant != '' ? Paths.json('songs/${song.songName}/events-${song.variant}') : Paths.json('songs/${song.songName}/events');
+				final yamlPath = Paths.yaml('songs/${song.songName}/charts/$diff');
+				final jsonPath = Paths.json('songs/${song.songName}/charts/$diff');
+				final eventsYamlPath = Paths.yaml('songs/${song.songName}/events');
+				final eventsJsonPath = Paths.json('songs/${song.songName}/events');
 
-				if (yamlPath != '' || jsonPath != '') registerChart(song, diff, { difficulty: diff, filePath: yamlPath != '' ? yamlPath : jsonPath, fileExt: yamlPath != '' ? 'yaml' : 'json', eventsPath: eventsYamlPath != '' ? eventsYamlPath : eventsJsonPath })
+				if (yamlPath != '' || jsonPath != '')
+					registerChart(song, diff, {
+						filePath: yamlPath != '' ? yamlPath : jsonPath,
+						eventsPath: eventsYamlPath != '' ? eventsYamlPath : eventsJsonPath,
+						fileExt: yamlPath != '' ? 'yaml' : 'json',
+						difficulty: diff
+					});
 				else trace('warning:<red>Could not find chart for song "${song.songName}" for difficulty "$diff"');
+			}
+			for (song in song.variants) {
+				for (diff in song.difficulties) {
+					final yamlPath = Paths.yaml('songs/${song.songName}/charts/${song.variant}/$diff');
+					final jsonPath = Paths.json('songs/${song.songName}/charts/${song.variant}/$diff');
+					final eventsYamlPath = Paths.yaml('songs/${song.songName}/events-${song.variant}');
+					final eventsJsonPath = Paths.json('songs/${song.songName}/events-${song.variant}');
+
+					if (yamlPath != '' || jsonPath != '')
+						registerChart(song, diff, {
+							filePath: yamlPath != '' ? yamlPath : jsonPath,
+							eventsPath: eventsYamlPath != '' ? eventsYamlPath : eventsJsonPath,
+							fileExt: yamlPath != '' ? 'yaml' : 'json',
+							difficulty: diff
+						});
+					else trace('warning:<red>Could not find chart for song "${song.songName}:${song.variant}" for difficulty "$diff"');
+				}
 			}
 		}
 	}
 
 	public static function registerChart(song:Song, diff:String, cache:ChartCache) {
-		chartCache.set('${song.id}:$diff', cache);
-		fetchChart('${song.id}:$diff', true); // Uncomment if you want to enable chart preloading for whatever reason.
-		trace('debug:<cyan>Found and registered chart for song with ID "<magenta>${song.songName}<cyan>" for difficulty "<magenta>$diff<cyan>"' + (song.variant != '' ? ' for variant "<magenta>${song.variant}<cyan>"' : ''));
+		final fixedId = Song.setupId(song.id, diff, song.variant);
+		chartCache.set(fixedId, cache);
+		fetchChart(fixedId, true); // Uncomment if you want to enable chart preloading for whatever reason.
+		trace('debug:<cyan>Found and registered chart for song with ID "<magenta>${song.songName}<cyan>" for difficulty "<magenta>$diff<cyan>"' + (!song.variant.isNone() ? ' for variant "<magenta>${song.variant}<cyan>"' : ''));
 	}
 
 	public static function fetchChart(id:String, force:Bool = false):ChartData {
@@ -53,8 +76,8 @@ class ChartRegistry {
 		return data;
 	}
 
-	public static function getChart(songID:String, diff:String, ?variant:String):Chart {
-		return new Chart(songID, diff, null);
+	public static function getChart(songID:String, diff:String, ?variant:Variation):Chart {
+		return new Chart(songID, diff, variant);
 	}
 
 }

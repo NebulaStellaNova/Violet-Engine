@@ -1,8 +1,10 @@
 package violet.data.song;
 
+import violet.backend.utils.ParseUtil;
+
 typedef SongData = {
 	public var name:String;
-	public var ?variant:String;
+	public var ?variant:Variation;
 	public var ?displayName:String;
 
 	public var ?playableCharacter:String;
@@ -26,8 +28,8 @@ typedef SongData = {
 
 
 	public var ?icon:String;
-	public var ?color:violet.backend.utils.ParseUtil.ParseColor; // for cne compat
-	public var ?gradient:Array<violet.backend.utils.ParseUtil.ParseColor>; // for freeplay
+	public var ?color:ParseColor; // for cne compat
+	public var ?gradient:Array<ParseColor>; // for freeplay
 
 	public var ?coopAllowed:Bool; // Doesn't do shit, only here for compatibility
 	public var ?opponentModeAllowed:Bool; // Doesn't do shit, only here for compatibility
