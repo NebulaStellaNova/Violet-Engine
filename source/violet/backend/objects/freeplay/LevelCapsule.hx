@@ -68,13 +68,13 @@ class LevelCapsule extends Capsule {
 		iconBG.updateHitbox();
 
 		var displayNameText = new FlxText(0, 0, 0, data.getTitle());
-		displayNameText.setFormat(Paths.font("akira", null, "otf"), 90, FlxColor.BLACK, "center");
+		displayNameText.setFormat(Paths.font("akira", null, "otf"), 100, FlxColor.BLACK, "center");
 		displayNameText.scale.set(0.3, 0.5);
 		displayNameText.scale.scale(2);
 		displayNameText.drawFrame();
 		displayNameText.updateHitbox();
 
-		var displayNameSprite = new FlxSkewedSprite(iconBG.x + iconBG.width + 5, 0);
+		var displayNameSprite = new FlxSkewedSprite(iconBG.x + iconBG.width - 5, 17);
 		displayNameSprite.loadGraphic(displayNameText.pixels);
 		displayNameSprite.scale.set(0.3, 0.5);
 		displayNameSprite.skew.set(-30, 0);
