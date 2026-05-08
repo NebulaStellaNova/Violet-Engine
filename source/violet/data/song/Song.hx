@@ -69,6 +69,10 @@ class Song {
 		return _data?.needsVoices ?? false;
 	}
 
+	public function isDev():Bool {
+		return _data?.isDev ?? false;
+	}
+
 	public var _data:SongData;
 
 	public function new(id:String, ?variant:Variation) {

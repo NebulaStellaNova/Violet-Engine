@@ -83,4 +83,12 @@ class Level {
 		return group;
 	}
 
+	public function isDev():Bool {
+		return ![
+			for (name in getSongs())
+				for (data in violet.data.song.SongRegistry.getSongVariantsByID(name))
+					data.isDev()
+		].contains(false);
+	}
+
 }

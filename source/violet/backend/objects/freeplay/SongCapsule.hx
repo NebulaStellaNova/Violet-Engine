@@ -12,20 +12,27 @@ using violet.backend.utils.MathUtil;
 
 class SongCapsule extends Capsule {
 
-	// public var parentCapsule:LevelCapsule;
+	public var parent:LevelCapsule;
+	public var data:Song;
 
-	override public function new(songData:Song) {
+	override public function new(parent:LevelCapsule, data:Song) {
 		super();
+		this.parent = parent;
+		this.data = data;
+	}
+
+	override public function init():Void {
+		super.init();
 
 		Capsule.colorToAlphaShader.targetColor = FlxColor.BLACK;
 
 		var capsuleWidth:Float = FlxG.width/4;
 
-		if (songData?.customValues?.gradient != null)
-			songData._data.gradient = cast songData?.customValues?.gradient;
+		if (data?.customValues?.gradient != null)
+			data._data.gradient = cast data?.customValues?.gradient;
 
-		var gradient:Array<ParseColor> = songData._data.gradient != null ? songData._data.gradient : [songData._data.color, songData._data.color];
-		var capsuleBG:String = songData._data.freeplayCapsule ?? songData?.customValues?.capsuleBackground ?? "mainStage";
+		var gradient:Array<ParseColor> = data._data.gradient != null ? data._data.gradient : [data._data.color, data._data.color];
+		var capsuleBG:String = data._data.freeplayCapsule ?? data?.customValues?.capsuleBackground ?? "mainStage";
 
 		var temp = new NovaSprite(0, 0).loadSprite(Paths.image("menus/freeplaymenu/capsuleBackgrounds/" + capsuleBG));
 		temp.drawFrame();
@@ -40,14 +47,14 @@ class SongCapsule extends Capsule {
 		iconBG.makeGraphic(Math.round(68/iconScale), Math.round(68/iconScale), gradient[0]);
 		iconBG.antialiasing = true;
 		iconBG.drawFrame();
-		skewPixels(iconBG, -30, 0);
+		Capsule.skewPixels(iconBG, -30, 0);
 		iconBG.scale.set(iconScale, iconScale);
 		iconBG.updateHitbox();
 		add(iconBG);
 
-		final outlinePath = 'icons/outlines/${songData.icon}-outline'; // Typo but I'm not changing it now
+		final outlinePath = 'icons/outlines/${data.icon}-outline'; // Typo but I'm not changing it now
 		final outlineAsset = Paths.image(outlinePath);
-		var iconImage = new HealthIcon(songData.icon, false, false, outlineAsset != '' ? outlinePath : null);
+		var iconImage = new HealthIcon(data.icon, false, false, outlineAsset != '' ? outlinePath : null);
 		iconImage.scaleOffset = 0.45;
 		iconImage.globalOffset.set(0, 0);
 		iconImage.canDance = false;
@@ -58,10 +65,10 @@ class SongCapsule extends Capsule {
 		iconImage.y = 5;
 
 		iconImage.drawFrame();
-		scalePixels(iconImage, 1, 1);
+		Capsule.scalePixels(iconImage, 1, 1);
 		var x = (iconImage.width % 150) * 150;
-		cropPixels(iconImage, x.round(), 0, 150, 150);
-		isolateBlackPixels(iconImage);
+		Capsule.cropPixels(iconImage, x.round(), 0, 150, 150);
+		Capsule.isolateBlackPixels(iconImage);
 		var offsetX = (iconImage._data.freeplayOffsets ?? [0, 0])[0] ?? 0;
 		var offsetY = (iconImage._data.freeplayOffsets ?? [0, 0])[1] ?? 0;
 		iconBG.stamp(iconImage, 140 + offsetX.round(), 0 + offsetY.round());
@@ -69,7 +76,7 @@ class SongCapsule extends Capsule {
 
 		iconBG.updateHitbox();
 
-		var displayNameText = new FlxText(0, 0, 0, songData.displayName);
+		var displayNameText = new FlxText(0, 0, 0, data.displayName);
 		displayNameText.setFormat(Paths.font("akira", null, "otf"), 90, FlxColor.BLACK, "center");
 		displayNameText.scale.set(0.3, 0.5);
 		displayNameText.drawFrame();
@@ -91,7 +98,7 @@ class SongCapsule extends Capsule {
 		FlxSpriteUtil.alphaMaskFlxSprite(FlxGradient.createGradientFlxSprite(displayNameSprite.width.round(), displayNameSprite.height.round(), displayNameGradient, 1, 0), displayNameSprite, displayNameSprite);
 		displayNameSprite.updateHitbox();
 
-		var composerText = new FlxText(0, 0, 0, songData._data.composer != null ? songData._data.composer : "Unknown Artist");
+		var composerText = new FlxText(0, 0, 0, data._data.composer != null ? data._data.composer : "Unknown Artist");
 		composerText.setFormat(Paths.font("bozon", null, "otf"), 70, FlxColor.BLACK, "center");
 		composerText.drawFrame();
 		composerText.updateHitbox();
@@ -120,7 +127,7 @@ class SongCapsule extends Capsule {
 		composerSegment.shader = Capsule.colorToAlphaShader;
 		composerSegment.updateHitbox();
 
-		var bpmText = new FlxText(0, 0, 0, "    " + songData.bpm);
+		var bpmText = new FlxText(0, 0, 0, "    " + data.bpm);
 		bpmText.setFormat(Paths.font("bozon", null, "otf"), 70, FlxColor.BLACK, "center");
 		bpmText.drawFrame();
 		bpmText.updateHitbox();

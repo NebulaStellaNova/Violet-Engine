@@ -14,17 +14,23 @@ using violet.backend.utils.MathUtil;
 
 class Capsule extends FlxSpriteGroup {
 
+	public static var colorToAlphaShader:ColorToAlphaShader = new ColorToAlphaShader();
+	public static var outlineExtractionShader:OutlineExtractionShader = new OutlineExtractionShader();
+	public static var angleCropShader:AngleCropShader = new AngleCropShader();
+
 	public var capsuleBackground:FlxSkewedSprite;
 	public var backCase:FlxSkewedSprite;
 	public var frontCase:FlxSkewedSprite;
 	public var blackGradient:FlxSkewedSprite;
 
-	public static var colorToAlphaShader:ColorToAlphaShader = new ColorToAlphaShader();
-	public static var outlineExtractionShader:OutlineExtractionShader = new OutlineExtractionShader();
-	public static var angleCropShader:AngleCropShader = new AngleCropShader();
-
 	override public function new() {
 		super();
+	}
+
+	@:unreflective var initalized:Bool = false;
+	public function init():Void {
+		if (initalized) return;
+		else initalized = true;
 
 		var temp = new NovaSprite(0, 0).loadSprite(Paths.image("menus/freeplaymenu/capsuleBackgrounds/mainStage"));
 		temp.drawFrame();
@@ -57,7 +63,7 @@ class Capsule extends FlxSpriteGroup {
 		add(blackGradient);
 	}
 
-	function skewPixels(sprite:FlxSprite, xSkew:Float = 0, ySkew:Float = 0) {
+	static function skewPixels(sprite:FlxSprite, xSkew:Float = 0, ySkew:Float = 0):Void {
 		var skewXDegrees:Float = xSkew;
 		var skewYDegrees:Float = ySkew;
 
@@ -89,7 +95,7 @@ class Capsule extends FlxSpriteGroup {
 		sprite.loadGraphic(finalBD);
 	}
 
-	function scalePixels(sprite:FlxSprite, scaleX:Float, scaleY:Float):Void {
+	static function scalePixels(sprite:FlxSprite, scaleX:Float, scaleY:Float):Void {
 		var oldPixels:BitmapData = sprite.pixels;
 		var newWidth:Int = Std.int(oldPixels.width * scaleX);
 		var newHeight:Int = Std.int(oldPixels.height * scaleY);
@@ -100,7 +106,7 @@ class Capsule extends FlxSpriteGroup {
 		sprite.pixels = newPixels;
 	}
 
-	function isolateBlackPixels(sprite:FlxSprite, sensitivity:Float = 0.001):Void {
+	static function isolateBlackPixels(sprite:FlxSprite, sensitivity:Float = 0.001):Void {
 		if (sprite == null || sprite.graphic == null || sprite.graphic.bitmap == null) {
 			return;
 		}
@@ -137,7 +143,7 @@ class Capsule extends FlxSpriteGroup {
 		sprite.pixels = bmd;
 	}
 
-	function cropPixels(sprite:FlxSprite, x:Int, y:Int, width:Int, height:Int):Void {
+	static function cropPixels(sprite:FlxSprite, x:Int, y:Int, width:Int, height:Int):Void {
 		if (sprite == null || sprite.graphic == null) return;
 
 		var original:BitmapData = sprite.pixels;

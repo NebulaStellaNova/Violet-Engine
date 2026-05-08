@@ -4,8 +4,13 @@ import violet.data.level.Level;
 
 class LevelCapsule extends Capsule {
 
-	override public function new(levelData:Level) {
+	public var data:Level;
+	// to keep track of its sub items / songs
+	public final children:Array<SongCapsule> = [];
+
+	override public function new(data:Level) {
 		super();
+		this.data = data;
 	}
 
 }

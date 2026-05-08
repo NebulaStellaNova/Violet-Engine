@@ -67,6 +67,29 @@ class SongRegistry {
 				return song;
 		return null;
 	}
+	public static function getSongVariantsByID(songID:String, sortByVariant:Bool = true):Array<Song> {
+		if (!sortByVariant) {
+			return [
+				for (song in songs)
+					if (song.id == songID)
+						song
+			];
+		}
+
+		final list:Map<String, Array<Song>> = new Map<String, Array<Song>>();
+		for (song in songs)
+			if (song.id == songID) {
+				final variant:String = song.variant.toString();
+				if (!list.exists(variant))
+					list.set(variant, []);
+				list.get(variant).push(song);
+			}
+		return [
+			for (list in list)
+				for (song in list)
+					song
+		];
+	}
 
 	public static function getAllSongIDs(?variantFilter:String):Array<String> {
 		if (variantFilter == Variation.NO_VARIANT) { // we need to be able to do all variations too
