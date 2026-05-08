@@ -1,6 +1,5 @@
 package violet.backend;
 
-import flixel.FlxCamera;
 import haxe.CallStack;
 import haxe.io.Path;
 import sys.FileSystem;
@@ -23,7 +22,7 @@ class CrashHandler {
 				event.stopImmediatePropagation();
 				event.stopPropagation();
 				event.preventDefault();
-				onCrash(event.error);
+				onCrash(event);
 			}
 		);
 
