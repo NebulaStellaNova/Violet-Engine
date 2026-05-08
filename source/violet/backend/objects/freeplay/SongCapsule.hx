@@ -1,6 +1,7 @@
 package violet.backend.objects.freeplay;
 
 import flixel.addons.effects.FlxSkewedSprite;
+import flixel.math.FlxPoint;
 import flixel.text.FlxText;
 import flixel.util.FlxGradient;
 import flixel.util.FlxSpriteUtil;
@@ -31,21 +32,20 @@ class SongCapsule extends Capsule {
 		if (data?.customValues?.gradient != null)
 			data._data.gradient = cast data?.customValues?.gradient;
 
-		var gradient:Array<ParseColor> = data._data.gradient != null ? data._data.gradient : [data._data.color, data._data.color];
-		var capsuleBG:String = data._data.freeplayCapsule ?? data?.customValues?.capsuleBackground ?? "mainStage";
+		final gradient:Array<ParseColor> = data._data.gradient ?? [data._data.color, data._data.color];
+		final capsuleBG:String = data._data.freeplayCapsule ?? data?.customValues?.capsuleBackground ?? "mainStage";
 
-		var temp = new NovaSprite(0, 0).loadSprite(Paths.image("menus/freeplaymenu/capsuleBackgrounds/" + capsuleBG));
+		var temp = new NovaSprite().loadSprite(Paths.image("menus/freeplaymenu/capsuleBackgrounds/" + capsuleBG));
 		temp.drawFrame();
-
 		capsuleBackground.loadGraphicFromSprite(temp);
 		capsuleBackground.drawFrame();
+		temp.destroy();
 
 		backCase.makeGraphic(FlxG.width, 85, gradient[0]);
 
 		var iconScale = 0.425;
 		var iconBG = new FlxSkewedSprite(-25, 8);
 		iconBG.makeGraphic(Math.round(68/iconScale), Math.round(68/iconScale), gradient[0]);
-		iconBG.antialiasing = true;
 		iconBG.drawFrame();
 		Capsule.skewPixels(iconBG, -30, 0);
 		iconBG.scale.set(iconScale, iconScale);
@@ -69,9 +69,12 @@ class SongCapsule extends Capsule {
 		var x = (iconImage.width % 150) * 150;
 		Capsule.cropPixels(iconImage, x.round(), 0, 150, 150);
 		Capsule.isolateBlackPixels(iconImage);
-		var offsetX = (iconImage._data.freeplayOffsets ?? [0, 0])[0] ?? 0;
-		var offsetY = (iconImage._data.freeplayOffsets ?? [0, 0])[1] ?? 0;
-		iconBG.stamp(iconImage, 140 + offsetX.round(), 0 + offsetY.round());
+		final freeplayOffsets:FlxPoint = {
+			var offset = iconImage._data.freeplayOffsets ?? [0, 0];
+			new FlxPoint(offset[0] ?? 0, offset[1] ?? 0);
+		}
+		freeplayOffsets.round();
+		iconBG.stamp(iconImage, cast 140 + freeplayOffsets.x, cast freeplayOffsets.y);
 		iconBG.shader = Capsule.colorToAlphaShader;
 
 		iconBG.updateHitbox();
@@ -84,7 +87,6 @@ class SongCapsule extends Capsule {
 
 		var displayNameSprite = new FlxSkewedSprite(iconBG.x + iconBG.width + 5, 0);
 		displayNameSprite.loadGraphic(displayNameText.pixels);
-		displayNameSprite.antialiasing = true;
 		displayNameSprite.scale.set(0.3, 0.5);
 		displayNameSprite.skew.set(-30, 0);
 		add(displayNameSprite);
@@ -92,27 +94,27 @@ class SongCapsule extends Capsule {
 		var gradientMult = 2;
 
 		var amt = displayNameText.width / capsuleWidth;
+		displayNameText.destroy();
 		// amt /= gradientMult;
 		var displayNameGradient:Array<FlxColor> = [gradient[0], FlxColor.interpolate(gradient[0], gradient[1], amt)];
 
 		FlxSpriteUtil.alphaMaskFlxSprite(FlxGradient.createGradientFlxSprite(displayNameSprite.width.round(), displayNameSprite.height.round(), displayNameGradient, 1, 0), displayNameSprite, displayNameSprite);
 		displayNameSprite.updateHitbox();
 
-		var composerText = new FlxText(0, 0, 0, data._data.composer != null ? data._data.composer : "Unknown Artist");
+		var composerText = new FlxText(0, 0, 0, data._data.composer ?? "Unknown Artist");
 		composerText.setFormat(Paths.font("bozon", null, "otf"), 70, FlxColor.BLACK, "center");
 		composerText.drawFrame();
 		composerText.updateHitbox();
 
 		var composerSprite = new FlxSkewedSprite(displayNameSprite.x - 10, displayNameSprite.y + displayNameSprite.height - 3);
 		composerSprite.loadGraphic(composerText.pixels);
-		composerSprite.antialiasing = true;
 		composerSprite.scale.set(0.5, 0.5);
 		composerSprite.drawFrame();
 		composerSprite.updateHitbox();
+		composerText.destroy();
 
 		var composerSegment = new FlxSkewedSprite(composerSprite.x - 10, displayNameSprite.y + displayNameSprite.height - 3);
 		composerSegment.loadGraphic(FlxGradient.createGradientFlxSprite(Math.round(composerSprite.width + 40), 30*2, [FlxColor.WHITE, FlxColor.WHITE], 1, 0).pixels);
-		composerSegment.antialiasing = true;
 		composerSegment.skew.set(-30, 0);
 		composerSegment.scale.set(0.5, 0.5);
 		composerSegment.drawFrame();
@@ -139,21 +141,18 @@ class SongCapsule extends Capsule {
 
 		var bpmSprite = new FlxSkewedSprite(composerSegment.x + composerSegment.width + 20, displayNameSprite.y + displayNameSprite.height - 3);
 		bpmSprite.loadGraphic(bpmText.pixels);
-		bpmSprite.antialiasing = true;
 		bpmSprite.scale.set(0.5, 0.5);
 		bpmSprite.skew.set(-30, 0);
 		bpmSprite.updateHitbox();
 		bpmSprite.drawFrame();
-
+		bpmText.destroy();
 
 		var bpmSegment = new FlxSkewedSprite(bpmSprite.x - 10, displayNameSprite.y + displayNameSprite.height - 3);
 		bpmSegment.loadGraphic(FlxGradient.createGradientFlxSprite(bpmSprite.width.round() + 40, 30*2, [FlxColor.WHITE, FlxColor.WHITE], 1, 0).pixels);
-		bpmSegment.antialiasing = true;
 		bpmSegment.skew.set(-30, 0);
 		bpmSegment.scale.set(0.5, 0.5);
 		add(bpmSegment);
 		// add(bpmSprite);
-
 
 		var bpmAmt = bpmSegment.width / capsuleWidth;
 		bpmAmt /= gradientMult;

@@ -32,32 +32,28 @@ class Capsule extends FlxSpriteGroup {
 		if (initalized) return;
 		else initalized = true;
 
-		var temp = new NovaSprite(0, 0).loadSprite(Paths.image("menus/freeplaymenu/capsuleBackgrounds/mainStage"));
-		temp.drawFrame();
-
-		capsuleBackground = new FlxSkewedSprite(-10, 0);
-		capsuleBackground.loadGraphicFromSprite(temp);
-		capsuleBackground.drawFrame();
-		// skewPixels(capsuleBackground, 30, 0);
-
 		backCase = new FlxSkewedSprite(0, 0);
-		backCase.antialiasing = true;
 		backCase.skew.set(-30, 0);
 		add(backCase);
 
 		frontCase = new FlxSkewedSprite(15, 0);
 		frontCase.makeGraphic(FlxG.width, 85, FlxColor.WHITE);
-		frontCase.antialiasing = true;
 		frontCase.drawFrame();
 		frontCase.skew.set(-30, 0);
 		add(frontCase);
 
+		var temp = new NovaSprite().loadSprite(Paths.image("menus/freeplaymenu/capsuleBackgrounds/mainStage"));
+		temp.drawFrame();
+		capsuleBackground = new FlxSkewedSprite(-10, 0);
+		capsuleBackground.loadGraphicFromSprite(temp);
+		capsuleBackground.drawFrame();
+		// skewPixels(capsuleBackground, 30, 0);
+		temp.destroy();
 		capsuleBackground.shader = angleCropShader;
 		add(capsuleBackground);
 
 		blackGradient = new FlxSkewedSprite(14, 0);
-		blackGradient.loadGraphic(FlxGradient.createGradientFlxSprite(Math.round(frontCase.width/2), Math.round(frontCase.height), [FlxColor.BLACK, FlxColor.BLACK, FlxColor.TRANSPARENT], 1, 0).pixels);
-		blackGradient.antialiasing = true;
+		blackGradient.loadGraphic(FlxGradient.createGradientBitmapData(Math.round(frontCase.width/2), Math.round(frontCase.height), [FlxColor.BLACK, FlxColor.BLACK, FlxColor.TRANSPARENT], 1, 0));
 		blackGradient.skew.set(-30, 0);
 		blackGradient.alpha = 0.6;
 		add(blackGradient);

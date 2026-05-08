@@ -1,9 +1,7 @@
 package violet.backend.objects.freeplay;
 
 import violet.backend.shaders.RoundCornerShader;
-import flixel.group.FlxSpriteGroup;
 import violet.backend.utils.ParseUtil;
-import violet.backend.objects.NovaSprite;
 
 typedef AlbumData = {
 	/**
@@ -35,15 +33,10 @@ typedef AlbumData = {
 	public var ?albumTitleOffsets:Array<Float>;
 }
 
-class Album extends FlxSpriteGroup {
+class Album extends NovaSprite {
 
 	public var id:String;
 	public var _data:AlbumData;
-
-	public var name(get, never):String;
-	function get_name():String {
-		return _data?.name ?? id;
-	}
 
 	public var ostText(get, never):String;
 	function get_ostText():String {
@@ -52,7 +45,8 @@ class Album extends FlxSpriteGroup {
 
 	public var artists(get, never):Array<String>;
 	function get_artists():Array<String> {
-		return (_data?.artists ?? []).copy();
+		if (_data?.artists == null) return [];
+		return _data.artists.copy();
 	}
 
 	public var albumArtAsset(get, never):String;
@@ -67,31 +61,20 @@ class Album extends FlxSpriteGroup {
 
 	public var albumTitleOffsets(get, never):Array<Float>;
 	function get_albumTitleOffsets():Array<Float> {
-		return (_data?.albumTitleOffsets ?? []).copy();
-	}
-
-	public function new(id:String) {
-		super();
-		setAlbum(id);
+		if (_data?.albumTitleOffsets == null) return [];
+		return _data.albumTitleOffsets.copy();
 	}
 
 	public static var roundCornerShader:RoundCornerShader = new RoundCornerShader();
 
-	var image:NovaSprite;
-	public function setAlbum(id:String) {
+	public function new(id:String) {
 		this.id = id;
-
-		_data = ParseUtil.jsonOrYaml('data/ui/freeplay/albums/$id');
-		if (image != null) remove(image);
-
-		image = new NovaSprite(100, 210, Paths.image(albumArtAsset));
-		image.setGraphicSize(250);
-		image.updateHitbox();
-		image.antialiasing = true;
-		image.updateHitbox();
-		image.shader = roundCornerShader;
-
-		add(image);
+		this._data = ParseUtil.jsonOrYaml('data/ui/freeplay/albums/$id');
+		super(100, 210, Paths.image(albumArtAsset));
+		this.offset.x = 100;
+		setGraphicSize(250);
+		updateHitbox();
+		shader = roundCornerShader;
 	}
 
 }

@@ -12,7 +12,7 @@ class VariantSelectScreen extends EditorListBackend {
 			var songData = _i == 0 ? violet.data.song.SongRegistry.getSongByID(ChartEditorState.songID)
 			: violet.data.song.SongRegistry.getSongByID(ChartEditorState.songID, i);
 			list.push({
-				title: i.isNone() ? Variation.NO_VARIANT : i.toString().toUpperCase(),
+				title: i.toString('default').toUpperCase(),
 				disabled: false,
 				onClick: () -> {
 					ChartEditorState.variant = _i == 0 ? null : i;

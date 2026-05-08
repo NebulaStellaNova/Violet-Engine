@@ -11,6 +11,9 @@ abstract Variation(Null<String>) {
 
 	@:from inline public static function fromString(?value:String):Variation
 		return new Variation(value);
-	@:to inline public function toString():Null<String>
-		return isNone() ? null : this;
+	@:to inline public function _toString():Null<String> // fuck haxe
+		return toString();
+
+	inline public function toString(?ifNone:String):Null<String>
+		return isNone() ? ifNone : this;
 }

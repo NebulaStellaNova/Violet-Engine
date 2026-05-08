@@ -108,19 +108,14 @@ class FreeplayMenu extends SubStateBackend {
 
 		add(albumGroup = new FlxTypedGroup<Album>());
 
-		var album = new Album('placeholder');
-		album.x = 0;
-		albumMap.set('placeholder', albumGroup.add(album));
+		for (id in ['none', 'placeholder']) albumMap.set(id, albumGroup.add(new Album(id)));
 
 		capsules = new FlxTypedGroup<CapsuleInst>();
 		for (i => data in LevelRegistry.getAllLevels()) {
 			if (data.isDev() ? !Options.data.developerMode : false) continue;
 
 			var levelCap = new LevelCapsule(data);
-			levelCap.init();
-			levelCap.x = FlxG.width;
-			levelCap.y = 100 * i + (FlxG.height/2) - (85/2);
-			_capsules.push(capsules.add(levelCap));
+			capsules.add(levelCap);
 
 			for (i => data in [
 				for (data in Song.sortByVariant([
@@ -152,6 +147,12 @@ class FreeplayMenu extends SubStateBackend {
 				_capsules.push(capsules.add(cap));
 				levelCap.children.push(cap);
 			}
+
+			// init after everything
+			levelCap.init();
+			levelCap.x = FlxG.width;
+			levelCap.y = 100 * i + (FlxG.height/2) - (85/2);
+			_capsules.push(levelCap);
 		}
 		add(capsules);
 
@@ -224,15 +225,14 @@ class FreeplayMenu extends SubStateBackend {
 
 		if (Controls.back && !transitioning) close();
 
-		var scoreGet:Int = 0;
-		capsules.members[selectedSongIndex].getEither((level, song) -> {
-			if (level != null) scoreGet = ScoreUtil.getLevelScore(level.data.id, difficultyText.text.toLowerCase());
-			if (song != null) scoreGet = ScoreUtil.getSongScore(song.data.id, difficultyText.text.toLowerCase(), song.data.variant);
-			return null; // fuck haxe abstracts man 💀
-		}) ?? 0;
 		scoreLerp = lerp(
 			scoreLerp,
-			scoreGet,
+			capsules.members[selectedSongIndex].getEither((level, song) -> {
+				var score:Int = 0;
+				if (level != null) score = ScoreUtil.getLevelScore(level.data.id, difficultyText.text.toLowerCase());
+				if (song != null) score = ScoreUtil.getSongScore(song.data.id, difficultyText.text.toLowerCase(), song.data.variant);
+				return cast score; // fuck haxe abstracts man 💀
+			}),
 			0.3
 		);
 		scoreText.text = "SCORE: " + ScoreUtil.stringifyScore(scoreLerp, 8);
@@ -269,10 +269,14 @@ class FreeplayMenu extends SubStateBackend {
 
 		if (Controls.accept) selectSong();
 
-		final targetID:String = capsules.members[selectedSongIndex].getSong(cap -> return cap.data._data.album) ?? 'placeholder';
+		final targetID:String = capsules.members[selectedSongIndex].getEither((_, song) -> {
+			if (song != null)
+				return song.data._data.album ?? 'placeholder';
+			return 'none'; // for it too assign for levels
+		});
 		for (album in albumMap) {
 			if (album.visible = album.id == targetID) {
-				ostText.text = album?.ostText ?? "OFFICIAL OST";
+				ostText.text = album.ostText;
 				ostText.updateHitbox();
 				ostText.x = 1975 + 25 - ostText.width + 125;
 			}
