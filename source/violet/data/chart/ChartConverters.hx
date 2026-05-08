@@ -131,7 +131,7 @@ class ChartConverters {
 			composer: meta.artist,
 			charter: meta.charter,
 
-			icon: meta?.icon != null ? meta.icon : CharacterRegistry.characterDatas.get(meta.playData.characters.opponent).healthIcon,
+			icon: meta?.icon ?? CharacterRegistry.characterDatas.get(meta.playData.characters.opponent)?.healthIcon ?? "face",
 
 			variants: meta.playData.songVariations,
 			difficulties: meta.playData.difficulties,
@@ -373,7 +373,9 @@ class ChartConverters {
 			"mallXmasErect" => "mall-erect",
 			"schoolErect" => "school-erect",
 			"schoolEvil" => "school-evil",
-			"schoolEvilErect" => "school-evil-erect"
+			"schoolEvilErect" => "school-evil-erect",
+			"spookyMansion" => "spooky",
+			"spookyMansionErect" => "spooky-erect"
 		];
 		if (!aliases.exists(stageID)) return stageID;
 		return aliases.get(stageID);

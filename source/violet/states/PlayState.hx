@@ -872,7 +872,7 @@ class PlayState extends violet.backend.StateBackend {
 				}
 
 			case 'Play Animation':
-				var targetCharacter:Character = strumLines.members[scriptEvent.params[0]].characters[0];
+				var targetCharacter:Character = strumLines.members[cast Math.abs(scriptEvent.params[0])].characters[0];
 				targetCharacter.canDance = false;
 				targetCharacter.canSing = false;
 				targetCharacter.isSinging = false;
@@ -887,7 +887,6 @@ class PlayState extends violet.backend.StateBackend {
 					}
 				});
 		}
-
 
 		if (event.name != null) {
 			trace('debug:Ran song event named "<yellow>${event.name}<reset>" with parameters "<yellow>${event.params.join(", ")}<reset>"');
