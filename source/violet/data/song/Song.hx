@@ -88,9 +88,8 @@ class Song {
 		return fixedId;
 	}
 
-	inline public static function sortByVariant(songs:Array<Song>) {
-		inline function noneCheck(variant:Variation):String return variant.toString('');
-		songs.sort((a, b) -> violet.backend.utils.NovaUtils.sortAlphabetically(noneCheck(a.variant), noneCheck(b.variant)));
+	inline public static function sortByVariant(songs:Array<Song>):Array<Song> {
+		songs.sort((a, b) -> violet.backend.utils.NovaUtils.sortAlphabetically(a.variant.toString(''), b.variant.toString('')));
 		return songs;
 	}
 
