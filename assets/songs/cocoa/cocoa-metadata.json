@@ -13,7 +13,7 @@
       "opponent": "parents-christmas",
       "altInstrumentals": ["pico"],
       "opponentVocals": ["parents-christmas"],
-      "playerVocals": ["bf-christmas"]
+      "playerVocals": ["bf"]
     },
     "stage": "mallXmas",
     "noteStyle": "funkin",
