@@ -52,7 +52,7 @@ class SongRegistry {
 	}
 
 	public static function registerSong(song:Song) {
-		trace('debug:<cyan>Found and registered song with ID "<magenta>${song.id}<cyan>" and variant of "<magenta>${song.variant.isNone() ? Variation.NO_VARIANT : song.variant.toString()}<cyan>"');
+		trace('debug:<cyan>Found and registered song with ID "<magenta>${song.id}<cyan>"' + (song.variant.isNone() ? '' : ' variant of "<magenta>${song.variant}<cyan>"'));
 		songs.push(song);
 	}
 
@@ -62,17 +62,20 @@ class SongRegistry {
 	}
 
 	public static function getSongByID(songID:String, ?variantID:Variation):Null<Song> {
-		for (song in songs) {
-			if (song.id == songID && song.variant == variantID) {
+		for (song in songs)
+			if (song.id == songID && song.variant == variantID)
 				return song;
-			}
-		}
 		return null;
 	}
 
 	public static function getAllSongIDs(?variantFilter:String):Array<String> {
-		if (variantFilter == Variation.NO_VARIANT) // we need to be able to do all variations too
-			return [for (song in songs) song.id];
+		if (variantFilter == Variation.NO_VARIANT) { // we need to be able to do all variations too
+			final list:Array<String> = [];
+			for (song in songs)
+				if (!list.contains(song.id))
+					list.push(song.id);
+			return list;
+		}
 		return [
 			for (song in songs)
 				if (song.variant == variantFilter)
