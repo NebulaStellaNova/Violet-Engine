@@ -43,7 +43,7 @@ class LevelCapsule extends Capsule {
 		iconBG.updateHitbox();
 		add(iconBG);
 
-		final outlinePath = 'icons/outlines/${children[0].data.icon}-outline'; // Typo but I'm not changing it now
+		final outlinePath = 'icons/outlines/${children[0].data.icon}';
 		final outlineAsset = Paths.image(outlinePath);
 		var iconImage = new HealthIcon(children[0].data.icon, false, false, outlineAsset != '' ? outlinePath : null);
 		iconImage.scaleOffset = 0.45;
