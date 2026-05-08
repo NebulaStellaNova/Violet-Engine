@@ -123,17 +123,19 @@ class FreeplayMenu extends SubStateBackend {
 			_capsules.push(capsules.add(levelCap));
 
 			for (i => data in [
-				for (name in data.getSongs())
-					for (data in SongRegistry.getSongVariantsByID(name)) {
-						final conditions:Array<Bool> = [
-							data.isDev() ? Options.data.developerMode : true
-						];
-						var conditionsMet:Bool = true;
-						for (i in conditions)
-							if (!i) conditionsMet = false;
-						if (conditionsMet)
-							data;
-					}
+				for (data in Song.sortByVariant([
+					for (name in data.getSongs())
+						for (data in SongRegistry.getSongVariantsByID(name)) {
+							final conditions:Array<Bool> = [
+								data.isDev() ? Options.data.developerMode : true
+							];
+							var conditionsMet:Bool = true;
+							for (i in conditions)
+								if (!i) conditionsMet = false;
+							if (conditionsMet)
+								data;
+						}
+				])) data
 			]) {
 				if (!albumMap.exists(data._data.album) && data._data.album != null) {
 					var album = new Album(data._data.album);
