@@ -1,7 +1,7 @@
 package violet.backend;
 
-import violet.backend.options.Options;
 import flixel.input.keyboard.FlxKey;
+import violet.backend.options.Options;
 
 /**
  * This class handles user controls, without it how would you do anything?
@@ -160,6 +160,19 @@ class Controls {
 	public static var uiRightReleased(get, never):Bool;
 	inline static function get_uiRightReleased():Bool
 		return released('ui_right');
+
+	/**
+	 * When you press left to move through ui tabs
+	 */
+	public static var uiLeftTab(get, never):Bool;
+	inline static function get_uiLeftTab():Bool
+		return pressed('ui_left_tabs');
+	/**
+	 * When you press right to move through ui tabs
+	 */
+	public static var uiRightTab(get, never):Bool;
+	inline static function get_uiRightTab():Bool
+		return pressed('ui_right_tabs');
 
 	/**
 	 * When "accept" is pressed.

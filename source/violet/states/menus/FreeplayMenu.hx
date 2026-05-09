@@ -51,14 +51,53 @@ abstract CapsuleInst(Capsule) from Capsule to Capsule from SongCapsule from Leve
 	}
 }
 
+typedef RawCategoryData = {
+	var image:String;
+	var ?filterBy:CapsuleInst -> Bool;
+	var ?sortBy:(CapsuleInst, CapsuleInst) -> Int;
+}
+@:forward
+abstract CategoryData(RawCategoryData) from RawCategoryData to RawCategoryData {
+	public function getImage():flixel.graphics.FlxGraphic {
+		var path:String = this.image;
+		if (!Paths.fileExists(Paths.image(path), true))
+			path = 'menus/freeplaymenu/categories/${this.image}';
+		return Cache.image(path);
+	}
+
+	public function filterList(list:Array<CapsuleInst>):Array<CapsuleInst> {
+		if (this.filterBy == null) return list;
+		return list.filter(this.filterBy);
+	}
+	public function sortList(list:Array<CapsuleInst>):Void
+		if (this.sortBy != null)
+			list.sort(this.sortBy);
+}
+
 class FreeplayMenu extends SubStateBackend {
 
 	public static var skipTransition:Bool = false;
 	public static var selectedSongIndex(default, set):Int = 0;
+	public static var selectedCategoryIndex(default, set):Int = 0;
 
 	// might not get used, unsure at this time
 	@:unreflective var _levels:Map<String, LevelCapsule> = [];
 	@:unreflective var _songs:Map<String, SongCapsule> = [];
+
+	public var caregoryGroup:FlxTypedGroup<NovaSprite>;
+	public final categoryData:Map<String, CategoryData> = [
+		'favorited' => {
+			image: 'heart',
+			filterBy: cap -> {
+				return cap.getEither((level, song) -> {
+					if (level != null) return [for (song in level.children) song.data.isFavorited].contains(true);
+					if (song != null) return song.data.isFavorited;
+					return false;
+				});
+			}
+		},
+		'all' => { image: 'all' }
+	];
 
 	public static var difficultyColors:Map<String, ParseColor> = [
 		"easy" => "#00FF00",
@@ -110,6 +149,7 @@ class FreeplayMenu extends SubStateBackend {
 
 		for (id in ['none', 'placeholder']) albumMap.set(id, albumGroup.add(new Album(id)));
 
+		final playableChars:Array<String> = [];
 		capsules = new FlxTypedGroup<CapsuleInst>();
 		for (i => data in LevelRegistry.getAllLevels()) {
 			if (data.isDev() ? !Options.data.developerMode : false) continue;
@@ -134,7 +174,6 @@ class FreeplayMenu extends SubStateBackend {
 			]) {
 				if (!albumMap.exists(data._data.album) && data._data.album != null) {
 					var album = new Album(data._data.album);
-					album.x = skipTransition ? 0 : -(FlxG.width/2);
 					albumMap.set(data._data.album, albumGroup.add(album));
 
 					FlxTween.tween(album, { x: 0 }, 0.5, { ease: FlxEase.expoOut, startDelay: 0.5 });
@@ -146,6 +185,9 @@ class FreeplayMenu extends SubStateBackend {
 				cap.y = 100 * i + (FlxG.height/2) - (85/2);
 				_capsules.push(capsules.add(cap));
 				levelCap.children.push(cap);
+
+				if (!playableChars.contains(data.playableCharacter))
+					playableChars.push(data.playableCharacter);
 			}
 
 			// init after everything
@@ -155,6 +197,21 @@ class FreeplayMenu extends SubStateBackend {
 			_capsules.push(levelCap);
 		}
 		add(capsules);
+
+		playableChars.sort(NovaUtils.sortAlphabetically);
+		for (char in playableChars) {
+			categoryData.set('char:$char', {
+				{
+					image: char,
+					filterBy: cap -> return cap.getEither((level, song) -> {
+						if (level != null) return [for (song in level.children) song.data.playableCharacter == char].contains(true);
+						if (song != null) return song.data.playableCharacter == char;
+						return false;
+					})
+				}
+			});
+		}
+		runEvent('categorySetup', new violet.backend.scripting.events.CategorySetupEvent(categoryData));
 
 		bottomBar = new NovaSprite(0, FlxG.height, Paths.image('menus/freeplaymenu/bottomBar'));
 		bottomBar.setGraphicSize(FlxG.width);
@@ -166,6 +223,14 @@ class FreeplayMenu extends SubStateBackend {
 		topBar.updateHitbox();
 		topBar.y = -topBar.height;
 		add(topBar);
+
+		caregoryGroup = new FlxTypedGroup<NovaSprite>();
+		for (id => data in categoryData) {
+			var icon:NovaSprite = cast (id.startsWith('char:') ? new violet.data.icon.HealthIcon(data.image, false) : new NovaSprite().loadGraphic(data.getImage()));
+			icon.y = topBar.y + 100;
+			caregoryGroup.add(icon);
+		}
+		add(caregoryGroup);
 
 		scoreText = new NovaText(30, 15, 0, "SCORE: 00000000", Paths.font('ErasBoldITC'));
 		scoreText.size = 80;
@@ -198,7 +263,6 @@ class FreeplayMenu extends SubStateBackend {
 
 		ostText = new NovaText(100, FlxG.height - 47, 500*2, "FIRE FIGHT P1");
 		ostText.setFormat(Paths.font("akira", null, "otf"), 50, FlxColor.WHITE, "center");
-		ostText.antialiasing = true;
 		ostText.scale.x = ostText.scale.y = 0.5;
 		ostText.scale.y *= 1.4;
 		ostText.updateHitbox();
@@ -240,6 +304,23 @@ class FreeplayMenu extends SubStateBackend {
 		scoreText.y = topBar.y + 15;
 		difficultyText.y = bottomBar.y + 50;
 
+		if (Controls.uiUp) selectedSongIndex -= 1;
+		if (Controls.uiDown) selectedSongIndex += 1;
+
+		if (FlxG.keys.justPressed.HOME) selectedSongIndex = 0;
+		if (FlxG.keys.justPressed.END) selectedSongIndex = capsules.length-1;
+
+		if (FlxG.keys.justPressed.PAGEUP) selectedSongIndex -= 5;
+		if (FlxG.keys.justPressed.PAGEDOWN) selectedSongIndex += 5;
+
+		if (Controls.uiLeft) changeDiff(-1);
+		if (Controls.uiRight) changeDiff(1);
+
+		if (Controls.uiLeftTab) selectedCategoryIndex -= 1;
+		if (Controls.uiRightTab) selectedCategoryIndex += 1;
+
+		if (Controls.accept) selectSong();
+
 		for (index => cap in capsules) {
 			var offset = 55 * (selectedSongIndex - index);
 			offset += (selectedSongIndex - index) == 0 ? 0 : 50;
@@ -254,20 +335,10 @@ class FreeplayMenu extends SubStateBackend {
 			}
 			cap.backCase.x = lerp(cap.backCase.x, cap.frontCase.x + (index == selectedSongIndex ? -15 : -5), snap ? 1 : 0.2);
 		}
-
-		if (Controls.uiUp) selectedSongIndex -= 1;
-		if (Controls.uiDown) selectedSongIndex += 1;
-
-		if (FlxG.keys.justPressed.HOME) selectedSongIndex = 0;
-		if (FlxG.keys.justPressed.END) selectedSongIndex = capsules.length-1;
-
-		if (FlxG.keys.justPressed.PAGEUP) selectedSongIndex -= 5;
-		if (FlxG.keys.justPressed.PAGEDOWN) selectedSongIndex += 5;
-
-		if (Controls.uiLeft) changeDiff(-1);
-		if (Controls.uiRight) changeDiff(1);
-
-		if (Controls.accept) selectSong();
+		for (index => icon in caregoryGroup) {
+			var newX:Float = 300 * (selectedCategoryIndex + 1) + (FlxG.width / 2);
+			icon.x = lerp(icon.x, newX, snap ? 1 : 0.2);
+		}
 
 		final targetID:String = capsules.members[selectedSongIndex].getEither((_, song) -> {
 			if (song != null)
@@ -301,24 +372,31 @@ class FreeplayMenu extends SubStateBackend {
 			return '----';
 		}) + " · ");
 		selectASong.setFormat(Paths.font("Nunito-Medium"), 65, FlxColor.WHITE, "center");
-		selectASong.antialiasing = true;
 		selectASong.scale.x = selectASong.scale.y = 0.5;
 		selectASong.updateHitbox();
 		selectASong.drawFrame();
 
 		if (instance.selectASongText != null) instance.remove(instance.selectASongText);
 		instance.selectASongText = new FlxBackdrop(selectASong.pixels, X);
-		instance.selectASongText.antialiasing = true;
 		instance.selectASongText.y = -4;
 		instance.selectASongText.scale.x = instance.selectASongText.scale.y = instance.topBar.scale.x;
 		instance.selectASongText.updateHitbox();
 		instance.selectASongText.alpha = 0.5;
 		instance.selectASongText.velocity.set(100, 0);
 		instance.insert(instance.members.indexOf(instance.topBar) - 1, instance.selectASongText);
+		selectASong.destroy();
 
 		if (instance.timer != null) instance.timer.cancel();
 		instance.timer = FlxTimer.wait(0.5, instance.onTimerEnd);
 		return value;
+	}
+	static function set_selectedCategoryIndex(value:Int) {
+		if (instance.transitioning) return selectedCategoryIndex;
+		selectedCategoryIndex = FlxMath.wrap(value, 0, instance.caregoryGroup.length - 1);
+
+		/* if (instance.timer != null) instance.timer.cancel();
+		instance.timer = FlxTimer.wait(0.5, instance.onTimerEnd); */
+		return value; // TODO: code capsule list updating
 	}
 
 	function changeDiff(amount:Int) {

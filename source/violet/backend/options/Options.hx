@@ -37,6 +37,9 @@ import violet.data.song.Variation;
 		'ui_up' => ['W', 'UP'],
 		'ui_right' => ['D', 'RIGHT'],
 
+		'ui_left_tabs' => ['Q', 'COMMA'],
+		'ui_right_tabs' => ['E', 'PERIOD'],
+
 		'accept' => ['ENTER', 'SPACE'],
 		'back' => ['BACKSPACE', 'ESCAPE'],
 		'pause' => ['ENTER', 'ESCAPE'],
@@ -62,6 +65,9 @@ import violet.data.song.Variation;
 	public var savedAccuracies:Map<String, Float> = [];
 
 	public var savedLevelScores:Map<String, Int> = [];
+
+	// modID<songID:variant, Bool>
+	public var favoritedSongs:Map<String, Map<String, Bool>> = [];
 
 	public var modOptions:Dynamic = {};
 
@@ -200,16 +206,29 @@ class Options {
 	}
 
 	private static function getLevelScore(id:String, difficulty:String) {
-		var saveID:String = [ id, ':$difficulty' ].join('');
-		return data.savedLevelScores.get(saveID) ?? 0;
+		return data.savedLevelScores.get(Song.setupId(id, difficulty)) ?? 0;
 	}
 
 	private static function saveLevelScore(id:String, difficulty:String, score:Int, force:Bool = false) {
 		if (score > getLevelScore(id, difficulty) || force) {
-			var saveID:String = [ id, ':$difficulty' ].join('');
-			data.savedLevelScores.set(saveID, score);
+			data.savedLevelScores.set(Song.setupId(id, difficulty), score);
 		}
 		flush();
+	}
+
+	public static function getSongFavoritedStatus(modID:String, songID:String, ?variant:Variation):Bool {
+		if (!data.favoritedSongs.exists(modID)) return false;
+		return data.favoritedSongs.get(modID).get(Song.setupId(songID, null, variant)) ?? false;
+	}
+	public static function setSongFavoritedStatus(modID:String, songID:String, ?variant:Variation, state:Bool):Void {
+		if (!data.favoritedSongs.exists(modID))
+			data.favoritedSongs.set(modID, []);
+		data.favoritedSongs.get(modID).set(Song.setupId(songID, null, variant), state);
+		flush();
+	}
+	inline public static function toggleSongFavoritedStatus(modID:String, songID:String, ?variant:Variation):Bool {
+		setSongFavoritedStatus(modID, songID, variant, getSongFavoritedStatus(modID, songID, variant));
+		return getSongFavoritedStatus(modID, songID, variant);
 	}
 
 }

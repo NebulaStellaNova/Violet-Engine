@@ -1,12 +1,18 @@
 package violet.backend.objects.options;
 
-import flixel.effects.FlxFlicker;
-import violet.states.menus.OptionsMenu;
 import violet.backend.utils.NovaUtils;
+import violet.states.menus.OptionsMenu;
 
 class ControlOption extends BaseOption {
 
-	public var controlArray:Array<String> = ['A', 'B'];
+	public var controlArray(default, set):Array<String> = ['A', 'B'];
+	inline function set_controlArray(value:Array<String>):Array<String> {
+		if (value == null)
+			return controlArray;
+		while (value.length < 2)
+			value.push('C');
+		return controlArray = value;
+	}
 
 	public var leftControl:Alphabet;
 	public var rightControl:Alphabet;

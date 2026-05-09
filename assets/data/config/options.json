@@ -56,6 +56,24 @@
 					"saveID": "ui_right"
 				},
 				{
+					"name": "",
+					"type": "section"
+				},
+				{
+					"name": "Tab Left",
+					"type": "control",
+					"saveID": "ui_left_tabs"
+				},
+				{
+					"name": "Tab Right",
+					"type": "control",
+					"saveID": "ui_right_tabs"
+				},
+				{
+					"name": "",
+					"type": "section"
+				},
+				{
 					"name": "Confirm",
 					"type": "control",
 					"saveID": "accept"

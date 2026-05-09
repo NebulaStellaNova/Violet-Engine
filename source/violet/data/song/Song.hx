@@ -1,9 +1,19 @@
 package violet.data.song;
 
+import violet.backend.options.Options;
+
 class Song {
 
 	public final id:String;
 	public final variant:Variation;
+
+	public var isFavorited(get, set):Bool;
+	inline function get_isFavorited():Bool
+		return Options.getSongFavoritedStatus(null, id, variant);
+	inline function set_isFavorited(value:Bool):Bool {
+		Options.setSongFavoritedStatus(null, id, variant, value);
+		return get_isFavorited();
+	}
 
 	public var playableCharacter(get, never):String;
 	function get_playableCharacter():String {
