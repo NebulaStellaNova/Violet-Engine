@@ -5,12 +5,12 @@ import violet.states.menus.OptionsMenu;
 
 class ControlOption extends BaseOption {
 
-	public var controlArray(default, set):Array<String> = ['A', 'B'];
+	public var controlArray(default, set):Array<String> = ['NONE', 'NONE'];
 	inline function set_controlArray(value:Array<String>):Array<String> {
 		if (value == null)
 			return controlArray;
 		while (value.length < 2)
-			value.push('C');
+			value.push('NONE');
 		return controlArray = value;
 	}
 
@@ -19,15 +19,15 @@ class ControlOption extends BaseOption {
 
 	public var selectedKeybind:Bool = true;
 
-	public dynamic function onChange(which:Bool) {}
+	public dynamic function onChange(which:Array<String>) {}
 
 	public function new(title:String, description:String = "") {
 		super(title, description);
 
-		leftControl = new Alphabet('A');
+		leftControl = new Alphabet('NONE');
 		add(leftControl);
 
-		rightControl = new Alphabet('B');
+		rightControl = new Alphabet('NONE');
 		add(rightControl);
 	}
 
@@ -70,6 +70,7 @@ class ControlOption extends BaseOption {
 					controlArray[selectedKeybind ? 0 : 1] = i;
 					waitingForInput = false;
 					flickering = false;
+					onChange(controlArray.copy());
 					new FlxTimer().start(0.01, (_)->OptionsMenu.instance.enableInput = true);
 				}
 			}

@@ -256,7 +256,7 @@ class Controls {
 	 * @return Bool
 	 */
 	inline public static function pressed(key:String):Bool
-		return bindCheck(key) != [] ? FlxG.keys.anyJustPressed(bindCheck(key)) : false;
+		return FlxG.keys.anyJustPressed(bindCheck(key));
 	/**
 	 * Held input.
 	 * @param key The key name.
@@ -273,12 +273,9 @@ class Controls {
 		return FlxG.keys.anyJustReleased(bindCheck(key));
 
 	inline static function bindCheck(key:String):Array<FlxKey> {
-		var lol = [];
-		return (active && bindMap.exists(key) ? bindMap.get(key) : []).filter((f) -> {
-			var out = !lol.contains(f);
-			lol.push(f);
-			return out;
-		});
+		var binds:Array<FlxKey> = active && bindMap.exists(key) ? bindMap.get(key).copy() : [];
+		binds = binds.filter(bind -> return !(bind == NONE || bind == ANY));
+		return binds;
 	}
 
 	/**
