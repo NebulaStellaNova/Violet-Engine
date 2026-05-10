@@ -127,7 +127,7 @@ class LoadingState extends StateBackend { // for now
 				FlxG.switchState(() -> new violet.states.menus.MainMenu());
 		});
 
-		traceTxt = new NovaText(100, 100, 0, "", Paths.font('vcr.ttf'));
+		traceTxt = new NovaText(100, 50, 0, "", Paths.font('vcr.ttf'));
 		traceTxt.size = 35;
 		traceTxt.alpha = 0.5;
 		add(traceTxt);
@@ -237,7 +237,7 @@ class LoadingState extends StateBackend { // for now
 		loadingTxt.x = loadingBar.x;
 
 
-		while (textArray.length > 30 && textArray.length != 0) textArray.shift();
+		while (textArray.length > 34 && textArray.length != 0) textArray.shift();
 		traceTxt.text = textArray.join('\n');
 		traceTxt.updateHitbox();
 
