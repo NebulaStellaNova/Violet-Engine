@@ -171,13 +171,14 @@ class SongCapsule extends Capsule {
 		bpmSegment.updateHitbox();
 
 		heart = new NovaSprite(-40, -40, Paths.image('menus/freeplaymenu/categories/heart'));
-		heart.visible = data.isFavorited;
+		heart.alpha = data.isFavorited ? 1 : 0;
 		add(heart);
 	}
 
 	override public function toggleFavorite():Void {
-		heart.visible = data.isFavorited = !data.isFavorited;
-		parent.heart.visible = parent.isFav();
+		data.isFavorited = !data.isFavorited;
+		heart.alpha = data.isFavorited ? 1 : 0;
+		parent.heart.alpha = parent.isFav() ? 1 : 0;
 	}
 
 }

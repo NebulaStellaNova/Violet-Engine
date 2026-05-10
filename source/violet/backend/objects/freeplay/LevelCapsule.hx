@@ -132,7 +132,7 @@ class LevelCapsule extends Capsule {
 		composerSegment.updateHitbox(); */
 
 		heart = new NovaSprite(-40, -40, Paths.image('menus/freeplaymenu/categories/heart'));
-		heart.visible = isFav();
+		heart.alpha = isFav() ? 1 : 0;
 		add(heart);
 	}
 
