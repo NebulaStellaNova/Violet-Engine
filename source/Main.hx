@@ -112,7 +112,7 @@ class Main extends openfl.display.Sprite {
 		var gameHeight = 720;
 
 		var startFPS:Int = Options.data.vsync ? #if !linux Application.current.window.displayMode.refreshRate #else 60 #end : Std.int(Options.data.fps);
-		new flixel.FlxGame(gameWidth, gameHeight, violet.states.InitialState, startFPS, startFPS, true);
+		new flixel.FlxGame(gameWidth, gameHeight, violet.states.LoadingState, startFPS, startFPS, true);
 		FlxG.sound.volume = FlxG.save.data.volume ?? 0.4;
 		@:privateAccess FlxG.game._customSoundTray = violet.backend.display.VioletSoundTray;
 		addChild(FlxG.game);

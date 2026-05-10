@@ -1,5 +1,6 @@
 package violet.backend.console;
 
+import flixel.util.FlxSignal.FlxTypedSignal;
 import haxe.Log;
 import haxe.PosInfos;
 
@@ -72,6 +73,8 @@ class Logs {
 
 	public static var nativeTrace:(Dynamic, ?PosInfos)->Void;
 
+	public static var onTrace:FlxTypedSignal<String->Void> = new FlxTypedSignal<String->Void>();
+
 	public static var traceCallback:(v:Dynamic, ?infos:Null<PosInfos>)->Void = (v:Dynamic, ?infos:PosInfos) -> {
 		var type = LogMessage;
 		if (v is String) {
@@ -130,6 +133,15 @@ class Logs {
 				finalOut +=     '${LOG_COLOR}[    LOG    ] -> $dataString:${ConsoleColors.RESET} $value';
 		}
 		Sys.println(ConsoleColors.formatString(finalOut) + ConsoleColors.RESET);
+		var signalOut = '$value';
+		for (name => color in ConsoleColors.colorList) {
+			for (name in [name, name.toLowerCase()]) {
+				signalOut = signalOut.replace('#$name', '');
+				signalOut = signalOut.replace('$' + name, '');
+				signalOut = signalOut.replace('<$name>', '');
+			}
+		}
+		onTrace.dispatch(signalOut);
 	}
 
 }

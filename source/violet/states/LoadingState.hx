@@ -1,5 +1,6 @@
 package violet.states;
 
+import violet.backend.filesystem.HXCHandler;
 import violet.backend.utils.WindowUtil;
 import violet.backend.options.Options;
 import flixel.util.FlxStringUtil;
@@ -11,10 +12,10 @@ import violet.backend.StateBackend;
 import violet.backend.audio.Conductor;
 import openfl.system.Capabilities;
 import violet.backend.objects.ClassData;
+import violet.backend.console.Logs;
 
-class InitialState extends StateBackend { // for now
+class LoadingState extends StateBackend { // for now
 
-	var logo:NovaSprite = new NovaSprite(Paths.image('icons/dad'));
 	var loadingBar:NovaSprite;
 
 	static var stateRedirects:Array<RedirectPiece> = [];
@@ -29,6 +30,10 @@ class InitialState extends StateBackend { // for now
 	}
 
 	public static var loadingPercent:Float = 0;
+	public static var loadingText:String = "";
+	public var loadingTxt:NovaText;
+	public var loadingPercentTxt:NovaText;
+	public var traceTxt:NovaText;
 
 	override public function create():Void {
 		FlxG.fixedTimestep = false;
@@ -77,7 +82,6 @@ class InitialState extends StateBackend { // for now
 		});
 
 		FlxG.signals.preUpdate.add(() -> {
-
 			if (OptionsMenu.instance != null)
 				if (!OptionsMenu.instance.canSelectMenu) return;
 
@@ -121,13 +125,24 @@ class InitialState extends StateBackend { // for now
 				FlxG.switchState(() -> new violet.states.menus.MainMenu());
 		});
 
-		loadingBar = new NovaSprite().makeGraphic(FlxG.width * 0.9, 20);
+		traceTxt = new NovaText(100, 50, 0, "", Paths.font('vcr.ttf'));
+		traceTxt.size = 35;
+		traceTxt.alpha = 0.5;
+		add(traceTxt);
+
+		Logs.onTrace.add(tracey);
+
+		loadingBar = new NovaSprite().makeGraphic(FlxG.width - 200, 20);
 		loadingBar.scale.x = 0;
 		add(loadingBar);
 
-		logo.screenCenter();
-		logo.antialiasing = true;
-		add(logo);
+		loadingTxt = new NovaText(0, 0, 0, "Initializing...", Paths.font('vcr.ttf'));
+		loadingTxt.size = 50;
+		add(loadingTxt);
+
+		loadingPercentTxt = new NovaText(0, 0, 0, "", Paths.font('vcr.ttf'));
+		loadingPercentTxt.size = 50;
+		add(loadingPercentTxt);
 
 		FlxTimer.wait(0.05, ()->{
 			#if MOD_SUPPORT
@@ -136,7 +151,28 @@ class InitialState extends StateBackend { // for now
 			#end
 			GlobalPack.init();
 		});
+
+		var it = null;
+		it = ()->{
+			try {
+				ModdingAPI.reloadModList();
+				@:bypassAccessor ModdingAPI.activeModsIds = FlxG.save.data.enabledModIds;
+				new HXCHandler();
+				ModdingAPI.reloadRegistries();
+				ModdingAPI.checkForHXC();
+			} catch (e:Dynamic) {
+				trace(e);
+			}
+			Main.threadCallacks.remove(it);
+		}
+		Main.threadCallacks.addOnce(it);
 		// FlxG.camera.visible = false;
+	}
+
+	var textArray = [];
+	public function tracey(v:String) {
+		if (v.startsWith('Registering')) return;
+		textArray.push(v);
 	}
 
 	public static function reloadEverything() {
@@ -170,19 +206,43 @@ class InitialState extends StateBackend { // for now
 		}
 	}
 
+	var lerpedNum:Float = 0;
+	var ran = false;
+
 	override function update(elapsed:Float) {
 		super.update(elapsed);
-		logo.angle++;
 
+		lerpedNum = lerp(lerpedNum, loadingPercent, 0.1);
 
 		loadingBar.scale.x = MathUtil.lerp(loadingBar.scale.x, loadingPercent, 0.1);
 		loadingBar.updateHitbox();
-		loadingBar.y = FlxG.height - loadingBar.height - 20;
-		loadingBar.screenCenter(X);
+		loadingBar.x = 100;
+		loadingBar.y = FlxG.height - loadingBar.height - 50;
 
-		if (Math.round(loadingBar.scale.x*100)/100 == 1) {
-			FlxG.switchState(SplashState.new);
-			FlxG.camera.visible = true;
+		loadingPercentTxt.text = '${Math.round(lerpedNum*100)}%';
+		loadingPercentTxt.updateHitbox();
+		loadingPercentTxt.y = loadingBar.y -  loadingBar.height - 20;
+		loadingPercentTxt.x = (FlxG.width - 100) - loadingPercentTxt.width;
+
+		loadingTxt.text = loadingText;
+		loadingTxt.updateHitbox();
+		loadingTxt.y = loadingBar.y -  loadingBar.height - 20;
+		loadingTxt.x = loadingBar.x;
+
+
+		while (textArray.length > 34 && textArray.length != 0) textArray.shift();
+		traceTxt.text = textArray.join('\n');
+		traceTxt.updateHitbox();
+
+		if (Math.round(loadingBar.scale.x*100)/100 == 1 && !ran) {
+			ran = true;
+			Logs.onTrace.remove(tracey);
+			FlxG.camera.fade(()->{
+				FlxTimer.wait(0.2, ()->{
+					FlxG.switchState(SplashState.new);
+					FlxG.camera.visible = true;
+				});
+			});
 		}
 	}
 

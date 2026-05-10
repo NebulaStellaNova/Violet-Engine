@@ -1,5 +1,6 @@
 package violet.backend.filesystem;
 
+import violet.backend.utils.ZipUtil;
 import flixel.util.FlxSignal;
 import sys.io.File;
 import haxe.zip.Entry;
@@ -8,7 +9,7 @@ import haxe.io.Path;
 import sys.FileSystem;
 import openfl.Assets;
 import violet.backend.utils.NovaUtils;
-import violet.states.InitialState;
+import violet.states.LoadingState;
 
 #if MOD_SUPPORT
 import thx.semver.Version;
@@ -70,7 +71,7 @@ class ModdingAPI {
 	@:unreflective public static var tempFolders:Array<String> = [];
 
 	public static var availableMods(default, null):Array<ModMeta> = [];
-	public static var activeModsIds(default, null):Array<String> = [];
+	public static var activeModsIds(default, default):Array<String> = [];
 
 	public static #if release inline #end final MOD_FOLDER:String = #if REDIRECT_ASSETS_FOLDER "../../../../mods" #else "mods" #end;
 	public static var API_VERSION:Version = "0.0.0";
@@ -132,15 +133,6 @@ class ModdingAPI {
 		FlxG.save.data.registeredModIds ??= [];
 		FlxG.save.data.enabledModIds ??= [];
 
-		reloadModList();
-		// FlxTimer.wait(0.01, ()->reloadModList()); // To fix vmod's not showing. I think
-
-		activeModsIds = FlxG.save.data.enabledModIds;
-
-		// Main.threadCallacks.addOnce(reloadRegistries);
-		new HXCHandler();
-		reloadRegistries();
-		checkForHXC();
 	}
 
 	public static function reloadModList() {
@@ -154,10 +146,10 @@ class ModdingAPI {
 				tempFolders.push(modPath);
 				if (FileSystem.exists(modPath)) continue;
 				FileSystem.createDirectory(modPath);
-	  			Sys.command("attrib +h " + modPath);
+	  			NovaUtils.runHiddenCommand("attrib", ["+h", '"$modPath"']);
 
 				#if debug var startTime = NovaUtils.getTimerPrecise(); #end
-				violet.backend.utils.ZipUtil.extractZip('$MOD_FOLDER/$path', modPath);
+				violet.backend.utils.ZipUtil.extractZip('$MOD_FOLDER/$path', '"$modPath"');
 				#if debug var delta = (NovaUtils.getTimerPrecise() - startTime) * 1000;
 				trace('debug:VMod extraction took ${Math.round(delta*100)/100} milliseconds'); #end
 			}
@@ -254,20 +246,28 @@ class ModdingAPI {
 		trace('debug:<yellow>${registered ? "Reloading" : "Initializing"} Registries...');
 		NovaUtils.CURRENT_MUSIC = null;
 		registered = true;
+		LoadingState.loadingText = "Loading: NoteStyles...";
 		violet.data.notestyles.NoteStyleRegistry.registerNoteStyles();
-		InitialState.loadingPercent += 1/7;
+		LoadingState.loadingPercent += 1/7;
+		LoadingState.loadingText = "Loading: Levels...";
 		violet.data.level.LevelRegistry.registerLevels();
-		InitialState.loadingPercent += 1/7;
+		LoadingState.loadingPercent += 1/7;
+		LoadingState.loadingText = "Loading: Icons...";
 		violet.data.icon.HealthIconRegistry.registerIcons();
-		InitialState.loadingPercent += 1/7;
+		LoadingState.loadingPercent += 1/7;
+		LoadingState.loadingText = "Loading: Characters...";
 		violet.data.character.CharacterRegistry.registerCharacters();
-		InitialState.loadingPercent += 1/7;
+		LoadingState.loadingPercent += 1/7;
+		LoadingState.loadingText = "Loading: Songs...";
 		violet.data.song.SongRegistry.registerSongs();
-		InitialState.loadingPercent += 1/7;
+		LoadingState.loadingPercent += 1/7;
+		LoadingState.loadingText = "Loading: Stages...";
 		violet.data.stage.StageRegistry.registerStages();
-		InitialState.loadingPercent += 1/7;
+		LoadingState.loadingPercent += 1/7;
+		LoadingState.loadingText = "Loading: Charts...";
 		violet.data.chart.ChartRegistry.registerCharts();
-		InitialState.loadingPercent += 1/7;
+		LoadingState.loadingPercent += 1/7;
+		LoadingState.loadingText = "Done!!";
 
 		/* final foundHXC:Array<String> = checkForHXC();
 		if (foundHXC.length == 0) trace('debug:<cyan>No HXC scripts found.');
