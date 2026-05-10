@@ -16,7 +16,6 @@ import violet.backend.console.Logs;
 
 class LoadingState extends StateBackend { // for now
 
-	var logo:NovaSprite = new NovaSprite(Paths.image('icons/dad'));
 	var loadingBar:NovaSprite;
 
 	static var stateRedirects:Array<RedirectPiece> = [];
@@ -145,10 +144,6 @@ class LoadingState extends StateBackend { // for now
 		loadingPercentTxt.size = 50;
 		add(loadingPercentTxt);
 
-		logo.screenCenter();
-		logo.antialiasing = true;
-		add(logo);
-
 		FlxTimer.wait(0.05, ()->{
 			#if MOD_SUPPORT
 			ModdingAPI.init();
@@ -216,7 +211,6 @@ class LoadingState extends StateBackend { // for now
 
 	override function update(elapsed:Float) {
 		super.update(elapsed);
-		logo.angle++;
 
 		lerpedNum = lerp(lerpedNum, loadingPercent, 0.1);
 
