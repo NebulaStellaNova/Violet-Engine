@@ -1,5 +1,6 @@
 package violet.states;
 
+import violet.backend.filesystem.HXCHandler;
 import violet.backend.utils.WindowUtil;
 import violet.backend.options.Options;
 import flixel.util.FlxStringUtil;
@@ -29,6 +30,9 @@ class InitialState extends StateBackend { // for now
 	}
 
 	public static var loadingPercent:Float = 0;
+	public static var loadingText:String = "";
+	public var loadingTxt:NovaText;
+	public var loadingPercentTxt:NovaText;
 
 	override public function create():Void {
 		FlxG.fixedTimestep = false;
@@ -121,9 +125,17 @@ class InitialState extends StateBackend { // for now
 				FlxG.switchState(() -> new violet.states.menus.MainMenu());
 		});
 
-		loadingBar = new NovaSprite().makeGraphic(FlxG.width * 0.9, 20);
+		loadingBar = new NovaSprite().makeGraphic(FlxG.width - 200, 20);
 		loadingBar.scale.x = 0;
 		add(loadingBar);
+
+		loadingTxt= new NovaText(0, 0, 0, "Initializing...");
+		loadingTxt.size = 50;
+		add(loadingTxt);
+
+		loadingPercentTxt= new NovaText(0, 0, 0, "");
+		loadingPercentTxt.size = 50;
+		add(loadingPercentTxt);
 
 		logo.screenCenter();
 		logo.antialiasing = true;
@@ -136,6 +148,21 @@ class InitialState extends StateBackend { // for now
 			#end
 			GlobalPack.init();
 		});
+
+		var it = null;
+		it = ()->{
+			try {
+				ModdingAPI.reloadModList();
+				@:bypassAccessor ModdingAPI.activeModsIds = FlxG.save.data.enabledModIds;
+				new HXCHandler();
+				ModdingAPI.reloadRegistries();
+				ModdingAPI.checkForHXC();
+			} catch (e:Dynamic) {
+				trace(e);
+			}
+			Main.threadCallacks.remove(it);
+		}
+		Main.threadCallacks.addOnce(it);
 		// FlxG.camera.visible = false;
 	}
 
@@ -170,15 +197,28 @@ class InitialState extends StateBackend { // for now
 		}
 	}
 
+	var lerpedNum:Float = 0;
+
 	override function update(elapsed:Float) {
 		super.update(elapsed);
 		logo.angle++;
 
+		lerpedNum = lerp(lerpedNum, loadingPercent, 0.1);
 
 		loadingBar.scale.x = MathUtil.lerp(loadingBar.scale.x, loadingPercent, 0.1);
 		loadingBar.updateHitbox();
-		loadingBar.y = FlxG.height - loadingBar.height - 20;
-		loadingBar.screenCenter(X);
+		loadingBar.x = 100;
+		loadingBar.y = FlxG.height - loadingBar.height - 50;
+
+		loadingPercentTxt.text = '${Math.round(lerpedNum*100)}%';
+		loadingPercentTxt.updateHitbox();
+		loadingPercentTxt.y = loadingBar.y -  loadingBar.height - 20;
+		loadingPercentTxt.x = (FlxG.width - 100) - loadingPercentTxt.width;
+
+		loadingTxt.text = loadingText;
+		loadingTxt.updateHitbox();
+		loadingTxt.y = loadingBar.y -  loadingBar.height - 20;
+		loadingTxt.x = loadingBar.x;
 
 		if (Math.round(loadingBar.scale.x*100)/100 == 1) {
 			FlxG.switchState(SplashState.new);

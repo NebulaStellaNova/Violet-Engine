@@ -1,5 +1,6 @@
 package violet.states;
 
+import haxe.Json;
 import haxe.xml.Access;
 import violet.backend.utils.FileUtil;
 import openfl.events.KeyboardEvent;
@@ -306,6 +307,9 @@ class PlayState extends violet.backend.StateBackend {
 		healthBar.camera = camHUD;
 		healthBar.screenCenter(X);
 		add(healthBar);
+
+		healthBar.x += getHealthBarOffsets().x;
+		healthBar.y += getHealthBarOffsets().y;
 
 		if (iconOpponent == null) iconOpponent = new HealthIcon('face'); // Null safety
 		iconOpponent.scaleFromCenter = false;
@@ -1125,6 +1129,9 @@ class PlayState extends violet.backend.StateBackend {
 		iconPlayer.y = healthBar.y + (healthBar.height/2) - (iconPlayer.height/2);
 		iconOpponent.y = healthBar.y + (healthBar.height/2) - (iconOpponent.height/2);
 
+		healthBar.x += getHealthBarOffsets().x;
+		healthBar.y += getHealthBarOffsets().y;
+
 		if (iconOpponent._data.color != null && Options.data.coloredHealthBar)
 			healthBar.leftColor = iconOpponent._data.color;
 		else healthBar.leftColor = FlxColor.RED;
@@ -1137,6 +1144,19 @@ class PlayState extends violet.backend.StateBackend {
 		accuracyTxt.visible = !Options.data.hideAccuracy;
 
 		runSongEvent('postUpdateOptions', event);
+	}
+
+	@:unreflective var healthBarShi:FlxPoint = null;
+	public function getHealthBarOffsets():FlxPoint {
+		if (healthBarShi != null) return healthBarShi;
+		var iniPath = Paths.image('game/hud/healthBar-offsets', null, 'ini');
+		if (Paths.fileExists(iniPath, true)) {
+			var data = '{ "offsets": ${FileUtil.getFileContent(Paths.image('game/hud/healthBar-offsets', null, 'ini'))} }';
+			var parsed = Json.parse(data);
+			return healthBarShi = new FlxPoint(parsed.offsets[0], parsed.offsets[1] * (Options.data.downscroll ? -1 : 1));
+		} else {
+			return healthBarShi = new FlxPoint();
+		}
 	}
 
 	override public function destroy():Void {
