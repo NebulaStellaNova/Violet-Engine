@@ -1,16 +1,14 @@
 package violet.backend.utils;
 
-import openfl.net.URLRequest;
-import openfl.net.URLLoader;
-import openfl.net.URLLoaderDataFormat;
-import violet.backend.options.Options;
-import flixel.graphics.FlxGraphic;
-import openfl.display.BitmapData;
-import animate.FlxAnimateFrames.FlxAnimateSettings;
 import haxe.io.Path;
+import animate.FlxAnimateFrames.FlxAnimateSettings;
 import flixel.FlxCamera;
 import flixel.graphics.frames.FlxAtlasFrames;
+import openfl.net.URLLoader;
+import openfl.net.URLLoaderDataFormat;
+import openfl.net.URLRequest;
 import violet.backend.audio.Conductor;
+import violet.backend.options.Options;
 import violet.data.Constants;
 
 enum abstract MenuSFX(Int) {
@@ -21,6 +19,7 @@ enum abstract MenuSFX(Int) {
 
 enum NotificationType {
 	ERROR;
+	WARNING;
 	DEFAULT;
 }
 
@@ -44,11 +43,11 @@ class NovaUtils {
 	}
 
 	public static function addNotification(title:String, body:String, expiryMs:Int = 10000, type:NotificationType = DEFAULT, ?infos:haxe.PosInfos) {
-		if (type == ERROR && !Options.data.developerMode) return;
+		if ((type == ERROR || type == WARNING) && !Options.data.developerMode) return;
 		var notification = lemonui.controllers.NotificationController.instance.addNotification(title, body, expiryMs/1000);
-		if (type == ERROR) {
-			notification.elementColor = 0xFF591818;
-			violet.backend.console.Logs.log(body.replace('\n', ' '), ErrorMessage, infos);
+		if (type == ERROR || type == WARNING) {
+			notification.elementColor = type == ERROR ? 0xFF591818 : 0xff6c5311;
+			violet.backend.console.Logs.log(body.replace('\n', ' '), type, infos);
 		}
 	}
 

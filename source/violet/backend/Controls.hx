@@ -173,6 +173,12 @@ class Controls {
 	public static var uiRightTab(get, never):Bool;
 	inline static function get_uiRightTab():Bool
 		return pressed('ui_right_tabs');
+	/**
+	 * When "favorite" is pressed.
+	 */
+	public static var favorite(get, never):Bool;
+	inline static function get_favorite():Bool
+		return pressed('favorite');
 
 	/**
 	 * When "accept" is pressed.

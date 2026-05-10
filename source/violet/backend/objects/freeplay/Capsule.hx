@@ -18,6 +18,8 @@ class Capsule extends FlxSpriteGroup {
 	public static var outlineExtractionShader:OutlineExtractionShader = new OutlineExtractionShader();
 	public static var angleCropShader:AngleCropShader = new AngleCropShader();
 
+	public var defaultIndex:Int = 0;
+
 	public var capsuleBackground:FlxSkewedSprite;
 	public var backCase:FlxSkewedSprite;
 	public var frontCase:FlxSkewedSprite;
@@ -27,16 +29,16 @@ class Capsule extends FlxSpriteGroup {
 		super();
 	}
 
-	@:unreflective var initalized:Bool = false;
+	@:unreflective public var initalized:Bool = false;
 	public function init():Void {
 		if (initalized) return;
 		else initalized = true;
 
-		backCase = new FlxSkewedSprite(0, 0);
+		backCase = new FlxSkewedSprite();
 		backCase.skew.set(-30, 0);
 		add(backCase);
 
-		frontCase = new FlxSkewedSprite(15, 0);
+		frontCase = new FlxSkewedSprite(15);
 		frontCase.makeGraphic(FlxG.width, 85, FlxColor.WHITE);
 		frontCase.drawFrame();
 		frontCase.skew.set(-30, 0);
@@ -44,7 +46,7 @@ class Capsule extends FlxSpriteGroup {
 
 		var temp = new NovaSprite().loadSprite(Paths.image("menus/freeplaymenu/capsuleBackgrounds/mainStage"));
 		temp.drawFrame();
-		capsuleBackground = new FlxSkewedSprite(-10, 0);
+		capsuleBackground = new FlxSkewedSprite(-10);
 		capsuleBackground.loadGraphicFromSprite(temp);
 		capsuleBackground.drawFrame();
 		// skewPixels(capsuleBackground, 30, 0);
@@ -52,12 +54,14 @@ class Capsule extends FlxSpriteGroup {
 		capsuleBackground.shader = angleCropShader;
 		add(capsuleBackground);
 
-		blackGradient = new FlxSkewedSprite(14, 0);
+		blackGradient = new FlxSkewedSprite(14);
 		blackGradient.loadGraphic(FlxGradient.createGradientBitmapData(Math.round(frontCase.width/2), Math.round(frontCase.height), [FlxColor.BLACK, FlxColor.BLACK, FlxColor.TRANSPARENT], 1, 0));
 		blackGradient.skew.set(-30, 0);
 		blackGradient.alpha = 0.6;
 		add(blackGradient);
 	}
+
+	public function toggleFavorite():Void {}
 
 	static function skewPixels(sprite:FlxSprite, xSkew:Float = 0, ySkew:Float = 0):Void {
 		var skewXDegrees:Float = xSkew;

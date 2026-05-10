@@ -10,9 +10,29 @@ using violet.backend.utils.MathUtil;
 
 class LevelCapsule extends Capsule {
 
+	public var collasped:Bool = true;
+
+	public var hidden(get, never):Bool;
+	function get_hidden():Bool {
+		for (song in children)
+			if (!song.hidden)
+				return false;
+		return collasped = true;
+	}
+	public function isFav():Bool {
+		for (song in children)
+			if (song.hidden)
+				continue;
+			else if (!song.data.isFavorited)
+				return false;
+		return true;
+	}
+
 	public var data:Level;
 	// to keep track of its sub items / songs
 	public final children:Array<SongCapsule> = [];
+
+	public var heart:NovaSprite;
 
 	override public function new(data:Level) {
 		super();
@@ -110,6 +130,15 @@ class LevelCapsule extends Capsule {
 		composerSegment.stamp(composerSprite, (-composerSegment.width/2).round() + 40, (-composerSegment.height/2).round() + 15);
 		composerSegment.shader = Capsule.colorToAlphaShader;
 		composerSegment.updateHitbox(); */
+
+		heart = new NovaSprite(-40, -40, Paths.image('menus/freeplaymenu/categories/heart'));
+		heart.visible = isFav();
+		add(heart);
+	}
+
+	override public function toggleFavorite():Void {
+		for (song in children)
+			song.toggleFavorite();
 	}
 
 }

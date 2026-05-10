@@ -4,14 +4,11 @@ import violet.states.menus.FreeplayMenu;
 
 class CategorySetupEvent extends EventBase {
 
-	public var list:Map<String, CategoryData>;
+	public var list:Array<CategoryData>;
 
-	override public function new(categoryData:Map<String, CategoryData>) {
+	override public function new(categoryData:Array<CategoryData>) {
 		super();
 		list = categoryData;
 	}
-
-	inline public function addData(id:String, data:CategoryData):Void
-		list.set(id, data);
 
 }

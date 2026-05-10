@@ -13,8 +13,14 @@ using violet.backend.utils.MathUtil;
 
 class SongCapsule extends Capsule {
 
+	public var hidden(default, set):Bool = true;
+	inline function set_hidden(value:Bool):Bool
+		return hidden = value;
+
 	public var parent:LevelCapsule;
 	public var data:Song;
+
+	public var heart:NovaSprite;
 
 	override public function new(parent:LevelCapsule, data:Song) {
 		super();
@@ -163,6 +169,15 @@ class SongCapsule extends Capsule {
 
 		bpmSegment.shader = Capsule.colorToAlphaShader;
 		bpmSegment.updateHitbox();
+
+		heart = new NovaSprite(-40, -40, Paths.image('menus/freeplaymenu/categories/heart'));
+		heart.visible = data.isFavorited;
+		add(heart);
+	}
+
+	override public function toggleFavorite():Void {
+		heart.visible = data.isFavorited = !data.isFavorited;
+		parent.heart.visible = parent.isFav();
 	}
 
 }

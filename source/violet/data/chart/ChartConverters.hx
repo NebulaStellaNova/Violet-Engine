@@ -121,6 +121,8 @@ class ChartConverters {
 			name: songID,
 			displayName: meta.songName,
 
+			playableCharacter: meta.playData.characters.player.split('-')[0],
+
 			composer: meta.artist,
 			charter: meta.charter,
 
