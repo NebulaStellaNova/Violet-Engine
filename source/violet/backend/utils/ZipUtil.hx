@@ -4,23 +4,22 @@ import flixel.graphics.FlxGraphic;
 import openfl.display.BitmapData;
 import haxe.zip.Reader;
 import haxe.io.Path;
-
+import cpp.Native;
+@:cppFileCode('
+	#include <windows.h>
+	#include <stdio.h>
+')
 class ZipUtil {
 
 	/**
 	 * Near instantaneous zip extracting via sys commands :D
 	 */
 	public static function extractZip(inputPath:String, outputPath:String):Void {
-		var process = null;
 		#if windows
-		process = new sys.io.Process("tar", ["-xf", inputPath, "-C", outputPath]);
+		NovaUtils.runHiddenCommand("tar", ["-xf", inputPath, "-C", outputPath]);
 		#else
-		process = new sys.io.Process("unzip", [inputPath, "-d", outputPath]);
+		NovaUtils.runHiddenCommand("unzip", [inputPath, "-d", outputPath]);
 		#end
-		var output = process.stdout.readAll().toString();
-		var errors = process.stderr.readAll().toString();
-		var code = process.exitCode();
-		process.close();
 	}
 
 	public static function getZipEntries(inputPath:String):Array<String> {

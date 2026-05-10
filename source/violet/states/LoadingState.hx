@@ -83,7 +83,6 @@ class LoadingState extends StateBackend { // for now
 		});
 
 		FlxG.signals.preUpdate.add(() -> {
-
 			if (OptionsMenu.instance != null)
 				if (!OptionsMenu.instance.canSelectMenu) return;
 

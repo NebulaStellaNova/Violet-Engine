@@ -1,5 +1,6 @@
 package violet.backend.filesystem;
 
+import violet.backend.utils.ZipUtil;
 import flixel.util.FlxSignal;
 import sys.io.File;
 import haxe.zip.Entry;
@@ -145,10 +146,10 @@ class ModdingAPI {
 				tempFolders.push(modPath);
 				if (FileSystem.exists(modPath)) continue;
 				FileSystem.createDirectory(modPath);
-	  			Sys.command("attrib +h " + modPath);
+	  			NovaUtils.runHiddenCommand("attrib", ["+h", '"$modPath"']);
 
 				#if debug var startTime = NovaUtils.getTimerPrecise(); #end
-				violet.backend.utils.ZipUtil.extractZip('$MOD_FOLDER/$path', modPath);
+				violet.backend.utils.ZipUtil.extractZip('$MOD_FOLDER/$path', '"$modPath"');
 				#if debug var delta = (NovaUtils.getTimerPrecise() - startTime) * 1000;
 				trace('debug:VMod extraction took ${Math.round(delta*100)/100} milliseconds'); #end
 			}

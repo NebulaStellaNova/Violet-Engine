@@ -24,6 +24,10 @@ enum NotificationType {
 	DEFAULT;
 }
 
+@:cppFileCode('
+	#include <windows.h>
+	#include <stdio.h>
+')
 class NovaUtils {
 
 	public static var CURRENT_MUSIC:String = '';
@@ -153,5 +157,31 @@ class NovaUtils {
 		});
 		loader.load(new URLRequest(url));
 	}
+
+	public static function runHiddenCommand(command:String, ?args:Array<String>) {
+		args ??= [];
+		args.insert(0, command);
+		_runHidden(args.join(' '));
+	}
+
+	@:unreflective
+	private static function _runHidden(cmd:String):Void {
+        untyped __cpp__('
+			STARTUPINFO si;
+            PROCESS_INFORMATION pi;
+            ZeroMemory(&si, sizeof(si));
+            si.cb = sizeof(si);
+            si.dwFlags = STARTF_USESHOWWINDOW;
+            si.wShowWindow = SW_HIDE;
+
+            ZeroMemory(&pi, sizeof(pi));
+
+            if (CreateProcess(NULL, (char*){0}.c_str(), NULL, NULL, FALSE, 0x08000000, NULL, NULL, &si, &pi)) {
+                WaitForSingleObject(pi.hProcess, INFINITE);
+                CloseHandle(pi.hProcess);
+                CloseHandle(pi.hThread);
+            }
+        ', cmd);
+    }
 
 }
