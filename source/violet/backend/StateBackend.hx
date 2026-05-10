@@ -1,6 +1,6 @@
 package violet.backend;
 
-import violet.states.InitialState;
+import violet.states.LoadingState;
 import flixel.util.FlxStringUtil;
 import flixel.FlxSubState;
 import lemonui.utils.MathUtil;
@@ -121,7 +121,7 @@ class StateBackend extends flixel.FlxState {
 	override function openSubState(subState:FlxSubState) {
 		var subStateID = FlxStringUtil.getClassName(Type.getClass(subState), true);
 		var targetSubState:Null<ClassData> = null;
-		for (data in @:privateAccess InitialState.stateRedirects) {
+		for (data in @:privateAccess LoadingState.stateRedirects) {
 			if (data.state == subStateID) {
 				targetSubState = new ClassData(data.target, true);
 				break;

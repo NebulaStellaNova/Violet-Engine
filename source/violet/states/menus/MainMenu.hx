@@ -264,7 +264,7 @@ class MainMenu extends StateBackend {
 			FlxTween.tween(reloadingBG, { alpha: 1 }, 0.5);
 			FlxTween.tween(reloadingText, { alpha: 1 }, 0.5);
 			FlxTimer.wait(0.6, ()->{
-				InitialState.reloadEverything();
+				LoadingState.reloadEverything();
 				var mm = new MainMenu();
 				fadeIn = false;
 				fromReload = true;

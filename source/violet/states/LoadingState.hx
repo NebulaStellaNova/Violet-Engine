@@ -12,8 +12,9 @@ import violet.backend.StateBackend;
 import violet.backend.audio.Conductor;
 import openfl.system.Capabilities;
 import violet.backend.objects.ClassData;
+import violet.backend.console.Logs;
 
-class InitialState extends StateBackend { // for now
+class LoadingState extends StateBackend { // for now
 
 	var logo:NovaSprite = new NovaSprite(Paths.image('icons/dad'));
 	var loadingBar:NovaSprite;
@@ -33,6 +34,7 @@ class InitialState extends StateBackend { // for now
 	public static var loadingText:String = "";
 	public var loadingTxt:NovaText;
 	public var loadingPercentTxt:NovaText;
+	public var traceTxt:NovaText;
 
 	override public function create():Void {
 		FlxG.fixedTimestep = false;
@@ -125,15 +127,22 @@ class InitialState extends StateBackend { // for now
 				FlxG.switchState(() -> new violet.states.menus.MainMenu());
 		});
 
+		traceTxt = new NovaText(100, 100, 0, "", Paths.font('vcr.ttf'));
+		traceTxt.size = 35;
+		traceTxt.alpha = 0.5;
+		add(traceTxt);
+
+		Logs.onTrace.add(tracey);
+
 		loadingBar = new NovaSprite().makeGraphic(FlxG.width - 200, 20);
 		loadingBar.scale.x = 0;
 		add(loadingBar);
 
-		loadingTxt= new NovaText(0, 0, 0, "Initializing...");
+		loadingTxt = new NovaText(0, 0, 0, "Initializing...", Paths.font('vcr.ttf'));
 		loadingTxt.size = 50;
 		add(loadingTxt);
 
-		loadingPercentTxt= new NovaText(0, 0, 0, "");
+		loadingPercentTxt = new NovaText(0, 0, 0, "", Paths.font('vcr.ttf'));
 		loadingPercentTxt.size = 50;
 		add(loadingPercentTxt);
 
@@ -164,6 +173,12 @@ class InitialState extends StateBackend { // for now
 		}
 		Main.threadCallacks.addOnce(it);
 		// FlxG.camera.visible = false;
+	}
+
+	var textArray = [];
+	public function tracey(v:String) {
+		if (v.startsWith('Registering')) return;
+		textArray.push(v);
 	}
 
 	public static function reloadEverything() {
@@ -198,6 +213,7 @@ class InitialState extends StateBackend { // for now
 	}
 
 	var lerpedNum:Float = 0;
+	var ran = false;
 
 	override function update(elapsed:Float) {
 		super.update(elapsed);
@@ -220,9 +236,20 @@ class InitialState extends StateBackend { // for now
 		loadingTxt.y = loadingBar.y -  loadingBar.height - 20;
 		loadingTxt.x = loadingBar.x;
 
-		if (Math.round(loadingBar.scale.x*100)/100 == 1) {
-			FlxG.switchState(SplashState.new);
-			FlxG.camera.visible = true;
+
+		while (textArray.length > 30 && textArray.length != 0) textArray.shift();
+		traceTxt.text = textArray.join('\n');
+		traceTxt.updateHitbox();
+
+		if (Math.round(loadingBar.scale.x*100)/100 == 1 && !ran) {
+			ran = true;
+			Logs.onTrace.remove(tracey);
+			FlxG.camera.fade(()->{
+				FlxTimer.wait(0.2, ()->{
+					FlxG.switchState(SplashState.new);
+					FlxG.camera.visible = true;
+				});
+			});
 		}
 	}
 
