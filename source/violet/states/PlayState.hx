@@ -197,6 +197,9 @@ class PlayState extends violet.backend.StateBackend {
 		instance = this;
 		inCutscene = false;
 
+		Cache.image('alphabet/english-bold');
+		Cache.sound(PauseMenu.pauseMusic);
+
 		FlxG.cameras.reset(camGame = new NovaCamera());
 		camHUD = new FlxCamera();
 		camHUD.bgColor = FlxColor.TRANSPARENT;

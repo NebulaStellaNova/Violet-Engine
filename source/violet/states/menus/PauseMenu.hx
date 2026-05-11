@@ -13,7 +13,7 @@ import violet.backend.audio.Conductor;
 
 class PauseMenu extends EditorListBackend {
 
-	public var pauseMusic:String = 'game/pause/breakfast';
+	public static var pauseMusic:String = 'game/pause/breakfast';
 
 	public var pauseMusicSound:FlxSound;
 
