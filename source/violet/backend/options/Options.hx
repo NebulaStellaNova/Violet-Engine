@@ -116,17 +116,6 @@ class Options {
 
 	public static function setterCallback(what:String) {
 		switch (what) {
-			case 'antialiasTextures':
-				var state = FlxG.state;
-				while (state != null) {
-					state.forEach(basic -> {
-						if (basic is FlxSprite) {
-							var sprite:FlxSprite = cast basic;
-							sprite.antialiasing = data.antialiasTextures;
-						}
-					}, true);
-					state = state.subState;
-				}
 			case 'fps', 'vsync':
 				var newFps = data.vsync ? Application.current.window.displayMode.refreshRate : data.fps;
 				if (data.vsync && data.fps == Application.current.window.displayMode.refreshRate) return;
