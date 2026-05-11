@@ -13,23 +13,22 @@
 			"type": "shell"
 		},
 		{
-			"type": "lime",
 			"command": "test",
-			"targetConfiguration": "Windows / Debug",
+			"group": {
+				"isDefault": true,
+				"kind": "build"
+			},
+			"label": "Run Debug",
 			"problemMatcher": [
 				"$haxe-absolute",
 				"$haxe",
 				"$haxe-error",
 				"$haxe-trace"
 			],
-			"label": "Run Debug",
-			"group": {
-				"kind": "build",
-				"isDefault": true
-			}
+			"type": "lime"
 		},
 		{
-			"command": "lime test windows -release",
+			"command": "test",
 			"label": "Run Release",
 			"problemMatcher": [
 				"$haxe-absolute",
@@ -37,7 +36,8 @@
 				"$haxe-error",
 				"$haxe-trace"
 			],
-			"type": "shell"
+			"targetConfiguration": "Windows / Final",
+			"type": "lime"
 		}
 	]
 }
