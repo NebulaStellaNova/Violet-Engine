@@ -60,7 +60,8 @@ class Project extends HXProject {
 		new Lib('yaml'),
 
 		// -- Git Libs -- \\
-		new Lib('funkin.vis', 'https://github.com/FunkinCrew/funkVis'),
+		new Lib('funkin.vis', 'https://github.com/FunkinCrew/funkVis', ['useGrig']),
+		new Lib('grig.audio', 'https://github.com/FunkinCrew/grig.audio'),
 		new Lib('moonchart', 'https://github.com/MaybeMaru/moonchart.git'),
 		new Lib('flxrhythmconductor', 'https://github.com/PurSnake/FlxRhythmConductor', ['--skip-dependencies']),
 		new Lib('lemon-ui', 'https://github.com/NebulaStellaNova/LemonUI', ['--skip-dependencies']),
@@ -178,6 +179,9 @@ class Project extends HXProject {
 		super();
 
 		CompilerFlag.init(this);
+
+		if (hasDefine('final'))
+			setDefine('release');
 
 		if (hasDefine('web') || hasDefine('html5')) {
 			error('None of that thank you! I don\'t want people using the engine for web ports. If you don\'t remember, there used to be so many that base game wasn\'t first in search results!');
@@ -327,6 +331,8 @@ class Project extends HXProject {
 
 		// json parsing
 		addHaxelib('flxrhythmconductor', 'git');
+		addHaxelib('funkin.vis', 'git');
+		addHaxelib('grig.audio', 'git');
 		addHaxelib('yaml');
 
 		// debugging
