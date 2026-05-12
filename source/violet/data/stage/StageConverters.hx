@@ -179,7 +179,7 @@ class StageConverters {
 					width: i.scale[0],
 					height: i.scale[1],
 					properties: null
-				};
+				}
 			} else {
 				propOut = i;
 			}
@@ -207,7 +207,7 @@ class StageConverters {
 			scroll: gf?.scroll,
 			angle: gf?.angle,
 			alpha: gf?.alpha
-		};
+		}
 		out.props.push(data);
 
 		var bf:StageDataCharacter = stageData.characters.bf;
@@ -221,7 +221,7 @@ class StageConverters {
 			scroll: bf?.scroll,
 			angle: bf?.angle,
 			alpha: bf?.alpha
-		};
+		}
 		out.props.push(data);
 
 		var dad:StageDataCharacter = stageData.characters.dad;
@@ -235,7 +235,7 @@ class StageConverters {
 			scroll: dad?.scroll,
 			angle: dad?.angle,
 			alpha: dad?.alpha
-		};
+		}
 		out.props.push(data);
 
 		return out;
@@ -288,4 +288,4 @@ typedef StageDataCharacter =
   var ?scroll:Array<Float>;
   var ?alpha:Float;
   var ?angle:Float;
-};
+}

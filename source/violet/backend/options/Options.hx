@@ -68,7 +68,7 @@ import violet.data.song.Variation;
 	// modID<songID:variant, Bool>
 	public var favoritedSongs:Map<String, Map<String, Bool>> = [];
 
-	public var modOptions:Dynamic = {};
+	public var modOptions:Dynamic = {}
 
 	// -- Lane Underlays -- \\
 	public var laneUnderlay:Bool = false;

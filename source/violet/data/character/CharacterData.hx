@@ -114,4 +114,4 @@ typedef CharacterData = {
 	 * Only available for texture atlases.
 	 */
 	// var ?atlasSettings:funkin.data.stage.StageData.TextureAtlasData;
-};
+}

@@ -158,7 +158,7 @@ class CharacterEditorState extends StateBackend {
 			for (i in newList) if (CharacterRegistry.characterDatas.exists(i)) CharacterRegistry.characterDatas.remove(i);
 			ModdingAPI.reloadRegistries();
 			FlxG.switchState(new MainMenu());
-		};
+		}
 		cast (menuBar.findElement('saveCharacter'), MenuItem).onClick = save;
 		insert(10, menuBar);
 

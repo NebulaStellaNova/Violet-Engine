@@ -69,7 +69,7 @@ class NewCharacterScreen extends SubStateBackend {
 				singTime: 8.0,
 				flipX: false,
 				animations: []
-			};
+			}
 			CharacterEditorState.newList.push(id);
 			CharacterRegistry.register(id, characterData);
 			CharacterEditorState.instance.refreshCharacterDropdown();

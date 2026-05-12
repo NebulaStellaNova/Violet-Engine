@@ -82,7 +82,7 @@ class ChartConverters {
 	}
 
 	public static function parseFromCache(chartCache:ChartCache):Dynamic {
-		var parsedCache:Dynamic = {};
+		var parsedCache:Dynamic = {}
 		switch (chartCache.fileExt) {
 			case 'yaml':
 				final options = new ParserOptions(); options.maps = false;
@@ -163,7 +163,7 @@ class ChartConverters {
 				type: OPPONENT,
 				notes: [],
 				vocalsSuffix: (meta.playData.characters?.opponentVocals ?? [])[0]
-			};
+			}
 			var play:ChartStrumLine = {
 				characters: [meta.playData.characters.player],
 				position: 'boyfriend',
