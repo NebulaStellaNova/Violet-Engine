@@ -20,17 +20,13 @@ class NoteStyleRegistry {
 				trace('warning:Could not find meta file for note style with ID $file. Skipping registration.');
 				continue;
 			}
-			noteStyleDatas.set(fileName, ParseUtil.jsonOrYaml(metaPath));
-			registerNoteStyle(new NoteStyle(fileName));
-		}
-	}
-
-	public static function getDefaultNoteStyleData():NoteStyleData {
-		return {
-			name: 'default',
-			strums: {animations: []},
-			notes: {animations: []},
-			sustains: {animations: []}
+			var parsed:Dynamic = ParseUtil.jsonOrYaml(metaPath);
+			if (parsed.assets != null) {
+				trace('warning:Could not parse note style with ID $file as it is in V-Slice format.');
+			} else {
+				noteStyleDatas.set(fileName, parsed);
+				registerNoteStyle(new NoteStyle(fileName));
+			}
 		}
 	}
 

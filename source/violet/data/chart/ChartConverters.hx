@@ -107,15 +107,18 @@ class ChartConverters {
 		return cast new FNFCodename().fromFormat(new FNFKade().fromJson(Json.stringify(parsed))).data;
 	}
 
-	public static function convertVSliceSong(songID, ?variant:Variation) {
+	public static function convertVSliceSong(songID:String, ?variant:Variation) {
+		trace(songID);
 		var suffix = '';
 		if (!variant.isNone()) {
 			suffix = '-$variant';
 		}
+		if (Paths.json('songs/$songID/$songID-metadata$suffix') == '') return;
 		var path = Path.directory(Paths.json('songs/$songID/$songID-metadata$suffix'));
 		var meta = ParseUtil.jsonDirect('songs/$songID/$songID-metadata$suffix');
 		if (meta.playData.noteStyle == 'funkin')
 			meta.playData.noteStyle = 'default';
+		meta = ParseUtil.applyMerge(meta, '_merge/data/songs/$songID/$songID-metadata$suffix');
 		var chart = ParseUtil.jsonDirect('songs/$songID/$songID-chart$suffix');
 		var metaOut:SongData = {
 			name: songID,
@@ -182,7 +185,9 @@ class ChartConverters {
 			chartOut.strumLines.push(play);
 			chartOut.strumLines.push(spec);
 
-			for (note in cast (Reflect.field(chart.notes, i), Array<Dynamic>)) {
+			trace(i);
+
+			for (note in cast ((Reflect.field(chart.notes, i) ?? []), Array<Dynamic>)) {
 				var time = note.t;
 				var data = note.d;
 				var length = note.l;
