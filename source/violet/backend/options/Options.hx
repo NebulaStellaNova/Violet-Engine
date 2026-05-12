@@ -1,5 +1,6 @@
 package violet.backend.options;
 
+import violet.backend.save.SaveAPI;
 import flixel.util.FlxSave;
 import lime.app.Application;
 
@@ -96,6 +97,10 @@ class Options {
 		save.bind('options', lime.app.Application.current.meta.get("file"));
 
 		load();
+
+		SaveAPI.load();
+		SaveAPI.setSlot('Controls', data.controls);
+		SaveAPI.flush();
 	}
 
 	public static function set(what:String, value:Dynamic) {
