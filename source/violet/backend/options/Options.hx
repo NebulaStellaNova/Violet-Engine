@@ -1,5 +1,7 @@
 package violet.backend.options;
 
+import haxe.DynamicAccess;
+import flixel.input.keyboard.FlxKey;
 import flixel.util.FlxSave;
 import lime.app.Application;
 import violet.data.song.Song;
@@ -12,10 +14,10 @@ import violet.data.song.Variation;
 	public var downscroll:Bool = false;
 	public var disableHoldJitter:Bool = false;
 	public var coloredHealthBar:Bool = true;
-	public var developerMode:Bool = false;
+	public var developerMode:Bool = #if debug true #else false #end;
 	public var mouseControls:Bool = #if mobile false #else true #end;
 	public var forceMouseScrolling:Bool = true;
-	public var debugDisplayOnStart:Bool = false;
+	public var debugDisplayOnStart:Bool = #if debug true #else false #end;
 	public var personalScrollSpeed:Float = 0;
 	public var disableScoreLerping:Bool = false;
 	public var kadePopups:Bool = false;
@@ -26,7 +28,7 @@ import violet.data.song.Variation;
 	public var antialiasTextures:Bool = true;
 	public var forceMiddleScroll:Bool = false;
 	public var vsync:Bool = #if linux false #else true #end;
-	public var controls:Map<String, Array<String>> = [
+	public var controls:Map<String, Array<FlxKey>> = [
 		'note_left' => ['A', 'LEFT'],
 		'note_down' => ['S', 'DOWN'],
 		'note_up' => ['W', 'UP'],
@@ -93,6 +95,12 @@ enum abstract AccuracyBase(Int) {
 	var MILLISECOND;
 }
 
+@:forward
+abstract DynamicMap<T>(DynamicAccess<T>) from DynamicAccess<T> to DynamicAccess<T> from Dynamic<T> to Dynamic<T> from Dynamic to Dynamic {
+	public function exists(key:String):Bool
+		return this.exists(key) || Type.getClass(this) == null ? false : Type.getInstanceFields(Type.getClass(this)).contains(key);
+}
+
 class Options {
 
 	public static var data:OptionsData = {}
@@ -100,14 +108,24 @@ class Options {
 
 	public static function init() {
 		save = new FlxSave();
-		save.bind('options', lime.app.Application.current.meta.get("file"));
+		save.bind('options', Application.current.meta.get("file"), (data, error) -> {
+			trace([data, error]);
+			return data;
+		});
+		@:privateAccess save.checkStatus();
 
 		load();
+
+		Application.current.window.onClose.add(() -> {
+			flush();
+			save.close();
+		});
 	}
 
 	public static function set(what:String, value:Dynamic) {
-		if (Reflect.fields(data).contains(what)) {
-			Reflect.setProperty(data, what, value);
+		final saveData:DynamicMap<Dynamic> = data;
+		if (saveData.exists(what)) {
+			saveData.set(what, value);
 			setterCallback(what);
 		} else {
 			trace('warning:Could not find option data for value $what');
@@ -130,25 +148,39 @@ class Options {
 	}
 
 	public static function get(what:String):Dynamic {
-		return Reflect.getProperty(data, what);
+		final saveData:DynamicMap<Dynamic> = data;
+		return saveData.get(what);
+	}
+
+	inline static function toDyMap<T>(dy:DynamicMap<T>):String {
+		return '{' + [for (field => value in dy) '\n\t$field: $value'].join(',') + '\n}';
 	}
 
 	/**
 	 * Loads save data to the struct.
 	 */
 	private static function load() {
-		for (field in Reflect.fields(save.data)) {
-			if (Reflect.getProperty(data, field) == null) continue;
-			var value = Reflect.getProperty(save.data, field);
+		trace(save.data);
+		@:privateAccess save.data ??= {} // jic
+		final flxSave:DynamicMap<Dynamic> = save.data;
+		final saveData:DynamicMap<Dynamic> = data;
+		trace('pre load');
+		trace('Flixel: ' + toDyMap(flxSave));
+		trace('Engine: ' + toDyMap(saveData));
 
+		for (field => value in flxSave) {
+			if (!saveData.exists(field)) continue;
 			if (value == null) {
-				value = Reflect.getProperty(data, field);
-				Reflect.setProperty(save.data, field, value);
+				flxSave.set(field, saveData.get(field));
 				continue;
 			}
-
-			Reflect.setProperty(data, field, value);
+			if (saveData.exists(field))
+				saveData.set(field, value);
 		}
+		trace('post load');
+		trace('Flixel: ' + toDyMap(flxSave));
+		trace('Engine: ' + toDyMap(saveData));
+
 		updateControls();
 	}
 
@@ -157,19 +189,27 @@ class Options {
 	 * Kind of like flushing a toilet.
 	 */
 	public static function flush() {
-		for (field in Reflect.fields(data)) {
-			var value = Reflect.getProperty(data, field);
-			Reflect.setProperty(save.data, field, value);
-		}
+		final flxSave:DynamicMap<Dynamic> = save.data;
+		final saveData:DynamicMap<Dynamic> = data;
+
+		trace('pre flush');
+		trace('Flixel: ' + toDyMap(flxSave));
+		trace('Engine: ' + toDyMap(saveData));
+		for (field => value in saveData)
+			flxSave.set(field, value);
+		trace('post flush');
+		trace('Flixel: ' + toDyMap(flxSave));
+		trace('Engine: ' + toDyMap(saveData));
 
 		save.flush();
 		updateControls();
+
+		trace('sys:Successfully flushed save data.');
 	}
 
 	public static function updateControls() {
-		for (key in data.controls.keys()) {
-			Controls.bindMap.set(key, [ for (i in data.controls.get(key)) FlxKey.fromString(i) ]);
-		}
+		for (key in data.controls.keys())
+			Controls.bindMap.set(key, [for (i in data.controls.get(key)) i]);
 	}
 
 	private static function getSongAccuracy(id:String, difficulty:String, ?variation:Variation) {

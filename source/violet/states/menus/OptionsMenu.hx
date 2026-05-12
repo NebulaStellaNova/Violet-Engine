@@ -233,7 +233,7 @@ class OptionsMenu extends SubStateBackend {
 					option.y = (FlxG.height/2) + ((i-optionCurSelected) * 100) - (option.alphabet.height/2);
 					option.updatePosition();
 					option.controlArray = Options.data.controls.exists(optionData.saveID) ? Options.data.controls.get(optionData.saveID).copy() : [];
-					option.onChange = (value:Array<String>) -> Options.data.controls.set(optionData.saveID, value);
+					option.onChange = (value:Array<flixel.input.keyboard.FlxKey>) -> Options.data.controls.set(optionData.saveID, value);
 					option.setEnabled(!optionData.disabled);
 					insert(0, option);
 					options.push(option);

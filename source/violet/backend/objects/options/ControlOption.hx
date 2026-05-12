@@ -1,12 +1,13 @@
 package violet.backend.objects.options;
 
+import flixel.input.keyboard.FlxKey;
 import violet.backend.utils.NovaUtils;
 import violet.states.menus.OptionsMenu;
 
 class ControlOption extends BaseOption {
 
-	public var controlArray(default, set):Array<String> = ['NONE', 'NONE'];
-	inline function set_controlArray(value:Array<String>):Array<String> {
+	public var controlArray(default, set):Array<FlxKey> = ['NONE', 'NONE'];
+	inline function set_controlArray(value:Array<FlxKey>):Array<FlxKey> {
 		if (value == null)
 			return controlArray;
 		while (value.length < 2)
@@ -19,7 +20,7 @@ class ControlOption extends BaseOption {
 
 	public var selectedKeybind:Bool = true;
 
-	public dynamic function onChange(which:Array<String>) {}
+	public dynamic function onChange(which:Array<FlxKey>) {}
 
 	public function new(title:String, description:String = "") {
 		super(title, description);
