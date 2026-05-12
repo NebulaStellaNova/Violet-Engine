@@ -34,7 +34,7 @@ class NoteStyle {
 
 	public function new(id:String) {
 		this.id = id;
-		this._data = NoteStyleRegistry.noteStyleDatas.get(id) ?? NoteStyleRegistry.getDefaultNoteStyleData();
+		this._data = NoteStyleRegistry.noteStyleDatas.get(id) ?? NoteStyleRegistry.noteStyleDatas.get('default');
 
 		strumProperties = new _NoteStyleProperties(_data.strums?.properties, _data?.properties, {scale: 0.7});
 		noteProperties = new _NoteStyleProperties(_data.notes?.properties, _data?.properties, {scale: 0.7});

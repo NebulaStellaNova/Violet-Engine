@@ -4,6 +4,17 @@ import haxe.Json;
 import yaml.Parser;
 import yaml.Yaml;
 
+enum abstract Operand(String) {
+	var ADD = "add";
+}
+
+typedef MergePiece = {
+	var op:Operand;
+	var path:String;
+	var value:Dynamic;
+}
+
+
 class ParseUtil {
 
 	public static function json(path:String, directory:String = ''):Dynamic {
@@ -81,6 +92,25 @@ class ParseUtil {
 			i++;
 		}
 		return string;
+	}
+
+	/* public static var mergeAliases:Map<String, String> = [
+		"playData.songVariations" => "variants"
+	]; */
+
+	public static function applyMerge<T>(data:Dynamic, mergePath:String):T {
+		var mergeParsed:Null<Array<MergePiece>> = jsonOrYaml(mergePath, '', 'null');
+		if (mergeParsed == null) return data;
+		for (i in mergeParsed) {
+			if (i.op != ADD) continue;
+			i.path = i.path.replace('/-', '');
+			i.path = i.path.substr(1);
+			i.path = i.path.replace('/', '.');
+			var prop:Array<Dynamic> = NovaUtils.getNestedProperty(data, i.path);
+			prop.push(i.value);
+			NovaUtils.setNestedProperty(data, i.path, prop);
+		}
+		return data;
 	}
 
 	/**

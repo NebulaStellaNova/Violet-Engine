@@ -90,7 +90,8 @@ class Stage extends flixel.group.FlxGroup {
 					prop.name = i.name;
 					prop.z = i.zIndex;
 					prop.scrollFactor.set(i.scroll[0] ?? 1, i.scroll[1] ?? 1);
-					prop.scale.set(i.scale[0] ?? 1, i.scale[1] ?? 1);
+					var scale = i.scale ?? [1, 1];
+					prop.scale.set(scale[0] ?? 1, scale[1] ?? 1);
 					prop.flipX = i.flipX ?? false;
 					prop.flipY = i.flipY ?? false;
 					prop.visible = i.visible;
@@ -143,9 +144,7 @@ class Stage extends flixel.group.FlxGroup {
 
 	public function applyProperties(object:FlxBasic, array:Dynamic) {
 		for (i in Reflect.fields(array)) {
-			var recursion = i.split('.');
-			var piece = Reflect.field(object, i);
-			Reflect.setProperty(object, i, Reflect.field(array, i));
+			NovaUtils.setNestedProperty(object, i, Reflect.field(array, i));
 		}
 	}
 

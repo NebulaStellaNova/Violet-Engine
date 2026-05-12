@@ -184,4 +184,41 @@ class NovaUtils {
         ', cmd);
     }
 
+	/**
+     * Sets a nested property on an object using dot notation (e.g., "scale.x").
+     * * @param target The base object.
+     * @param path   The string path (e.g., "scale.x" or "transform.position.y").
+     * @param value  The value to set.
+     */
+    public static function setNestedProperty(target:Dynamic, path:String, value:Dynamic):Void {
+        if (target == null || path == null) return;
+        var parts:Array<String> = path.split(".");
+        var currentObject:Dynamic = target;
+        for (i in 0...parts.length - 1) {
+            var currentField = parts[i];
+            currentObject = Reflect.getProperty(currentObject, currentField);
+            if (currentObject == null) return;
+        }
+        var finalProperty:String = parts[parts.length - 1];
+        Reflect.setProperty(currentObject, finalProperty, value);
+    }
+
+	/**
+     * Gets a nested property on an object using dot notation (e.g., "scale.x").
+     * * @param target The base object.
+     * @param path   The string path (e.g., "scale.x" or "transform.position.y").
+     * @param value  The value to set.
+     */
+    public static function getNestedProperty<T>(target:Dynamic, path:String):Null<T> {
+        if (target == null || path == null) return null;
+        var parts:Array<String> = path.split(".");
+        var currentObject:Dynamic = target;
+        for (i in 0...parts.length - 1) {
+            var currentField = parts[i];
+            currentObject = Reflect.getProperty(currentObject, currentField);
+            if (currentObject == null) return null;
+        }
+        var finalProperty:String = parts[parts.length - 1];
+        return cast Reflect.getProperty(currentObject, finalProperty);
+    }
 }

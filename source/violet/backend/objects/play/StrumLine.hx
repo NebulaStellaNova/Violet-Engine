@@ -171,7 +171,11 @@ class StrumLine extends FlxGroup {
 			vocals = Conductor.addAdditionalTrack(FlxG.sound.load(Cache.sound(vocalPath, 'root', null, true), FlxG.sound.defaultMusicGroup));
 		}
 
-		noteStyle = chartData.noteStyle;
+		if (NoteStyleRegistry.doesNoteStyleExist(chartData.noteStyle)) {
+			noteStyle = chartData.noteStyle;
+		} else {
+			noteStyle = 'default';
+		}
 
 		for (data in chartData.notes) {
 			var type = PlayState.SONG._data.noteTypes[data.type-1];
