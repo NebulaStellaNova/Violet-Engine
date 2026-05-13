@@ -14,6 +14,7 @@ import openfl.display.Loader;
 import openfl.display.LoaderInfo;
 import openfl.net.FileReference;
 import openfl.net.FileFilter;
+import flixel.FlxSprite;
 
 import violet.data.animation.AnimationData;
 import lemonui.elements.NumericStepper;
@@ -80,6 +81,7 @@ class CharacterEditorState extends StateBackend {
 	}
 
 	public var cameraTarget:CameraTarget = { x: 0, y: 0, zoom: 1 }
+	public var copiedOffset:Array<Float> = [0, 0];
 
 	// -- Character Window -- \\
 	public var characterDropdown:Dropdown;
@@ -121,6 +123,7 @@ class CharacterEditorState extends StateBackend {
 
 	override function create() {
 		super.create();
+		FlxG.mouse.visible = true;
 
 		newList = [];
 
@@ -140,14 +143,90 @@ class CharacterEditorState extends StateBackend {
 		bg.camera = bgCamera;
 		add(bg);
 
+		var crosshairH = new FlxSprite(-2000, -1).makeGraphic(4000, 2, FlxColor.WHITE);
+		var crosshairV = new FlxSprite(-1, -2000).makeGraphic(2, 4000, FlxColor.WHITE);
+		crosshairH.camera = charCamera;
+		crosshairV.camera = charCamera;
+		crosshairH.alpha = 0.5;
+		crosshairV.alpha = 0.5;
+		add(crosshairH);
+		add(crosshairV);
+
 		var menuBar = ElementUtil.buildFromXML(Paths.xml('data/ui/character-editor/menubar')).root;
 		var bar:MenuBar = menuBar.findElement('menubar');
 		menuBar.camera = lemonCamera;
+		
 		var newCharacter:MenuItem = menuBar.findElement('newCharacter');
 		newCharacter.onClick = ()->{
 			bar.closeAll();
-			openSubState(new NewCharacterScreen());
+			var dialog = new lime.ui.FileDialog();
+			dialog.onSelectMultiple.add(function(paths:Array<String>) {
+				var pngPath:String = "";
+				var xmlPath:String = "";
+				for (p in paths) {
+					if (StringTools.endsWith(p.toLowerCase(), ".png")) pngPath = p;
+					if (StringTools.endsWith(p.toLowerCase(), ".xml")) xmlPath = p;
+				}
+
+				if (pngPath == "" || xmlPath == "") return;
+
+				var id = haxe.io.Path.withoutDirectory(haxe.io.Path.withoutExtension(pngPath));
+				var targetFolder = "resources/images/characters/";
+				if (!FileSystem.exists(targetFolder)) FileSystem.createDirectory(targetFolder);
+
+				sys.io.File.copy(pngPath, targetFolder + id + ".png");
+				sys.io.File.copy(xmlPath, targetFolder + id + ".xml");
+
+				var data:CharacterData = {
+					version: "1.0.0",
+					name: id,
+					assetPath: "characters/" + id,
+					offsets: [0, 0],
+					cameraOffsets: [150, -100],
+					animations: [],
+					healthIcon: 'face'
+				};
+
+				var xmlContent = sys.io.File.getContent(targetFolder + id + ".xml");
+				var xml = Xml.parse(xmlContent).firstElement();
+				if (xml != null) {
+					var animNames:Array<String> = [];
+					var ereg = new EReg("([0-9]+)$", "");
+					for (tex in xml.elementsNamed("SubTexture")) {
+						var texName = tex.get("name");
+						if (texName != null) {
+							var cleanName = ereg.replace(texName, "");
+							if (StringTools.endsWith(cleanName, " ")) cleanName = cleanName.substr(0, cleanName.length - 1);
+							if (!animNames.contains(cleanName)) animNames.push(cleanName);
+						}
+					}
+					for (anm in animNames) {
+						data.animations.push({
+							name: anm,
+							prefix: anm,
+							offsets: [0, 0],
+							looped: false,
+							flipX: false,
+							flipY: false,
+							frameRate: 24
+						});
+					}
+				}
+
+				CharacterRegistry.characterDatas.set(id, data);
+				if (!newList.contains(id)) newList.push(id);
+				refreshCharacterDropdown();
+				for (i in 0...characterDropdown.options.length) {
+					if (characterDropdown.options[i] == id) {
+						characterDropdown.selectedIndex = i;
+						characterDropdown.onChange(i, id);
+						break;
+					}
+				}
+			});
+			dialog.browse(lime.ui.FileDialogType.OPEN_MULTIPLE, null, null, "Select Character PNG and XML (Sparrow Atlas)");
 		}
+		
 		var newAnimation:MenuItem = menuBar.findElement('newAnimation');
 		newAnimation.onClick = ()->{
 			bar.closeAll();
@@ -203,13 +282,16 @@ class CharacterEditorState extends StateBackend {
 		loopedBox = characterWindow.findElement('isLooped');
 		ghostBox = characterWindow.findElement('isGhost');
 		byLabel = characterWindow.findElement('byLabel');
+		
 		characterDropdown.onChange = function(v:Int, v2:String) {
 			if (character != null) remove(character);
 			if (ghost != null) remove(ghost);
 
 			animationList = [];
 
-			ghost = new Character(characterDropdown.selectedOption.id);
+			var selectedId = characterDropdown.options[v];
+
+			ghost = new Character(selectedId);
 			ghost.debug = true;
 			ghost.allowOnComplete = false;
 			ghost.camera = charCamera;
@@ -222,7 +304,7 @@ class CharacterEditorState extends StateBackend {
 			@:privateAccess ghost.__baseFlipped = false;
 			add(ghost);
 
-			character = new Character(characterDropdown.selectedOption.id);
+			character = new Character(selectedId);
 			character.debug = true;
 			character.allowOnComplete = false;
 			character.camera = charCamera;
@@ -234,7 +316,12 @@ class CharacterEditorState extends StateBackend {
 			@:privateAccess character.__baseFlipped = false;
 			add(character);
 
-			ghost._data = character._data = character.cloneData();
+			if (newList.contains(selectedId)) {
+				character._data = CharacterRegistry.characterDatas.get(selectedId);
+				ghost._data = character._data;
+			} else {
+				ghost._data = character._data = character.cloneData();
+			}
 
 			name.text = character._data.name;
 			assetPath.text = character._data.assetPath;
@@ -270,8 +357,47 @@ class CharacterEditorState extends StateBackend {
 
 			assetPath.onChange = function(value:String) {
 				assetPath.elementColor = 0xFF3d3f41;
-				if (Paths.image(value) != '' && value != '') {
+				var imgPath = Paths.image(value);
+				if (imgPath != null && imgPath != '' && value != '') {
 					character._data.assetPath = value;
+					
+					var xmlPath = StringTools.replace(imgPath, ".png", ".xml");
+					if (FileSystem.exists(xmlPath)) {
+						var content = sys.io.File.getContent(xmlPath);
+						var xml = Xml.parse(content).firstElement();
+						if (xml != null) {
+							var newAnims:Array<String> = [];
+							var ereg = new EReg("([0-9]+)$", "");
+							for (tex in xml.elementsNamed("SubTexture")) {
+								var name = tex.get("name");
+								if (name != null) {
+									var cleanName = ereg.replace(name, "");
+									if (StringTools.endsWith(cleanName, " ")) cleanName = cleanName.substr(0, cleanName.length - 1);
+									if (!newAnims.contains(cleanName)) newAnims.push(cleanName);
+								}
+							}
+							if (newAnims.length > 0) {
+								if (character._data.animations == null) character._data.animations = [];
+								for (anm in newAnims) {
+									var exists = false;
+									for (existing in character._data.animations) {
+										if (existing.name == anm) exists = true;
+									}
+									if (!exists) {
+										character._data.animations.push({
+											name: anm,
+											prefix: anm,
+											offsets: [0, 0],
+											looped: false,
+											flipX: false,
+											flipY: false,
+											frameRate: 24
+										});
+									}
+								}
+							}
+						}
+					}
 					reloadCharacters();
 				} else {
 					assetPath.elementColor = 0xff751b1b;
@@ -331,7 +457,8 @@ class CharacterEditorState extends StateBackend {
 						refreshAnimations();
 						return;
 					}
-					if (Paths.image(value) != '') {
+					var animImg = Paths.image(value);
+					if (animImg != null && animImg != '') {
 						selectedAnimation.assetPath = value;
 						refreshAnimations();
 					} else {
@@ -527,6 +654,22 @@ class CharacterEditorState extends StateBackend {
 		var zoomAmt = (movement/250)/cameraTarget.zoom;
 		cameraTarget.zoom += FlxG.keys.pressed.Q ? -zoomAmt : FlxG.keys.pressed.E ? zoomAmt : 0;
 		cameraTarget.zoom = FlxMath.bound(cameraTarget.zoom, 0.1, 50);
+
+		if (FlxG.keys.pressed.CONTROL) {
+			if (FlxG.keys.justPressed.C) {
+				copiedOffset[0] = xOffsetStepper.value;
+				copiedOffset[1] = yOffsetStepper.value;
+			} else if (FlxG.keys.justPressed.V) {
+				xOffsetStepper.onChange(copiedOffset[0]);
+				yOffsetStepper.onChange(copiedOffset[1]);
+			}
+		}
+
+		if (FlxG.keys.justPressed.R) {
+			cameraTarget.x = 0;
+			cameraTarget.y = 0;
+			cameraTarget.zoom = 1;
+		}
 
 		if (FlxG.keys.justPressed.LEFT) xOffsetStepper.onChange(xOffsetStepper.value += FlxG.keys.pressed.SHIFT ? 1 : 10);
 		if (FlxG.keys.justPressed.RIGHT) xOffsetStepper.onChange(xOffsetStepper.value -= FlxG.keys.pressed.SHIFT ? 1 : 10);
