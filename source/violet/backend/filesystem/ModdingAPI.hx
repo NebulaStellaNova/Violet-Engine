@@ -73,13 +73,14 @@ class ModdingAPI {
 	public static var availableMods(default, null):Array<ModMeta> = [];
 	public static var activeModsIds(default, default):Array<String> = [];
 
-	public static #if release inline #end final MOD_FOLDER:String = #if REDIRECT_ASSETS_FOLDER "../../../../mods" #else "mods" #end;
+	public static inline final MOD_FOLDER:String = #if REDIRECT_ASSETS_FOLDER "../../../../mods" #else "mods" #end;
 	public static var API_VERSION:Version = "0.0.0";
 
 	public static var EXT_ALIASES:Map<String, Array<String>> = [
 		'lua' => ['lua', 'luac', 'luas', 'lscript'],
 		'hx' => ['hx', /* 'hxc',  */'hxs', 'hscript'],
-		'py' => ['py', 'pyc', 'pys', 'pscript']
+		'py' => ['py', 'pyc', 'pys', 'pscript'],
+		'nx' => ['nx', 'nxc', 'nxs', 'nxscript']
 	];
 
 	public static var STATE_PATHS = ['data/scripts/states'];
@@ -306,6 +307,16 @@ class ModdingAPI {
 				if (file.endsWith('.$ext')) {
 					if (!FileUtil.getFileContent(file).contains("scriptDisabled = true")) {
 						pack.addScript(new violet.backend.scripting.LuaScript(file));
+					}
+				}
+			}
+			#end
+
+			#if CAN_NX_SCRIPT
+			for (ext in ModdingAPI.EXT_ALIASES.get("nx")) {
+				if (file.endsWith('.$ext')) {
+					if (!FileUtil.getFileContent(file).contains("scriptDisabled = true")) {
+						pack.addScript(new violet.backend.scripting.NxScript(file));
 					}
 				}
 			}

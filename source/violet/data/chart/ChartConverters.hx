@@ -108,7 +108,6 @@ class ChartConverters {
 	}
 
 	public static function convertVSliceSong(songID:String, ?variant:Variation) {
-		trace(songID);
 		var suffix = '';
 		if (!variant.isNone()) {
 			suffix = '-$variant';
@@ -184,8 +183,6 @@ class ChartConverters {
 			chartOut.strumLines.push(opp);
 			chartOut.strumLines.push(play);
 			chartOut.strumLines.push(spec);
-
-			trace(i);
 
 			for (note in cast ((Reflect.field(chart.notes, i) ?? []), Array<Dynamic>)) {
 				var time = note.t;

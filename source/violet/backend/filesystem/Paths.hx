@@ -14,7 +14,7 @@ typedef AssetType = #if (flixel >= "5.9.0") flixel.system.frontEnds.AssetFrontEn
 #end
 
 class Paths {
-	public static #if release inline #end final ASSETS_FOLDER:String = #if REDIRECT_ASSETS_FOLDER "../../../../assets" #else "resources" #end;
+	public static inline final ASSETS_FOLDER:String = #if REDIRECT_ASSETS_FOLDER "../../../../assets" #else "resources" #end;
 
 	private static function notifyIfBlank(foundPath:String, targetPath:String, type:String) {
 		if (foundPath == "" && Path.withoutExtension(Path.withoutDirectory('$targetPath')) != 'null') {
@@ -48,7 +48,7 @@ class Paths {
 
 	}
 
-	#if release inline #end public static function getFileName(path:String, startFromRoot:Bool = false)
+	inline public static function getFileName(path:String, startFromRoot:Bool = false)
 		return fileName(root(path, startFromRoot));
 
 	public static function fileName(file:String) {
@@ -82,63 +82,63 @@ class Paths {
 		return results;
 	}
 
-	#if release inline #end public static function font(path:String, directory:String = '', ?ext:String = 'ttf'):String
+	inline public static function font(path:String, directory:String = '', ?ext:String = 'ttf'):String
 		return file(path, directory == 'root' ? 'root' : [directory, 'fonts'].join('/'), ext);
 
-	#if release inline #end public static function xml(path:String, directory:String = '', ?ext:String = 'xml'):String
+	inline public static function xml(path:String, directory:String = '', ?ext:String = 'xml'):String
 		return file(path, directory == 'root' ? 'root' : [directory].join('/'), ext);
 
-	#if release inline #end public static function ui(path:String, directory:String = ''):String {
+	inline public static function ui(path:String, directory:String = ''):String {
 		return xml('data/ui/$path', directory);
 	}
 
-	#if release inline #end public static function atlas(path:String, directory:String = ''):String {
+	inline public static function atlas(path:String, directory:String = ''):String {
 		return file(Path.withoutExtension(path) + '/Animation', directory == 'root' ? 'root' : [directory, 'images'].join('/'), "json");
 	}
 
-	#if release inline #end public static function image(path:String, directory:String = '', ?ext:String = 'png'):String {
+	inline public static function image(path:String, directory:String = '', ?ext:String = 'png'):String {
 		var out = file(path, directory == 'root' ? 'root' : [directory, 'images'].join('/'), ext);
 		if (out != '') return out;
 		else return atlas(path, directory);
 	}
 
-	#if release inline #end public static function sound(path:String, directory:String = '', ?ext:String = 'ogg'):String
+	inline public static function sound(path:String, directory:String = '', ?ext:String = 'ogg'):String
 		return file(path, directory == 'root' ? 'root' : [directory, 'sounds'].join('/'), ext);
 
-	#if release inline #end public static function frag(path:String, directory:String = '', ?ext:String = 'frag'):String
+	inline public static function frag(path:String, directory:String = '', ?ext:String = 'frag'):String
 		return file(path, directory == 'root' ? 'root' : [directory, 'shaders'].join('/'), ext);
-	#if release inline #end public static function vert(path:String, directory:String = '', ?ext:String = 'vert'):String
+	inline public static function vert(path:String, directory:String = '', ?ext:String = 'vert'):String
 		return file(path, directory == 'root' ? 'root' : [directory, 'shaders'].join('/'), ext);
 
-	#if release inline #end public static function music(path:String, directory:String = '', ?ext:String = 'ogg'):String
+	inline public static function music(path:String, directory:String = '', ?ext:String = 'ogg'):String
 		return file(path, directory == 'root' ? 'root' : [directory, 'music'].join('/'), ext);
 
-	#if release inline #end public static function yaml(path:String, directory:String = '', ?ext:String = 'yaml'):String {
+	inline public static function yaml(path:String, directory:String = '', ?ext:String = 'yaml'):String {
 		return file(path, directory, ext) != "" ? file(path, directory, ext) : file(path, directory, ext == 'yaml' ? 'yml' : ext);
 	}
 
-	#if release inline #end public static function json(path:String, directory:String = '', ?ext:String = 'json'):String
+	inline public static function json(path:String, directory:String = '', ?ext:String = 'json'):String
 		return file(path, directory, ext) != '' ? file(path, directory, ext) : (ext == 'json' ? file(path, directory, ext + 'c') : '');
 
-	#if release inline #end public static function file(path:String, directory:String = '', ?ext:String):String
+	inline public static function file(path:String, directory:String = '', ?ext:String):String
 		return root((directory == 'root' ? ['$path${ext == null || path.endsWith('.$ext') ? '' : '.$ext'}'] : [
 			Path.removeTrailingSlashes(directory),
 			'$path${ext == null || path.endsWith('.$ext') ? '' : '.$ext'}'
 		]).join('/'), directory == 'root');
 
-	#if release inline #end public static function vocal(song:String, suffix:String = '', ?variant:Variation, dashes:Bool = true):String {
+	inline public static function vocal(song:String, suffix:String = '', ?variant:Variation, dashes:Bool = true):String {
 		var prefix = dashes ? '-' : '';
 		return root('songs/$song/song/Voices${suffix != '' ? '$prefix$suffix' : ''}${!variant.isNone() ? '$prefix$variant' : ''}.ogg');
 	}
 
-	#if release inline #end public static function inst(song:String, ?variant:Variation):String
+	inline public static function inst(song:String, ?variant:Variation):String
 		return root('songs/$song/song/${!variant.isNone() ? '$variant/' : ''}Inst.ogg');
 
-	#if release inline #end public static function fileExists(path:String, startFromRoot:Bool = false):Bool {
+	inline public static function fileExists(path:String, startFromRoot:Bool = false):Bool {
 		return path != "" ? _checkExists(root(path, startFromRoot)) : false;
 	}
 
-	#if release inline #end public static function folderExists(path:String, startFromRoot:Bool = false):Bool
+	inline public static function folderExists(path:String, startFromRoot:Bool = false):Bool
 		return #if mobile _readFolder(Path.removeTrailingSlashes(root(path, startFromRoot))).length != 0 || #end FileSystem.isDirectory(Path.removeTrailingSlashes(root(path, startFromRoot)));
 
 	public static function readFolder(path:String, startFromRoot:Bool = false, ?filter:String->Bool, modOnly:Bool = false):Array<String> {
