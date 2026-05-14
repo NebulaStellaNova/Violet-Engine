@@ -245,7 +245,7 @@ class PlayState extends violet.backend.StateBackend {
 		Conductor.playSong(songData.id, variation); Conductor.pause();
 		Conductor.setupBPMChanges(songData, sortedEvents);
 		Conductor.offset = (countdownLength) * Conductor.beatLengthMs;
-		if (SONG.meta.needsVoices) generalVocals = Conductor.addAdditionalTrack(FlxG.sound.load(Cache.sound(Paths.vocal(songData.id, null, PlayState.variation), 'root', null, true), FlxG.sound.defaultMusicGroup));
+		if (Paths.vocal(songData.songName, null, PlayState.variation) != '') generalVocals = Conductor.addAdditionalTrack(FlxG.sound.load(Cache.sound(Paths.vocal(songData.songName, null, PlayState.variation), 'root', null, true), FlxG.sound.defaultMusicGroup));
 		else generalVocals = Conductor.addAdditionalTrack(new FlxSound());
 
 		StrumLine.generalScrollSpeed = SONG.scrollSpeed ?? 1;
