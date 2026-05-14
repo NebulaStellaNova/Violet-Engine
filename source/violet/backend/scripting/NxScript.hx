@@ -17,7 +17,7 @@ class NxScript extends Script {
 		super(path, isCode);
 		internalScript = new Interpreter();
 		this.fileName = Path.withoutDirectory(path);
-		// initVars();
+		initVars();
 		execute();
 	}
 
