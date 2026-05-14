@@ -160,6 +160,8 @@ class LoadingState extends StateBackend { // for now
 				new HXCHandler();
 				ModdingAPI.reloadRegistries();
 				ModdingAPI.checkForHXC();
+				GlobalPack.init();
+				refreshRedirects();
 			} catch (e:Dynamic) {
 				trace(e);
 			}
