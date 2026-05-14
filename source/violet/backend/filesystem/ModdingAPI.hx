@@ -73,7 +73,7 @@ class ModdingAPI {
 	public static var availableMods(default, null):Array<ModMeta> = [];
 	public static var activeModsIds(default, default):Array<String> = [];
 
-	public static #if release inline #end final MOD_FOLDER:String = #if REDIRECT_ASSETS_FOLDER "../../../../mods" #else "mods" #end;
+	public static inline final MOD_FOLDER:String = #if REDIRECT_ASSETS_FOLDER "../../../../mods" #else "mods" #end;
 	public static var API_VERSION:Version = "0.0.0";
 
 	public static var EXT_ALIASES:Map<String, Array<String>> = [
