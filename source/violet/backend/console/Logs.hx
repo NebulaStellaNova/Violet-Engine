@@ -53,6 +53,14 @@ enum abstract LogType(String) from String to String {
 	var SystemMessage = 'system';
 	var DebugMessage = 'debug';
 	var LogMessage = 'log';
+
+	@:from public static function fromNotifType(value:violet.backend.utils.NovaUtils.NotificationType):LogType {
+		return switch (value) {
+			case ERROR: ErrorMessage;
+			case WARNING: WarningMessage;
+			case DEFAULT: LogMessage;
+		}
+	}
 }
 
 class Logs {

@@ -41,6 +41,7 @@ import violet.data.chart.ChartData;
 import violet.data.chart.ChartRegistry;
 import violet.data.icon.HealthIcon;
 import violet.data.song.Song;
+import violet.data.song.Variation;
 import violet.data.stage.Stage;
 import violet.states.menus.FreeplayMenu;
 import violet.states.menus.StoryMenu;
@@ -76,7 +77,7 @@ class PlayState extends violet.backend.StateBackend {
 	public static var songData:Song;
 	public static var song:String;
 	public static var difficulty:String;
-	public static var variation:Null<String>;
+	public static var variation:Variation;
 	public static var playlist:Array<String> = [];
 	public static var doFadeOut:Bool = false;
 	public static var hasSeenCutscene:Bool = false;
@@ -241,10 +242,9 @@ class PlayState extends violet.backend.StateBackend {
 		strumLines = new FlxTypedGroup<StrumLine>();
 		strumLines.z = 100;
 
-		Conductor.playSong(songData.songName, variation); Conductor.pause();
+		Conductor.playSong(songData.id, variation); Conductor.pause();
 		Conductor.setupBPMChanges(songData, sortedEvents);
 		Conductor.offset = (countdownLength) * Conductor.beatLengthMs;
-
 		if (Paths.vocal(songData.songName, null, PlayState.variation) != '') generalVocals = Conductor.addAdditionalTrack(FlxG.sound.load(Cache.sound(Paths.vocal(songData.songName, null, PlayState.variation), 'root', null, true), FlxG.sound.defaultMusicGroup));
 		else generalVocals = Conductor.addAdditionalTrack(new FlxSound());
 
@@ -396,7 +396,7 @@ class PlayState extends violet.backend.StateBackend {
 		}
 
 		#if debug
-		DebugDisplay.registerVariable('Current Song', () -> return '$song:$difficulty');
+		DebugDisplay.registerVariable('Current Song', () -> return Song.setupId(song, difficulty, variation));
 		DebugDisplay.registerVariable('Is Story Mode', () -> return isStoryMode);
 		DebugDisplay.registerVariable('Misses & Accuracy', () -> return '$misses - $accuracy');
 		if (playlist.length != 0) DebugDisplay.registerVariable('Playlist Items', () -> return playlist);
@@ -1008,8 +1008,8 @@ class PlayState extends violet.backend.StateBackend {
 		var event:EventBase = runSongEvent('endSong', runSongEvent('songEnd', new EventBase()));
 		if (event.cancelled) return;
 		songEnded = true;
-		if (!hasChangedPracticeMode && !practiceMode && !botplayScoreDiscarded) ScoreUtil.saveSongScore(songData.songName, difficulty, songData.variant, score);
-		if (!hasChangedPracticeMode && !practiceMode && !botplayScoreDiscarded) ScoreUtil.saveSongAccuracy(songData.songName, difficulty, songData.variant, accuracy);
+		if (!hasChangedPracticeMode && !practiceMode && !botplayScoreDiscarded) ScoreUtil.saveSongScore(songData.id, difficulty, songData.variant, score);
+		if (!hasChangedPracticeMode && !practiceMode && !botplayScoreDiscarded) ScoreUtil.saveSongAccuracy(songData.id, difficulty, songData.variant, accuracy);
 		if (!botplayScoreDiscarded && !storyScoreDiscarded) storyScore += score;
 		if (playlist.length == 0 || !isStoryMode) {
 			exitToMenu();
@@ -1048,21 +1048,11 @@ class PlayState extends violet.backend.StateBackend {
 		HXCHandler.instance.hxcScripts.callVariants(func, params);
 		songScripts.callVariants(func, params);
 		if (stage != null) stage.stageScripts.callVariants(func, params);
-		if (strumLines != null) {
-			for (line in strumLines) {
-				for (i in line.characters) i.scripts.call(func, params);
-			}
-		}
 	}
 
 	public function runSongEvent<T:violet.backend.scripting.events.EventBase>(func:String, event:T):T {
 		HXCHandler.instance.hxcScripts.event(func, event);
 		songScripts.event(func, event);
-		if (strumLines != null) {
-			for (line in strumLines) {
-				for (i in line.characters) i.scripts.call(func, event);
-			}
-		}
 		return stage.stageScripts.event(func, event);
 	}
 

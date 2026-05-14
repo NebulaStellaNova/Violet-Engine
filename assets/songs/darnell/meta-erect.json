@@ -18,5 +18,6 @@
 	"bpm": 155,
 	"instSuffix": "-erect",
 	"freeplayCapsule": "streets-erect",
+	"playableCharacter": "pico",
 	"needsVoices": false
 }

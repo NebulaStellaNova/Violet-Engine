@@ -60,7 +60,7 @@ class NewAnimationScreen extends SubStateBackend {
 			var animationData:AnimationData = {
 				name: name,
 				prefix: prefix
-			};
+			}
 			CharacterEditorState.instance.animationList.push(NullChecker.checkAnimation(animationData));
 			CharacterEditorState.instance.refreshAnimations();
 			CharacterEditorState.instance.refreshAnimationDropdown();

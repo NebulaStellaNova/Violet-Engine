@@ -29,7 +29,7 @@ class Scoring {
 
 	public static function judgeNoteHit(ms:Float):Judgement {
 		var msAbs = Math.abs(ms);
-		var judgement:Judgement = { splash: false, score: 0, rating: 'miss' };
+		var judgement:Judgement = { splash: false, score: 0, rating: 'miss' }
 
 		if (enableKiller && msAbs < killerWindow) judgement.rating = 'killer';
 		else if (msAbs < sickWindow) judgement.rating = 'sick';

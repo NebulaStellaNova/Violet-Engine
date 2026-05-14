@@ -55,7 +55,7 @@ class ParseUtil {
 			return json(path, directory);
 		}
 		if (def == 'null') return null;
-		return def ?? {};
+		return def ?? {}
 	}
 
 	public static function stringifyYaml(data:Dynamic):String {

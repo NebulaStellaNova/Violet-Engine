@@ -1,6 +1,7 @@
 package violet.backend.objects.freeplay;
 
 import flixel.addons.effects.FlxSkewedSprite;
+import flixel.math.FlxPoint;
 import flixel.text.FlxText;
 import flixel.util.FlxGradient;
 import flixel.util.FlxSpriteUtil;
@@ -12,49 +13,54 @@ using violet.backend.utils.MathUtil;
 
 class SongCapsule extends Capsule {
 
-	// public var parentCapsule:LevelCapsule;
+	public var hidden(default, set):Bool = true;
+	inline function set_hidden(value:Bool):Bool
+		return hidden = value;
 
-	override public function new(songData:Song) {
+	public var parent:LevelCapsule;
+	public var data:Song;
+
+	public var heart:NovaSprite;
+
+	override public function new(parent:LevelCapsule, data:Song) {
 		super();
+		this.parent = parent;
+		this.data = data;
+	}
+
+	override public function init():Void {
+		super.init();
 
 		Capsule.colorToAlphaShader.targetColor = FlxColor.BLACK;
 
 		var capsuleWidth:Float = FlxG.width/4;
 
-		if (songData?.customValues?.gradient != null)
-			songData._data.gradient = cast songData?.customValues?.gradient;
+		if (data?.customValues?.gradient != null)
+			data._data.gradient = cast data?.customValues?.gradient;
 
-		var gradient:Array<ParseColor> = songData._data.gradient != null ? songData._data.gradient : [songData._data.color, songData._data.color];
-		var capsuleBG:String = songData._data.freeplayCapsule ?? songData?.customValues?.capsuleBackground ?? "mainStage";
+		final gradient:Array<ParseColor> = data._data.gradient ?? [data._data.color, data._data.color];
+		final capsuleBG:String = data._data.freeplayCapsule ?? data?.customValues?.capsuleBackground ?? "mainStage";
 
-		var temp = new NovaSprite(0, 0).loadSprite(Paths.image("menus/freeplaymenu/capsuleBackgrounds/" + capsuleBG));
+		var temp = new NovaSprite().loadSprite(Paths.image("menus/freeplaymenu/capsuleBackgrounds/" + capsuleBG));
 		temp.drawFrame();
-
 		capsuleBackground.loadGraphicFromSprite(temp);
 		capsuleBackground.drawFrame();
+		temp.destroy();
 
 		backCase.makeGraphic(FlxG.width, 85, gradient[0]);
-
-		blackGradient = new FlxSkewedSprite(14, 0);
-		blackGradient.loadGraphic(FlxGradient.createGradientFlxSprite(Math.round(frontCase.width/2), Math.round(frontCase.height), [FlxColor.BLACK, FlxColor.BLACK, FlxColor.TRANSPARENT], 1, 0).pixels);
-		blackGradient.antialiasing = true;
-		blackGradient.skew.set(-30, 0);
-		blackGradient.alpha = 0.6;
-		add(blackGradient);
 
 		var iconScale = 0.425;
 		var iconBG = new FlxSkewedSprite(-25, 8);
 		iconBG.makeGraphic(Math.round(68/iconScale), Math.round(68/iconScale), gradient[0]);
-		iconBG.antialiasing = true;
 		iconBG.drawFrame();
-		skewPixels(iconBG, -30, 0);
+		Capsule.skewPixels(iconBG, -30, 0);
 		iconBG.scale.set(iconScale, iconScale);
 		iconBG.updateHitbox();
 		add(iconBG);
 
-		final outlinePath = 'icons/outlines/${songData.icon}-outline'; // Typo but I'm not changing it now
+		final outlinePath = 'icons/outlines/${data.icon}';
 		final outlineAsset = Paths.image(outlinePath);
-		var iconImage = new HealthIcon(songData.icon, false, false, outlineAsset != '' ? outlinePath : null);
+		var iconImage = new HealthIcon(data.icon, false, false, outlineAsset != '' ? outlinePath : null);
 		iconImage.scaleOffset = 0.45;
 		iconImage.globalOffset.set(0, 0);
 		iconImage.canDance = false;
@@ -65,18 +71,21 @@ class SongCapsule extends Capsule {
 		iconImage.y = 5;
 
 		iconImage.drawFrame();
-		scalePixels(iconImage, 1, 1);
+		Capsule.scalePixels(iconImage, 1, 1);
 		var x = (iconImage.width % 150) * 150;
-		cropPixels(iconImage, x.round(), 0, 150, 150);
-		isolateBlackPixels(iconImage);
-		var offsetX = (iconImage._data.freeplayOffsets ?? [0, 0])[0] ?? 0;
-		var offsetY = (iconImage._data.freeplayOffsets ?? [0, 0])[1] ?? 0;
-		iconBG.stamp(iconImage, 140 + offsetX.round(), 0 + offsetY.round());
+		Capsule.cropPixels(iconImage, x.round(), 0, 150, 150);
+		Capsule.isolateBlackPixels(iconImage);
+		final freeplayOffsets:FlxPoint = {
+			var offset = iconImage._data.freeplayOffsets ?? [0, 0];
+			new FlxPoint(offset[0] ?? 0, offset[1] ?? 0);
+		}
+		freeplayOffsets.round();
+		iconBG.stamp(iconImage, cast 140 + freeplayOffsets.x, cast freeplayOffsets.y);
 		iconBG.shader = Capsule.colorToAlphaShader;
 
 		iconBG.updateHitbox();
 
-		var displayNameText = new FlxText(0, 0, 0, songData.displayName);
+		var displayNameText = new FlxText(0, 0, 0, data.displayName);
 		displayNameText.setFormat(Paths.font("akira", null, "otf"), 90, FlxColor.BLACK, "center");
 		displayNameText.scale.set(0.3, 0.5);
 		displayNameText.drawFrame();
@@ -84,7 +93,6 @@ class SongCapsule extends Capsule {
 
 		var displayNameSprite = new FlxSkewedSprite(iconBG.x + iconBG.width + 5, 0);
 		displayNameSprite.loadGraphic(displayNameText.pixels);
-		displayNameSprite.antialiasing = true;
 		displayNameSprite.scale.set(0.3, 0.5);
 		displayNameSprite.skew.set(-30, 0);
 		add(displayNameSprite);
@@ -92,27 +100,27 @@ class SongCapsule extends Capsule {
 		var gradientMult = 2;
 
 		var amt = displayNameText.width / capsuleWidth;
+		displayNameText.destroy();
 		// amt /= gradientMult;
 		var displayNameGradient:Array<FlxColor> = [gradient[0], FlxColor.interpolate(gradient[0], gradient[1], amt)];
 
 		FlxSpriteUtil.alphaMaskFlxSprite(FlxGradient.createGradientFlxSprite(displayNameSprite.width.round(), displayNameSprite.height.round(), displayNameGradient, 1, 0), displayNameSprite, displayNameSprite);
 		displayNameSprite.updateHitbox();
 
-		var composerText = new FlxText(0, 0, 0, songData._data.composer != null ? songData._data.composer : "Unknown Artist");
+		var composerText = new FlxText(0, 0, 0, data._data.composer ?? "Unknown Artist");
 		composerText.setFormat(Paths.font("bozon", null, "otf"), 70, FlxColor.BLACK, "center");
 		composerText.drawFrame();
 		composerText.updateHitbox();
 
 		var composerSprite = new FlxSkewedSprite(displayNameSprite.x - 10, displayNameSprite.y + displayNameSprite.height - 3);
 		composerSprite.loadGraphic(composerText.pixels);
-		composerSprite.antialiasing = true;
 		composerSprite.scale.set(0.5, 0.5);
 		composerSprite.drawFrame();
 		composerSprite.updateHitbox();
+		composerText.destroy();
 
 		var composerSegment = new FlxSkewedSprite(composerSprite.x - 10, displayNameSprite.y + displayNameSprite.height - 3);
 		composerSegment.loadGraphic(FlxGradient.createGradientFlxSprite(Math.round(composerSprite.width + 40), 30*2, [FlxColor.WHITE, FlxColor.WHITE], 1, 0).pixels);
-		composerSegment.antialiasing = true;
 		composerSegment.skew.set(-30, 0);
 		composerSegment.scale.set(0.5, 0.5);
 		composerSegment.drawFrame();
@@ -127,7 +135,7 @@ class SongCapsule extends Capsule {
 		composerSegment.shader = Capsule.colorToAlphaShader;
 		composerSegment.updateHitbox();
 
-		var bpmText = new FlxText(0, 0, 0, "    " + songData.bpm);
+		var bpmText = new FlxText(0, 0, 0, "    " + data.bpm);
 		bpmText.setFormat(Paths.font("bozon", null, "otf"), 70, FlxColor.BLACK, "center");
 		bpmText.drawFrame();
 		bpmText.updateHitbox();
@@ -139,21 +147,18 @@ class SongCapsule extends Capsule {
 
 		var bpmSprite = new FlxSkewedSprite(composerSegment.x + composerSegment.width + 20, displayNameSprite.y + displayNameSprite.height - 3);
 		bpmSprite.loadGraphic(bpmText.pixels);
-		bpmSprite.antialiasing = true;
 		bpmSprite.scale.set(0.5, 0.5);
 		bpmSprite.skew.set(-30, 0);
 		bpmSprite.updateHitbox();
 		bpmSprite.drawFrame();
-
+		bpmText.destroy();
 
 		var bpmSegment = new FlxSkewedSprite(bpmSprite.x - 10, displayNameSprite.y + displayNameSprite.height - 3);
 		bpmSegment.loadGraphic(FlxGradient.createGradientFlxSprite(bpmSprite.width.round() + 40, 30*2, [FlxColor.WHITE, FlxColor.WHITE], 1, 0).pixels);
-		bpmSegment.antialiasing = true;
 		bpmSegment.skew.set(-30, 0);
 		bpmSegment.scale.set(0.5, 0.5);
 		add(bpmSegment);
 		// add(bpmSprite);
-
 
 		var bpmAmt = bpmSegment.width / capsuleWidth;
 		bpmAmt /= gradientMult;
@@ -164,6 +169,16 @@ class SongCapsule extends Capsule {
 
 		bpmSegment.shader = Capsule.colorToAlphaShader;
 		bpmSegment.updateHitbox();
+
+		heart = new NovaSprite(-40, -40, Paths.image('menus/freeplaymenu/categories/heart'));
+		heart.alpha = data.isFavorited ? 1 : 0;
+		add(heart);
+	}
+
+	override public function toggleFavorite():Void {
+		data.isFavorited = !data.isFavorited;
+		heart.alpha = data.isFavorited ? 1 : 0;
+		parent.heart.alpha = parent.isFav() ? 1 : 0;
 	}
 
 }

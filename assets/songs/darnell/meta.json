@@ -19,6 +19,7 @@
 	"icon": "darnell",
 	"freeplayCapsule": "streets",
 	"gradient": ["#6162FF", "#00FF48"],
+	"playableCharacter": "pico",
 	"customValues": {
 		"stickerPack": "bonus-weekend1",
 		"album": "volume4"

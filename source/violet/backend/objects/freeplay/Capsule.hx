@@ -1,6 +1,7 @@
 package violet.backend.objects.freeplay;
 
 import flixel.addons.effects.FlxSkewedSprite;
+import flixel.util.FlxGradient;
 import openfl.display.BitmapData;
 import openfl.geom.Matrix;
 import openfl.geom.Point;
@@ -13,43 +14,56 @@ using violet.backend.utils.MathUtil;
 
 class Capsule extends FlxSpriteGroup {
 
+	public static var colorToAlphaShader:ColorToAlphaShader = new ColorToAlphaShader();
+	public static var outlineExtractionShader:OutlineExtractionShader = new OutlineExtractionShader();
+	public static var angleCropShader:AngleCropShader = new AngleCropShader();
+
+	public var defaultIndex:Int = 0;
+
 	public var capsuleBackground:FlxSkewedSprite;
 	public var backCase:FlxSkewedSprite;
 	public var frontCase:FlxSkewedSprite;
 	public var blackGradient:FlxSkewedSprite;
 
-	public static var colorToAlphaShader:ColorToAlphaShader = new ColorToAlphaShader();
-	public static var outlineExtractionShader:OutlineExtractionShader = new OutlineExtractionShader();
-	public static var angleCropShader:AngleCropShader = new AngleCropShader();
-
 	override public function new() {
 		super();
+	}
 
-		var temp = new NovaSprite(0, 0).loadSprite(Paths.image("menus/freeplaymenu/capsuleBackgrounds/mainStage"));
-		temp.drawFrame();
+	@:unreflective public var initalized:Bool = false;
+	public function init():Void {
+		if (initalized) return;
+		else initalized = true;
 
-		capsuleBackground = new FlxSkewedSprite(-10, 0);
-		capsuleBackground.loadGraphicFromSprite(temp);
-		capsuleBackground.drawFrame();
-		// skewPixels(capsuleBackground, 30, 0);
-
-		backCase = new FlxSkewedSprite(0, 0);
-		backCase.antialiasing = true;
+		backCase = new FlxSkewedSprite();
 		backCase.skew.set(-30, 0);
 		add(backCase);
 
-		frontCase = new FlxSkewedSprite(15, 0);
+		frontCase = new FlxSkewedSprite(15);
 		frontCase.makeGraphic(FlxG.width, 85, FlxColor.WHITE);
-		frontCase.antialiasing = true;
 		frontCase.drawFrame();
 		frontCase.skew.set(-30, 0);
 		add(frontCase);
 
+		var temp = new NovaSprite().loadSprite(Paths.image("menus/freeplaymenu/capsuleBackgrounds/mainStage"));
+		temp.drawFrame();
+		capsuleBackground = new FlxSkewedSprite(-10);
+		capsuleBackground.loadGraphicFromSprite(temp);
+		capsuleBackground.drawFrame();
+		// skewPixels(capsuleBackground, 30, 0);
+		temp.destroy();
 		capsuleBackground.shader = angleCropShader;
 		add(capsuleBackground);
+
+		blackGradient = new FlxSkewedSprite(14);
+		blackGradient.loadGraphic(FlxGradient.createGradientBitmapData(Math.round(frontCase.width/2), Math.round(frontCase.height), [FlxColor.BLACK, FlxColor.BLACK, FlxColor.TRANSPARENT], 1, 0));
+		blackGradient.skew.set(-30, 0);
+		blackGradient.alpha = 0.6;
+		add(blackGradient);
 	}
 
-	function skewPixels(sprite:FlxSprite, xSkew:Float = 0, ySkew:Float = 0) {
+	public function toggleFavorite():Void {}
+
+	static function skewPixels(sprite:FlxSprite, xSkew:Float = 0, ySkew:Float = 0):Void {
 		var skewXDegrees:Float = xSkew;
 		var skewYDegrees:Float = ySkew;
 
@@ -81,7 +95,7 @@ class Capsule extends FlxSpriteGroup {
 		sprite.loadGraphic(finalBD);
 	}
 
-	function scalePixels(sprite:FlxSprite, scaleX:Float, scaleY:Float):Void {
+	static function scalePixels(sprite:FlxSprite, scaleX:Float, scaleY:Float):Void {
 		var oldPixels:BitmapData = sprite.pixels;
 		var newWidth:Int = Std.int(oldPixels.width * scaleX);
 		var newHeight:Int = Std.int(oldPixels.height * scaleY);
@@ -92,7 +106,7 @@ class Capsule extends FlxSpriteGroup {
 		sprite.pixels = newPixels;
 	}
 
-	function isolateBlackPixels(sprite:FlxSprite, sensitivity:Float = 0.001):Void {
+	static function isolateBlackPixels(sprite:FlxSprite, sensitivity:Float = 0.001):Void {
 		if (sprite == null || sprite.graphic == null || sprite.graphic.bitmap == null) {
 			return;
 		}
@@ -129,7 +143,7 @@ class Capsule extends FlxSpriteGroup {
 		sprite.pixels = bmd;
 	}
 
-	function cropPixels(sprite:FlxSprite, x:Int, y:Int, width:Int, height:Int):Void {
+	static function cropPixels(sprite:FlxSprite, x:Int, y:Int, width:Int, height:Int):Void {
 		if (sprite == null || sprite.graphic == null) return;
 
 		var original:BitmapData = sprite.pixels;

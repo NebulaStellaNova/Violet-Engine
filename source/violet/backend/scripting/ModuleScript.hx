@@ -39,7 +39,7 @@ class ModuleScript extends Script {
 				return null;
 
 			return new HxParser().parseModule(aliasImports(FileUtil.getFileContent(path)));
-		};
+		}
 
 		var contentSplit:Array<String> = FileUtil.getFileContent(path).replace('\n', ' ').split(' ');
 

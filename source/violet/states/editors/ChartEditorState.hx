@@ -1,23 +1,22 @@
 package violet.states.editors;
 
-import lemonui.elements.Text;
-import lemonui.elements.Slider;
-import violet.data.character.Character;
-import lemonui.utils.ElementUtil;
-import lemonui.elements.MenuBar;
-import violet.data.icon.HealthIcon;
-import violet.data.character.CharacterRegistry;
-import flixel.math.FlxPoint;
-import violet.backend.scripting.events.NoteHitEvent;
-import violet.backend.scripting.events.EventBase;
-import violet.backend.utils.NovaUtils;
-import violet.data.song.Song;
-import violet.data.song.SongRegistry;
-import violet.data.chart.ChartRegistry;
-import violet.data.chart.Chart;
 import flixel.addons.display.FlxBackdrop;
-import violet.backend.audio.Conductor;
+import flixel.math.FlxPoint;
+import lemonui.elements.MenuBar;
+import lemonui.elements.Slider;
+import lemonui.elements.Text;
+import lemonui.utils.ElementUtil;
 import violet.backend.StateBackend;
+import violet.backend.audio.Conductor;
+import violet.backend.scripting.events.NoteHitEvent;
+import violet.backend.utils.NovaUtils;
+import violet.data.character.Character;
+import violet.data.character.CharacterRegistry;
+import violet.data.chart.Chart;
+import violet.data.chart.ChartRegistry;
+import violet.data.icon.HealthIcon;
+import violet.data.song.Song;
+import violet.data.song.Variation;
 
 using violet.backend.utils.ArrayUtil;
 
@@ -25,7 +24,7 @@ class ChartEditorState extends StateBackend {
 
 	public static var songID:String = 'test';
 	public static var difficulty:String = 'normal';
-	public static var variant:Null<String> = null;
+	public static var variant:Variation = null;
 
 	public var noteToPlace:NovaSprite;
 
@@ -56,11 +55,11 @@ class ChartEditorState extends StateBackend {
 		// FlxG.camera.zoom = 0.7; // Looks funny
 
 		chart = ChartRegistry.getChart(songID, difficulty, variant);
-		meta = SongRegistry.getSongByID(songID);
+		meta = chart.meta;
 
 		Conductor.stop();
-		Conductor.playSong(meta.songName, meta.variant);
-		if (meta.needsVoices) Conductor.addAdditionalTrack(FlxG.sound.load(Cache.sound(Paths.vocal(meta.songName, null, meta.variant), 'root', null, true), FlxG.sound.defaultMusicGroup));
+		Conductor.playSong(meta.id, meta.variant);
+		if (meta.needsVoices) Conductor.addAdditionalTrack(FlxG.sound.load(Cache.sound(Paths.vocal(meta.id, null, meta.variant), 'root', null, true), FlxG.sound.defaultMusicGroup));
 		else Conductor.addAdditionalTrack(new FlxSound());
 		Conductor.pause();
 
@@ -110,7 +109,7 @@ class ChartEditorState extends StateBackend {
 			icons.push(icon);
 
 			if (line.vocalsSuffix != null)
-				Conductor.addAdditionalTrack(FlxG.sound.load(Cache.sound(Paths.vocal(meta.songName, line.vocalsSuffix, meta.variant), 'root', null, true), FlxG.sound.defaultMusicGroup));
+				Conductor.addAdditionalTrack(FlxG.sound.load(Cache.sound(Paths.vocal(meta.id, line.vocalsSuffix, meta.variant), 'root', null, true), FlxG.sound.defaultMusicGroup));
 
 			for (id => note in line.notes) {
 				var noteSprite = new NovaSprite(Paths.image('game/notes/default/notes'));

@@ -1,7 +1,7 @@
 package violet.states.editors.sub;
 
-import violet.backend.utils.NovaUtils;
 import violet.backend.EditorListBackend;
+import violet.backend.utils.NovaUtils;
 
 class SongSelectScreen extends EditorListBackend {
 
@@ -16,8 +16,8 @@ class SongSelectScreen extends EditorListBackend {
 				disabled: false,
 				onClick: () -> {
 					ChartEditorState.songID = songID;
-					ChartEditorState.variant = songData.variant;
-					FlxG.switchState(new DifficultySelectScreen(songData.difficulties));
+					if (songData.variantsList.length == 0) FlxG.switchState(new DifficultySelectScreen(songData.difficulties));
+					else FlxG.switchState(new VariantSelectScreen(songData.variantsList));
 				}
 			});
 		}

@@ -1,12 +1,18 @@
 package violet.data.song;
 
+import violet.backend.options.Options;
+
 class Song {
 
-	public var id:String;
+	public final id:String;
+	public final variant:Variation;
 
-	public var songName(get, never):String;
-	function get_songName():String {
-		return _data?.name ?? id.split(':')[0];
+	public var isFavorited(get, set):Bool;
+	inline function get_isFavorited():Bool
+		return Options.getSongFavoritedStatus(null, id, variant);
+	inline function set_isFavorited(value:Bool):Bool {
+		Options.setSongFavoritedStatus(null, id, variant, value);
+		return get_isFavorited();
 	}
 
 	public var playableCharacter(get, never):String;
@@ -16,12 +22,7 @@ class Song {
 
 	public var displayName(get, never):String;
 	function get_displayName():String {
-		return _data?.displayName ?? songName;
-	}
-
-	public var variant(get, never):String;
-	function get_variant():String {
-		return id.split(':')[1] ?? '';
+		return _data?.displayName ?? id;
 	}
 
 	public var bpm(get, never):Float;
@@ -44,9 +45,13 @@ class Song {
 		return [for (diff in _data?.difficulties ?? []) diff.toLowerCase()];
 	}
 
-	public var variants(get, never):Array<String>;
-	function get_variants():Array<String> {
-		return [for (diff in _data?.variants ?? []) diff.toLowerCase()];
+	public var variants(get, never):Array<Song>;
+	function get_variants():Array<Song> {
+		return [for (diff in _data?.variants ?? []) SongRegistry.getSongByID(id, diff)];
+	}
+	public var variantsList(get, never):Array<Variation>;
+	function get_variantsList():Array<Variation> {
+		return [for (diff in _data?.variants ?? []) diff];
 	}
 
 	public var customValues(get, never):Dynamic;
@@ -74,11 +79,28 @@ class Song {
 		return _data?.needsVoices ?? false;
 	}
 
+	public function isDev():Bool {
+		return _data?.isDev ?? false;
+	}
+
 	public var _data:SongData;
 
-	public function new(id:String) {
-		this._data = SongRegistry.songDatas.get(id);
+	public function new(id:String, ?variant:Variation) {
+		this._data = SongRegistry.songDatas.get(setupId(id, null, variant));
 		this.id = id;
+		this.variant = variant;
+	}
+
+	inline public static function setupId(id:String, ?difficulty:String, ?variant:Variation):String {
+		var fixedId = id;
+		if (!(difficulty == null || difficulty.trim() == '')) fixedId += ':$difficulty';
+		if (!variant.isNone()) fixedId += ':$variant';
+		return fixedId;
+	}
+
+	inline public static function sortByVariant(songs:Array<Song>):Array<Song> {
+		songs.sort((a, b) -> violet.backend.utils.NovaUtils.sortAlphabetically(a.variant.toString(''), b.variant.toString('')));
+		return songs;
 	}
 
 }

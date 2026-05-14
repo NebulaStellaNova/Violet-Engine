@@ -182,18 +182,41 @@ class Macro {
 	 */
 	public static macro function buildFlxSprite():Array<Field> {
 		var classFields = Context.getBuildFields();
+		var tempClass = macro class TempClass {
+			/**
+			 * Helper function to set the graphic's dimensions by using `scale`, but unlike setGraphicSize, the sprites original aspect ratio is kept! It might make sense to call `updateHitbox()` afterwards!
+			 *
+			 * @param   width    How wide the graphic should be.
+			 * @param   height   How high the graphic should be.
+			 * @param   fill     Wether it should fill to bounds.
+			 * @param   maxScale The max possible scale.
+			 */
+			public function setGraphicScale(width:Float = 0, height:Float = 0, fill:Bool = true, maxScale:Float = 0):Void {
+				var prevWidth = this.width; var prevHeight = this.height;
+				setGraphicSize(width, height);
+				updateHitbox();
+				var nScale = (fill ? Math.max : Math.min)(scale.x, scale.y);
+				if (maxScale > 0 && nScale > maxScale) nScale = maxScale;
+				setSize(prevWidth, prevHeight);
+				scale.set(nScale, nScale);
+			}
+		}
 
-		var setAntialiasingFunc = classFields.filter(field -> return field.name == 'set_antialiasing')[0];
-		switch (setAntialiasingFunc.kind) {
+		var setDrawFunc = classFields.filter(field -> return field.name == 'draw')[0];
+		switch (setDrawFunc.kind) {
 			case FFun(f):
 				var initExpr:Expr = f.expr;
 				f.expr = macro {
-					// prevents it from being set to true
-					if (!violet.backend.options.Options.data.antialiasTextures)
-						return antialiasing = false;
-					$initExpr;
+					if (!violet.backend.options.Options.data.antialiasTextures) {
+						final prev = antialiasing;
+						antialiasing = false;
+						$initExpr;
+						antialiasing = prev;
+					} else {
+						$initExpr;
+					}
 				}
-				setAntialiasingFunc.kind = FFun(f);
+				setDrawFunc.kind = FFun(f);
 			default:
 		}
 
@@ -227,7 +250,7 @@ class Macro {
 			default:
 		}
 
-		return classFields;
+		return classFields.concat(tempClass.fields);
 	}
 
 	public static macro function buildFlxTypedGroup():Array<Field> {
