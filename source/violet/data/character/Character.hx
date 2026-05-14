@@ -7,7 +7,7 @@ import violet.backend.utils.NovaUtils;
 
 class Character extends violet.backend.objects.Bopper {
 
-	public var scripts:ScriptPack;
+	public var scripts:ScriptPack = new ScriptPack();
 
 	public var id:String;
 	public var _data:CharacterData;
@@ -50,6 +50,9 @@ class Character extends violet.backend.objects.Bopper {
 		this.initialFlipX = this.flipX;
 		this._data = CharacterRegistry.characterDatas.get(id) ?? CharacterRegistry.characterDatas.get('bf');
 		super(x, y, Paths.image(this._data.assetPath)); // did this for atlases
+
+		ModdingAPI.checkForScripts('data/characters', id, scripts);
+		scripts.parent = this;
 
 		if (CharacterRegistry.characterDatas.get(id) == null) {
 			NovaUtils.addNotification('Character not found!', 'Could not find character with ID "$id" using default character "bf".', ERROR);

@@ -1048,11 +1048,21 @@ class PlayState extends violet.backend.StateBackend {
 		HXCHandler.instance.hxcScripts.callVariants(func, params);
 		songScripts.callVariants(func, params);
 		if (stage != null) stage.stageScripts.callVariants(func, params);
+		if (strumLines != null) {
+			for (line in strumLines) {
+				for (i in line.characters) i.scripts.call(func, params);
+			}
+		}
 	}
 
 	public function runSongEvent<T:violet.backend.scripting.events.EventBase>(func:String, event:T):T {
 		HXCHandler.instance.hxcScripts.event(func, event);
 		songScripts.event(func, event);
+		if (strumLines != null) {
+			for (line in strumLines) {
+				for (i in line.characters) i.scripts.call(func, event);
+			}
+		}
 		return stage.stageScripts.event(func, event);
 	}
 
