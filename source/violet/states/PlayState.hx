@@ -1125,14 +1125,8 @@ class PlayState extends violet.backend.StateBackend {
 		ghostTapping = Options.data.ghostTapping;
 		for (i=>strumLine in strumLines) {
 			if (!strumLine.disableOptionsAffect) {
-				// var prevScroll:Bool = strumLine.downscroll;
 				strumLine.downscroll = Options.data.downscroll;
-				/* if (strumLine.scrollAngle != null)
-					if (strumLine.downscroll != prevScroll)
-						strumLine.scrollAngle += 180; */
 				strumLine.setPosition(strumLine.chartData.strumPosition[0], strumLine.chartData.strumPosition[1], strumLine.chartData.strumPosIsPure);
-
-				// allow notes to update
 				strumLine.update(0);
 			}
 		}
@@ -1140,10 +1134,7 @@ class PlayState extends violet.backend.StateBackend {
 
 		comboGroup.style = Options.data.kadePopups ? 'kade' : 'funkin';
 
-		healthBar.y = Options.data.downscroll ? FlxG.height * 0.1 : FlxG.height * 0.9;
-		scoreTxt.y = healthBar.y + healthBar.height + 5;
-		iconPlayer.y = healthBar.y + (healthBar.height/2) - (iconPlayer.height/2);
-		iconOpponent.y = healthBar.y + (healthBar.height/2) - (iconOpponent.height/2);
+
 
 		healthBar.x += getHealthBarOffsets().x;
 		healthBar.y += getHealthBarOffsets().y;
@@ -1155,6 +1146,12 @@ class PlayState extends violet.backend.StateBackend {
 		if (iconPlayer._data.color != null && Options.data.coloredHealthBar)
 			healthBar.rightColor = iconPlayer._data.color;
 		else healthBar.rightColor = FlxColor.LIME;
+
+		healthBar.y = Options.data.downscroll ? FlxG.height * 0.1 : FlxG.height * 0.9;
+		accuracyTxt.y = Options.data.downscroll ? FlxG.height * 0.1 : FlxG.height * 0.9;
+		scoreTxt.y = healthBar.y + healthBar.height + 5;
+		iconPlayer.y = healthBar.y + (healthBar.height/2) - (iconPlayer.height/2);
+		iconOpponent.y = healthBar.y + (healthBar.height/2) - (iconOpponent.height/2);
 
 		scoreTxt.visible = !Options.data.hideScore;
 		accuracyTxt.visible = !Options.data.hideAccuracy;
@@ -1169,7 +1166,7 @@ class PlayState extends violet.backend.StateBackend {
 		if (Paths.fileExists(iniPath, true)) {
 			var data = '{ "offsets": ${FileUtil.getFileContent(Paths.image('game/hud/healthBar-offsets', null, 'ini'))} }';
 			var parsed = Json.parse(data);
-			return healthBarShi = new FlxPoint(parsed.offsets[0], parsed.offsets[1] * (Options.data.downscroll ? -1 : 1));
+			return healthBarShi = new FlxPoint(parsed.offsets[0], parsed.offsets[1]);
 		} else {
 			return healthBarShi = new FlxPoint();
 		}
