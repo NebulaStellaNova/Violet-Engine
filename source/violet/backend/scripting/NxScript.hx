@@ -13,6 +13,11 @@ using violet.backend.utils.ArrayUtil;
 class NxScript extends Script {
 	var internalScript:Interpreter;
 
+	override function set_parent(value:Dynamic):Dynamic
+		return internalScript.parent = value;
+	override function get_parent():Dynamic
+		return internalScript.parent;
+
 	public function new(path:String, isCode:Bool = false) {
 		super(path, isCode);
 		internalScript = new Interpreter();
