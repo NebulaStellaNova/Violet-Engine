@@ -23,8 +23,11 @@ class NxScript extends Script {
 
 	override public function call<T>(funcName:String, ?args:Array<Dynamic>, ?def:T):T {
 		if (internalScript.vm.getVariable(funcName) == null) return def;
+		args ??= [];
+		var out:Array<Value> = [];
+		for (i in args) out.push(internalScript.vm.haxeToValue(out));
 		try {
-			return cast internalScript.call(funcName, cast args);
+			return cast internalScript.call(funcName, out);
 		} catch (e) {
 			NovaUtils.addNotification('Novamod Script Exception!', 'Error executing "$fileName:?":$e', ERROR);
 		}

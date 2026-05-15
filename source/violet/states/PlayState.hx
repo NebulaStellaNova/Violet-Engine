@@ -841,7 +841,7 @@ class PlayState extends violet.backend.StateBackend {
 				if (direction == null) targetEase = NovaUtils.easeFromString(ease, '');
 				else targetEase = NovaUtils.easeFromString(ease, direction);
 
-				scrollTween = FlxTween.tween(camFollowPoint, { x: x, y: y }, (Conductor.stepLengthMs / 1000) * duration, { ease: targetEase, onUpdate: _->{
+				scrollTween = FlxTween.tween(camFollowPoint, { x: x, y: y }, Conductor.stepLengthMs * duration / 1000, { ease: targetEase, onUpdate: _->{
 					snapCamera();
 				}});
 
@@ -852,13 +852,15 @@ class PlayState extends violet.backend.StateBackend {
 
 				var x = targetCharacter.getMidpoint().x + (targetCharacter.cameraOffsets ?? [0, 0])[0];
 				var y = targetCharacter.getMidpoint().y + (targetCharacter.cameraOffsets ?? [0, 0])[1];
+				x += scriptEvent.params[4];
+				y += scriptEvent.params[5];
 
 				var duration:Float = scriptEvent.params[1];
 				var ease:String = scriptEvent.params[2];
 				var direction:String = scriptEvent.params[3];
 				var targetEase = NovaUtils.easeFromString(ease, direction ?? '');
 
-				scrollTween = FlxTween.tween(camFollowPoint, { x: x, y: y }, (Conductor.stepLengthMs / 1000) * duration, { ease: targetEase, onUpdate: _->{
+				scrollTween = FlxTween.tween(camFollowPoint, { x: x, y: y }, Conductor.stepLengthMs * duration / 1000, { ease: targetEase, onUpdate: _->{
 					snapCamera();
 				}});
 
@@ -873,7 +875,7 @@ class PlayState extends violet.backend.StateBackend {
 				if (scriptEvent.params[0]) {
 					var targetCamera = ['camGame' => camGameBase].get(scriptEvent.params[2]);
 					var	targetZoom = scriptEvent.params[1];
-					var targetDuration = (Conductor.stepLengthMs/1000) * scriptEvent.params[3];
+					var targetDuration = Conductor.stepLengthMs * scriptEvent.params[3] / 1000;
 					var targetEase = NovaUtils.easeFromString(scriptEvent.params[4], scriptEvent.params[5] ?? '');
 					FlxTween.cancelTweensOf(targetCamera);
 					FlxTween.tween(targetCamera, { zoom: targetZoom }, targetDuration, { ease: targetEase });
@@ -1060,7 +1062,7 @@ class PlayState extends violet.backend.StateBackend {
 		songScripts.event(func, event);
 		if (strumLines != null) {
 			for (line in strumLines) {
-				for (i in line.characters) i.scripts.call(func, event);
+				for (i in line.characters) i.scripts.event(func, event);
 			}
 		}
 		return stage.stageScripts.event(func, event);
