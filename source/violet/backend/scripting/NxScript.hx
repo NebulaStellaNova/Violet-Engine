@@ -34,7 +34,9 @@ class NxScript extends Script {
 		try {
 			return cast internalScript.call(funcName, out);
 		} catch (e) {
-			NovaUtils.addNotification('Novamod Script Exception!', 'Error executing "$fileName:?":$e', ERROR);
+			if (!'$e'.startsWith('Undefined function')) {
+				NovaUtils.addNotification('Novamod Script Exception!', 'Error executing "$fileName:?":$e', ERROR);
+			}
 		}
 		return def;
 	}
