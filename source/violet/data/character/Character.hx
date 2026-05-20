@@ -104,8 +104,8 @@ class Character extends violet.backend.objects.Bopper {
 		if (canSing) {
 			var targetAnim:String = '${singAnimations[direction % singAnimations.length]}${isMiss ? 'miss' : ''}${suffix != null ? '-$suffix' : ''}';
 			var force:Bool = !Options.data.disableHoldJitter;
-			if (this.animation.name != targetAnim || noteJustHit) force = true;
-			this.playAnim(targetAnim, force);
+			if (lastPlayedAnim != targetAnim || noteJustHit) force = true;
+			if (force) this.playAnim(targetAnim, true);
 		}
 		this.lastHit = Conductor.songPosition;
 		this.isSinging = true;
@@ -147,12 +147,15 @@ class Character extends violet.backend.objects.Bopper {
 
 	public var debug:Bool = false;
 
+	public var lastPlayedAnim:String = null;
+
 	override function playAnim(name:String, forced:Bool = false, reversed:Bool = false, frame:Int = 0) {
 		if (this.flipX && !debug) {
 			if (name.startsWith('singLEFT')) name = name.replace('singLEFT', 'singRIGHT');
 			else if (name.startsWith('singRIGHT')) name = name.replace('singRIGHT', 'singLEFT');
 		}
 		super.playAnim(name, forced, reversed, frame);
+		lastPlayedAnim = name;
 	}
 
 	public function cloneData():Dynamic {
