@@ -27,6 +27,10 @@
 		"vmod"
 	],
 
+	"editor.codeActionsOnSave": {
+		"source.organizeImports": "never",
+		"source.sortImports": "never"
+	},
 	"editor.insertSpaces": false,
 	"editor.tabSize": 4,
 
