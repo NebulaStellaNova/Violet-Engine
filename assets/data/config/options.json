@@ -281,6 +281,18 @@
 					"type": "bool"
 				},
 				{
+					"name": "Underlay For Player Only",
+					"description": "If checked, the underlay will only appear for player strumLines.",
+					"saveID": "underlayOnlyForPlayer",
+					"type": "bool",
+					"conditions": [
+						{
+							"id": "laneUnderlay",
+							"state": true
+						}
+					]
+				},
+				{
 					"name": "Underlay Expansion",
 					"description": "How much should the lane's width expand from the default.",
 					"saveID": "laneGrow",
@@ -343,12 +355,6 @@
 							"state": true
 						}
 					]
-				},
-				{
-					"name": "Underlay For Player Only",
-					"description": "If checked, the underlay will only appear for player strumLines.",
-					"saveID": "underlayOnlyForPlayer",
-					"type": "bool"
 				}
 			]
 		},
