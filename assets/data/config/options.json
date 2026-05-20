@@ -359,7 +359,7 @@
 			]
 		},
 		{
-			"title": "Graphics",
+			"title": "Display",
 			"options": [
 				{
 					"name": "VSync",
@@ -394,6 +394,31 @@
 					"description": "Allows the GPU to store textures and keeps them cached, reducing RAM usage. (Mid-High End GPU recommended for this)",
 					"saveID": "gpuCaching",
 					"type": "bool"
+				},
+				{
+					"name": "Window Mode",
+					"description": "Whether window should be fullscreen, borderless fullscreen, or windowed.\n(Persists between sessions)",
+					"saveID": "windowMode",
+					"allowHolding": false,
+					"type": "number",
+					"wrap": true,
+					"min": 0,
+                    "max": 2,
+					"step": 1,
+					"replacer": [
+						{
+							"what": 0,
+							"with": "WINDOWED"
+						},
+						{
+							"what": 1,
+							"with": "BORDERLESS"
+						},
+						{
+							"what": 2,
+							"with": "FULLSCREEN"
+						}
+					]
 				}
 			]
 		},

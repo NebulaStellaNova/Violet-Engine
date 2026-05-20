@@ -45,8 +45,10 @@ typedef OptionsMenuOption = {
 	// for number option
 	var ?min:Float;
 	var ?max:Float;
+	var ?wrap:Bool;
 	var ?step:Float;
 	var ?replacer:Array<{what:Int, with:String}>;
+	var ?allowHolding:Bool;
 }
 
 typedef Condition = {
@@ -210,6 +212,8 @@ class OptionsMenu extends SubStateBackend {
 
 				case NUMBER:
 					var option:NumberOption = new NumberOption('${optionData.name}:', optionData.description, optionData.min, optionData.max, optionData.step);
+					option.allowHolding = optionData.allowHolding ?? true;
+					option.wrap = optionData.wrap ?? false;
 					option.x = optionsListOffset;
 					option.y = (FlxG.height/2) + ((i-optionCurSelected) * 100) - (option.alphabet.height/2);
 					option.value = Options.get(optionData.saveID) ?? 0;

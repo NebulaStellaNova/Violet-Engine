@@ -1,5 +1,6 @@
 package violet.backend.options;
 
+import violet.states.LoadingState;
 import flixel.util.FlxSave;
 import lime.app.Application;
 
@@ -79,11 +80,19 @@ import lime.app.Application;
 	public var hideAccuracy:Bool = false;
 
 	public var accuracyCalculation:AccuracyBase = RATING; // 0 = Rating, 1 = Millisecond
+
+	public var windowMode:WindowMode = WINDOWED;
 }
 
 enum abstract AccuracyBase(Int) {
 	var RATING;
 	var MILLISECOND;
+}
+
+enum abstract WindowMode(Int) {
+	var WINDOWED = 0;
+	var BORDERLESS = 1;
+	var FULLSCREEN = 2;
 }
 
 class Options {
@@ -109,6 +118,9 @@ class Options {
 
 	public static function setterCallback(what:String) {
 		switch (what) {
+			case 'windowMode':
+				LoadingState.updateWindowMode();
+				LoadingState.prevWindowMode = data.windowMode;
 			case 'antialiasTextures':
 				var state = FlxG.state;
 				while (state != null) {
