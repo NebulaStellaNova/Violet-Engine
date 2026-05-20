@@ -362,13 +362,6 @@
 			"title": "Display",
 			"options": [
 				{
-					"name": "VSync",
-					"description": "If enabled, the game will use the display's refresh rate instead of the Framerate value.",
-					"saveID": "vsync",
-					"type": "bool",
-					"platform": "windows"
-				},
-				{
 					"name": "Framerate",
 					"description": "Sets the target framerate for the game.",
 					"saveID": "fps",
@@ -382,6 +375,13 @@
 							"state": false
 						}
 					]
+				},
+				{
+					"name": "VSync",
+					"description": "If enabled, the game will use the display's refresh rate instead of the Framerate value.",
+					"saveID": "vsync",
+					"type": "bool",
+					"platform": "windows"
 				},
 				{
 					"name": "Texture Antialiasing",

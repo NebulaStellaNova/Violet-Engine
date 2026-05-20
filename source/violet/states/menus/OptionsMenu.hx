@@ -260,6 +260,7 @@ class OptionsMenu extends SubStateBackend {
 		canSelectMenu = true;
 		enableInput = true;
 		options.resize(0);
+		optionCurSelected = 0;
 
 		for (i in menus) {
 			FlxTween.tween(i, { y: i.y-FlxG.width }, 0.5, { ease: FlxEase.expoOut });
