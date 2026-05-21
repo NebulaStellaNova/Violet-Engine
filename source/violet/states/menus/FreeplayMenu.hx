@@ -141,6 +141,8 @@ class FreeplayMenu extends SubStateBackend {
 		ostText.scale.y *= 1.4;
 		ostText.updateHitbox();
 		add(ostText);
+
+		FlxG.bitmap.clearUnused();
 	}
 
 	public function build() {
@@ -263,7 +265,7 @@ class FreeplayMenu extends SubStateBackend {
 		var songData = songList[selectedSongIndex];
 		if (current == '${songData.songName}:${songData.variant}') return;
 		else current = '${songData.songName}:${songData.variant}';
-		Conductor.playSong(songData.songName, songData.variant);
+		Conductor.playSong(songData.songName, songData.variant, true);
 	}
 
 	function selectSong() {
@@ -358,6 +360,11 @@ class FreeplayMenu extends SubStateBackend {
 					conditionsMet = false;
 			return conditionsMet;
 		});
+	}
+
+	override function destroy() {
+		super.destroy();
+		SongCapsule.gradientCache = null;
 	}
 
 }
