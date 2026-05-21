@@ -1,5 +1,6 @@
 package violet.data.stage;
 
+import haxe.io.Path;
 import violet.backend.scripting.ScriptPack;
 import flixel.FlxBasic;
 import violet.data.character.Character;
@@ -29,9 +30,15 @@ class Stage extends flixel.group.FlxGroup {
 		this.id = StageRegistry.stageDatas.get(id) != null ? id : 'default';
 		this._data = StageRegistry.stageDatas.get(id) ?? StageRegistry.stageDatas.get('default');
 		this._data.basicCharPos ??= false;
+		this._data.extraScripts ??= [];
 		this.stage = this;
 
 		ModdingAPI.checkForScripts('data/stages', id, stageScripts);
+		for (i in this._data.extraScripts) {
+			var fileName = Path.withoutExtension(Path.withoutDirectory(i));
+			var filePath = Path.directory(i);
+			ModdingAPI.checkForScripts(filePath, fileName, stageScripts);
+		}
 		stageScripts.set('directory', this._data.directory);
 		stageScripts.parent = this;
 

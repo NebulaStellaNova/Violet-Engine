@@ -56,7 +56,7 @@ animations:
     looped: true
 assetPath: characters/gf
 offsets: [0, 0]
-cameraOffsets: [-50, -50]
+cameraOffsets: [-50, -150]
 healthIcon: gf
 danceEvery: 1
 singTime: 8

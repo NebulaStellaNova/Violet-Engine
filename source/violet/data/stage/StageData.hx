@@ -28,6 +28,15 @@ typedef StageData = {
 	@:default([0, 0])
 	var ?cameraPosition:Array<Float>;
 
+	@:default([])
+	var ?extraScripts:Array<String>; // NOTE: This does NOT effect the default stage script. This just adds extra scripts with the following names.
+								     // All V-Slice stages get their own script in 'data/stages/types/V-Slice.ext' so that the combo appears by default.
+									 /* NOTE:
+									 	This starts from the root of your mod, so if your script is in 'mods/yourMod/data/theScript.ext'
+										You'd put "data/theScript" inside of the array.
+									 */
+
+
 }
 
 typedef StagePropData = {
