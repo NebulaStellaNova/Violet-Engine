@@ -354,7 +354,6 @@ class PlayState extends violet.backend.StateBackend {
 		botplayText.borderColor = FlxColor.BLACK;
 		botplayText.borderSize = 3;
 		botplayText.updateHitbox();
-		botplayText.centerOrigin();
 		botplayText.camera = camHUD;
 		botplayText.visible = false;
 		add(botplayText);
