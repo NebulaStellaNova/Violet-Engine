@@ -1,5 +1,7 @@
 package violet.data.character;
 
+import violet.backend.utils.NovaUtils;
+
 @:structInit @:publicFields class PsychEngineCharacter {
 	var image:String;
 	var animations:Array<Dynamic>;
@@ -29,6 +31,10 @@ class CharacterFormatChecker {
 			if (!Reflect.hasField(parsedStageObject, i)) isVSlice = false;
 		}
 		if (isVSlice) return VSLICE;
+
+		if (NovaUtils.getNestedProperty(parsedStageObject, 'healthIcon.id') != null) {
+			return VSLICE;
+		}
 
 		return UNKNOWN;
 	}
