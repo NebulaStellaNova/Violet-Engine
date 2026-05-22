@@ -335,15 +335,8 @@ class ModMenu extends SubStateBackend {
 
 		FlxG.save.flush();
 
-		if (needsReset) {
-			Conductor.stop();
-			Constants.MENU_MUSIC = 'mainMenuTheme';
-			ModdingAPI.reloadRegistries();
-			GlobalPack.init();
-			LoadingState.refreshRedirects();
-			FlxG.switchState(new MainMenu());
-		}
-		// state.onCloseSubState();
+		if (needsReset)
+			MainMenu.instance.reloadMods();
 	}
 
 	function exit() {
