@@ -316,6 +316,9 @@ class Project extends HXProject {
 			if (modSupport.exists()) addAssetPath('./mods', './mods', ['*'], excludeList);
 		}
 
+		if (isDesktop())
+			addAsset('./alsoft.ini', './alsoft.${isWindows() ? 'ini' : 'conf'}');
+
 		/* Path Settings */
 
 		addHaxeMacro('violet.backend.Macro.init()');
