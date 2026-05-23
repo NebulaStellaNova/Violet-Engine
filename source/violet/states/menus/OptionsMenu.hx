@@ -80,13 +80,26 @@ class OptionsMenu extends SubStateBackend {
 
 	public static var instance:OptionsMenu;
 
+	public function getMenuByTitle(title:String):Null<OptionsMenuData> {
+		for (menu in optionsData.menus) {
+			if (menu.title == title) return menu;
+		}
+		return null;
+	}
+
 	override function create() {
 		super.create();
 
 		for (i in ModdingAPI.getActiveMods()) {
 			var modOptions = ParseUtil.jsonOrYaml('${ModdingAPI.MOD_FOLDER}/${i.folder}/data/config/options', 'root', 'null');
 			if (modOptions != null) {
-				optionsData.menus = optionsData.menus.concat(modOptions.menus);
+				for (i in (modOptions?.menus ?? [])) {
+					if (getMenuByTitle(i.title) != null) {
+						getMenuByTitle(i.title).options = getMenuByTitle(i.title).options.concat(i.options);
+					} else {
+						optionsData.menus.push(i);
+					}
+				}
 			}
 		}
 
