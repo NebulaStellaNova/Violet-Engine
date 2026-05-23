@@ -110,10 +110,10 @@ class Options {
 	public static function set(what:String, value:Dynamic) {
 		if (Reflect.fields(data).contains(what)) {
 			Reflect.setProperty(data, what, value);
-			setterCallback(what);
+			trace('debug:Options.data.$what was set to $value');
 		} else {
-			trace('warning:Could not find option data for value $what, saved in modOptions instead.');
 			Reflect.setProperty(data.modOptions, what, value);
+			trace('debug:Options.data.modOptions.$what was set to $value');
 		}
 	}
 
@@ -147,7 +147,12 @@ class Options {
 	}
 
 	public static function get(what:String):Dynamic {
-		return Reflect.getProperty(data, what);
+		if (Reflect.fields(data).contains(what)) {
+			return Reflect.getProperty(data, what);
+		} else {
+			return Reflect.getProperty(data.modOptions, what);
+		}
+	}
 	}
 
 	/**
