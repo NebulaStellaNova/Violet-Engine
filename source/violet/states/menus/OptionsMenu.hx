@@ -59,10 +59,12 @@ typedef Condition = {
 
 class OptionsMenu extends SubStateBackend {
 
-	public var optionsData:OptionsData = ParseUtil.jsonOrYaml('data/config/options');
+	public var optionsData:OptionsData = ParseUtil.jsonOrYaml('${Paths.ASSETS_FOLDER}/data/config/options', 'root');
 
 	public var menus:Array<Alphabet> = [];
 	public var options:Array<BaseOption> = [];
+
+	public var isAMenuOpen:Bool = false;
 
 	public var canSelectMenu:Bool = true;
 
@@ -80,6 +82,13 @@ class OptionsMenu extends SubStateBackend {
 
 	override function create() {
 		super.create();
+
+		for (i in ModdingAPI.getActiveMods()) {
+			var modOptions = ParseUtil.jsonOrYaml('${ModdingAPI.MOD_FOLDER}/${i.folder}/data/config/options', 'root', 'null');
+			if (modOptions != null) {
+				optionsData.menus = optionsData.menus.concat(modOptions.menus);
+			}
+		}
 
 		instance = this;
 		for (menu in optionsData.menus) {
@@ -99,9 +108,8 @@ class OptionsMenu extends SubStateBackend {
 
 		for (i=>menuData in optionsData.menus) {
 			var alphabet:Alphabet = new Alphabet(menuData.title.toUpperCase());
-			alphabet.screenCenter();
+			alphabet.screenCenter(X);
 			alphabet.y += i * 100;
-			alphabet.y -= ((optionsData.menus.length-1) * 100)/2;
 			menus.push(alphabet);
 			add(alphabet);
 			alphabet.x += FlxG.width;
@@ -123,12 +131,18 @@ class OptionsMenu extends SubStateBackend {
 		updateDesc({});
 	}
 
+	var menuOffset:Float = 0;
+
 	override function update(elapsed:Float) {
 		super.update(elapsed);
 
 		for (i=>menu in menus) {
 			menu.alpha = menuCurSelected == i ? 1 : 0.5;
 		}
+
+		var target = (menuCurSelected * 100) - (FlxG.height/2) + 50;
+		menuOffset = lerp(menuOffset, target, 0.2);
+		camera.scroll.y = isAMenuOpen ? 0 : menuOffset;
 
 		if (Controls.uiUp && enableInput) options.length != 0 ? optionsScroll(-1) : menuScroll(-1);
 		if (Controls.uiDown && enableInput) options.length != 0 ? optionsScroll(1) : menuScroll(1);
@@ -244,6 +258,7 @@ class OptionsMenu extends SubStateBackend {
 		}
 		optionsScroll(0);
 		enableInput = true;
+		isAMenuOpen = true;
 		FlxTween.tween(this, { optionsListOffset: 0 }, 0.5, { ease: FlxEase.expoOut });
 	}
 
@@ -261,7 +276,7 @@ class OptionsMenu extends SubStateBackend {
 		enableInput = true;
 		options.resize(0);
 		optionCurSelected = 0;
-
+		isAMenuOpen = false;
 		for (i in menus) {
 			FlxTween.tween(i, { y: i.y-FlxG.width }, 0.5, { ease: FlxEase.expoOut });
 		}

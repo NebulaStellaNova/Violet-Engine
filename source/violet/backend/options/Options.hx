@@ -112,7 +112,8 @@ class Options {
 			Reflect.setProperty(data, what, value);
 			setterCallback(what);
 		} else {
-			trace('warning:Could not find option data for value $what');
+			trace('warning:Could not find option data for value $what, saved in modOptions instead.');
+			Reflect.setProperty(data.modOptions, what, value);
 		}
 	}
 
