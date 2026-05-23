@@ -153,7 +153,6 @@ class Options {
 			return Reflect.getProperty(data.modOptions, what);
 		}
 	}
-	}
 
 	/**
 	 * Loads save data to the struct.
