@@ -1148,8 +1148,7 @@ class PlayState extends violet.backend.StateBackend {
 		else healthBar.rightColor = FlxColor.LIME;
 
 		healthBar.y = Options.data.downscroll ? FlxG.height * 0.1 : FlxG.height * 0.9;
-		accuracyTxt.y = Options.data.downscroll ? FlxG.height * 0.1 : FlxG.height * 0.9;
-		scoreTxt.y = healthBar.y + healthBar.height + 5;
+		accuracyTxt.y = scoreTxt.y = healthBar.y + healthBar.height + 5;
 		iconPlayer.y = healthBar.y + (healthBar.height/2) - (iconPlayer.height/2);
 		iconOpponent.y = healthBar.y + (healthBar.height/2) - (iconOpponent.height/2);
 
