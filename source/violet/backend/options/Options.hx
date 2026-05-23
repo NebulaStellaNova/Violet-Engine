@@ -155,6 +155,15 @@ class Options {
 	}
 
 	/**
+	 * If your desired option is null, this will set it to the value you give it and return that value.
+	 * Useful for setting defaults for modded options.
+	 */
+	public static function setIfNull(what:String, value:Dynamic):Dynamic {
+		if (get(what) == null) set(what, value);
+		return value;
+	}
+
+	/**
 	 * Loads save data to the struct.
 	 */
 	private static function load() {
