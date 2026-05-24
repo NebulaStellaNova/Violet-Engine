@@ -254,6 +254,7 @@ class ModdingAPI {
 			{name: 'Icons', func: violet.data.icon.HealthIconRegistry.registerIcons},
 			{name: 'Characters', func: violet.data.character.CharacterRegistry.registerCharacters},
 			{name: 'Songs', func: violet.data.song.SongRegistry.registerSongs},
+			{name: 'Dialogue Boxes', func: violet.data.dialogue.DialogueBoxRegistry.registerBoxes},
 			{name: 'Stages', func: violet.data.stage.StageRegistry.registerStages},
 			{name: 'Charts', func: violet.data.chart.ChartRegistry.registerCharts}
 		];
