@@ -1,4 +1,4 @@
-package violet.backend;
+package violet.backend.macros;
 
 #if macro
 import haxe.macro.Context;
