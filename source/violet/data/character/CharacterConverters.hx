@@ -155,7 +155,8 @@ class CharacterConverters {
 			cameraOffsets: characterData?.cameraOffsets ?? [0.0, 0.0],
 			flipX: characterData?.flipX ?? false,
 			isPixel: characterData?.isPixel ?? false,
-			animations: []
+			animations: [],
+			disableFlipCheck: true
 		}
 
 		for (i in (characterData.animations != null ? cast characterData.animations : [])) {

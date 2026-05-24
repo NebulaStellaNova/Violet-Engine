@@ -248,6 +248,17 @@ class NovaSprite extends #if ANIMATE_SUPPORT FlxAnimate #else FlxSprite #end {
 			#end
 			if (newFrames != null) {
 				#if ANIMATE_SUPPORT
+				for (i in this.frames.frames) {
+					if (i.name == null) {
+						this.frames.frames.remove(i);
+					}
+				}
+
+				if (this.frames.frames.length == 0) {
+					this.frames = newFrames;
+					return;
+				}
+
 				this.frames = animate.FlxAnimateFrames.combineAtlas(cast this.frames, newFrames);
 				#else
 				if (this.frames is FlxAtlasFrames)
@@ -264,12 +275,17 @@ class NovaSprite extends #if ANIMATE_SUPPORT FlxAnimate #else FlxSprite #end {
 
 	}
 
+	public var doFlipCheck:Bool = true;
 	var __characterFlip:Bool = false;
 	var __baseFlipped:Bool = false;
 	var __offsetFlipX:Bool = false;
 	var __offsetFlipY:Bool = false;
 	override public function draw():Void {
 		// TODO: Add __baseFlipped check.
+		if (!doFlipCheck) {
+			super.draw();
+			return;
+		}
 
 		var softFlipX = flipX != __baseFlipped;
 

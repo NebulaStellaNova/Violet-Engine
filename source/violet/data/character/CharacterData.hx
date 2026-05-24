@@ -99,6 +99,8 @@ typedef CharacterData = {
 	 */
 	var ?flipX:Bool;
 
+	var ?disableFlipCheck:Bool; // Used internally.
+
 	/**
 	 * NOTE: This only applies to animate atlas characters.
 	 *
