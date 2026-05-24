@@ -38,10 +38,15 @@ class ControlOption extends BaseOption {
 
 	var allowThisFrame = true;
 
+	var holdCheck:Float = 0;
+
+	var ifWaitForNext:Bool = false;
+
 	var time:Float = 0;
 	override function update(elapsed:Float) {
 		super.update(elapsed);
 		time += elapsed;
+
 
 		if (!allowThisFrame) allowThisFrame = true;
 
@@ -64,9 +69,13 @@ class ControlOption extends BaseOption {
 
 		if (waitingForInput) {
 			var blacklist = ["NONE", "ANY", "keyManager", "status"];
-			for (i in Reflect.fields(FlxG.keys.justPressed)) {
+			for (i in Reflect.fields(FlxG.keys.justReleased)) {
 				if (blacklist.contains(i)) continue;
-				if (FlxG.keys.anyJustPressed([i])) {
+				if (FlxG.keys.anyJustReleased([i])) {
+					if (ifWaitForNext) {
+						ifWaitForNext = false;
+						break;
+					}
 					allowThisFrame = false;
 					controlArray[selectedKeybind ? 0 : 1] = i;
 					waitingForInput = false;
@@ -75,13 +84,31 @@ class ControlOption extends BaseOption {
 					new FlxTimer().start(0.01, (_)->OptionsMenu.instance.enableInput = true);
 				}
 			}
+			OptionsMenu.instance.updateDesc({
+				description: 'Waiting for input...\nPress and Hold BACKSPACE to clear the keybind.'
+			});
 		}
 
-		if (Controls.accept && allowThisFrame) {
+		if (Controls.accept && allowThisFrame && !waitingForInput) {
 			OptionsMenu.instance.enableInput = false;
 			waitingForInput = true;
+			ifWaitForNext = true;
 			flickering = true;
 			NovaUtils.playMenuSFX(CONFIRM);
+		}
+
+		if (FlxG.keys.pressed.BACKSPACE && waitingForInput) {
+			holdCheck += elapsed;
+			if (holdCheck > 0.5) {
+				allowThisFrame = false;
+				controlArray[selectedKeybind ? 0 : 1] = 'NONE';
+				waitingForInput = false;
+				flickering = false;
+				onChange(controlArray.copy());
+				new FlxTimer().start(0.01, (_)->OptionsMenu.instance.enableInput = true);
+			}
+		} else {
+			holdCheck = 0;
 		}
 	}
 

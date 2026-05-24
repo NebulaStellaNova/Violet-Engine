@@ -321,7 +321,7 @@ class OptionsMenu extends SubStateBackend {
 		updateDesc(optionsData.menus[menuCurSelected].options[optionCurSelected]);
 	}
 
-	function updateDesc(data:Dynamic) {
+	public function updateDesc(data:Dynamic) {
 		descriptionTxt.text = (data.description ?? '').replace('\\n', '\n');
 		descriptionTxt.updateHitbox();
 		descriptionTxt.screenCenter();
