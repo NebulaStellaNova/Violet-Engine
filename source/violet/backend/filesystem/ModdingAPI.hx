@@ -247,28 +247,22 @@ class ModdingAPI {
 		trace('debug:<yellow>${registered ? "Reloading" : "Initializing"} Registries...');
 		NovaUtils.CURRENT_MUSIC = null;
 		registered = true;
-		LoadingState.loadingText = "Loading: NoteStyles...";
-		violet.data.notestyles.NoteStyleRegistry.registerNoteStyles();
-		LoadingState.loadingPercent += 1/7;
-		LoadingState.loadingText = "Loading: Levels...";
-		violet.data.level.LevelRegistry.registerLevels();
-		LoadingState.loadingPercent += 1/7;
-		LoadingState.loadingText = "Loading: Icons...";
-		violet.data.icon.HealthIconRegistry.registerIcons();
-		LoadingState.loadingPercent += 1/7;
-		LoadingState.loadingText = "Loading: Characters...";
-		violet.data.character.CharacterRegistry.registerCharacters();
-		LoadingState.loadingPercent += 1/7;
-		LoadingState.loadingText = "Loading: Songs...";
-		violet.data.song.SongRegistry.registerSongs();
-		LoadingState.loadingPercent += 1/7;
-		LoadingState.loadingText = "Loading: Stages...";
-		violet.data.stage.StageRegistry.registerStages();
-		LoadingState.loadingPercent += 1/7;
-		LoadingState.loadingText = "Loading: Charts...";
-		violet.data.chart.ChartRegistry.registerCharts();
-		LoadingState.loadingPercent += 1/7;
+
+		final registries = [
+			{name: 'NoteStyles', func: violet.data.notestyles.NoteStyleRegistry.registerNoteStyles},
+			{name: 'Levels', func: violet.data.level.LevelRegistry.registerLevels},
+			{name: 'Icons', func: violet.data.icon.HealthIconRegistry.registerIcons},
+			{name: 'Characters', func: violet.data.character.CharacterRegistry.registerCharacters},
+			{name: 'Songs', func: violet.data.song.SongRegistry.registerSongs},
+			{name: 'Stages', func: violet.data.stage.StageRegistry.registerStages},
+			{name: 'Charts', func: violet.data.chart.ChartRegistry.registerCharts}
+		];
+		for (data in registries) {
+			LoadingState.loadingText = 'Loading: ${data.name}...'; data.func();
+			LoadingState.loadingPercent += 1/registries.length;
+		}
 		LoadingState.loadingText = "Done!!";
+		registries.resize(0);
 
 		/* final foundHXC:Array<String> = checkForHXC();
 		if (foundHXC.length == 0) trace('debug:<cyan>No HXC scripts found.');
