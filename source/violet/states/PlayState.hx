@@ -1216,7 +1216,7 @@ class PlayState extends violet.backend.StateBackend {
 		for (i=>txt in arr) {
 			if (Options.data.advancedHud) {
 				txt.visible = true;
-				txt.x = 0;
+				txt.x = 5;
 				txt.y = (FlxG.height / 2) + (25 * i);
 				txt.y -= (25 * (arr.length-1)) / 2;
 				txt.refreshDisplay();
