@@ -1,27 +1,34 @@
 package violet.backend.objects.options;
 
-import flixel.effects.FlxFlicker;
+import flixel.input.keyboard.FlxKey;
 import violet.states.menus.OptionsMenu;
 import violet.backend.utils.NovaUtils;
 
 class ControlOption extends BaseOption {
 
-	public var controlArray:Array<String> = ['A', 'B'];
+	public var controlArray(default, set):Array<FlxKey> = ['NONE', 'NONE'];
+	inline function set_controlArray(value:Array<FlxKey>):Array<FlxKey> {
+		if (value == null)
+			return controlArray;
+		while (value.length < 2)
+			value.push('NONE');
+		return controlArray = value;
+	}
 
 	public var leftControl:Alphabet;
 	public var rightControl:Alphabet;
 
 	public var selectedKeybind:Bool = true;
 
-	public dynamic function onChange(which:Bool) {}
+	public dynamic function onChange(keys:Array<FlxKey>) {}
 
 	public function new(title:String, description:String = "") {
 		super(title, description);
 
-		leftControl = new Alphabet('A');
+		leftControl = new Alphabet('NONE');
 		add(leftControl);
 
-		rightControl = new Alphabet('B');
+		rightControl = new Alphabet('NONE');
 		add(rightControl);
 	}
 
@@ -64,6 +71,7 @@ class ControlOption extends BaseOption {
 					controlArray[selectedKeybind ? 0 : 1] = i;
 					waitingForInput = false;
 					flickering = false;
+					onChange(controlArray.copy());
 					new FlxTimer().start(0.01, (_)->OptionsMenu.instance.enableInput = true);
 				}
 			}

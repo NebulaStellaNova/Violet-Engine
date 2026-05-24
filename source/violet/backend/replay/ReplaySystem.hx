@@ -58,7 +58,7 @@ class ReplaySystem extends FlxBasic {
 			if (includedKeys.length != 0) fields = fields.filter((v)->return includedKeys.contains(v));
 			trace(fields);
 			for (i in fields) {
-				if (FlxG.keys.anyJustPressed([FlxKey.fromString(i)])) {
+				if (FlxG.keys.anyJustPressed([i])) {
 					currentInputs.push({
 						key: i,
 						time: Conductor.framePosition,
@@ -73,7 +73,7 @@ class ReplaySystem extends FlxBasic {
 			var fields:Array<String> = Reflect.fields(FlxG.keys.justReleased).filter((v)->return !baseFields.contains(v));
 			if (includedKeys.length != 0) fields = fields.filter((v)->return includedKeys.contains(v));
 			for (i in fields) {
-				if (FlxG.keys.anyJustReleased([FlxKey.fromString(i)])) {
+				if (FlxG.keys.anyJustReleased([i])) {
 					currentInputs.push({
 						key: i,
 						time: Conductor.framePosition,

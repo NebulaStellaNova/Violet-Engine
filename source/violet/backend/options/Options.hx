@@ -1,5 +1,6 @@
 package violet.backend.options;
 
+import flixel.input.keyboard.FlxKey;
 import violet.states.LoadingState;
 import flixel.util.FlxSave;
 import lime.app.Application;
@@ -25,36 +26,34 @@ import lime.app.Application;
 	public var antialiasTextures:Bool = true;
 	public var forceMiddleScroll:Bool = false;
 	public var vsync:Bool = #if linux false #else true #end;
-	public var controls:Map<String, Array<String>> = [
-		'note_left' => ['A', 'LEFT'],
-		'note_down' => ['S', 'DOWN'],
-		'note_up' => ['W', 'UP'],
-		'note_right' => ['D', 'RIGHT'],
+	public var controls:Map<String, Array<FlxKey>> = [
+		'note_left' => [A, LEFT],
+		'note_down' => [S, DOWN],
+		'note_up' => [W, UP],
+		'note_right' => [D, RIGHT],
 
-		'ui_left' => ['A', 'LEFT'],
-		'ui_down' => ['S', 'DOWN'],
-		'ui_up' => ['W', 'UP'],
-		'ui_right' => ['D', 'RIGHT'],
+		'ui_left' => [A, LEFT],
+		'ui_down' => [S, DOWN],
+		'ui_up' => [W, UP],
+		'ui_right' => [D, RIGHT],
 
-		'accept' => ['ENTER', 'SPACE'],
-		'back' => ['BACKSPACE', 'ESCAPE'],
-		'pause' => ['ENTER', 'ESCAPE'],
-		'reset' => ['R', 'DELETE'],
+		'accept' => [ENTER, SPACE],
+		'back' => [BACKSPACE, ESCAPE],
+		'pause' => [ENTER, ESCAPE],
+		'reset' => [R, DELETE],
 
-		'volume_up' => ['PLUS', 'NUMPADPLUS'],
-		'volume_down' => ['MINUS', 'NUMPADMINUS'],
-		'volume_mute' => ['ZERO', 'NUMPADZERO'],
+		'volume_up' => [PLUS, NUMPADPLUS],
+		'volume_down' => [MINUS, NUMPADMINUS],
+		'volume_mute' => [ZERO, NUMPADZERO],
 
-		// getAnyJustPressed([NONE]) will return true if nothing is pressed
+		'fullscreen' => [F11, NONE],
 
-		'fullscreen' => ['F11', 'F11'],
-
-		'botplay' => ['F1', 'F1'],
-		'console' => ['F2', 'F2'],
-		'resetState' => ['F3', 'F3'],
-		'shortcutState' => ['F4', 'F4'],
-		'reloadGame' => ['F5', 'F5'],
-		'debugDisplay' => ['F6', 'F6']
+		'botplay' => [F1, NONE],
+		'console' => [F2, NONE],
+		'resetState' => [F3, NONE],
+		'shortcutState' => [F4, NONE],
+		'reloadGame' => [F5, NONE],
+		'debugDisplay' => [F6, NONE]
 	];
 
 	public var savedScores:Map<String, Int> = [];
@@ -90,13 +89,14 @@ enum abstract AccuracyBase(Int) {
 }
 
 enum abstract WindowMode(Int) {
-	var WINDOWED = 0;
-	var BORDERLESS = 1;
-	var FULLSCREEN = 2;
+	var WINDOWED;
+	var BORDERLESS;
+	var FULLSCREEN;
 }
 
 class Options {
 
+	public static var defaultData:OptionsData = {}
 	public static var data:OptionsData = {}
 	public static var save:FlxSave;
 
@@ -197,9 +197,8 @@ class Options {
 	}
 
 	public static function updateControls() {
-		for (key in data.controls.keys()) {
-			Controls.bindMap.set(key, [ for (i in data.controls.get(key)) FlxKey.fromString(i) ]);
-		}
+		for (key in data.controls.keys())
+			Controls.bindMap.set(key, [for (i in data.controls.get(key)) i]);
 	}
 
 	private static function getSongAccuracy(id:String, difficulty:String, ?variation:String) {

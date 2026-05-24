@@ -255,8 +255,27 @@ class MainMenu extends StateBackend {
 			return 0;
 	}
 
+	@:unreflective var wait:Bool = false;
 	override public function update(elapsed:Float)
 	{
+		if (subState == null) {
+			if (FlxG.keys.pressed.CONTROL && !wait) {
+				if (FlxG.keys.pressed.ALT)
+					if (FlxG.keys.justPressed.ENTER) {
+						Options.data.controls.clear();
+						for (control => key in Options.defaultData.controls)
+							Options.data.controls.set(control, key);
+						trace('sys:Reset keybindings!');
+						NovaUtils.playSound('flixel', 0.6);
+						wait = true;
+						return;
+					}
+			} else if (FlxG.keys.justReleased.CONTROL || FlxG.keys.justReleased.CONTROL || FlxG.keys.justReleased.CONTROL) {
+				wait = false;
+				return;
+			}
+		}
+
 		super.update(elapsed);
 
 		if (doReload) {
