@@ -35,7 +35,7 @@ typedef OptionsMenuData = {
 typedef OptionsMenuOption = {
 	var name:String;
 	var ?description:String;
-	var saveID:String;
+	var ?saveID:String;
 	var type:OptionsType;
 	var ?platform:String; // Used to have platform specific settings
 	var ?disabled:Bool;
@@ -104,14 +104,22 @@ class OptionsMenu extends SubStateBackend {
 		}
 
 		instance = this;
+		var off = 0;
 		for (menu in optionsData.menus) {
-			for (optionData in menu.options) {
+			for (i=>optionData in menu.options.copy()) {
 				var platformTargets = optionData.platform.replace(' ', '').split(',');
 				for (platform in platformTargets)
 					if (!NovaUtils.platformCheck(platform))
 						menu.options.remove(optionData);
 				if (optionData.disabledInPlayState && FlxG.state is PlayState)
 					optionData.disabled = true;
+				if (optionData.type == SECTION && optionData.name != '') {
+					menu.options.insert(i + off, {
+						name: "",
+						type: SECTION
+					});
+					off++;
+				}
 			}
 		}
 
