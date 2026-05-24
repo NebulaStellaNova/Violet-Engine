@@ -45,7 +45,6 @@ import violet.data.stage.Stage;
 import violet.states.menus.FreeplayMenu;
 import violet.states.menus.StoryMenu;
 import violet.states.menus.PauseMenu;
-import violet.backend.objects.play.DialogueHandler;
 
 #if SCRIPT_SUPPORT
 import violet.backend.scripting.ScriptPack;
@@ -764,29 +763,6 @@ class PlayState extends violet.backend.StateBackend {
 
 
 	function startCountdown():Void {
-
-		// Start Dialogue
-		if (!hasSeenDialogue) {
-			var sD:Array<ConverstationPiece> = ParseUtil.jsonOrYaml('songs/$song/start-dialogue', null, 'null');
-			if (sD != null) {
-				var dialogueHandler = new DialogueHandler(sD);
-				dialogueHandler.camera = camHUD;
-				dialogueHandler.updateHitbox();
-				dialogueHandler.screenCenter();
-				dialogueHandler.y += 150;
-				add(dialogueHandler);
-
-				dialogueHandler.onDialogueEnd = ()->{
-					dialogueHandler.destroy();
-					inDialogue = false;
-					hasSeenDialogue = true;
-					startCountdown();
-				}
-				inDialogue = true;
-				return;
-			}
-		}
-
 		countdownTick = 0;
 		var event:EventBase = runSongEvent('startCountdown', new EventBase());
 		if (event.cancelled) return;
