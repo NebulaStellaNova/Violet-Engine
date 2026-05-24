@@ -68,6 +68,8 @@ class Character extends violet.backend.objects.Bopper {
 			this.removeAnim(i);
 		}
 
+		this.doFlipCheck = !(_data.disableFlipCheck ?? false);
+
 		this.flipX = this.initialFlipX;
 
 		this.loadSprite(Paths.image(this._data.assetPath));

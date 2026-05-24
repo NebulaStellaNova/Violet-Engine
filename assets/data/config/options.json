@@ -28,10 +28,6 @@
 					"saveID": "note_right"
 				},
 				{
-					"name": "",
-					"type": "section"
-				},
-				{
 					"name": "UI",
 					"type": "section"
 				},
@@ -74,10 +70,6 @@
 					"name": "Fullscreen",
 					"type": "control",
 					"saveID": "fullscreen"
-				},
-				{
-					"name": "",
-					"type": "section"
 				},
 				{
 					"name": "DEVELOPER",

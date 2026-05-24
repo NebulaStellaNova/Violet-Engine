@@ -94,7 +94,9 @@ class Stage extends flixel.group.FlxGroup {
 					applyProperties(prop, i.properties ?? {});
 
 				case PROP:
-					var prop:StageProp = new StageProp(i.position[0], i.position[1], Paths.image([this._data.directory, i.assetPath].join('/')));
+					var img = Paths.image([this._data.directory, i.assetPath].join('/'));
+					if (img == '') img = Paths.image(i.assetPath);
+					var prop:StageProp = new StageProp(i.position[0], i.position[1], img);
 					prop.name = i.name;
 					prop.z = i.zIndex;
 					prop.scrollFactor.set(i.scroll[0] ?? 1, i.scroll[1] ?? 1);
