@@ -169,7 +169,7 @@ class MainMenu extends StateBackend {
 			add(item);
 		}
 
-		leftWatermark = new NovaText(10, 0, 'Nova Engine v0.1', 20);
+		leftWatermark = new NovaText(10, 'Nova Engine v0.1', 20);
 		leftWatermark.y = FlxG.height - leftWatermark.getHeight() - 5;
 		leftWatermark.setFormat(Paths.font('vcr.ttf'), 40);
 		leftWatermark.scrollFactor.set();
@@ -223,7 +223,7 @@ class MainMenu extends StateBackend {
 		reloadingBG.scrollFactor.set();
 		add(reloadingBG);
 
-		reloadingText = new NovaText(0, 0, 0, 'Reloading Mods...', Paths.font('Tardling v1.1'));
+		reloadingText = new NovaText('Reloading Mods...', Paths.font('Tardling v1.1'));
 		reloadingText.size = 100;
 		reloadingText.x = 20;
 		reloadingText.y = FlxG.height - 50;

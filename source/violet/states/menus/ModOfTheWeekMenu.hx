@@ -182,8 +182,8 @@ class ModOfTheWeekMenu extends SubStateBackend {
 		loadingIcon.playAnim('idle');
 		add(loadingIcon);
 
-		modTitle = new NovaText(0, 0, 0, '', Paths.font('Tardling v1.1'));
-		modDesc = new NovaText(0, 0, 0, '', Paths.font('PhantomMuff/empty letters'));
+		modTitle = new NovaText('', Paths.font('Tardling v1.1'));
+		modDesc = new NovaText('', Paths.font('PhantomMuff/empty letters'));
 
 		downloadIcon.visible = false;
 		downloadIcon.onClick = ()->{

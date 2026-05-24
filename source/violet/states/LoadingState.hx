@@ -115,7 +115,7 @@ class LoadingState extends StateBackend { // for now
 				FlxG.switchState(() -> new violet.states.menus.MainMenu());
 		});
 
-		traceTxt = new NovaText(100, 50, 0, "", Paths.font('vcr.ttf'));
+		traceTxt = new NovaText(100, 50, '', Paths.font('vcr.ttf'));
 		traceTxt.size = 35;
 		traceTxt.alpha = 0.5;
 		add(traceTxt);
@@ -126,11 +126,11 @@ class LoadingState extends StateBackend { // for now
 		loadingBar.scale.x = 0;
 		add(loadingBar);
 
-		loadingTxt = new NovaText(0, 0, 0, "Initializing...", Paths.font('vcr.ttf'));
+		loadingTxt = new NovaText("Initializing...", Paths.font('vcr.ttf'));
 		loadingTxt.size = 50;
 		add(loadingTxt);
 
-		loadingPercentTxt = new NovaText(0, 0, 0, "", Paths.font('vcr.ttf'));
+		loadingPercentTxt = new NovaText('', Paths.font('vcr.ttf'));
 		loadingPercentTxt.size = 50;
 		add(loadingPercentTxt);
 

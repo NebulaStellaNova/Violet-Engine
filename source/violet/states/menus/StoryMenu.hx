@@ -79,26 +79,20 @@ class StoryMenu extends SubStateBackend {
 		bottomBox.camera = storyCam;
 		bottomBox.scrollFactor.set();
 
-		scoreText = new NovaText(11, -100, 'HIGH SCORE: 0', 32);
-		scoreText.setFont(Paths.font('vcr.ttf'));
-		scoreText.updateHitbox();
+		scoreText = new NovaText(11, -100, 'HIGH SCORE: 0', 32, Paths.font('vcr.ttf'));
 		scoreText.camera = storyCam;
 		scoreText.scrollFactor.set();
 		scoreText.y = -scoreText.getHeight();
 
-		levelText = new NovaText(11, -100, 'LEVEL NAME', 32);
-		levelText.setFont(Paths.font('vcr.ttf'));
-		levelText.updateHitbox();
+		levelText = new NovaText(11, -100, 'LEVEL NAME', 32, Paths.font('vcr.ttf'));
 		levelText.camera = storyCam;
 		levelText.scrollFactor.set();
 		levelText.alpha = 0.7;
 		levelText.y = -levelText.getHeight();
 
-		trackText = new NovaText(FlxG.width * 0.05, 500, '- TRACKS -\n\nSome Song Lol', 32);
-		trackText.setFont(Paths.font('vcr.ttf'));
+		trackText = new NovaText(FlxG.width * 0.05, 500, '- TRACKS -\n\nSome Song Lol', 32, Paths.font('vcr.ttf'));
 		trackText.alignment = CENTER;
 		trackText.color = 0xFFE55777;
-		trackText.updateHitbox();
 		trackText.camera = storyCam;
 		trackText.scrollFactor.set();
 		trackText.x = -trackText.getWidth();
