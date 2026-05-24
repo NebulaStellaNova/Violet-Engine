@@ -263,16 +263,34 @@
 					"type": "bool"
 				},
 				{
+					"name": "Advanced HUD",
+					"description": "If checked, hud will show stuff such as misses and rating counts.",
+					"saveID": "advancedHud",
+					"type": "bool"
+				},
+				{
 					"name": "Hide Score",
 					"description": "If checked, score text under the health bar will be hidden.",
 					"saveID": "hideScore",
-					"type": "bool"
+					"type": "bool",
+					"conditions": [
+						{
+							"id": "advancedHud",
+							"state": false
+						}
+					]
 				},
 				{
 					"name": "Hide Accuracy",
 					"description": "If checked, accuracy text under the health bar will be hidden.",
 					"saveID": "hideAccuracy",
-					"type": "bool"
+					"type": "bool",
+					"conditions": [
+						{
+							"id": "advancedHud",
+							"state": false
+						}
+					]
 				},
 				{
 					"name": "Enable Lane Underlay",

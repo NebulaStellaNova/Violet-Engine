@@ -126,6 +126,11 @@ class PlayState extends violet.backend.StateBackend {
 		return Math.round(out * 100) / 100;
 	}
 
+	public var sicks:Int = 0;
+	public var goods:Int = 0;
+	public var bads:Int = 0;
+	public var shits:Int = 0;
+
 	public var score:Int = 0;
 	public var healthBar:HealthBar;
 	public var health:Float;
@@ -135,6 +140,13 @@ class PlayState extends violet.backend.StateBackend {
 
 	public var scoreTxt:HudText;
 	public var accuracyTxt:HudText;
+	public var missesTxt:HudText;
+	public var sickTxt:HudText;
+	public var goodTxt:HudText;
+	public var badTxt:HudText;
+	public var shitTxt:HudText;
+
+
 	public var botplayText:FlxText;
 	public var botplayTextTweenAlpha:FlxTween;
 	public var botplayTextTweenScale:FlxTween;
@@ -344,6 +356,36 @@ class PlayState extends violet.backend.StateBackend {
 		accuracyTxt.zIndex = 99;
 		add(accuracyTxt);
 
+		missesTxt = new HudText();
+		missesTxt.camera = camHUD;
+		missesTxt.zIndex = 99;
+		missesTxt.text = 'Misses: 0';
+		add(missesTxt);
+
+		sickTxt = new HudText();
+		sickTxt.camera = camHUD;
+		sickTxt.zIndex = 99;
+		sickTxt.text = 'Sicks: 0';
+		add(sickTxt);
+
+		goodTxt = new HudText();
+		goodTxt.camera = camHUD;
+		goodTxt.zIndex = 99;
+		goodTxt.text = 'Goods: 0';
+		add(goodTxt);
+
+		badTxt = new HudText();
+		badTxt.camera = camHUD;
+		badTxt.zIndex = 99;
+		badTxt.text = 'Bads: 0';
+		add(badTxt);
+
+		shitTxt = new HudText();
+		shitTxt.camera = camHUD;
+		shitTxt.zIndex = 99;
+		shitTxt.text = 'Shits: 0';
+		add(shitTxt);
+
 		accuracyTxt.text = 'Accuracy: 100.00%';
 		accuracyTxt.x = healthBar.x;
 		accuracyTxt.refreshDisplay();
@@ -435,6 +477,8 @@ class PlayState extends violet.backend.StateBackend {
 			});
 			add(cameraMovementSprite);
 		}
+
+		positionHudTexts();
 	}
 
 	var healthLerp:Float = 0.5;
@@ -491,7 +535,7 @@ class PlayState extends violet.backend.StateBackend {
 
 		scoreLerp = lerp(scoreLerp, score, 0.25);
 		scoreTxt.text = 'Score: ' + ScoreUtil.stringifyScore(Options.data.disableScoreLerping ? Math.round(score) : Math.round(scoreLerp), 8);
-		scoreTxt.x = healthBar.x + healthBar.width - scoreTxt.realWidth;
+		if (!Options.data.advancedHud) scoreTxt.x = healthBar.x + healthBar.width - scoreTxt.realWidth;
 		scoreTxt.refreshDisplay();
 
 		scoreTxt.visible = !Options.data.hideScore;
@@ -570,6 +614,11 @@ class PlayState extends violet.backend.StateBackend {
 			combo++;
 			comboGroup.popupRating(judgement.rating, combo);
 
+			Reflect.setField(this, judgement.rating.toLowerCase() + 's', Reflect.field(this, judgement.rating.toLowerCase() + 's') + 1);
+			var txt = Reflect.field(this, judgement.rating.toLowerCase() + 'Txt');
+			txt.text = '${StringUtil.capitalizeFirst(judgement.rating)}s: ${Reflect.field(this, judgement.rating.toLowerCase() + 's')}';
+			txt.refreshDisplay();
+
 			switch (Options.data.accuracyCalculation) {
 				case RATING:
 					accuracies.push([
@@ -595,7 +644,6 @@ class PlayState extends violet.backend.StateBackend {
 		if (split[1].length == 1) split[1] = '0' + split[1];
 		if (Math.round(Std.parseFloat(accT)) == Std.parseFloat(accT)) split.push('00');
 		accuracyTxt.text = 'Accuracy: ${split.join('.')}%';
-		accuracyTxt.x = healthBar.x;
 		accuracyTxt.refreshDisplay();
 
 		runSongEvent('noteHitPost', event);
@@ -608,6 +656,8 @@ class PlayState extends violet.backend.StateBackend {
 		if (event.cancelled) return;
 
 		misses++;
+		missesTxt.text = 'Misses: $misses';
+		missesTxt.refreshDisplay();
 		combo = 0;
 
 		note.wasMissed = true; note.alpha *= 0.6;
@@ -1148,6 +1198,7 @@ class PlayState extends violet.backend.StateBackend {
 		else healthBar.rightColor = FlxColor.LIME;
 
 		healthBar.y = Options.data.downscroll ? FlxG.height * 0.1 : FlxG.height * 0.9;
+		accuracyTxt.x = healthBar.x;
 		accuracyTxt.y = scoreTxt.y = healthBar.y + healthBar.height + 5;
 		iconPlayer.y = healthBar.y + (healthBar.height/2) - (iconPlayer.height/2);
 		iconOpponent.y = healthBar.y + (healthBar.height/2) - (iconOpponent.height/2);
@@ -1155,7 +1206,24 @@ class PlayState extends violet.backend.StateBackend {
 		scoreTxt.visible = !Options.data.hideScore;
 		accuracyTxt.visible = !Options.data.hideAccuracy;
 
+		positionHudTexts();
+
 		runSongEvent('postUpdateOptions', event);
+	}
+
+	public function positionHudTexts() {
+		var arr = [sickTxt, goodTxt, badTxt, shitTxt, missesTxt, scoreTxt, accuracyTxt];
+		for (i=>txt in arr) {
+			if (Options.data.advancedHud) {
+				txt.visible = true;
+				txt.x = 0;
+				txt.y = (FlxG.height / 2) + (25 * i);
+				txt.y -= (25 * (arr.length-1)) / 2;
+				txt.refreshDisplay();
+			} else {
+				if (i > 1) txt.visible = false;
+			}
+		}
 	}
 
 	@:unreflective var healthBarShi:FlxPoint = null;

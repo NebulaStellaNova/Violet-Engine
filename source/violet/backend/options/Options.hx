@@ -75,6 +75,7 @@ import lime.app.Application;
 	public var enableNoteSplashes:Bool = true;
 	public var enableHoldCovers:Bool = true;
 
+	public var advancedHud:Bool = false;
 	public var hideScore:Bool = false;
 	public var hideAccuracy:Bool = false;
 
