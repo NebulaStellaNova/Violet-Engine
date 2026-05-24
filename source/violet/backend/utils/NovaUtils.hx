@@ -197,7 +197,7 @@ class NovaUtils {
 				pid_t pid = fork();
 
 				if (pid == -1) {
-					std::cerr << "Failed to fork process.\n";
+
 				}
 				else if (pid == 0) {
 					int devNull = open("/dev/null", O_WRONLY);
