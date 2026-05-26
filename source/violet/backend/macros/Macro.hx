@@ -1,10 +1,6 @@
 package violet.backend.macros;
 
 #if macro
-import haxe.macro.Compiler;
-import haxe.macro.Context;
-import haxe.macro.Expr;
-
 class Macro {
 
 	inline public static function print(message:String) {
