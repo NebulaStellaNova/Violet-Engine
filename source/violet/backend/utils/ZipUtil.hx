@@ -5,10 +5,6 @@ import openfl.display.BitmapData;
 import haxe.zip.Reader;
 import haxe.io.Path;
 import cpp.Native;
-@:cppFileCode('
-	#include <windows.h>
-	#include <stdio.h>
-')
 class ZipUtil {
 
 	/**

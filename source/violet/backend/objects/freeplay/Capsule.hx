@@ -12,7 +12,6 @@ import violet.backend.shaders.OutlineExtractionShader;
 using violet.backend.utils.MathUtil;
 
 class Capsule extends FlxSpriteGroup {
-
 	public var capsuleBackground:FlxSkewedSprite;
 	public var backCase:FlxSkewedSprite;
 	public var frontCase:FlxSkewedSprite;
@@ -25,12 +24,12 @@ class Capsule extends FlxSpriteGroup {
 	override public function new() {
 		super();
 
-		var temp = new NovaSprite(0, 0).loadSprite(Paths.image("menus/freeplaymenu/capsuleBackgrounds/mainStage"));
-		temp.drawFrame();
+		// var temp = new NovaSprite(0, 0).loadSprite(Paths.image("menus/freeplaymenu/capsuleBackgrounds/mainStage"));
+		// temp.drawFrame();
 
 		capsuleBackground = new FlxSkewedSprite(-10, 0);
-		capsuleBackground.loadGraphicFromSprite(temp);
-		capsuleBackground.drawFrame();
+		// capsuleBackground.loadGraphicFromSprite(temp);
+		// capsuleBackground.drawFrame();
 		// skewPixels(capsuleBackground, 30, 0);
 
 		backCase = new FlxSkewedSprite(0, 0);
@@ -67,15 +66,17 @@ class Capsule extends FlxSpriteGroup {
 		var newWidth:Int = Std.int(originalPixels.width + (originalPixels.height * Math.abs(matrix.c)));
 		var newHeight:Int = Std.int(originalPixels.height + (originalPixels.width * Math.abs(matrix.b)));
 
-		if (matrix.c < 0) matrix.tx = (-originalPixels.height * matrix.c) * sample;
-		if (matrix.b < 0) matrix.ty = (-originalPixels.width * matrix.b) * sample;
+		if (matrix.c < 0)
+			matrix.tx = (-originalPixels.height * matrix.c) * sample;
+		if (matrix.b < 0)
+			matrix.ty = (-originalPixels.width * matrix.b) * sample;
 
 		var tempBD:BitmapData = new BitmapData(newWidth * sample, newHeight * sample, true, 0);
 		tempBD.draw(originalPixels, matrix, null, null, null, true);
 
 		var finalBD:BitmapData = new BitmapData(newWidth, newHeight, true, 0);
 		var downscaleMatrix = new Matrix();
-		downscaleMatrix.scale(1/sample, 1/sample);
+		downscaleMatrix.scale(1 / sample, 1 / sample);
 		finalBD.draw(tempBD, downscaleMatrix, null, null, null, true);
 
 		sprite.loadGraphic(finalBD);
@@ -110,7 +111,8 @@ class Capsule extends FlxSpriteGroup {
 			for (x in 0...bmd.width) {
 				color = bmd.getPixel32(x, y);
 
-				if ((color >> 24) & 0xFF == 0) continue;
+				if ((color >> 24) & 0xFF == 0)
+					continue;
 
 				r = (color >> 16) & 0xFF;
 				g = (color >> 8) & 0xFF;
@@ -130,7 +132,8 @@ class Capsule extends FlxSpriteGroup {
 	}
 
 	function cropPixels(sprite:FlxSprite, x:Int, y:Int, width:Int, height:Int):Void {
-		if (sprite == null || sprite.graphic == null) return;
+		if (sprite == null || sprite.graphic == null)
+			return;
 
 		var original:BitmapData = sprite.pixels;
 		var cropped:BitmapData = new BitmapData(width, height, true, 0x00000000);
@@ -141,5 +144,4 @@ class Capsule extends FlxSpriteGroup {
 
 		sprite.updateHitbox();
 	}
-
 }

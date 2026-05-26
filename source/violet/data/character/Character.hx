@@ -7,7 +7,7 @@ import violet.backend.utils.NovaUtils;
 
 class Character extends violet.backend.objects.Bopper {
 
-	public var scripts:ScriptPack;
+	public var scripts:ScriptPack = new ScriptPack();
 
 	public var id:String;
 	public var _data:CharacterData;
@@ -51,6 +51,9 @@ class Character extends violet.backend.objects.Bopper {
 		this._data = CharacterRegistry.characterDatas.get(id) ?? CharacterRegistry.characterDatas.get('bf');
 		super(x, y, Paths.image(this._data.assetPath)); // did this for atlases
 
+		ModdingAPI.checkForScripts('data/characters', id, scripts);
+		scripts.parent = this;
+
 		if (CharacterRegistry.characterDatas.get(id) == null) {
 			NovaUtils.addNotification('Character not found!', 'Could not find character with ID "$id" using default character "bf".', ERROR);
 		}
@@ -64,6 +67,8 @@ class Character extends violet.backend.objects.Bopper {
 		for (i in animation.getNameList()) {
 			this.removeAnim(i);
 		}
+
+		this.doFlipCheck = !(_data.disableFlipCheck ?? false);
 
 		this.flipX = this.initialFlipX;
 
@@ -101,8 +106,8 @@ class Character extends violet.backend.objects.Bopper {
 		if (canSing) {
 			var targetAnim:String = '${singAnimations[direction % singAnimations.length]}${isMiss ? 'miss' : ''}${suffix != null ? '-$suffix' : ''}';
 			var force:Bool = !Options.data.disableHoldJitter;
-			if (this.animation.name != targetAnim || noteJustHit) force = true;
-			this.playAnim(targetAnim, force);
+			if (lastPlayedAnim != targetAnim || noteJustHit) force = true;
+			if (force) this.playAnim(targetAnim, true);
 		}
 		this.lastHit = Conductor.songPosition;
 		this.isSinging = true;
@@ -144,12 +149,15 @@ class Character extends violet.backend.objects.Bopper {
 
 	public var debug:Bool = false;
 
+	public var lastPlayedAnim:String = null;
+
 	override function playAnim(name:String, forced:Bool = false, reversed:Bool = false, frame:Int = 0) {
 		if (this.flipX && !debug) {
 			if (name.startsWith('singLEFT')) name = name.replace('singLEFT', 'singRIGHT');
 			else if (name.startsWith('singRIGHT')) name = name.replace('singRIGHT', 'singLEFT');
 		}
 		super.playAnim(name, forced, reversed, frame);
+		lastPlayedAnim = name;
 	}
 
 	public function cloneData():Dynamic {

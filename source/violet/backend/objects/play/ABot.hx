@@ -46,7 +46,7 @@ class ABot extends BopperSpriteGroup {
 		add(stereoBG);
 
 		eyes = new NovaSprite(50, 238, Paths.image("characters/abot/systemEyes"));
-		eyes.addAnim("idle", "a bot eyes lookin", null, [0, 0], 24, true, false);
+		eyes.addAnim("idle", "a bot eyes lookin", null, [0, 0], 24, false, false);
 		eyes.playAnim("idle");
 		eyes.z = -5;
 		add(eyes);

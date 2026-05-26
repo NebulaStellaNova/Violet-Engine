@@ -1,5 +1,7 @@
 package violet.backend.objects.freeplay;
 
+import openfl.display.BitmapData;
+import flixel.graphics.FlxGraphic;
 import flixel.addons.effects.FlxSkewedSprite;
 import flixel.text.FlxText;
 import flixel.util.FlxGradient;
@@ -11,11 +13,16 @@ import violet.data.song.Song;
 using violet.backend.utils.MathUtil;
 
 class SongCapsule extends Capsule {
+	public static var bgCache:Map<String, NovaSprite> = [];
+	public static var gradientCache:BitmapData;
+	public static var iconCache:Map<String, HealthIcon> = [];
 
 	// public var parentCapsule:LevelCapsule;
 
 	override public function new(songData:Song) {
 		super();
+
+		gradientCache ??= FlxGradient.createGradientBitmapData(Math.round(frontCase.width/2), Math.round(frontCase.height), [FlxColor.BLACK, FlxColor.BLACK, FlxColor.TRANSPARENT], 1, 0);
 
 		Capsule.colorToAlphaShader.targetColor = FlxColor.BLACK;
 
@@ -27,8 +34,14 @@ class SongCapsule extends Capsule {
 		var gradient:Array<ParseColor> = songData._data.gradient != null ? songData._data.gradient : [songData._data.color, songData._data.color];
 		var capsuleBG:String = songData._data.freeplayCapsule ?? songData?.customValues?.capsuleBackground ?? "mainStage";
 
-		var temp = new NovaSprite(0, 0).loadSprite(Paths.image("menus/freeplaymenu/capsuleBackgrounds/" + capsuleBG));
-		temp.drawFrame();
+		var temp = null;
+		if (bgCache.exists(capsuleBG)) {
+			temp = bgCache.get(capsuleBG);
+		} else {
+			temp = new NovaSprite(0, 0).loadSprite(Paths.image("menus/freeplaymenu/capsuleBackgrounds/" + capsuleBG));
+			temp.drawFrame();
+			bgCache.set(capsuleBG, temp);
+		}
 
 		capsuleBackground.loadGraphicFromSprite(temp);
 		capsuleBackground.drawFrame();
@@ -36,7 +49,7 @@ class SongCapsule extends Capsule {
 		backCase.makeGraphic(FlxG.width, 85, gradient[0]);
 
 		blackGradient = new FlxSkewedSprite(14, 0);
-		blackGradient.loadGraphic(FlxGradient.createGradientFlxSprite(Math.round(frontCase.width/2), Math.round(frontCase.height), [FlxColor.BLACK, FlxColor.BLACK, FlxColor.TRANSPARENT], 1, 0).pixels);
+		blackGradient.loadGraphic(FlxGraphic.fromBitmapData(gradientCache));
 		blackGradient.antialiasing = true;
 		blackGradient.skew.set(-30, 0);
 		blackGradient.alpha = 0.6;
@@ -52,17 +65,23 @@ class SongCapsule extends Capsule {
 		iconBG.updateHitbox();
 		add(iconBG);
 
-		final outlinePath = 'icons/outlines/${songData.icon}-outline'; // Typo but I'm not changing it now
-		final outlineAsset = Paths.image(outlinePath);
-		var iconImage = new HealthIcon(songData.icon, false, false, outlineAsset != '' ? outlinePath : null);
-		iconImage.scaleOffset = 0.45;
-		iconImage.globalOffset.set(0, 0);
-		iconImage.canDance = false;
-		// if (iconImage._data.freeplayFlipX) iconImage.flipX = !iconImage.flipX;
-		iconImage.flipX = !iconImage.flipX;
-		iconImage.updateHitbox();
-		iconImage.x = 45;
-		iconImage.y = 5;
+		var iconImage:HealthIcon;
+		if (iconCache.exists(songData.icon)) {
+			iconImage = iconCache.get(songData.icon);
+		} else {
+			final outlinePath = 'icons/outlines/${songData.icon}-outline'; // Typo but I'm not changing it now
+			final outlineAsset = Paths.image(outlinePath);
+			iconImage = new HealthIcon(songData.icon, false, false, outlineAsset != '' ? outlinePath : null);
+			iconImage.scaleOffset = 0.45;
+			iconImage.globalOffset.set(0, 0);
+			iconImage.canDance = false;
+			// if (iconImage._data.freeplayFlipX) iconImage.flipX = !iconImage.flipX;
+			iconImage.flipX = !iconImage.flipX;
+			iconImage.updateHitbox();
+			iconImage.x = 45;
+			iconImage.y = 5;
+			iconCache.set(songData.icon, iconImage);
+		}
 
 		iconImage.drawFrame();
 		scalePixels(iconImage, 1, 1);
@@ -92,6 +111,7 @@ class SongCapsule extends Capsule {
 		var gradientMult = 2;
 
 		var amt = displayNameText.width / capsuleWidth;
+		displayNameText.destroy();
 		// amt /= gradientMult;
 		var displayNameGradient:Array<FlxColor> = [gradient[0], FlxColor.interpolate(gradient[0], gradient[1], amt)];
 
@@ -109,6 +129,7 @@ class SongCapsule extends Capsule {
 		composerSprite.scale.set(0.5, 0.5);
 		composerSprite.drawFrame();
 		composerSprite.updateHitbox();
+		composerText.destroy();
 
 		var composerSegment = new FlxSkewedSprite(composerSprite.x - 10, displayNameSprite.y + displayNameSprite.height - 3);
 		composerSegment.loadGraphic(FlxGradient.createGradientFlxSprite(Math.round(composerSprite.width + 40), 30*2, [FlxColor.WHITE, FlxColor.WHITE], 1, 0).pixels);
@@ -145,6 +166,7 @@ class SongCapsule extends Capsule {
 		bpmSprite.updateHitbox();
 		bpmSprite.drawFrame();
 
+		bpmText.destroy();
 
 		var bpmSegment = new FlxSkewedSprite(bpmSprite.x - 10, displayNameSprite.y + displayNameSprite.height - 3);
 		bpmSegment.loadGraphic(FlxGradient.createGradientFlxSprite(bpmSprite.width.round() + 40, 30*2, [FlxColor.WHITE, FlxColor.WHITE], 1, 0).pixels);
@@ -164,6 +186,8 @@ class SongCapsule extends Capsule {
 
 		bpmSegment.shader = Capsule.colorToAlphaShader;
 		bpmSegment.updateHitbox();
+
+		bpmSprite.destroy();
 	}
 
 }

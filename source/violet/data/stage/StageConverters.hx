@@ -162,7 +162,8 @@ class StageConverters {
 			name: stageData.name,
 			zoom: stageData.cameraZoom,
 			directory: stageData.directory != null && stageData.directory != '' ? 'stages/' + stageData.directory : '',
-			props: []
+			props: [],
+			extraScripts: [ 'data/stages/types/V-Slice' ]
 		}
 
 		for (i in cast (stageData.props, Array<Dynamic>)) {
@@ -194,6 +195,7 @@ class StageConverters {
 			}
 			out.props.push(propOut);
 		}
+
 
 
 		var gf:StageDataCharacter = stageData.characters.gf;
@@ -237,6 +239,15 @@ class StageConverters {
 			alpha: dad?.alpha
 		};
 		out.props.push(data);
+
+		var comboPos:Array<Float> = (gf?.position ?? [0, 0]).copy();
+		comboPos[0] += 300;
+		out.props.push({
+			id: 'combo',
+			type: StageItemType.COMBO,
+			zIndex: bf?.zIndex-1,
+			position: comboPos
+		});
 
 		return out;
 	}

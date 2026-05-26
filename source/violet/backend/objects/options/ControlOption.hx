@@ -1,27 +1,34 @@
 package violet.backend.objects.options;
 
-import flixel.effects.FlxFlicker;
+import flixel.input.keyboard.FlxKey;
 import violet.states.menus.OptionsMenu;
 import violet.backend.utils.NovaUtils;
 
 class ControlOption extends BaseOption {
 
-	public var controlArray:Array<String> = ['A', 'B'];
+	public var controlArray(default, set):Array<FlxKey> = ['NONE', 'NONE'];
+	inline function set_controlArray(value:Array<FlxKey>):Array<FlxKey> {
+		if (value == null)
+			return controlArray;
+		while (value.length < 2)
+			value.push('NONE');
+		return controlArray = value;
+	}
 
 	public var leftControl:Alphabet;
 	public var rightControl:Alphabet;
 
 	public var selectedKeybind:Bool = true;
 
-	public dynamic function onChange(which:Bool) {}
+	public dynamic function onChange(keys:Array<FlxKey>) {}
 
 	public function new(title:String, description:String = "") {
 		super(title, description);
 
-		leftControl = new Alphabet('A');
+		leftControl = new Alphabet('NONE');
 		add(leftControl);
 
-		rightControl = new Alphabet('B');
+		rightControl = new Alphabet('NONE');
 		add(rightControl);
 	}
 
@@ -31,10 +38,15 @@ class ControlOption extends BaseOption {
 
 	var allowThisFrame = true;
 
+	var holdCheck:Float = 0;
+
+	var ifWaitForNext:Bool = false;
+
 	var time:Float = 0;
 	override function update(elapsed:Float) {
 		super.update(elapsed);
 		time += elapsed;
+
 
 		if (!allowThisFrame) allowThisFrame = true;
 
@@ -57,23 +69,46 @@ class ControlOption extends BaseOption {
 
 		if (waitingForInput) {
 			var blacklist = ["NONE", "ANY", "keyManager", "status"];
-			for (i in Reflect.fields(FlxG.keys.justPressed)) {
+			for (i in Reflect.fields(FlxG.keys.justReleased)) {
 				if (blacklist.contains(i)) continue;
-				if (FlxG.keys.anyJustPressed([i])) {
+				if (FlxG.keys.anyJustReleased([i])) {
+					if (ifWaitForNext) {
+						ifWaitForNext = false;
+						break;
+					}
 					allowThisFrame = false;
 					controlArray[selectedKeybind ? 0 : 1] = i;
 					waitingForInput = false;
 					flickering = false;
+					onChange(controlArray.copy());
 					new FlxTimer().start(0.01, (_)->OptionsMenu.instance.enableInput = true);
 				}
 			}
+			OptionsMenu.instance.updateDesc({
+				description: 'Waiting for input...\nPress and Hold BACKSPACE to clear the keybind.'
+			});
 		}
 
-		if (Controls.accept && allowThisFrame) {
+		if (Controls.accept && allowThisFrame && !waitingForInput) {
 			OptionsMenu.instance.enableInput = false;
 			waitingForInput = true;
+			ifWaitForNext = true;
 			flickering = true;
 			NovaUtils.playMenuSFX(CONFIRM);
+		}
+
+		if (FlxG.keys.pressed.BACKSPACE && waitingForInput) {
+			holdCheck += elapsed;
+			if (holdCheck > 0.5) {
+				allowThisFrame = false;
+				controlArray[selectedKeybind ? 0 : 1] = 'NONE';
+				waitingForInput = false;
+				flickering = false;
+				onChange(controlArray.copy());
+				new FlxTimer().start(0.01, (_)->OptionsMenu.instance.enableInput = true);
+			}
+		} else {
+			holdCheck = 0;
 		}
 	}
 

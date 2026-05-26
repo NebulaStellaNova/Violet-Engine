@@ -242,30 +242,41 @@ class Controls {
 	 * @param key The key name.
 	 * @return Bool
 	 */
-	inline public static function pressed(key:String):Bool
-		return bindCheck(key) != [] ? FlxG.keys.anyJustPressed(bindCheck(key)) : false;
+	inline public static function pressed(key:String):Bool {
+		#if debug
+		try { return FlxG.keys.anyJustPressed(bindCheck(key)); } catch(e) return false;
+		#else
+		return FlxG.keys.anyJustPressed(bindCheck(key));
+		#end
+	}
 	/**
 	 * Held input.
 	 * @param key The key name.
 	 * @return Bool
 	 */
-	inline public static function held(key:String):Bool
+	inline public static function held(key:String):Bool {
+		#if debug
+		try { return FlxG.keys.anyPressed(bindCheck(key)); } catch(e) return false;
+		#else
 		return FlxG.keys.anyPressed(bindCheck(key));
+		#end
+	}
 	/**
 	 * Released input.
 	 * @param key The key name.
 	 * @return Bool
 	 */
-	inline public static function released(key:String):Bool
+	inline public static function released(key:String):Bool {
+		#if debug
+		try { return FlxG.keys.anyJustReleased(bindCheck(key)); } catch(e) return false;
+		#else
 		return FlxG.keys.anyJustReleased(bindCheck(key));
+		#end
+	}
 
 	inline static function bindCheck(key:String):Array<FlxKey> {
-		var lol = [];
-		return (active && bindMap.exists(key) ? bindMap.get(key) : []).filter((f) -> {
-			var out = !lol.contains(f);
-			lol.push(f);
-			return out;
-		});
+		var binds:Array<FlxKey> = active && bindMap.exists(key) ? bindMap.get(key) : [];
+		return binds.filter(bind -> return !(bind == NONE || bind == ANY));
 	}
 
 	/**

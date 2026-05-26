@@ -221,9 +221,9 @@ class Conductor {
 			Conductor.setInitialBPM(songMetaData.bpm, songMetaData.stepsPerBeat, songMetaData.beatsPerMeasure);
 			instrumental.looped = false;
 		}
-		/* if (threaded)
+		if (threaded)
 			Main.threadCallacks.addOnce(() -> result());
-		else */ result();
+		else result();
 	}
 
 	public static function stop() {

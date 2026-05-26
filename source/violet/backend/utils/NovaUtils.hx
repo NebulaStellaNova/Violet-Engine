@@ -25,8 +25,16 @@ enum NotificationType {
 }
 
 @:cppFileCode('
-	#include <windows.h>
-	#include <stdio.h>
+	#include <iostream>
+	#include <string>
+
+	#ifdef _WIN32
+		#include <windows.h>
+	#else
+		#include <unistd.h>
+		#include <sys/wait.h>
+		#include <fcntl.h>
+	#endif
 ')
 class NovaUtils {
 
@@ -165,22 +173,48 @@ class NovaUtils {
 	}
 
 	@:unreflective
-	private static function _runHidden(cmd:String):Void {
+	private static function _runHidden(command:String):Void {
         untyped __cpp__('
-			STARTUPINFO si;
-            PROCESS_INFORMATION pi;
-            ZeroMemory(&si, sizeof(si));
-            si.cb = sizeof(si);
-            si.dwFlags = STARTF_USESHOWWINDOW;
-            si.wShowWindow = SW_HIDE;
+			#ifdef _WIN32
+				STARTUPINFO si;
+				PROCESS_INFORMATION pi;
+				ZeroMemory(&si, sizeof(si));
+				si.cb = sizeof(si);
+				si.dwFlags = STARTF_USESHOWWINDOW;
+				si.wShowWindow = SW_HIDE;
 
-            ZeroMemory(&pi, sizeof(pi));
+				ZeroMemory(&pi, sizeof(pi));
 
-            if (CreateProcess(NULL, (char*){0}.c_str(), NULL, NULL, FALSE, 0x08000000, NULL, NULL, &si, &pi)) {
-                WaitForSingleObject(pi.hProcess, INFINITE);
-                CloseHandle(pi.hProcess);
-                CloseHandle(pi.hThread);
-            }
+				std::string cmdCopy = command;
+
+				if (CreateProcessA(NULL, &cmdCopy[0], NULL, NULL, FALSE, 0x08000000, NULL, NULL, &si, &pi)) {
+					WaitForSingleObject(pi.hProcess, INFINITE);
+					CloseHandle(pi.hProcess);
+					CloseHandle(pi.hThread);
+				}
+
+			#else
+				pid_t pid = fork();
+
+				if (pid == -1) {
+
+				}
+				else if (pid == 0) {
+					int devNull = open("/dev/null", O_WRONLY);
+					if (devNull != -1) {
+						dup2(devNull, STDOUT_FILENO);
+						dup2(devNull, STDERR_FILENO);
+						close(devNull);
+					}
+
+					execl("/bin/sh", "sh", "-c", command.c_str(), (char*)NULL);
+					_exit(127);
+				}
+				else {
+					int status;
+					waitpid(pid, &status, 0);
+				}
+			#endif
         ', cmd);
     }
 

@@ -35,7 +35,7 @@ typedef OptionsMenuData = {
 typedef OptionsMenuOption = {
 	var name:String;
 	var ?description:String;
-	var saveID:String;
+	var ?saveID:String;
 	var type:OptionsType;
 	var ?platform:String; // Used to have platform specific settings
 	var ?disabled:Bool;
@@ -45,8 +45,10 @@ typedef OptionsMenuOption = {
 	// for number option
 	var ?min:Float;
 	var ?max:Float;
+	var ?wrap:Bool;
 	var ?step:Float;
 	var ?replacer:Array<{what:Int, with:String}>;
+	var ?allowHolding:Bool;
 }
 
 typedef Condition = {
@@ -57,10 +59,12 @@ typedef Condition = {
 
 class OptionsMenu extends SubStateBackend {
 
-	public var optionsData:OptionsData = ParseUtil.jsonOrYaml('data/config/options');
+	public var optionsData:OptionsData = ParseUtil.jsonOrYaml('${Paths.ASSETS_FOLDER}/data/config/options', 'root');
 
 	public var menus:Array<Alphabet> = [];
 	public var options:Array<BaseOption> = [];
+
+	public var isAMenuOpen:Bool = false;
 
 	public var canSelectMenu:Bool = true;
 
@@ -76,18 +80,46 @@ class OptionsMenu extends SubStateBackend {
 
 	public static var instance:OptionsMenu;
 
+	public function getMenuByTitle(title:String):Null<OptionsMenuData> {
+		for (menu in optionsData.menus) {
+			if (menu.title == title) return menu;
+		}
+		return null;
+	}
+
 	override function create() {
 		super.create();
 
+		for (i in ModdingAPI.getActiveMods()) {
+			var modOptions = ParseUtil.jsonOrYaml('${ModdingAPI.MOD_FOLDER}/${i.folder}/data/config/options', 'root', 'null');
+			if (modOptions != null) {
+				for (i in (modOptions?.menus ?? [])) {
+					if (getMenuByTitle(i.title) != null) {
+						getMenuByTitle(i.title).options = getMenuByTitle(i.title).options.concat(i.options);
+					} else {
+						optionsData.menus.push(i);
+					}
+				}
+			}
+		}
+
 		instance = this;
+		var off = 0;
 		for (menu in optionsData.menus) {
-			for (optionData in menu.options) {
+			for (i=>optionData in menu.options.copy()) {
 				var platformTargets = optionData.platform.replace(' ', '').split(',');
 				for (platform in platformTargets)
 					if (!NovaUtils.platformCheck(platform))
 						menu.options.remove(optionData);
 				if (optionData.disabledInPlayState && FlxG.state is PlayState)
 					optionData.disabled = true;
+				if (optionData.type == SECTION && optionData.name != '') {
+					menu.options.insert(i + off, {
+						name: "",
+						type: SECTION
+					});
+					off++;
+				}
 			}
 		}
 
@@ -97,9 +129,8 @@ class OptionsMenu extends SubStateBackend {
 
 		for (i=>menuData in optionsData.menus) {
 			var alphabet:Alphabet = new Alphabet(menuData.title.toUpperCase());
-			alphabet.screenCenter();
+			alphabet.screenCenter(X);
 			alphabet.y += i * 100;
-			alphabet.y -= ((optionsData.menus.length-1) * 100)/2;
 			menus.push(alphabet);
 			add(alphabet);
 			alphabet.x += FlxG.width;
@@ -121,12 +152,18 @@ class OptionsMenu extends SubStateBackend {
 		updateDesc({});
 	}
 
+	var menuOffset:Float = 0;
+
 	override function update(elapsed:Float) {
 		super.update(elapsed);
 
 		for (i=>menu in menus) {
 			menu.alpha = menuCurSelected == i ? 1 : 0.5;
 		}
+
+		var target = (menuCurSelected * 100) - (FlxG.height/2) + 50;
+		menuOffset = lerp(menuOffset, target, 0.2);
+		camera.scroll.y = isAMenuOpen ? 0 : menuOffset;
 
 		if (Controls.uiUp && enableInput) options.length != 0 ? optionsScroll(-1) : menuScroll(-1);
 		if (Controls.uiDown && enableInput) options.length != 0 ? optionsScroll(1) : menuScroll(1);
@@ -186,7 +223,6 @@ class OptionsMenu extends SubStateBackend {
 
 	function generateOptions() {
 		for (i=>optionData in optionsData.menus[menuCurSelected].options) {
-
 			switch (optionData.type) {
 				case SECTION:
 					var option:BaseOption = new BaseOption('${optionData.name}', optionData.description);
@@ -210,6 +246,8 @@ class OptionsMenu extends SubStateBackend {
 
 				case NUMBER:
 					var option:NumberOption = new NumberOption('${optionData.name}:', optionData.description, optionData.min, optionData.max, optionData.step);
+					option.allowHolding = optionData.allowHolding ?? true;
+					option.wrap = optionData.wrap ?? false;
 					option.x = optionsListOffset;
 					option.y = (FlxG.height/2) + ((i-optionCurSelected) * 100) - (option.alphabet.height/2);
 					option.value = Options.get(optionData.saveID) ?? 0;
@@ -232,7 +270,8 @@ class OptionsMenu extends SubStateBackend {
 					option.x = optionsListOffset;
 					option.y = (FlxG.height/2) + ((i-optionCurSelected) * 100) - (option.alphabet.height/2);
 					option.updatePosition();
-					option.controlArray = Options.data.controls.get(optionData.saveID);
+					option.controlArray = Options.data.controls.exists(optionData.saveID) ? Options.data.controls.get(optionData.saveID).copy() : (cast (Options.get(optionData.saveID) ?? [])).copy();
+					option.onChange = (value:Array<flixel.input.keyboard.FlxKey>) ->  Options.data.controls.exists(optionData.saveID) ? Options.data.controls.set(optionData.saveID, value) : Options.set(optionData.saveID, value);
 					option.setEnabled(!optionData.disabled);
 					insert(0, option);
 					options.push(option);
@@ -240,10 +279,11 @@ class OptionsMenu extends SubStateBackend {
 		}
 		optionsScroll(0);
 		enableInput = true;
+		isAMenuOpen = true;
 		FlxTween.tween(this, { optionsListOffset: 0 }, 0.5, { ease: FlxEase.expoOut });
 	}
 
-	function set(what, value:Dynamic) {
+	inline function set(what, value:Dynamic) {
 		Options.set(what, value);
 		Options.flush();
 	}
@@ -256,7 +296,8 @@ class OptionsMenu extends SubStateBackend {
 		canSelectMenu = true;
 		enableInput = true;
 		options.resize(0);
-
+		optionCurSelected = 0;
+		isAMenuOpen = false;
 		for (i in menus) {
 			FlxTween.tween(i, { y: i.y-FlxG.width }, 0.5, { ease: FlxEase.expoOut });
 		}
@@ -288,7 +329,7 @@ class OptionsMenu extends SubStateBackend {
 		updateDesc(optionsData.menus[menuCurSelected].options[optionCurSelected]);
 	}
 
-	function updateDesc(data:Dynamic) {
+	public function updateDesc(data:Dynamic) {
 		descriptionTxt.text = (data.description ?? '').replace('\\n', '\n');
 		descriptionTxt.updateHitbox();
 		descriptionTxt.screenCenter();

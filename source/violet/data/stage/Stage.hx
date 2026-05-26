@@ -1,5 +1,6 @@
 package violet.data.stage;
 
+import haxe.io.Path;
 import violet.backend.scripting.ScriptPack;
 import flixel.FlxBasic;
 import violet.data.character.Character;
@@ -29,10 +30,17 @@ class Stage extends flixel.group.FlxGroup {
 		this.id = StageRegistry.stageDatas.get(id) != null ? id : 'default';
 		this._data = StageRegistry.stageDatas.get(id) ?? StageRegistry.stageDatas.get('default');
 		this._data.basicCharPos ??= false;
+		this._data.extraScripts ??= [];
 		this.stage = this;
 
 		ModdingAPI.checkForScripts('data/stages', id, stageScripts);
+		for (i in this._data.extraScripts) {
+			var fileName = Path.withoutExtension(Path.withoutDirectory(i));
+			var filePath = Path.directory(i);
+			ModdingAPI.checkForScripts(filePath, fileName, stageScripts);
+		}
 		stageScripts.set('directory', this._data.directory);
+		stageScripts.parent = this;
 
 		if (StageRegistry.stageDatas.get(id) == null) {
 			NovaUtils.addNotification('Stage not found!', 'Could not find stage with ID "$id" using default stage "theVoid".', ERROR);
@@ -86,7 +94,9 @@ class Stage extends flixel.group.FlxGroup {
 					applyProperties(prop, i.properties ?? {});
 
 				case PROP:
-					var prop:StageProp = new StageProp(i.position[0], i.position[1], Paths.image([this._data.directory, i.assetPath].join('/')));
+					var img = Paths.image([this._data.directory, i.assetPath].join('/'));
+					if (img == '') img = Paths.image(i.assetPath);
+					var prop:StageProp = new StageProp(i.position[0], i.position[1], img);
 					prop.name = i.name;
 					prop.z = i.zIndex;
 					prop.scrollFactor.set(i.scroll[0] ?? 1, i.scroll[1] ?? 1);

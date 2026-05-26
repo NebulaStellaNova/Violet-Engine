@@ -45,7 +45,6 @@ import violet.data.stage.Stage;
 import violet.states.menus.FreeplayMenu;
 import violet.states.menus.StoryMenu;
 import violet.states.menus.PauseMenu;
-import violet.backend.objects.play.DialogueHandler;
 
 #if SCRIPT_SUPPORT
 import violet.backend.scripting.ScriptPack;
@@ -126,6 +125,11 @@ class PlayState extends violet.backend.StateBackend {
 		return Math.round(out * 100) / 100;
 	}
 
+	public var sicks:Int = 0;
+	public var goods:Int = 0;
+	public var bads:Int = 0;
+	public var shits:Int = 0;
+
 	public var score:Int = 0;
 	public var healthBar:HealthBar;
 	public var health:Float;
@@ -135,6 +139,13 @@ class PlayState extends violet.backend.StateBackend {
 
 	public var scoreTxt:HudText;
 	public var accuracyTxt:HudText;
+	public var missesTxt:HudText;
+	public var sickTxt:HudText;
+	public var goodTxt:HudText;
+	public var badTxt:HudText;
+	public var shitTxt:HudText;
+
+
 	public var botplayText:FlxText;
 	public var botplayTextTweenAlpha:FlxTween;
 	public var botplayTextTweenScale:FlxTween;
@@ -244,7 +255,8 @@ class PlayState extends violet.backend.StateBackend {
 		Conductor.playSong(songData.songName, variation); Conductor.pause();
 		Conductor.setupBPMChanges(songData, sortedEvents);
 		Conductor.offset = (countdownLength) * Conductor.beatLengthMs;
-		if (SONG.meta.needsVoices) generalVocals = Conductor.addAdditionalTrack(FlxG.sound.load(Cache.sound(Paths.vocal(songData.songName, null, PlayState.variation), 'root', null, true), FlxG.sound.defaultMusicGroup));
+
+		if (Paths.vocal(songData.songName, null, PlayState.variation) != '') generalVocals = Conductor.addAdditionalTrack(FlxG.sound.load(Cache.sound(Paths.vocal(songData.songName, null, PlayState.variation), 'root', null, true), FlxG.sound.defaultMusicGroup));
 		else generalVocals = Conductor.addAdditionalTrack(new FlxSound());
 
 		StrumLine.generalScrollSpeed = SONG.scrollSpeed ?? 1;
@@ -343,6 +355,36 @@ class PlayState extends violet.backend.StateBackend {
 		accuracyTxt.zIndex = 99;
 		add(accuracyTxt);
 
+		missesTxt = new HudText();
+		missesTxt.camera = camHUD;
+		missesTxt.zIndex = 99;
+		missesTxt.text = 'Misses: 0';
+		add(missesTxt);
+
+		sickTxt = new HudText();
+		sickTxt.camera = camHUD;
+		sickTxt.zIndex = 99;
+		sickTxt.text = 'Sicks: 0';
+		add(sickTxt);
+
+		goodTxt = new HudText();
+		goodTxt.camera = camHUD;
+		goodTxt.zIndex = 99;
+		goodTxt.text = 'Goods: 0';
+		add(goodTxt);
+
+		badTxt = new HudText();
+		badTxt.camera = camHUD;
+		badTxt.zIndex = 99;
+		badTxt.text = 'Bads: 0';
+		add(badTxt);
+
+		shitTxt = new HudText();
+		shitTxt.camera = camHUD;
+		shitTxt.zIndex = 99;
+		shitTxt.text = 'Shits: 0';
+		add(shitTxt);
+
 		accuracyTxt.text = 'Accuracy: 100.00%';
 		accuracyTxt.x = healthBar.x;
 		accuracyTxt.refreshDisplay();
@@ -434,6 +476,8 @@ class PlayState extends violet.backend.StateBackend {
 			});
 			add(cameraMovementSprite);
 		}
+
+		positionHudTexts();
 	}
 
 	var healthLerp:Float = 0.5;
@@ -490,7 +534,7 @@ class PlayState extends violet.backend.StateBackend {
 
 		scoreLerp = lerp(scoreLerp, score, 0.25);
 		scoreTxt.text = 'Score: ' + ScoreUtil.stringifyScore(Options.data.disableScoreLerping ? Math.round(score) : Math.round(scoreLerp), 8);
-		scoreTxt.x = healthBar.x + healthBar.width - scoreTxt.realWidth;
+		if (!Options.data.advancedHud) scoreTxt.x = healthBar.x + healthBar.width - scoreTxt.realWidth;
 		scoreTxt.refreshDisplay();
 
 		scoreTxt.visible = !Options.data.hideScore;
@@ -569,6 +613,11 @@ class PlayState extends violet.backend.StateBackend {
 			combo++;
 			comboGroup.popupRating(judgement.rating, combo);
 
+			Reflect.setField(this, judgement.rating.toLowerCase() + 's', Reflect.field(this, judgement.rating.toLowerCase() + 's') + 1);
+			var txt = Reflect.field(this, judgement.rating.toLowerCase() + 'Txt');
+			txt.text = '${StringUtil.capitalizeFirst(judgement.rating)}s: ${Reflect.field(this, judgement.rating.toLowerCase() + 's')}';
+			txt.refreshDisplay();
+
 			switch (Options.data.accuracyCalculation) {
 				case RATING:
 					accuracies.push([
@@ -594,7 +643,6 @@ class PlayState extends violet.backend.StateBackend {
 		if (split[1].length == 1) split[1] = '0' + split[1];
 		if (Math.round(Std.parseFloat(accT)) == Std.parseFloat(accT)) split.push('00');
 		accuracyTxt.text = 'Accuracy: ${split.join('.')}%';
-		accuracyTxt.x = healthBar.x;
 		accuracyTxt.refreshDisplay();
 
 		runSongEvent('noteHitPost', event);
@@ -607,6 +655,8 @@ class PlayState extends violet.backend.StateBackend {
 		if (event.cancelled) return;
 
 		misses++;
+		missesTxt.text = 'Misses: $misses';
+		missesTxt.refreshDisplay();
 		combo = 0;
 
 		note.wasMissed = true; note.alpha *= 0.6;
@@ -713,29 +763,6 @@ class PlayState extends violet.backend.StateBackend {
 
 
 	function startCountdown():Void {
-
-		// Start Dialogue
-		if (!hasSeenDialogue) {
-			var sD:Array<ConverstationPiece> = ParseUtil.jsonOrYaml('songs/$song/start-dialogue', null, 'null');
-			if (sD != null) {
-				var dialogueHandler = new DialogueHandler(sD);
-				dialogueHandler.camera = camHUD;
-				dialogueHandler.updateHitbox();
-				dialogueHandler.screenCenter();
-				dialogueHandler.y += 150;
-				add(dialogueHandler);
-
-				dialogueHandler.onDialogueEnd = ()->{
-					dialogueHandler.destroy();
-					inDialogue = false;
-					hasSeenDialogue = true;
-					startCountdown();
-				}
-				inDialogue = true;
-				return;
-			}
-		}
-
 		countdownTick = 0;
 		var event:EventBase = runSongEvent('startCountdown', new EventBase());
 		if (event.cancelled) return;
@@ -840,7 +867,7 @@ class PlayState extends violet.backend.StateBackend {
 				if (direction == null) targetEase = NovaUtils.easeFromString(ease, '');
 				else targetEase = NovaUtils.easeFromString(ease, direction);
 
-				scrollTween = FlxTween.tween(camFollowPoint, { x: x, y: y }, (Conductor.stepLengthMs / 1000) * duration, { ease: targetEase, onUpdate: _->{
+				scrollTween = FlxTween.tween(camFollowPoint, { x: x, y: y }, Conductor.stepLengthMs * duration / 1000, { ease: targetEase, onUpdate: _->{
 					snapCamera();
 				}});
 
@@ -851,13 +878,15 @@ class PlayState extends violet.backend.StateBackend {
 
 				var x = targetCharacter.getMidpoint().x + (targetCharacter.cameraOffsets ?? [0, 0])[0];
 				var y = targetCharacter.getMidpoint().y + (targetCharacter.cameraOffsets ?? [0, 0])[1];
+				x += scriptEvent.params[4];
+				y += scriptEvent.params[5];
 
 				var duration:Float = scriptEvent.params[1];
 				var ease:String = scriptEvent.params[2];
 				var direction:String = scriptEvent.params[3];
 				var targetEase = NovaUtils.easeFromString(ease, direction ?? '');
 
-				scrollTween = FlxTween.tween(camFollowPoint, { x: x, y: y }, (Conductor.stepLengthMs / 1000) * duration, { ease: targetEase, onUpdate: _->{
+				scrollTween = FlxTween.tween(camFollowPoint, { x: x, y: y }, Conductor.stepLengthMs * duration / 1000, { ease: targetEase, onUpdate: _->{
 					snapCamera();
 				}});
 
@@ -872,7 +901,7 @@ class PlayState extends violet.backend.StateBackend {
 				if (scriptEvent.params[0]) {
 					var targetCamera = ['camGame' => camGameBase].get(scriptEvent.params[2]);
 					var	targetZoom = scriptEvent.params[1];
-					var targetDuration = (Conductor.stepLengthMs/1000) * scriptEvent.params[3];
+					var targetDuration = Conductor.stepLengthMs * scriptEvent.params[3] / 1000;
 					var targetEase = NovaUtils.easeFromString(scriptEvent.params[4], scriptEvent.params[5] ?? '');
 					FlxTween.cancelTweensOf(targetCamera);
 					FlxTween.tween(targetCamera, { zoom: targetZoom }, targetDuration, { ease: targetEase });
@@ -1047,11 +1076,21 @@ class PlayState extends violet.backend.StateBackend {
 		HXCHandler.instance.hxcScripts.callVariants(func, params);
 		songScripts.callVariants(func, params);
 		if (stage != null) stage.stageScripts.callVariants(func, params);
+		if (strumLines != null) {
+			for (line in strumLines) {
+				for (i in line.characters) i.scripts.call(func, params);
+			}
+		}
 	}
 
 	public function runSongEvent<T:violet.backend.scripting.events.EventBase>(func:String, event:T):T {
 		HXCHandler.instance.hxcScripts.event(func, event);
 		songScripts.event(func, event);
+		if (strumLines != null) {
+			for (line in strumLines) {
+				for (i in line.characters) i.scripts.event(func, event);
+			}
+		}
 		return stage.stageScripts.event(func, event);
 	}
 
@@ -1112,14 +1151,8 @@ class PlayState extends violet.backend.StateBackend {
 		ghostTapping = Options.data.ghostTapping;
 		for (i=>strumLine in strumLines) {
 			if (!strumLine.disableOptionsAffect) {
-				// var prevScroll:Bool = strumLine.downscroll;
 				strumLine.downscroll = Options.data.downscroll;
-				/* if (strumLine.scrollAngle != null)
-					if (strumLine.downscroll != prevScroll)
-						strumLine.scrollAngle += 180; */
 				strumLine.setPosition(strumLine.chartData.strumPosition[0], strumLine.chartData.strumPosition[1], strumLine.chartData.strumPosIsPure);
-
-				// allow notes to update
 				strumLine.update(0);
 			}
 		}
@@ -1127,10 +1160,7 @@ class PlayState extends violet.backend.StateBackend {
 
 		comboGroup.style = Options.data.kadePopups ? 'kade' : 'funkin';
 
-		healthBar.y = Options.data.downscroll ? FlxG.height * 0.1 : FlxG.height * 0.9;
-		scoreTxt.y = healthBar.y + healthBar.height + 5;
-		iconPlayer.y = healthBar.y + (healthBar.height/2) - (iconPlayer.height/2);
-		iconOpponent.y = healthBar.y + (healthBar.height/2) - (iconOpponent.height/2);
+
 
 		healthBar.x += getHealthBarOffsets().x;
 		healthBar.y += getHealthBarOffsets().y;
@@ -1143,10 +1173,35 @@ class PlayState extends violet.backend.StateBackend {
 			healthBar.rightColor = iconPlayer._data.color;
 		else healthBar.rightColor = FlxColor.LIME;
 
+		healthBar.y = Options.data.downscroll ? FlxG.height * 0.1 : FlxG.height * 0.9;
+		accuracyTxt.x = healthBar.x;
+		accuracyTxt.y = scoreTxt.y = healthBar.y + healthBar.height + 5;
+		iconPlayer.y = healthBar.y + (healthBar.height/2) - (iconPlayer.height/2);
+		iconOpponent.y = healthBar.y + (healthBar.height/2) - (iconOpponent.height/2);
+
 		scoreTxt.visible = !Options.data.hideScore;
 		accuracyTxt.visible = !Options.data.hideAccuracy;
 
+		positionHudTexts();
+
 		runSongEvent('postUpdateOptions', event);
+	}
+
+	public function positionHudTexts() {
+		var arr = [sickTxt, goodTxt, badTxt, shitTxt, missesTxt, scoreTxt, accuracyTxt];
+		for (i=>txt in arr) {
+			if (Options.data.advancedHud) {
+				txt.visible = true;
+				txt.x = 5;
+				txt.y = (FlxG.height / 2) + (25 * i);
+				txt.y -= (25 * (arr.length-1)) / 2;
+			} else {
+				txt.visible = false;
+			}
+			txt.refreshDisplay();
+		}
+		accuracyTxt.visible = !Options.data.hideAccuracy;
+		scoreTxt.visible = !Options.data.hideScore;
 	}
 
 	@:unreflective var healthBarShi:FlxPoint = null;
@@ -1156,7 +1211,7 @@ class PlayState extends violet.backend.StateBackend {
 		if (Paths.fileExists(iniPath, true)) {
 			var data = '{ "offsets": ${FileUtil.getFileContent(Paths.image('game/hud/healthBar-offsets', null, 'ini'))} }';
 			var parsed = Json.parse(data);
-			return healthBarShi = new FlxPoint(parsed.offsets[0], parsed.offsets[1] * (Options.data.downscroll ? -1 : 1));
+			return healthBarShi = new FlxPoint(parsed.offsets[0], parsed.offsets[1]);
 		} else {
 			return healthBarShi = new FlxPoint();
 		}

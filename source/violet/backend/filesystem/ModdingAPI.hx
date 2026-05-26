@@ -73,13 +73,14 @@ class ModdingAPI {
 	public static var availableMods(default, null):Array<ModMeta> = [];
 	public static var activeModsIds(default, default):Array<String> = [];
 
-	public static #if release inline #end final MOD_FOLDER:String = #if REDIRECT_ASSETS_FOLDER "../../../../mods" #else "mods" #end;
+	public static inline final MOD_FOLDER:String = #if REDIRECT_ASSETS_FOLDER "../../../../mods" #else "mods" #end;
 	public static var API_VERSION:Version = "0.0.0";
 
 	public static var EXT_ALIASES:Map<String, Array<String>> = [
 		'lua' => ['lua', 'luac', 'luas', 'lscript'],
 		'hx' => ['hx', /* 'hxc',  */'hxs', 'hscript'],
-		'py' => ['py', 'pyc', 'pys', 'pscript']
+		'py' => ['py', 'pyc', 'pys', 'pscript'],
+		'nx' => ['nx', 'nxc', 'nxs', 'nxscript']
 	];
 
 	public static var STATE_PATHS = ['data/scripts/states'];
@@ -246,28 +247,22 @@ class ModdingAPI {
 		trace('debug:<yellow>${registered ? "Reloading" : "Initializing"} Registries...');
 		NovaUtils.CURRENT_MUSIC = null;
 		registered = true;
-		LoadingState.loadingText = "Loading: NoteStyles...";
-		violet.data.notestyles.NoteStyleRegistry.registerNoteStyles();
-		LoadingState.loadingPercent += 1/7;
-		LoadingState.loadingText = "Loading: Levels...";
-		violet.data.level.LevelRegistry.registerLevels();
-		LoadingState.loadingPercent += 1/7;
-		LoadingState.loadingText = "Loading: Icons...";
-		violet.data.icon.HealthIconRegistry.registerIcons();
-		LoadingState.loadingPercent += 1/7;
-		LoadingState.loadingText = "Loading: Characters...";
-		violet.data.character.CharacterRegistry.registerCharacters();
-		LoadingState.loadingPercent += 1/7;
-		LoadingState.loadingText = "Loading: Songs...";
-		violet.data.song.SongRegistry.registerSongs();
-		LoadingState.loadingPercent += 1/7;
-		LoadingState.loadingText = "Loading: Stages...";
-		violet.data.stage.StageRegistry.registerStages();
-		LoadingState.loadingPercent += 1/7;
-		LoadingState.loadingText = "Loading: Charts...";
-		violet.data.chart.ChartRegistry.registerCharts();
-		LoadingState.loadingPercent += 1/7;
+
+		final registries = [
+			{name: 'NoteStyles', func: violet.data.notestyles.NoteStyleRegistry.registerNoteStyles},
+			{name: 'Levels', func: violet.data.level.LevelRegistry.registerLevels},
+			{name: 'Icons', func: violet.data.icon.HealthIconRegistry.registerIcons},
+			{name: 'Characters', func: violet.data.character.CharacterRegistry.registerCharacters},
+			{name: 'Songs', func: violet.data.song.SongRegistry.registerSongs},
+			{name: 'Stages', func: violet.data.stage.StageRegistry.registerStages},
+			{name: 'Charts', func: violet.data.chart.ChartRegistry.registerCharts}
+		];
+		for (data in registries) {
+			LoadingState.loadingText = 'Loading: ${data.name}...'; data.func();
+			LoadingState.loadingPercent += 1/registries.length;
+		}
 		LoadingState.loadingText = "Done!!";
+		registries.resize(0);
 
 		/* final foundHXC:Array<String> = checkForHXC();
 		if (foundHXC.length == 0) trace('debug:<cyan>No HXC scripts found.');
@@ -306,6 +301,16 @@ class ModdingAPI {
 				if (file.endsWith('.$ext')) {
 					if (!FileUtil.getFileContent(file).contains("scriptDisabled = true")) {
 						pack.addScript(new violet.backend.scripting.LuaScript(file));
+					}
+				}
+			}
+			#end
+
+			#if CAN_NX_SCRIPT
+			for (ext in ModdingAPI.EXT_ALIASES.get("nx")) {
+				if (file.endsWith('.$ext')) {
+					if (!FileUtil.getFileContent(file).contains("scriptDisabled = true")) {
+						pack.addScript(new violet.backend.scripting.NxScript(file));
 					}
 				}
 			}

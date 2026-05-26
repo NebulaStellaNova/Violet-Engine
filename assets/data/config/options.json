@@ -28,10 +28,6 @@
 					"saveID": "note_right"
 				},
 				{
-					"name": "",
-					"type": "section"
-				},
-				{
 					"name": "UI",
 					"type": "section"
 				},
@@ -74,10 +70,6 @@
 					"name": "Fullscreen",
 					"type": "control",
 					"saveID": "fullscreen"
-				},
-				{
-					"name": "",
-					"type": "section"
 				},
 				{
 					"name": "DEVELOPER",
@@ -263,22 +255,52 @@
 					"type": "bool"
 				},
 				{
+					"name": "Advanced HUD",
+					"description": "If checked, hud will show stuff such as misses and rating counts.",
+					"saveID": "advancedHud",
+					"type": "bool"
+				},
+				{
 					"name": "Hide Score",
 					"description": "If checked, score text under the health bar will be hidden.",
 					"saveID": "hideScore",
-					"type": "bool"
+					"type": "bool",
+					"conditions": [
+						{
+							"id": "advancedHud",
+							"state": false
+						}
+					]
 				},
 				{
 					"name": "Hide Accuracy",
 					"description": "If checked, accuracy text under the health bar will be hidden.",
 					"saveID": "hideAccuracy",
-					"type": "bool"
+					"type": "bool",
+					"conditions": [
+						{
+							"id": "advancedHud",
+							"state": false
+						}
+					]
 				},
 				{
 					"name": "Enable Lane Underlay",
 					"description": "If checked, a black box will appear under the notes.",
 					"saveID": "laneUnderlay",
 					"type": "bool"
+				},
+				{
+					"name": "Underlay For Player Only",
+					"description": "If checked, the underlay will only appear for player strumLines.",
+					"saveID": "underlayOnlyForPlayer",
+					"type": "bool",
+					"conditions": [
+						{
+							"id": "laneUnderlay",
+							"state": true
+						}
+					]
 				},
 				{
 					"name": "Underlay Expansion",
@@ -343,25 +365,12 @@
 							"state": true
 						}
 					]
-				},
-				{
-					"name": "Underlay For Player Only",
-					"description": "If checked, the underlay will only appear for player strumLines.",
-					"saveID": "underlayOnlyForPlayer",
-					"type": "bool"
 				}
 			]
 		},
 		{
-			"title": "Graphics",
+			"title": "Display",
 			"options": [
-				{
-					"name": "VSync",
-					"description": "If enabled, the game will use the display's refresh rate instead of the Framerate value.",
-					"saveID": "vsync",
-					"type": "bool",
-					"platform": "windows"
-				},
 				{
 					"name": "Framerate",
 					"description": "Sets the target framerate for the game.",
@@ -378,6 +387,13 @@
 					]
 				},
 				{
+					"name": "VSync",
+					"description": "If enabled, the game will use the display's refresh rate instead of the Framerate value.",
+					"saveID": "vsync",
+					"type": "bool",
+					"platform": "windows"
+				},
+				{
 					"name": "Texture Antialiasing",
 					"description": "Enables linear filtering on textures for smoother visuals.",
 					"saveID": "antialiasTextures",
@@ -388,6 +404,31 @@
 					"description": "Allows the GPU to store textures and keeps them cached, reducing RAM usage. (Mid-High End GPU recommended for this)",
 					"saveID": "gpuCaching",
 					"type": "bool"
+				},
+				{
+					"name": "Window Mode",
+					"description": "Whether window should be fullscreen, borderless fullscreen, or windowed.\n(Persists between sessions)",
+					"saveID": "windowMode",
+					"allowHolding": false,
+					"type": "number",
+					"wrap": true,
+					"min": 0,
+                    "max": 2,
+					"step": 1,
+					"replacer": [
+						{
+							"what": 0,
+							"with": "WINDOWED"
+						},
+						{
+							"what": 1,
+							"with": "BORDERLESS"
+						},
+						{
+							"what": 2,
+							"with": "FULLSCREEN"
+						}
+					]
 				}
 			]
 		},

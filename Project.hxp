@@ -71,7 +71,8 @@ class Project extends HXProject {
 		new Lib('lscript', 'https://github.com/SrtHero278/lscript', ['--skip-dependencies']),
 		new Lib('rulescript', 'https://github.com/Kriptel/RuleScript', ['dev']),
 		new Lib('flixel-animate', 'https://github.com/NebulaStellaNova/flixel-animate', ['bullshity-fix', '--skip-dependencies']),
-		new Lib('hython', 'https://github.com/Paopun20/hython.git', ['legacy'])
+		new Lib('hython', 'https://github.com/Paopun20/hython.git', ['legacy']),
+		new Lib('nxscript', 'https://github.com/senioritaelizabeth/NxScript', ['dev'])
 	];
 
 	// Basic variables.
@@ -138,6 +139,10 @@ class Project extends HXProject {
 	 * States if the engine has haxe scripting support.
 	 */
 	static final canHaxeScript:CompilerFlag = 'CAN_HAXE_SCRIPT';
+	/**
+	 * States if the engine has haxe scripting support.
+	 */
+	static final canNxScript:CompilerFlag = 'CAN_NX_SCRIPT';
 	/**
 	 * States if the engine has lua scripting support.
 	 */
@@ -243,6 +248,7 @@ class Project extends HXProject {
 		// script related
 		if (scriptSupport.exists()) {
 			canHaxeScript.enable();
+			canNxScript.enable();
 			canPythonScript.enable();
 			if (!isMobile()) canLuaScript.enable();
 
@@ -310,6 +316,9 @@ class Project extends HXProject {
 			if (modSupport.exists()) addAssetPath('./mods', './mods', ['*'], excludeList);
 		}
 
+		if (isDesktop())
+			addAsset('./alsoft.ini', './alsoft.${isWindows() ? 'ini' : 'conf'}');
+
 		/* Path Settings */
 
 		addHaxeMacro('violet.backend.Macro.init()');
@@ -342,6 +351,8 @@ class Project extends HXProject {
 		// chart converter
 		addHaxelib('moonchart');
 
+		if (canNxScript.exists())
+			addHaxelib('nxscript', 'git');
 		if (canHaxeScript.exists())
 			addHaxelib('rulescript', 'git');
 		if (canLuaScript.exists()) {

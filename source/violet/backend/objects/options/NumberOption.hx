@@ -1,11 +1,17 @@
 package violet.backend.objects.options;
 
+import flixel.math.FlxMath;
+using violet.backend.objects.options.Mather;
+
 class NumberOption extends BaseOption {
 
 	public var value:Float = 0;
 	var min:Null<Float>;
 	var max:Null<Float>;
 	var step:Float;
+
+	public var allowHolding:Bool = true;
+	public var wrap:Bool = false;
 
 	public var numberText:Alphabet;
 
@@ -30,19 +36,21 @@ class NumberOption extends BaseOption {
 
 		if (Controls.uiLeftPress || Controls.uiRightPress)
 			time += elapsed;
-		if (time > 0.5)
+		if (time > 0.5 && allowHolding)
 			usePress = true;
 
 		if (selected) {
 			if (usePress ? (Controls.uiLeftPress && time % 0.3 > 0.05) : Controls.uiLeft) {
 				value -= step;
-				if (min != null) value = Math.max(min, value);
+				if (wrap) value = value.wrap(min, max);
+				else if (min != null) value = Math.max(min, value);
 				value = Math.round(value/step)*step;
 				onChange(value); numberText.text = '< $value >';
 				onChangePost(value);
 			} else if (usePress ? (Controls.uiRightPress && time % 0.3 > 0.05) : Controls.uiRight) {
 				value += step;
-				if (max != null) value = Math.min(max, value);
+				if (wrap) value = value.wrap(min, max);
+				else if (max != null) value = Math.min(max, value);
 				value = Math.round(value/step)*step;
 				onChange(value); numberText.text = '< $value >';
 				onChangePost(value);

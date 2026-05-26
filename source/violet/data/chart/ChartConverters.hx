@@ -169,14 +169,14 @@ class ChartConverters {
 				position: 'dad',
 				type: OPPONENT,
 				notes: [],
-				vocalsSuffix: (meta.playData.characters?.opponentVocals ?? [])[0]
+				vocalsSuffix: (meta.playData.characters?.opponentVocals ?? [meta.playData.characters?.opponent])[0]
 			};
 			var play = {
 				characters: [meta.playData.characters.player],
 				position: 'boyfriend',
 				type: PLAYER,
 				notes: [],
-				vocalsSuffix: (meta.playData.characters?.playerVocals ?? [])[0]
+				vocalsSuffix: (meta.playData.characters?.playerVocals ?? [meta.playData.characters?.player])[0]
 			}
 			var spec = {
 				characters: [meta.playData.characters.girlfriend],
@@ -250,7 +250,9 @@ class ChartConverters {
 									[1, 0, 2][target],
 									ease == 'INSTANT' ? 0.0001 : dur,
 									ease,
-									easeDir
+									easeDir,
+									x,
+									y
 								]
 							});
 						}

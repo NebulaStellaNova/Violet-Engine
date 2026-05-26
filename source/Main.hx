@@ -9,50 +9,56 @@ import violet.boot.DiscordRPC;
 import violet.data.Constants;
 import hxvlc.flixel.FlxVideoSprite;
 
-typedef StupidSignalMember = {
-	var callback:Void->Void;
-	var removeAfterCall:Bool;
+typedef StupidSignalMember<T> = {
+    var callback:T;
+    var removeAfterCall:Bool;
 }
 
-class StupidSignal {
+class StupidSignal<T:haxe.Constraints.Function> {
+    final members:Array<StupidSignalMember<T>> = [];
+    public var dispatch:T;
+    public var intervalCallback:Void->Void;
 
-	final members:Array<StupidSignalMember> = [];
+    public function new() {
+        dispatch = cast Reflect.makeVarArgs(function(args:Array<Dynamic>) {
+            var _members = members.copy();
 
-	public function new() {}
+            for (member in _members) {
+                Reflect.callMethod(null, member.callback, args);
 
-	public function add(callback:Void->Void):Void {
-		for (member in members) if (member.callback == callback) return;
-		members.push({callback: callback, removeAfterCall: false});
-	}
-	public function addOnce(callback:Void->Void):Void {
-		for (member in members) if (member.callback == callback) return;
-		members.push({callback: callback, removeAfterCall: true});
-	}
+                if (member.removeAfterCall) {
+                    members.remove(member);
+                }
+                if (intervalCallback != null) {
+                    intervalCallback();
+                }
+            }
+        });
+    }
 
-	public function remove(callback:Void->Void):Void {
-		final _members = members.copy();
-		for (member in _members) {
-			if (member.callback == callback)
-				members.remove(member);
-		}
-		_members.resize(0);
-	}
+    public function add(callback:T):Void {
+        for (member in members) if (Reflect.compareMethods(member.callback, callback)) return;
+        members.push({callback: callback, removeAfterCall: false});
+    }
 
-	public function dispatch(?intervalCallback:Void->Void):Void {
-		for (member in members) {
-			member.callback();
-			if (member.removeAfterCall)
-				members.remove(member);
-			if (intervalCallback != null)
-				intervalCallback();
-		}
-	}
+    public function addOnce(callback:T):Void {
+        for (member in members) if (Reflect.compareMethods(member.callback, callback)) return;
+        members.push({callback: callback, removeAfterCall: true});
+    }
 
+    public function remove(callback:T):Void {
+        var i = members.length;
+        while (i-- > 0) {
+            if (Reflect.compareMethods(members[i].callback, callback)) {
+                members.splice(i, 1);
+            }
+        }
+    }
 }
 
 class Main extends openfl.display.Sprite {
 
-	public static var threadCallacks:StupidSignal = new StupidSignal();
+	public static var threadCallacks:StupidSignal<Void->Void> = new StupidSignal<Void->Void>();
 
 	/**
 	 * Name of the current state's class.
@@ -128,7 +134,8 @@ class Main extends openfl.display.Sprite {
 		sys.thread.Thread.create(() -> {
 			while (true) {
 				try {
-					threadCallacks.dispatch(() -> Sys.sleep(FlxG.elapsed));
+					threadCallacks.dispatch();
+					Sys.sleep(FlxG.elapsed);
 				} catch(error:haxe.Exception)
 					trace('debug:Error in thread callback: $error');
 			}

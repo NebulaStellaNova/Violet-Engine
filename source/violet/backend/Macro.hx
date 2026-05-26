@@ -86,7 +86,7 @@ class Macro {
 			/**
 			 * Signal's to help make scripting more convenient... ig
 			 */
-			public var onUpdate = new flixel.util.FlxSignal.FlxTypedSignal<Float->Void>();
+			public var onUpdate = new Main.StupidSignal<Float->Void>();
 			// Doesn't work tho idk why ??
 
 			public var parentGroup:flixel.group.FlxGroup.FlxTypedGroup<Dynamic> = null;
