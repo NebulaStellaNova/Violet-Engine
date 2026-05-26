@@ -399,7 +399,7 @@ class StrumLine extends FlxGroup {
 		var laneCursor = activeNoteLaneCursors[inputId];
 		while (laneCursor < laneNotes.length) {
 			final note = laneNotes[laneCursor];
-			if (note != null && note.exists && !note.wasHit && !note.wasMissed && !note.tooLate)
+			if (note != null && note.exists && !note.wasHit && !note.wasMissed && !note.tooLate && note.canHit)
 				break;
 			laneCursor++;
 		}
@@ -415,7 +415,6 @@ class StrumLine extends FlxGroup {
 			return;
 		}
 		_onVoidTap(inputId, this);
-
 	}
 
 	var __on_release:KeyboardEvent->Void;
