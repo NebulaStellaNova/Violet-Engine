@@ -3,62 +3,25 @@ package violet.data.notestyles;
 import haxe.io.Path;
 import violet.backend.utils.ParseUtil;
 
-class NoteStyleRegistry {
+@:registryData('NoteStyle', [violet.data.notestyles.NoteStyle, violet.data.notestyles.NoteStyleData])
+class NoteStyleRegistry implements violet.data.RegistryImpl {
 
-	public static var noteStyles:Array<NoteStyle> = [];
-	public static var noteStyleDatas:Map<String, NoteStyleData> = new Map<String, NoteStyleData>();
+	public static function registerEntries():Void {
+		trace('debug:<yellow>Registering ${id}s...');
 
-	public static function registerNoteStyles() {
-		trace('debug:<yellow>Registering note styles...');
-		noteStyles.resize(0);
-		noteStyleDatas.clear();
+		clearEntries();
 
 		for (file in Paths.readFolder('data/notestyles')) {
-			final fileName = Path.withoutExtension(file);
-			final metaPath = 'data/notestyles/$fileName';
+			final entryId = Path.withoutExtension(file);
+			final metaPath = 'data/notestyles/$entryId';
 			if (!(Paths.fileExists(Paths.json(metaPath), true) || Paths.fileExists(Paths.yaml(metaPath), true))) {
-				trace('warning:Could not find meta file for note style with ID $file. Skipping registration.');
+				trace('warning:<orange>Could not find $id, "<magenta>$file<orange>", ignoring entry.');
 				continue;
 			}
 			var parsed:Dynamic = ParseUtil.jsonOrYaml(metaPath);
-			if (parsed.assets != null) {
-				trace('warning:Could not parse note style with ID $file as it is in V-Slice format.');
-			} else {
-				noteStyleDatas.set(fileName, parsed);
-				registerNoteStyle(new NoteStyle(fileName));
-			}
+			if (parsed.assets != null) trace('warning:<orange>Could not parse $id, "<magenta>$file<orange>", as it is in VSlice\'s format.');
+			else if (parsed != null) registerEntry(entryId, parsed);
 		}
-	}
-
-	public static function registerNoteStyle(newStyle:NoteStyle) {
-		noteStyles.push(newStyle);
-		trace('debug:<cyan>Found and registered note style with ID "<magenta>${newStyle.id}<cyan>"');
-	}
-
-	public static function getAllNoteStyleIDs():Iterator<String> {
-		return noteStyles.map((noteStyle) -> noteStyle.id).iterator();
-	}
-
-	public static function getAllNoteStyles():Array<NoteStyle> {
-		return noteStyles.copy();
-	}
-
-	public static function doesNoteStyleExist(id:String):Bool {
-		for (noteStyle in noteStyles) {
-			if (noteStyle.id == id) {
-				return true;
-			}
-		}
-		return false;
-	}
-
-	public static function getNoteStyleByID(id:String):Null<NoteStyle> {
-		for (noteStyle in noteStyles) {
-			if (noteStyle.id == id) {
-				return noteStyle;
-			}
-		}
-		return null;
 	}
 
 }

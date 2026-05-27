@@ -48,7 +48,7 @@ class CharacterEditorState extends StateBackend {
 
 	public var characterList(get, never):Array<String>;
 	function get_characterList() {
-		var out = [for (i in CharacterRegistry.characterDatas.keys()) i];
+		var out = [for (i in CharacterRegistry.entries.keys()) i];
 		out.sort(NovaUtils.sortAlphabetically);
 		return out;
 	}
@@ -155,7 +155,7 @@ class CharacterEditorState extends StateBackend {
 		}
 		var exitToMenu:MenuItem = menuBar.findElement('exitToMenu');
 		exitToMenu.onClick = ()->{
-			for (i in newList) if (CharacterRegistry.characterDatas.exists(i)) CharacterRegistry.characterDatas.remove(i);
+			for (i in newList) if (CharacterRegistry.entries.exists(i)) CharacterRegistry.entries.remove(i);
 			ModdingAPI.reloadRegistries();
 			FlxG.switchState(new MainMenu());
 		};
@@ -399,7 +399,7 @@ class CharacterEditorState extends StateBackend {
 		@:privateAccess characterDropdown.close();
 		characterDropdown.clearOptions();
 		for (i in characterList) {
-			characterDropdown.addOption(CharacterRegistry.characterDatas.get(i).name, i);
+			characterDropdown.addOption(CharacterRegistry.fetchEntry(i).name, i);
 			// add(character);
 		}
 	}

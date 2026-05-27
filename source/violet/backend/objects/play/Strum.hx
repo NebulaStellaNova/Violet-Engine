@@ -63,7 +63,7 @@ class Strum extends NovaSprite {
 		this.parent = parent;
 		ID = id;
 		style = null;
-		this.styleMeta = NoteStyleRegistry.getNoteStyleByID(parent.noteStyle ?? 'default');
+		this.styleMeta = NoteStyleRegistry.fetchEntry(parent.noteStyle ?? 'default');
 
 		final daScale:Float = styleMeta.strumProperties.scale;
 		scale.set(daScale, daScale);
@@ -87,7 +87,7 @@ class Strum extends NovaSprite {
 		this.anims.clear();
 		animation.destroyAnimations();
 		final style:String = style ?? this.style ?? parent.noteStyle ?? 'default';
-		this.styleMeta = NoteStyleRegistry.getNoteStyleByID(style);
+		this.styleMeta = NoteStyleRegistry.fetchEntry(style);
 		loadSprite(styleMeta.getStrumAssetPath());
 		for (data in styleMeta.getStrumAnimations(ID, parent.keyCount))
 			addAnimFromData(data);
@@ -135,12 +135,7 @@ class Strum extends NovaSprite {
 
 	public function spawnSplash(?note:Note):Void {
 		if (!Options.data.enableNoteSplashes) return;
-		var finalMeta;
-		if (note?.style != null) {
-			finalMeta = NoteStyleRegistry.getNoteStyleByID(note.style);
-		} else {
-			finalMeta = styleMeta;
-		}
+		var finalMeta = note?.style != null ? NoteStyleRegistry.fetchEntry(note?.style) : styleMeta;
 
 		if (!splashBin.exists(finalMeta.id)) splashBin.set(finalMeta.id, []);
 		if (!splashBinIndex.exists(finalMeta.id)) splashBinIndex.set(finalMeta.id, 0);

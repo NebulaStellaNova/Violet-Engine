@@ -19,10 +19,7 @@ class Song {
 		return _data?.displayName ?? songName;
 	}
 
-	public var variant(get, never):String;
-	function get_variant():String {
-		return id.split(':')[1] ?? '';
-	}
+	public var variant:Null<String>;
 
 	public var bpm(get, never):Float;
 	function get_bpm():Float {
@@ -76,9 +73,17 @@ class Song {
 
 	public var _data:SongData;
 
-	public function new(id:String) {
-		this._data = SongRegistry.songDatas.get(id);
+	public function new(id:String, ?variant:String) {
+		this._data = SongRegistry.entries.get(setupId(id, null, variant));
 		this.id = id;
+		this.variant = variant;
+	}
+
+	inline public static function setupId(id:String, ?difficulty:String, ?variant:String, divider:String = ':'):String {
+		var fixedId = id;
+		if (!(difficulty == null || difficulty.trim() == '')) fixedId += '$divider$difficulty';
+		if (!(variant == null || variant.trim() == '')) fixedId += '$divider$variant';
+		return fixedId;
 	}
 
 }

@@ -5,17 +5,17 @@ using violet.backend.macros.MacroUtil;
 
 class RegistryMacro {
 
-	public static macro function buildRegistry():Array<Field> {
-		var cls:ClassType = Context.getLocalClass().get();
-		var fields:Array<Field> = Context.getBuildFields();
+	public static macro function build():Array<Field> {
+		final cls:ClassType = Context.getLocalClass().get();
+		final fields:Array<Field> = Context.getBuildFields();
 
-		var regMeta = cls.meta.extract(':registryData')[0];
-		var idValue:Expr = {expr: EConst(CString(regMeta.params[0].stringFromMetaExpr())), pos: Context.currentPos()}
-		var typeArgs:Expr = regMeta.params[1];
+		final regMeta = cls.meta.extract(':registryData')[0];
+		final idValue:Expr = {expr: EConst(CString(regMeta.params[0].stringFromMetaExpr())), pos: Context.currentPos()}
 		var classType:ComplexType;
 		var dataType:ComplexType;
+		cls.doc = 'Handles all ${regMeta.params[0].stringFromMetaExpr()}s!' + (cls.doc == null || cls.doc.length == 0 ? '' : '\n${cls.doc}');
 
-		switch (typeArgs.expr) {
+		switch (regMeta.params[1].expr) {
 			case EArrayDecl(items):
 				if (items.length < 2) throw 'Expected two registry types in @:registryData';
 				classType = items[0].typeFromMetaExpr();
@@ -24,8 +24,17 @@ class RegistryMacro {
 				throw 'Expected type array as second @:registryData parameter';
 		}
 
-		var tempClass = macro class TempClass {
-			public static final id:String = $idValue;
+		final classTPath:TypePath = switch (classType) {
+			case TPath(p): p;
+			default: null;
+		}
+		final tempClass = macro class TempClass {
+			/**
+			 * Just used internally when the function is generated via the macro.
+			 */
+			@:noCompletion inline static final _id:String = $idValue;
+
+			public static final id:String = _id;
 			public static final data:Array<$classType> = [];
 			public static final entries:Map<String, $dataType> = new Map<String, $dataType>();
 
@@ -34,34 +43,45 @@ class RegistryMacro {
 				entries.clear();
 			}
 
-			public static function registerEntries():Void {
-				throw 'debug:<darkcyan>$id registry is not setup.';
-			}
-			inline public static function registerEntry(id:String, data:Dynamic):Void {
-				throw 'debug:<darkcyan>$id registry is not setup.';
-			}
-
-
-			inline public static function entryExists(id:String):Bool {
-				// yes, you need to set this up too
-				throw 'debug:<darkcyan>$id registry is not setup.';
-			}
-			inline public static function fetchEntry(id:String):Null<Dynamic> {
-				throw 'debug:<darkcyan>$id registry is not setup.';
+			public static function registerEntries():Void
+				throw 'debug:<darkred>The <cyan>$id<darkred> registry is not setup.';
+			public static function registerEntry(id:String, _data:$dataType):Void {
+				if (entryExists(id)) {
+					trace('warning:<orange>$_id with ID "<magenta>$id<orange>" is already registered, ignoring entry.');
+					return;
+				}
+				entries.set(id, _data);
+				data.push(new $classTPath(id));
+				trace('debug:<cyan>Registered $_id entry, "<magenta>$id<cyan>".');
 			}
 
-			inline public static function getAllEntryIDs():Array<String>
-				return [for (id in entries.keys()) id];
-			inline public static function getAllEntries():Array<Dynamic>
-				return data.copy();
+
+			inline public static function entryExists(id:String):Bool return entries.exists(id);
+			inline public static function fetchEntry(id:String):Null<$classType> {
+				if (!entryExists(id)) // we love inlining :3
+					trace('debug:<red>$_id entry "<yellow>$id<red>" doesn\'t exist.');
+				return data.find(entry -> return entry.id == id);
+			}
+
+			inline public static function getAllEntryIDs():Array<String> return [for (id in entries.keys()) id];
+			inline public static function getAllEntries():Array<$classType> return data.copy();
 		}
 
+		final throwableFields = ['registerEntries'];
+		final autoGenFields = [
+			'clearEntries',
+			'registerEntry',
+			'entryExists', 'fetchEntry',
+			'getAllEntryIDs', 'getAllEntries'
+		];
+
 		// If you already have the function in the class, it will ignore the macro created one.
-		var skippableFields = ['registerEntries', 'registerEntry', 'fetchEntry', 'entryExists'];
+		final skippableFields = throwableFields.concat(autoGenFields);
 		return fields.concat(tempClass.fields.filter((field) -> {
 			if (!skippableFields.exists(f -> return f == field.name)) return true;
 			final contains = fields.exists(f -> return f.name == field.name);
-			if (!contains) Context.info('Field "${field.name}" doesn\'t exist, expect throws to occur.', Context.currentPos());
+			if (!contains && throwableFields.contains(field.name))
+				Context.info('Field "${field.name}" doesn\'t exist, expect throws to occur.', Context.currentPos());
 			return !contains;
 		}));
 	}

@@ -10,7 +10,7 @@ class Level {
 
 	public function new(id:String) {
 		this.id = id;
-		this._data = LevelRegistry.levelDatas.get(id) ?? LevelRegistry.getDefaultLevelData();
+		this._data = LevelRegistry.entries.get(id) ?? LevelRegistry.getDefaultData();
 	}
 
 	/**

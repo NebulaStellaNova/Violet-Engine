@@ -216,7 +216,7 @@ class PlayState extends violet.backend.StateBackend {
 		camHUD.bgColor = FlxColor.TRANSPARENT;
 		FlxG.cameras.add(camHUD, false);
 
-		SONG = ChartRegistry.getChart(song, difficulty, variation);
+		SONG = ChartRegistry.fetchEntry(song, difficulty, variation);
 		songData = SONG.meta;
 		variation = songData.variant;
 		sortedEvents = cast SONG.events;
@@ -437,7 +437,7 @@ class PlayState extends violet.backend.StateBackend {
 		}
 
 		#if debug
-		DebugDisplay.registerVariable('Current Song', () -> return '$song:$difficulty');
+		DebugDisplay.registerVariable('Current Song', () -> return Song.setupId(song, difficulty, variation));
 		DebugDisplay.registerVariable('Is Story Mode', () -> return isStoryMode);
 		DebugDisplay.registerVariable('Misses & Accuracy', () -> return '$misses - $accuracy');
 		if (playlist.length != 0) DebugDisplay.registerVariable('Playlist Items', () -> return playlist);

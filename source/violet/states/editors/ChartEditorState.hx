@@ -1,23 +1,22 @@
 package violet.states.editors;
 
-import lemonui.elements.Text;
-import lemonui.elements.Slider;
-import violet.data.character.Character;
-import lemonui.utils.ElementUtil;
-import lemonui.elements.MenuBar;
-import violet.data.icon.HealthIcon;
-import violet.data.character.CharacterRegistry;
+import flixel.addons.display.FlxBackdrop;
 import flixel.math.FlxPoint;
+import lemonui.elements.MenuBar;
+import lemonui.elements.Slider;
+import lemonui.elements.Text;
+import lemonui.utils.ElementUtil;
+import violet.backend.StateBackend;
+import violet.backend.audio.Conductor;
 import violet.backend.scripting.events.NoteHitEvent;
-import violet.backend.scripting.events.EventBase;
 import violet.backend.utils.NovaUtils;
+import violet.data.character.Character;
+import violet.data.character.CharacterRegistry;
+import violet.data.chart.Chart;
+import violet.data.chart.ChartRegistry;
+import violet.data.icon.HealthIcon;
 import violet.data.song.Song;
 import violet.data.song.SongRegistry;
-import violet.data.chart.ChartRegistry;
-import violet.data.chart.Chart;
-import flixel.addons.display.FlxBackdrop;
-import violet.backend.audio.Conductor;
-import violet.backend.StateBackend;
 
 using violet.backend.utils.ArrayUtil;
 
@@ -55,8 +54,8 @@ class ChartEditorState extends StateBackend {
 
 		// FlxG.camera.zoom = 0.7; // Looks funny
 
-		chart = ChartRegistry.getChart(songID, difficulty, variant);
-		meta = SongRegistry.getSongByID(songID);
+		chart = ChartRegistry.fetchEntry(songID, difficulty, variant);
+		meta = SongRegistry.fetchEntry(songID, variant);
 
 		Conductor.stop();
 		Conductor.playSong(meta.songName, meta.variant);
@@ -101,7 +100,7 @@ class ChartEditorState extends StateBackend {
 			grids.push(chartGrid);
 
 			var characterID = line.characters[0];
-			var characterData = CharacterRegistry.characterDatas.get(characterID);
+			var characterData = CharacterRegistry.fetchEntry(characterID);
 			var icon = new HealthIcon(characterData?.healthIcon ?? characterID);
 			icon.x = chartGrid.x + chartGrid.width/2 - icon.width/2;
 			icon.y = chartGrid.y + 200/2 - icon.height/2;

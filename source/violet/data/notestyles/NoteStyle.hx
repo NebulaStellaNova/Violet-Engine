@@ -28,13 +28,14 @@ class NoteStyle {
 
 	public var fallback(get, never):NoteStyle;
 	function get_fallback():NoteStyle {
-		if (_data == null || getFallbackID() == null) return null;
-		return NoteStyleRegistry.getNoteStyleByID(getFallbackID());
+		if (_data?.fallback != null)
+			return NoteStyleRegistry.fetchEntry(_data.fallback);
+		return null;
 	}
 
 	public function new(id:String) {
 		this.id = id;
-		this._data = NoteStyleRegistry.noteStyleDatas.get(id) ?? NoteStyleRegistry.noteStyleDatas.get('default');
+		this._data = NoteStyleRegistry.entries.get(id) ?? NoteStyleRegistry.entries.get('default');
 
 		strumProperties = new _NoteStyleProperties(_data.strums?.properties, _data?.properties, {scale: 0.7});
 		noteProperties = new _NoteStyleProperties(_data.notes?.properties, _data?.properties, {scale: 0.7});
@@ -73,10 +74,6 @@ class NoteStyle {
 
 	public function getName():String {
 		return _data.name;
-	}
-
-	public function getFallbackID():Null<String> {
-		return _data.fallback;
 	}
 
 	public final strumProperties:_NoteStyleProperties;

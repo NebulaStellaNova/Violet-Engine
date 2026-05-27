@@ -350,7 +350,7 @@ class FreeplayMenu extends SubStateBackend {
 			list = list.concat([for (song in level.getSongs()) 'SONG:$song']);
 		} */
 
-		return SongRegistry.getAllSongs().filter(song -> {
+		return SongRegistry.getAllEntries().filter(song -> {
 			var conditions:Array<Bool> = [
 				Options.data.developerMode ? true : !song._data?.isDev ?? true
 			];

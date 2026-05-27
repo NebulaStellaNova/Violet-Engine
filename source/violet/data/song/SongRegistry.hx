@@ -1,51 +1,17 @@
 package violet.data.song;
 
-import violet.data.chart.ChartConverters;
-import violet.data.chart.ChartData;
-import sys.FileSystem;
-import haxe.Json;
 import haxe.io.Path;
 import sys.io.File;
 import violet.backend.utils.FileUtil;
 import violet.backend.utils.ParseUtil;
+import violet.data.chart.ChartConverters;
+import violet.data.chart.ChartData;
 import violet.data.level.LevelRegistry;
 
-using StringTools;
+@:registryData('Song', [violet.data.song.Song, violet.data.song.SongData])
+class SongRegistry implements violet.data.RegistryImpl {
 
-class SongRegistry {
-
-	public static var songs:Array<Song> = [];
-	public static var songDatas:Map<String, SongData> = new Map<String, SongData>();
-
-	public static function registerSongs() {
-		trace('debug:<yellow>Registering songs...');
-		// Implementation for registering songs goes here
-		songs.resize(0);
-		songDatas.clear();
-		var songList:Array<String> = [];
-		for (level in LevelRegistry.getAllLevels()) {
-			songList = songList.concat(level.getSongs());
-		}
-		checkAndConvertVSliceSongs(songList);
-		for (songID in songList) {
-			final parsed:Dynamic = ParseUtil.jsonOrYaml('songs/$songID/meta', null, 'null');
-			if (parsed == null) {
-				trace('warning:Could not find meta file for song with ID "$songID". Skipping registration.');
-				continue;
-			} else {
-				songDatas.set(songID, parsed);
-				registerSong(new Song(songID));
-			}
-			for (i in (parsed?.variants ?? [])) {
-				final variantMeta:Dynamic = ParseUtil.jsonOrYaml('songs/$songID/meta-$i');
-				songDatas.set('$songID:$i', variantMeta);
-				registerSong(new Song('$songID:$i'));
-				// trace('$songID:$i');
-			}
-		}
-	}
-
-	static function checkAndConvertVSliceSongs(songList:Array<String>) {
+	static function checkAndConvertVSliceSongs(songList:Array<String>):Void {
 		for (songID in songList) {
 			if (Paths.fileExists('songs/$songID/$songID-metadata.json')) {
 				if (!Paths.fileExists('songs/$songID/$songID-chart.json')) continue;
@@ -54,31 +20,51 @@ class SongRegistry {
 		}
 	}
 
+	public static function registerEntries():Void {
+		trace('debug:<yellow>Registering ${id}s...');
 
-	public static function registerSong(song:Song) {
-		trace('debug:<cyan>Found and registered song with ID "<magenta>${song.id}<cyan>"');
-		songs.push(song);
-	}
+		clearEntries();
 
-	public static function getAllSongs():Array<Song> {
-		return songs.copy();
-	}
-
-	public static function getSongByID(songID:String):Null<Song> {
-		for (song in songs) {
-			if (song.id == songID) {
-				return song;
-			}
+		var songList:Array<String> = [
+			for (level in LevelRegistry.getAllEntries())
+				for (song in level.getSongs())
+					song
+		];
+		checkAndConvertVSliceSongs(songList);
+		for (songID in songList) {
+			final parsed:Dynamic = ParseUtil.jsonOrYaml('songs/$songID/meta', null, 'null');
+			if (parsed == null) {
+				trace('warning:<orange>Could not find $id, "<magenta>$songID<orange>", ignoring entry.');
+				continue;
+			} else registerEntry(songID, null, parsed);
+			for (i in (parsed?.variants ?? []))
+				registerEntry(songID, i, ParseUtil.jsonOrYaml('songs/$songID/meta-$i'));
 		}
-		return null;
 	}
 
-	public static function getAllSongIDs():Array<String> {
-		var ids:Array<String> = [];
-		for (song in songs) {
-			ids.push(song.id);
+	public static function registerEntry(id:String, ?variant:String, _data:SongData):Void {
+		if (entryExists(id, variant)) {
+			trace('warning:<orange>$_id with ID "<magenta>${Song.setupId(id, null, variant, '<orange>:<magenta>')}<orange>" is already registered, ignoring entry.');
+			return;
 		}
-		return ids;
+		entries.set(Song.setupId(id, null, variant), _data);
+		data.push(new Song(id, variant));
+		trace('debug:<cyan>Registered $_id entry, "<magenta>${Song.setupId(id, null, variant, '<cyan>:<magenta>')}<cyan>".');
+	}
+
+	inline public static function entryExists(id:String, ?variant:String):Bool return entries.exists(Song.setupId(id, null, variant));
+	inline public static function fetchEntry(id:String, ?variant:String):Null<Song> {
+		if (!entryExists(id, variant)) // we love inlining :3
+			trace('debug:<red>$_id entry "<yellow>${Song.setupId(id, null, variant, '<red>:<yellow>')}<red>" doesn\'t exist.');
+		return data.find(entry -> return entry.id == id && (entry.variant ?? '') == (variant ?? ''));
+	}
+
+	inline public static function getAllEntryIDs():Array<String> {
+		final list:Array<String> = [];
+		for (song in data)
+			if (!list.contains(song.id))
+				list.push(song.id);
+		return list;
 	}
 
 }
