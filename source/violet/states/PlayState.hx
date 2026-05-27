@@ -1195,11 +1195,13 @@ class PlayState extends violet.backend.StateBackend {
 				txt.x = 5;
 				txt.y = (FlxG.height / 2) + (25 * i);
 				txt.y -= (25 * (arr.length-1)) / 2;
-				txt.refreshDisplay();
 			} else {
-				if (i > 1) txt.visible = false;
+				txt.visible = false;
 			}
+			txt.refreshDisplay();
 		}
+		accuracyTxt.visible = !Options.data.hideAccuracy;
+		scoreTxt.visible = !Options.data.hideScore;
 	}
 
 	@:unreflective var healthBarShi:FlxPoint = null;
