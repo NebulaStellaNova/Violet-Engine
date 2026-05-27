@@ -11,7 +11,7 @@ import violet.data.level.LevelRegistry;
 @:registryData('Song', [violet.data.song.Song, violet.data.song.SongData])
 class SongRegistry implements violet.data.RegistryImpl {
 
-	static function checkAndConvertVSliceSongs(songList:Array<String>):Void {
+	inline static function checkAndConvertVSliceSongs(songList:Array<String>):Void {
 		for (songID in songList) {
 			if (Paths.fileExists('songs/$songID/$songID-metadata.json')) {
 				if (!Paths.fileExists('songs/$songID/$songID-chart.json')) continue;
