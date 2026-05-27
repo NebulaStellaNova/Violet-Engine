@@ -1,7 +1,5 @@
 package violet.backend.objects.play;
 
-import violet.backend.scripting.events.CanHitEvent;
-import violet.states.PlayState;
 import flixel.math.FlxMath;
 import flixel.math.FlxPoint;
 import flixel.util.FlxSort;
@@ -97,9 +95,6 @@ class Note extends NovaSprite {
 	 */
 	public var canHit(get, never):Bool;
 	inline function get_canHit():Bool {
-		var event:CanHitEvent = PlayState.instance.runSongEvent('canHitCheck', new CanHitEvent(this));
-		if (event.cancelled) return false;
-
 		return time > Conductor.framePosition - (Scoring.missThreshold * earlyWindow) && time < Conductor.framePosition + (Scoring.missThreshold * lateWindow);
 	}
 	/**
