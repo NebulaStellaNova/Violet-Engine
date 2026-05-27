@@ -1,15 +1,12 @@
 package violet.data.character;
 
-import violet.data.icon.HealthIconRegistry;
-import violet.data.animation.AnimationData;
-import violet.backend.utils.ParseUtil;
-import violet.backend.utils.ParseUtil.ParseColor;
-import violet.data.character.CharacterData;
-import violet.backend.utils.AnimationUtil;
-import violet.backend.utils.StringUtil;
-import violet.backend.utils.FileUtil;
-
 import haxe.xml.Access;
+import violet.backend.utils.AnimationUtil;
+import violet.backend.utils.FileUtil;
+import violet.backend.utils.ParseUtil;
+import violet.backend.utils.StringUtil;
+import violet.data.animation.AnimationData;
+import violet.data.icon.HealthIconRegistry;
 
 class CharacterConverters {
 
@@ -86,8 +83,7 @@ class CharacterConverters {
 		return characterData;
 	}
 
-
-	private static function d(access:Access, attribute:String, def:String):String {
+	inline static function d(access:Access, attribute:String, def:String):String {
 		return access.has.resolve(attribute) ? access.att.resolve(attribute) : def;
 	}
 
@@ -136,14 +132,15 @@ class CharacterConverters {
 
 		var iconID:String = characterData?.healthIcon?.id ?? characterID;
 
-		if (!HealthIconRegistry.healthIconDatas.exists(iconID)) HealthIconRegistry.registerIcon(iconID, {
-			id: iconID,
-			assetPath: 'icons/icon-' + iconID,
-			offsets: characterData?.healthIcon?.offsets ?? [10.0, 0.0],
-			flipX: characterData?.healthIcon?.flipX ?? false,
-			isPixel: characterData?.healthIcon?.isPixel ?? false,
-			scale: characterData?.healthIcon?.scale ?? 1
-		});
+		if (!HealthIconRegistry.entryExists(iconID))
+			HealthIconRegistry.registerEntry(iconID, {
+				id: iconID,
+				assetPath: 'icons/icon-' + iconID,
+				offsets: characterData?.healthIcon?.offsets ?? [10.0, 0.0],
+				flipX: characterData?.healthIcon?.flipX ?? false,
+				isPixel: characterData?.healthIcon?.isPixel ?? false,
+				scale: characterData?.healthIcon?.scale ?? 1
+			});
 
 		var out:CharacterData = {
 			version: '1.0.0',
@@ -167,4 +164,5 @@ class CharacterConverters {
 
 		return out;
 	}
+
 }

@@ -71,7 +71,7 @@ class NewCharacterScreen extends SubStateBackend {
 				animations: []
 			};
 			CharacterEditorState.newList.push(id);
-			CharacterRegistry.register(id, characterData);
+			CharacterRegistry.registerEntry(id, characterData);
 			CharacterEditorState.instance.refreshCharacterDropdown();
 			FlxG.resetState();
 			FlxG.signals.postStateSwitch.addOnce(()->{

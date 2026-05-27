@@ -1,26 +1,12 @@
 package violet.data.level;
 
+import haxe.io.Path;
 import violet.backend.utils.ParseUtil;
 
-class LevelRegistry {
+@:registryData('Level', [violet.data.level.Level, violet.data.level.LevelData])
+class LevelRegistry implements violet.data.RegistryImpl {
 
-	public static var levels:Array<Level> = [];
-	public static var levelDatas:Map<String, LevelData> = new Map<String, LevelData>();
-
-	public static function registerLevels() {
-		trace('debug:<yellow>Registering levels...');
-		levels.resize(0);
-		levelDatas.clear();
-		var hidden:Bool = false;
-		for (i in ModdingAPI.getActiveMods()) if (i.hideBaseSongs) hidden = true;
-		var levelFiles = Paths.readFolder('data/levels', false, hidden);
-		for (levelFile in levelFiles) {
-			levelDatas.set(levelFile.replace('.json', ''), ParseUtil.json('data/levels/$levelFile'));
-			registerLevel(new Level(levelFile.replace('.json', '')));
-		}
-	}
-
-	public static function getDefaultLevelData():LevelData {
+	inline public static function getDefaultData():LevelData {
 		return {
 			name: 'Untitled Level',
 			titleAsset: '',
@@ -32,48 +18,42 @@ class LevelRegistry {
 		}
 	}
 
-	public static function registerLevel(newLevel:Level):Void {
-		for (level in levels) {
-			if (level.id == newLevel.id) {
-				trace('warning:Level with ID "${newLevel.id}" is already registered. Skipping duplicate registration.');
-				return;
-			}
+	public static function registerEntries():Void {
+		trace('debug:<yellow>Registering ${id}s...');
+
+		clearEntries();
+
+		var hidden:Bool = false;
+		for (i in ModdingAPI.getActiveMods()) if (i.hideBaseSongs) hidden = true;
+		var levelFiles = Paths.readFolder('data/levels', false, hidden);
+		for (levelFile in levelFiles) {
+			final entryId = Path.withoutExtension(levelFile);
+			var parsed = ParseUtil.jsonOrYaml('data/levels/$entryId', '', 'null');
+			if (parsed != null) registerEntry(entryId, parsed);
+			else trace('warning:<orange>Could not find $entryId, "<magenta>$levelFile<orange>", ignoring entry.');
 		}
-		trace('debug:<cyan>Found and registered level with ID "<magenta>${newLevel.id}<cyan>"');
-		// Preload title graphic
-		newLevel.buildTitleGraphic().destroy();
-		newLevel.buildProps().destroy();
-		levels.push(newLevel);
 	}
-
-	public static function getAllLevelIDs():Iterator<String> {
-		return levels.map((level) -> level.id).iterator();
-	}
-
-	public static function getAllLevels():Array<Level> {
-		return levels.copy();
-	}
-
-	public static function getVisibleLevels():Array<Level> {
-		return getAllLevels().filter((level) -> return level.isVisible());
-	}
-
-	public static function doesLevelExist(levelID:String):Bool {
-		for (level in levels) {
-			if (level.id == levelID) {
-				return true;
-			}
+	public static function registerEntry(id:String, _data:LevelData):Void {
+		if (entryExists(id)) {
+			trace('warning:<orange>$_id with ID "$id" is already registered, ignoring duplicate.');
+			return;
 		}
-		return false;
+		entries.set(id, _data);
+		var entry = new Level(id);
+		data.push(entry);
+		trace('debug:<cyan>Registered $_id entry, "<magenta>$id<cyan>".');
+
+		// preload story menu assets
+		entry.buildTitleGraphic().destroy();
+		entry.buildProps().destroy();
 	}
 
-	public static function getLevelByID(levelID:String):Null<Level> {
-		for (level in levels) {
-			if (level.id == levelID) {
-				return level;
-			}
-		}
-		return null;
+	inline public static function getVisibleEntries():Array<Level> {
+		final entries = getAllEntries();
+		for (entry in entries)
+			if (!entry.isVisible())
+				entries.remove(entry);
+		return entries;
 	}
 
 }

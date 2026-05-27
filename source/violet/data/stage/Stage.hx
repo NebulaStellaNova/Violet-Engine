@@ -27,8 +27,8 @@ class Stage extends flixel.group.FlxGroup {
 
 	public function new(id:String) {
 		super();
-		this.id = StageRegistry.stageDatas.get(id) != null ? id : 'default';
-		this._data = StageRegistry.stageDatas.get(id) ?? StageRegistry.stageDatas.get('default');
+		this.id = StageRegistry.fetchEntry(id) != null ? id : 'default';
+		this._data = StageRegistry.fetchEntry(id) ?? StageRegistry.fetchEntry('default');
 		this._data.basicCharPos ??= false;
 		this._data.extraScripts ??= [];
 		this.stage = this;
@@ -42,7 +42,7 @@ class Stage extends flixel.group.FlxGroup {
 		stageScripts.set('directory', this._data.directory);
 		stageScripts.parent = this;
 
-		if (StageRegistry.stageDatas.get(id) == null) {
+		if (StageRegistry.fetchEntry(id) == null) {
 			NovaUtils.addNotification('Stage not found!', 'Could not find stage with ID "$id" using default stage "theVoid".', ERROR);
 		}
 

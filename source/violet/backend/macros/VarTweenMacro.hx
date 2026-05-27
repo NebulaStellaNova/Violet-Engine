@@ -1,9 +1,6 @@
-package violet.backend;
+package violet.backend.macros;
 
 #if macro
-import haxe.macro.Context;
-import haxe.macro.Expr;
-
 class VarTweenMacro {
 
 	public static var macroContext:Array<Field>;

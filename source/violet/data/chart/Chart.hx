@@ -26,7 +26,7 @@ class Chart {
 
 	public var meta(get, never):Song;
 	function get_meta():Song {
-		return SongRegistry.getSongByID(id);
+		return SongRegistry.fetchEntry(id, chartVariant);
 	}
 
 	public final stage:String;
@@ -35,7 +35,7 @@ class Chart {
 	public final chartVariant:Null<String>;
 
 	public function new(id:String, diff:String, ?variant:String) {
-		this._data = ChartRegistry.fetchChart('$id:$diff${variant == null ? '' : ':${variant}'}');
+		this._data = ChartRegistry.getEntry(id, diff, variant);
 		this.id = id;
 
 		stage = _data.stage;

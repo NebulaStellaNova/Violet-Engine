@@ -171,7 +171,7 @@ class StrumLine extends FlxGroup {
 			vocals = Conductor.addAdditionalTrack(FlxG.sound.load(Cache.sound(vocalPath, 'root', null, true), FlxG.sound.defaultMusicGroup));
 		}
 
-		if (NoteStyleRegistry.doesNoteStyleExist(chartData.noteStyle)) {
+		if (NoteStyleRegistry.entryExists(chartData.noteStyle)) {
 			noteStyle = chartData.noteStyle;
 		} else {
 			noteStyle = 'default';
@@ -179,8 +179,8 @@ class StrumLine extends FlxGroup {
 
 		for (data in chartData.notes) {
 			var type = PlayState.SONG._data.noteTypes[data.type-1];
-			if (type == null || !NoteStyleRegistry.doesNoteStyleExist(type)) continue;
-			var noteStyle = NoteStyleRegistry.getNoteStyleByID(type);
+			if (type == null || !NoteStyleRegistry.entryExists(type)) continue;
+			var noteStyle = NoteStyleRegistry.fetchEntry(type);
 			Cache.image(noteStyle.getSplashAssetPath(), 'root');
 			Cache.image(noteStyle.getHoldCoverAssetPath(), 'root');
 		}

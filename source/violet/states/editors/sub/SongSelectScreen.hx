@@ -7,10 +7,10 @@ class SongSelectScreen extends EditorListBackend {
 
 	public function new() {
 		var list:Array<EditorListOption> = [];
-		var idList = violet.data.song.SongRegistry.getAllSongIDs();
+		var idList = violet.data.song.SongRegistry.getAllEntryIDs();
 		idList.sort(NovaUtils.sortAlphabetically);
 		for (songID in idList) {
-			var songData = violet.data.song.SongRegistry.getSongByID(songID);
+			var songData = violet.data.song.SongRegistry.fetchEntry(songID);
 			list.push({
 				title: songData.displayName,
 				disabled: false,

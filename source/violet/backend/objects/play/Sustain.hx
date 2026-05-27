@@ -109,7 +109,7 @@ class Sustain extends NovaSprite {
 		this.anims.clear();
 		animation.destroyAnimations();
 		final style:String = style ?? this.style ?? parentNote.style ?? parentStrum.style ?? parent.noteStyle ?? 'default';
-		this.styleMeta = NoteStyleRegistry.getNoteStyleByID(style);
+		this.styleMeta = NoteStyleRegistry.fetchEntry(style);
 		loadSprite(styleMeta.getSustainAssetPath());
 		for (data in styleMeta.getSustainAnimations(id, parent.keyCount))
 			addAnimFromData(data);
