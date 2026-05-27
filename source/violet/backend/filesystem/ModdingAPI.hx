@@ -248,17 +248,18 @@ class ModdingAPI {
 		NovaUtils.CURRENT_MUSIC = null;
 		registered = true;
 
-		final registries = [
-			{name: 'NoteStyles', func: violet.data.notestyles.NoteStyleRegistry.registerNoteStyles},
-			{name: 'Levels', func: violet.data.level.LevelRegistry.registerLevels},
-			{name: 'Icons', func: violet.data.icon.HealthIconRegistry.registerIcons},
-			{name: 'Characters', func: violet.data.character.CharacterRegistry.registerCharacters},
-			{name: 'Songs', func: violet.data.song.SongRegistry.registerSongs},
-			{name: 'Stages', func: violet.data.stage.StageRegistry.registerStages},
-			{name: 'Charts', func: violet.data.chart.ChartRegistry.registerCharts}
+		final registries:Array<Class<Dynamic>> = [
+			violet.data.notestyles.NoteStyleRegistry,
+			violet.data.level.LevelRegistry,
+			violet.data.icon.HealthIconRegistry,
+			violet.data.character.CharacterRegistry,
+			violet.data.song.SongRegistry,
+			violet.data.stage.StageRegistry,
+			violet.data.chart.ChartRegistry,
 		];
-		for (data in registries) {
-			LoadingState.loadingText = 'Loading: ${data.name}...'; data.func();
+		for (registry in registries) {
+			LoadingState.loadingText = 'Loading: ${Reflect.field(registry, 'id')}s...';
+			Reflect.callMethod(null, Reflect.field(registry, 'registerEntries'), []);
 			LoadingState.loadingPercent += 1/registries.length;
 		}
 		LoadingState.loadingText = "Done!!";

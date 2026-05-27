@@ -1,10 +1,6 @@
-package violet.backend;
+package violet.backend.macros;
 
 #if macro
-import haxe.macro.Compiler;
-import haxe.macro.Context;
-import haxe.macro.Expr;
-
 class Macro {
 
 	inline public static function print(message:String) {
@@ -18,14 +14,14 @@ class Macro {
 
 	public static function init():Void {
 		print('Initializing macros...');
-		addMetadata('violet.backend.Macro.buildFlxBasic()', 'flixel.FlxBasic');
-		addMetadata('violet.backend.Macro.buildFlxObject()', 'flixel.FlxObject');
-		addMetadata('violet.backend.Macro.buildFlxSprite()', 'flixel.FlxSprite');
-		addMetadata('violet.backend.Macro.buildFlxTypedGroup()', 'flixel.group.FlxTypedGroup');
-		addMetadata('violet.backend.Macro.buildFlxSpriteGroup()', 'flixel.group.FlxTypedSpriteGroup');
-		addMetadata('violet.backend.Macro.buildFlxCamera()', 'flixel.FlxCamera');
-		addMetadata('violet.backend.Macro.buildFlxBaseKeyList()', 'flixel.input.FlxBaseKeyList');
-		addMetadata('violet.backend.VarTweenMacro.init()', 'flixel.tweens.misc.VarTween');
+		addMetadata('violet.backend.macros.Macro.buildFlxBasic()', 'flixel.FlxBasic');
+		addMetadata('violet.backend.macros.Macro.buildFlxObject()', 'flixel.FlxObject');
+		addMetadata('violet.backend.macros.Macro.buildFlxSprite()', 'flixel.FlxSprite');
+		addMetadata('violet.backend.macros.Macro.buildFlxGroup()', 'flixel.group.FlxTypedGroup');
+		addMetadata('violet.backend.macros.Macro.buildFlxSpriteGroup()', 'flixel.group.FlxTypedSpriteGroup');
+		addMetadata('violet.backend.macros.Macro.buildFlxCamera()', 'flixel.FlxCamera');
+		addMetadata('violet.backend.macros.Macro.buildFlxBaseKeyList()', 'flixel.input.FlxBaseKeyList');
+		addMetadata('violet.backend.macros.VarTweenMacro.init()', 'flixel.tweens.misc.VarTween');
 		#if SCRIPT_SUPPORT
 		Compiler.include('violet', true);
 		Compiler.include('haxe', true, ['haxe.atomic.*', 'haxe.macro.*']);
@@ -33,51 +29,6 @@ class Macro {
 		#end
 		Compiler.include('moonchart', true, ['moonchart.backend.*']); // force include, no matter what
 		print('Finished building macros.');
-	}
-
-	public static macro function buildFlxCamera():Array<Field> {
-		var classFields:Array<Field> = Context.getBuildFields();
-		var tempClass = macro class TempClass {
-
-			private var addedShaders:Map<FlxShader, openfl.filters.ShaderFilter> = [];
-
-			/**
-			 * Adds a FlxShader as a filter to the camera
-			 * @param shader Shader to add
-			 * @return ShaderFilter
-			 */
-			public function addShader(shader:FlxShader) {
-				var filter:openfl.filters.ShaderFilter = null;
-				if (filters == null) filters = [];
-				filters.push(filter = new openfl.filters.ShaderFilter(shader));
-				addedShaders.set(shader, filter);
-				return filter;
-			}
-
-			public function removeShader(shader:FlxShader) {
-				if (addedShaders.exists(shader)) {
-					filters.remove(addedShaders.get(shader));
-					addedShaders.remove(shader);
-				}
-			}
-		}
-
-		return classFields.concat(tempClass.fields);
-	}
-
-
-	public static macro function buildFlxBaseKeyList():Array<Field> {
-		var classFields:Array<Field> = Context.getBuildFields();
-
-		var checkFunc = classFields.filter(field -> return field.name == 'check')[0];
-		switch (checkFunc.kind) {
-			case FFun(f):
-				checkFunc.access.remove(AInline);
-				checkFunc.access.push(ADynamic);
-			default:
-		}
-
-		return classFields;
 	}
 
 	public static macro function buildFlxBasic():Array<Field> {
@@ -125,10 +76,6 @@ class Macro {
 
 		return classFields.concat(tempClass.fields);
 	}
-	/**
-	 * Implements forceIsOnScreen from Codename Engine and makes screenCenter compatible with other cameras.
-	 * @return Array<Field>
-	 */
 	public static macro function buildFlxObject():Array<Field> {
 		var classFields = Context.getBuildFields();
 		var tempClass = macro class TempClass {
@@ -176,10 +123,6 @@ class Macro {
 
 		return classFields.concat(tempClass.fields);
 	}
-	/**
-	 * Implements forceIsOnScreen from Codename Engine.
-	 * @return Array<Field>
-	 */
 	public static macro function buildFlxSprite():Array<Field> {
 		var classFields = Context.getBuildFields();
 
@@ -230,7 +173,7 @@ class Macro {
 		return classFields;
 	}
 
-	public static macro function buildFlxTypedGroup():Array<Field> {
+	public static macro function buildFlxGroup():Array<Field> {
 		var classFields:Array<Field> = Context.getBuildFields();
 		var tempClass = macro class TempClass {
 			/**
@@ -284,11 +227,6 @@ class Macro {
 
 		return classFields.concat(tempClass.fields);
 	}
-
-	/**
-	 * Implements keyValueIterator because it doesn't have one for some reason???
-	 * @return Array<Field>
-	 */
 	public static macro function buildFlxSpriteGroup():Array<Field> {
 		var classFields = Context.getBuildFields();
 		var tempClass = macro class TempClass {
@@ -300,6 +238,51 @@ class Macro {
 			}
 		}
 		return classFields.concat(tempClass.fields);
+	}
+
+	public static macro function buildFlxCamera():Array<Field> {
+		var classFields:Array<Field> = Context.getBuildFields();
+		var tempClass = macro class TempClass {
+
+			private var addedShaders:Map<FlxShader, openfl.filters.ShaderFilter> = [];
+
+			/**
+			 * Adds a FlxShader as a filter to the camera
+			 * @param shader Shader to add
+			 * @return ShaderFilter
+			 */
+			public function addShader(shader:FlxShader) {
+				var filter:openfl.filters.ShaderFilter = null;
+				if (filters == null) filters = [];
+				filters.push(filter = new openfl.filters.ShaderFilter(shader));
+				addedShaders.set(shader, filter);
+				return filter;
+			}
+
+			public function removeShader(shader:FlxShader) {
+				if (addedShaders.exists(shader)) {
+					filters.remove(addedShaders.get(shader));
+					addedShaders.remove(shader);
+				}
+			}
+		}
+
+		return classFields.concat(tempClass.fields);
+	}
+
+
+	public static macro function buildFlxBaseKeyList():Array<Field> {
+		var classFields:Array<Field> = Context.getBuildFields();
+
+		var checkFunc = classFields.filter(field -> return field.name == 'check')[0];
+		switch (checkFunc.kind) {
+			case FFun(f):
+				checkFunc.access.remove(AInline);
+				checkFunc.access.push(ADynamic);
+			default:
+		}
+
+		return classFields;
 	}
 
 }

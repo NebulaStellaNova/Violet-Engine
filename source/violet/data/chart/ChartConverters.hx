@@ -1,26 +1,22 @@
 package violet.data.chart;
 
-import flixel.util.typeLimit.OneOfTwo;
-import violet.data.character.CharacterRegistry;
-import sys.io.File;
-import violet.data.song.SongData;
-import sys.FileSystem;
-import haxe.io.Path;
-import moonchart.formats.fnf.FNFKade;
-import moonchart.formats.fnf.legacy.FNFPsych;
-import moonchart.formats.fnf.FNFVSlice;
-import yaml.Renderer.RenderOptions;
-import yaml.Parser.ParserOptions;
-import yaml.Yaml;
-import violet.data.chart.ChartRegistry.ChartCache;
-import violet.backend.utils.FileUtil;
-import violet.data.chart.ChartData;
-import violet.backend.utils.ParseUtil;
 import haxe.Json;
-import Xml;
-import yaml.Renderer;
+import haxe.io.Path;
+import sys.FileSystem;
+import sys.io.File;
 import moonchart.formats.fnf.FNFCodename;
-
+import moonchart.formats.fnf.FNFKade;
+import moonchart.formats.fnf.FNFVSlice;
+import moonchart.formats.fnf.legacy.FNFPsych;
+import yaml.Parser;
+import yaml.Renderer;
+import yaml.Yaml;
+import violet.backend.utils.FileUtil;
+import violet.backend.utils.ParseUtil;
+import violet.data.character.CharacterRegistry;
+import violet.data.chart.ChartData;
+import violet.data.chart.ChartRegistry.ChartCache;
+import violet.data.song.SongData;
 
 enum FileType {
 	NONE;
@@ -133,7 +129,7 @@ class ChartConverters {
 			composer: meta.artist,
 			charter: meta.charter,
 
-			icon: meta?.icon ?? CharacterRegistry.characterDatas.get(meta.playData.characters.opponent)?.healthIcon ?? "face",
+			icon: meta?.icon ?? CharacterRegistry.fetchEntry(meta.playData.characters.opponent)?.healthIcon ?? "face",
 
 			variants: meta.playData.songVariations,
 			difficulties: meta.playData.difficulties,

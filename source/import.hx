@@ -1,9 +1,7 @@
 #if !macro
-#if MOD_SUPPORT
-import violet.backend.filesystem.ModdingAPI;
-#end
 import flixel.FlxG;
 import flixel.FlxSprite;
+import flixel.group.FlxSpriteGroup;
 import flixel.sound.FlxSound;
 import flixel.tweens.FlxEase;
 import flixel.tweens.FlxTween;
@@ -15,7 +13,11 @@ import violet.backend.filesystem.Paths;
 import violet.backend.objects.ClassData;
 import violet.backend.objects.NovaSprite;
 import violet.backend.objects.NovaText;
-import flixel.group.FlxSpriteGroup;
 
+#if MOD_SUPPORT
+import violet.backend.filesystem.ModdingAPI;
+#end
+
+using Lambda;
 using StringTools;
 #end

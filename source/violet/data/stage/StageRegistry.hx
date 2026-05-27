@@ -4,44 +4,48 @@ import haxe.io.Path;
 import violet.backend.utils.FileUtil;
 import violet.backend.utils.ParseUtil;
 
-class StageRegistry {
+@:registryData('Stage', [violet.data.stage.Stage, violet.data.stage.StageData])
+class StageRegistry implements violet.data.RegistryImpl {
 
-	public static var stageDatas:Map<String, StageData> = new Map<String, StageData>();
+	public static function registerEntries():Void {
+		trace('debug:<yellow>Registering ${id}s...');
 
-	public static function registerStages() {
-		trace('debug:<yellow>Registering stages...');
-
-		stageDatas.clear();
+		clearEntries();
 
 		for (file in Paths.readFolder('data/stages', v -> return FileUtil.isDataFile(v))) {
+			final fileName = Paths.fileName(file);
 			if (FileUtil.hasExt(file, 'json')) {
-				var parsed = ParseUtil.json('data/stages/${Paths.fileName(file)}');
+				var parsed = ParseUtil.json('data/stages/$fileName');
 				var format = StageFormatChecker.checkFormat(parsed);
-				if (format == VSLICE) {
-					register(Paths.fileName(file), StageConverters.fromVSlice('data/stages/${Paths.fileName(file)}'));
-				} else if (format == PSYCHLEGACY) {
-					register(Paths.fileName(file), StageConverters.fromPsych('data/stages/${Paths.fileName(file)}'));
-				} else {
-					register(Paths.fileName(file), parsed);
+				switch (format) {
+					case VSLICE: registerEntry(fileName, StageConverters.fromVSlice('data/stages/$fileName'));
+					case PSYCHLEGACY: registerEntry(fileName, StageConverters.fromPsych('data/stages/$fileName'));
+					default: registerEntry(fileName, parsed);
 				}
-			} else {
-				register(Paths.fileName(file), ParseUtil.yaml('data/stages/${Paths.fileName(file)}'));
-			}
+			} else registerEntry(fileName, ParseUtil.yaml('data/stages/$fileName'));
 		}
 
 		for (file in Paths.readFolder('data/stages', v -> return FileUtil.hasExt(v, 'xml'))) {
+			final fileName = Paths.fileName(file);
 			var convertedStage:Null<StageData> = StageConverters.fromCodenameEngine('data/stages/$file');
-			if (convertedStage != null) {
-				register(Paths.fileName(file), convertedStage);
-			} else {
-				trace('error:Codename Engine stage "${Paths.fileName(file)}.xml" is invalid, not converting.');
-			}
+			if (convertedStage != null) registerEntry(fileName, convertedStage);
+			else trace('error:Codename Engine stage "$fileName.xml" is invalid, not converting.');
 		}
 	}
 
-	public static function register(stageID:String, data:StageData) {
-		stageDatas.set(stageID, data);
-		trace('debug:<cyan>Found and registered stage with ID "<magenta>${stageID}<cyan>"');
+	public static function registerEntry(id:String, _data:StageData):Void {
+		if (entryExists(id)) {
+			trace('warning:<orange>$_id with ID "<magenta>$id<orange>" is already registered, ignoring entry.');
+			return;
+		}
+		entries.set(id, _data);
+		trace('debug:<cyan>Registered $_id entry, "<magenta>$id<cyan>".');
+	}
+
+	inline public static function fetchEntry(id:String):Null<StageData> {
+		if (!entryExists(id)) // we love inlining :3
+			trace('debug:<red>Character entry "<yellow>$id<red>" doesn\'t exist.');
+		return entries.get(id);
 	}
 
 }

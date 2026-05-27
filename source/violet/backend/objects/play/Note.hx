@@ -142,7 +142,7 @@ class Note extends NovaSprite {
 			length = tail[tail.length - 1].time;
 		}
 
-		if (NoteStyleRegistry.doesNoteStyleExist(noteType) && noteType != null) style = noteType;
+		if (NoteStyleRegistry.entryExists(noteType) && noteType != null) style = noteType;
 
 		reloadStyle(style, true);
 	}
@@ -156,7 +156,7 @@ class Note extends NovaSprite {
 		this.anims.clear();
 		animation.destroyAnimations();
 		final style:String = style ?? this.style ?? parentStrum.style ?? parent.noteStyle ?? 'default';
-		this.styleMeta = NoteStyleRegistry.getNoteStyleByID(style);
+		this.styleMeta = NoteStyleRegistry.fetchEntry(style);
 		loadSprite(styleMeta.getNoteAssetPath());
 		for (data in styleMeta.getNoteAnimations(id, parent.keyCount))
 			addAnimFromData(data);

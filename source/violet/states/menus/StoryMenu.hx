@@ -116,7 +116,7 @@ class StoryMenu extends SubStateBackend {
 
 		add(bottomBox);
 		var yLevel = 0.0;
-		for (i=>level in levelList = LevelRegistry.getVisibleLevels()) {
+		for (i=>level in levelList = LevelRegistry.getVisibleEntries()) {
 			var titleAsset = level.buildTitleGraphic();
 			titleAsset.camera = storyCam;
 			titleAsset.y = yLevel-titleAsset.height;
@@ -317,7 +317,7 @@ class StoryMenu extends SubStateBackend {
 		var trackList = '- TRACKS -\n\n';
 		var songList = levelList[curSelected].getSongs();
 		for (song in songList) {
-			trackList += (SongRegistry.getSongByID(song)?.displayName ?? 'Unknown') + '\n';
+			trackList += (SongRegistry.fetchEntry(song)?.displayName ?? 'Unknown') + '\n';
 		}
 		trackText.text = trackList;
 		trackText.updateHitbox();

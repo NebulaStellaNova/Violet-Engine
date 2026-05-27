@@ -28,8 +28,8 @@ class HealthIcon extends Bopper {
 	public function setIcon(id:String, ?assetPathOverride:String) {
 		this.id = id;
 		this.assetPathOverride = assetPathOverride;
-		var defaultData = HealthIconRegistry.healthIconDatas.get(Constants.DEFAULT_HEALTH_ICON);
-		this._data = HealthIconRegistry.healthIconDatas.get(id) ?? defaultData;
+		var defaultData = HealthIconRegistry.fetchEntry(Constants.DEFAULT_HEALTH_ICON);
+		this._data = HealthIconRegistry.fetchEntry(id) ?? defaultData;
 
 		this._data.flipX ??= false;
 		this._data.scale ??= 1;
