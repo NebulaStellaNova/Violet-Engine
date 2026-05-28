@@ -215,9 +215,9 @@ class Project extends HXProject {
 				} else {
 					bug('Library "${i.id}" does not exist. Installing...');
 					if (i.url != null)
-						Sys.command('haxelib git ${i.id} ${i.url} ${i.flags.join(' ')} --force');
+						Sys.command('haxelib git ${i.id} ${i.url} ${i.flags.join(' ')}');
 					else
-						Sys.command('haxelib install ${i.id} ${i.flags.join(' ')} --force');
+						Sys.command('haxelib install ${i.id} ${i.flags.join(' ')}');
 					if (i.dev) {
 						final curName:String = './.haxelib/${i.id.replace('.', ',')}/.current';
 						if (!FileSystem.exists(curName)) {
@@ -392,10 +392,10 @@ class Project extends HXProject {
 		}
 
 		var branch = hasDefine('branch-dev') ? 'dev' : (hasDefine('branch-main') ? 'main' : '');
-		if (branch == '') branch = Sys.command('git rev-parse --abbrev-ref HEAD', false).stdout.readLine();
+		if (branch == '') branch = new Process('git rev-parse --abbrev-ref HEAD', false).stdout.readLine();
 
-		setHaxedef('COMMIT_HASH', Sys.command('git rev-parse --short HEAD', false).stdout.readLine());
-		setHaxedef('COMMIT_INDEX', Sys.command('git rev-list --count ${getHaxedef('COMMIT_HASH')}', false).stdout.readLine());
+		setHaxedef('COMMIT_HASH', new Process('git rev-parse --short HEAD', false).stdout.readLine());
+		setHaxedef('COMMIT_INDEX', new Process('git rev-list --count ${getHaxedef('COMMIT_HASH')}', false).stdout.readLine());
 		setHaxedef('GITHUB_BRANCH', branch);
 	}
 
