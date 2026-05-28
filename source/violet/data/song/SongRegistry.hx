@@ -14,6 +14,9 @@ class SongRegistry implements violet.data.RegistryImpl {
 	public static function registerEntries():Void {
 		trace('debug:<yellow>Registering ${id}s...');
 
+		@:privateAccess ChartConverters._cached_vslice_chart.clear();
+		@:privateAccess ChartConverters._cached_vslice_meta.clear();
+
 		clearEntries();
 
 		var songList:Array<String> = [
