@@ -26,4 +26,4 @@ haxelib git lscript https://github.com/SrtHero278/lscript --skip-dependencies
 haxelib git rulescript https://github.com/Kriptel/RuleScript dev
 haxelib git flixel-animate https://github.com/NebulaStellaNova/flixel-animate bullshity-fix --skip-dependencies
 haxelib git hython https://github.com/Paopun20/hython.git legacy
-haxelib git nxscript https://github.com/senioritaelizabeth/NxScript.git dev
+haxelib git nxscript https://github.com/Kitsumizy/NxScript.git dev
