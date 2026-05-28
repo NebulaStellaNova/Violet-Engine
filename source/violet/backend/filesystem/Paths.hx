@@ -117,7 +117,7 @@ class Paths {
 			'$path${ext == null || path.endsWith('.$ext') ? '' : '.$ext'}'
 		]).join('/'), directory == 'root');
 
-	inline public static function vocal(song:String, suffix:String = '', ?variant:String, dashes:Bool = true):String {
+	inline public static function vocal(song:String, suffix:String = '', variant:String = '', dashes:Bool = true):String {
 		var prefix = dashes ? '-' : '';
 		return root('songs/$song/song/Voices${suffix != '' ? '$prefix$suffix' : ''}${variant != '' ? '$prefix$variant' : ''}.ogg');
 	}
