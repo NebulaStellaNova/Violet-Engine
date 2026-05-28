@@ -1,5 +1,7 @@
 package violet.data.dialogue;
 
+import violet.backend.scripting.ScriptPack;
+
 /**
  * This is all mainly pulled from VSlice.
  */
@@ -7,7 +9,8 @@ class Conversation extends FlxSpriteGroup {
 
 	public var scripts:ScriptPack = new ScriptPack();
 
-	public function new() {
+	public function new(?prefix:String, ?suffix:String) {
+		super();
 		/* ModdingAPI.checkForScripts('data/dialogue/boxes', id, scripts);
 		if (PlayState.instance != null) {
 			var songId = PlayState.song;
