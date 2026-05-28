@@ -46,12 +46,8 @@ class ChartRegistry implements violet.data.RegistryImpl {
 	}
 
 	public static function registerEntry(song:Song, diff:String, cache:ChartCache):Void {
-		if (entryExists(song.id, diff, song.variant)) {
-			trace('warning:<orange>$id with ID "<magenta>${Song.setupId(song.id, diff, song.variant, '<orange>:<magenta>')}<orange>" is already registered, ignoring entry.');
-			return;
-		}
 		ChartRegistry.cache.set(Song.setupId(song.id, diff, song.variant), cache);
-		getEntry(song.id, diff, song.variant, true); // Uncomment if you want to enable chart preloading for whatever reason.
+		getEntry(song.id, diff, song.variant, true);
 		trace('debug:<cyan>Registered $id entry, "<magenta>${Song.setupId(song.id, diff, song.variant, '<cyan>:<magenta>')}<cyan>".');
 	}
 

@@ -43,10 +43,6 @@ class SongRegistry implements violet.data.RegistryImpl {
 	}
 
 	public static function registerEntry(id:String, ?variant:String, _data:SongData):Void {
-		if (entryExists(id, variant)) {
-			trace('warning:<orange>$_id with ID "<magenta>${Song.setupId(id, null, variant, '<orange>:<magenta>')}<orange>" is already registered, ignoring entry.');
-			return;
-		}
 		entries.set(Song.setupId(id, null, variant), _data);
 		data.push(new Song(id, variant));
 		trace('debug:<cyan>Registered $_id entry, "<magenta>${Song.setupId(id, null, variant, '<cyan>:<magenta>')}<cyan>".');

@@ -46,10 +46,6 @@ class RegistryMacro {
 			public static function registerEntries():Void
 				throw 'debug:<darkred>The <cyan>$id<darkred> registry is not setup.';
 			public static function registerEntry(id:String, _data:$dataType):Void {
-				if (entryExists(id)) {
-					trace('warning:<orange>$_id with ID "<magenta>$id<orange>" is already registered, ignoring entry.');
-					return;
-				}
 				entries.set(id, _data);
 				data.push(new $classTPath(id));
 				trace('debug:<cyan>Registered $_id entry, "<magenta>$id<cyan>".');
