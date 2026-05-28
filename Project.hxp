@@ -62,7 +62,6 @@ class Project extends HXProject {
 		// -- Git Libs -- \\
 		new Lib('funkin.vis', 'https://github.com/FunkinCrew/funkVis', ['useGrig']),
 		new Lib('grig.audio', 'https://github.com/FunkinCrew/grig.audio'),
-		new Lib('moonchart', 'https://github.com/MaybeMaru/moonchart.git'),
 		new Lib('flxrhythmconductor', 'https://github.com/PurSnake/FlxRhythmConductor', ['--skip-dependencies']),
 		new Lib('lemon-ui', 'https://github.com/NebulaStellaNova/LemonUI', ['--skip-dependencies']),
 		new Lib('hxcpp-debug-server', true, 'https://github.com/FunkinCrew/hxcpp-debugger'),
@@ -349,7 +348,6 @@ class Project extends HXProject {
 			addHaxelib('hxcpp-debug-server', 'git');
 
 		// chart converter
-		addHaxelib('moonchart');
 
 		if (canNxScript.exists())
 			addHaxelib('nxscript', 'git');

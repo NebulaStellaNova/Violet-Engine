@@ -4,10 +4,6 @@ import haxe.Json;
 import haxe.io.Path;
 import sys.FileSystem;
 import sys.io.File;
-import moonchart.formats.fnf.FNFCodename;
-import moonchart.formats.fnf.FNFKade;
-import moonchart.formats.fnf.FNFVSlice;
-import moonchart.formats.fnf.legacy.FNFPsych;
 import yaml.Parser;
 import yaml.Renderer;
 import yaml.Yaml;
@@ -35,93 +31,15 @@ enum ChartFormat {
 	IMAGINATIVE;
 }
 
+typedef VSliceEntry = {
+	var metadata:Dynamic;
+	var chart:Dynamic;
+}
+
 class ChartConverters {
 
-	public static var blankChart(get, never):ChartData;
-	static function get_blankChart() {
-		return {
-			strumLines: [],
-			events: [],
-			meta: { name: 'Unknown Song' },
-			scrollSpeed: 1,
-			noteTypes: [],
-			stage: 'default',
-			codenameChart: true
-		};
-	}
-
-	public static function convertChart(chartCache:ChartCache):ChartData {
-		if (chartCache?.fileExt == null) return blankChart;
-		var parsedCache:Dynamic = parseFromCache(chartCache);
-		var detectedFormat:ChartFormatChecker.ChartFileFormat = ChartFormatChecker.checkFormat(parsedCache);
-		var convertedChart:ChartData;
-		switch (detectedFormat) {
-			case CODENAME:
-				convertedChart = parsedCache;
-			case VSLICE:
-				convertedChart = fromVSlice(chartCache.filePath, chartCache.difficulty);
-			case PSYCH:
-				convertedChart = fromPsych(chartCache.filePath);
-			case KADE:
-				convertedChart = fromKade(chartCache.filePath, chartCache.difficulty);
-			default:
-				convertedChart = blankChart;
-		}
-
-		if (chartCache.eventsPath != '') {
-			final parsedEvents = ParseUtil.jsonOrYaml(Path.withoutExtension(chartCache.eventsPath), 'root');
-			convertedChart.events ??= [];
-			for (i in parsedEvents.events ?? []) {
-				i.global = true;
-				convertedChart.events.push(i);
-			}
-		}
-
-		for (i in convertedChart.events) {
-			i.global ??= false;
-		}
-
-		return convertedChart;
-	}
-
-	public static function parseFromCache(chartCache:ChartCache):Dynamic {
-		var parsedCache:Dynamic = {};
-		switch (chartCache.fileExt) {
-			case 'yaml':
-				final options = new ParserOptions(); options.maps = false;
-				parsedCache = Yaml.parse(FileUtil.getFileContent(chartCache.filePath), options);
-			case 'json':
-				parsedCache = Json.parse(FileUtil.getFileContent(chartCache.filePath));
-		}
-		return parsedCache;
-	}
-
-	public static function fromVSlice(chartPath, difficulty:String):ChartData {
-		return cast new FNFCodename().fromFormat(new FNFVSlice().fromFile(chartPath, difficulty)).data; // Crashes someone fix this please
-	}
-
-	public static function fromPsych(chartPath:String):ChartData {
-		return cast new FNFCodename().fromFormat(new FNFPsych().fromFile(chartPath)).data;
-	}
-
-	public static function fromKade(chartPath:String, difficulty:String):ChartData {
-		var parsed = Json.parse(FileUtil.getFileContent(chartPath));
-		parsed.song.eventObjects ??= [];
-		return cast new FNFCodename().fromFormat(new FNFKade().fromJson(Json.stringify(parsed))).data;
-	}
-
-	public static function convertVSliceSong(songID, ?varient:String) {
-		var suffix = '';
-		if (varient != null) {
-			suffix = '-$varient';
-		}
-		if (Paths.json('songs/$songID/$songID-metadata$suffix') == '') return;
-		var path = Path.directory(Paths.json('songs/$songID/$songID-metadata$suffix'));
-		var meta = ParseUtil.jsonDirect('songs/$songID/$songID-metadata$suffix');
-		if (meta.playData.noteStyle == 'funkin')
-			meta.playData.noteStyle = 'default';
-		meta = ParseUtil.applyMerge(meta, '_merge/data/songs/$songID/$songID-metadata$suffix');
-		var chart = ParseUtil.jsonDirect('songs/$songID/$songID-chart$suffix');
+	public static function metaFromVSlice(songID, ?varient:String) {
+		var meta:Dynamic = _get_vslice_meta(songID, varient);
 		var metaOut:SongData = {
 			name: songID,
 			displayName: meta.songName,
@@ -147,79 +65,75 @@ class ChartConverters {
 			beatsPerMeasure: meta.timeChanges[0].n,
 			stepsPerBeat: meta.timeChanges[0].d,
 		}
+		return metaOut;
+	}
 
-		if (!FileSystem.exists('$path/charts' + (varient != null ? '/$varient' : '')))
-			FileSystem.createDirectory('$path/charts' + (varient != null ? '/$varient' : ''));
+	public static function chartFromVSlice(songID, difficulty:String, ?varient:String):ChartData {
+		var meta:Dynamic = _get_vslice_meta(songID, varient);
+		var chart:Dynamic = _get_vslice_chart(songID, varient);
 
-		for (i in metaOut.difficulties) {
-			var chartOut:ChartData = {
-				strumLines: [],
-				events: [],
-				stage: aliasVSliceStage(meta.playData.stage),
-				noteStyle: meta.playData.noteStyle,
-				scrollSpeed: Reflect.field(chart.scrollSpeed, i),
-				noteTypes: []
+		var chartOut:ChartData = {
+			strumLines: [],
+			events: [],
+			stage: aliasVSliceStage(meta.playData.stage),
+			noteStyle: meta.playData.noteStyle,
+			scrollSpeed: Reflect.field(chart.scrollSpeed, difficulty),
+			noteTypes: []
+		}
+		var opp = {
+			characters: [meta.playData.characters.opponent],
+			position: 'dad',
+			type: OPPONENT,
+			notes: [],
+			vocalsSuffix: (meta.playData.characters?.opponentVocals ?? [meta.playData.characters?.opponent])[0]
+		};
+		var play = {
+			characters: [meta.playData.characters.player],
+			position: 'boyfriend',
+			type: PLAYER,
+			notes: [],
+			vocalsSuffix: (meta.playData.characters?.playerVocals ?? [meta.playData.characters?.player])[0]
+		}
+		var spec = {
+			characters: [meta.playData.characters.girlfriend],
+			position: 'girlfriend',
+			type: ADDITIONAL,
+			visible: false,
+			notes: []
+		}
+		chartOut.strumLines.push(opp);
+		chartOut.strumLines.push(play);
+		chartOut.strumLines.push(spec);
+
+		for (note in cast ((Reflect.field(chart.notes, difficulty) ?? []), Array<Dynamic>)) {
+			var time = note.t;
+			var data = note.d;
+			var length = note.l;
+			var kind = note.k;
+			var extra = note.p;
+
+			var dir = data % 4;
+			var strumlineID:Int = Math.floor(data / 4);
+
+			var noteOut:ChartNote = {
+				time: time,
+				id: dir,
+				sLen: length,
+				extra: extra,
+				type: kind
 			}
-			var opp = {
-				characters: [meta.playData.characters.opponent],
-				position: 'dad',
-				type: OPPONENT,
-				notes: [],
-				vocalsSuffix: (meta.playData.characters?.opponentVocals ?? [meta.playData.characters?.opponent])[0]
-			};
-			var play = {
-				characters: [meta.playData.characters.player],
-				position: 'boyfriend',
-				type: PLAYER,
-				notes: [],
-				vocalsSuffix: (meta.playData.characters?.playerVocals ?? [meta.playData.characters?.player])[0]
+			if (noteOut.type == null) Reflect.deleteField(noteOut, 'type');
+			if (noteOut.extra == null) Reflect.deleteField(noteOut, 'extra');
+
+			switch (strumlineID) {
+				case 0:
+					play.notes.push(noteOut);
+				case 1:
+					opp.notes.push(noteOut);
 			}
-			var spec = {
-				characters: [meta.playData.characters.girlfriend],
-				position: 'girlfriend',
-				type: ADDITIONAL,
-				visible: false,
-				notes: []
-			}
-			chartOut.strumLines.push(opp);
-			chartOut.strumLines.push(play);
-			chartOut.strumLines.push(spec);
-
-			for (note in cast ((Reflect.field(chart.notes, i) ?? []), Array<Dynamic>)) {
-				var time = note.t;
-				var data = note.d;
-				var length = note.l;
-				var kind = note.k;
-				var extra = note.p;
-
-				var dir = data % 4;
-				var strumlineID:Int = Math.floor(data / 4);
-
-				var noteOut:ChartNote = {
-					time: time,
-					id: dir,
-					sLen: length,
-					extra: extra,
-					type: kind
-				}
-				if (noteOut.type == null) Reflect.deleteField(noteOut, 'type');
-				if (noteOut.extra == null) Reflect.deleteField(noteOut, 'extra');
-
-				switch (strumlineID) {
-					case 0:
-						play.notes.push(noteOut);
-					case 1:
-						opp.notes.push(noteOut);
-				}
-			}
-
-			var sub = varient != null ? '/$varient' : '';
-			File.saveContent('$path/charts$sub/$i.json', Json.stringify(chartOut, null, '\t'));
 		}
 
-		var outEvents:{events:Array<ChartEvent>} = {
-			events: []
-		}
+		var outEvents:Array<ChartEvent> = [];
 		for (i in chart?.events ?? []) {
 			switch (i.e) {
 				case 'FocusCamera':
@@ -233,13 +147,13 @@ class ChartConverters {
 
 					if (target != -1) {
 						if (ease == 'CLASSIC' || ease == null) {
-							outEvents.events.push({
+							outEvents.push({
 								name: 'Camera Movement',
 								time: i.t,
 								params: [[1, 0, 2][target]]
 							});
 						} else {
-							outEvents.events.push({
+							outEvents.push({
 								name: 'Camera Tween Focus',
 								time: i.t,
 								params: [
@@ -253,7 +167,7 @@ class ChartConverters {
 							});
 						}
 					} else {
-						outEvents.events.push({
+						outEvents.push({
 							name: 'Camera Position',
 							time: i.t,
 							params: [
@@ -270,7 +184,7 @@ class ChartConverters {
 					var dur:Float = i.v.duration;
 					var ease:String = i.v.ease;
 					var easeDir:String = i.v.easeDir;
-					outEvents.events.push({
+					outEvents.push({
 						name: 'Camera Zoom',
 						time: i.t,
 						params: [
@@ -286,7 +200,7 @@ class ChartConverters {
 					var rate = i.v.rate;
 					var offset = i.v.offset;
 					var intensity = i.v.intensity;
-					outEvents.events.push({
+					outEvents.push({
 						name: 'Camera Modulo Change',
 						time: i.t,
 						params: [
@@ -298,7 +212,7 @@ class ChartConverters {
 				case 'PlayAnimation':
 					var anim:String = i.v.anim;
 					var target:String = i.v.target;
-					outEvents.events.push({
+					outEvents.push({
 						name: 'Play Animation',
 						time: i.t,
 						params: [
@@ -312,13 +226,14 @@ class ChartConverters {
 
 		var numerator:Int = 4;
 		var denominator:Int = 4;
-		for (i=>timeChange in meta.timeChanges) {
+		var changes:Array<SongTimeChange> = meta.timeChanges;
+		for (i=>timeChange in changes) {
 			if (timeChange.n != null) numerator = timeChange.n;
 			if (timeChange.d != null) denominator = timeChange.d;
 			if (i == 0) continue;
 			var data:{?n:Int, ?d:Int, b:Float, t:Float, bpm:Float} = timeChange;
 			if (data.b != 0) {
-				outEvents.events.push({
+				outEvents.push({
 					name: 'Continuous BPM Change',
 					time: data.t,
 					params: [
@@ -327,14 +242,14 @@ class ChartConverters {
 					]
 				});
 			} else {
-				outEvents.events.push({
+				outEvents.push({
 					name: "BPM Change",
 					time: data.t,
 					params: [ data.bpm ]
 				});
 			}
 			if (data.n != null || data.d != null) {
-				outEvents.events.push({
+				outEvents.push({
 					name: "Time Signature Change",
 					time: data.t,
 					params: [
@@ -345,19 +260,34 @@ class ChartConverters {
 				});
 			}
 		}
+		chartOut.events = outEvents;
+		return chartOut;
+	}
 
-		File.saveContent('$path/events$suffix.json', Json.stringify(outEvents, null, '\t'));
+	private static var _cached_vslice_meta:Map<String, Dynamic> = new Map<String, Dynamic>();
+	private static var _cached_vslice_chart:Map<String, Dynamic> = new Map<String, Dynamic>();
 
-		File.saveContent('$path/meta$suffix.json', Json.stringify(metaOut, null, '\t'));
-		for (i in meta.playData?.songVariations ?? []) {
-			convertVSliceSong(songID, i);
-		}
+	private static function _get_vslice_meta(songID, ?varient:String):Dynamic {
+		var fileName = '$songID-metadata${varient != null ? '-$varient' : ''}';
+		if (_cached_vslice_meta.exists(fileName)) return _cached_vslice_meta.get(fileName);
 
-		ModdingAPI.onRegistryFinishReload.addOnce(()->{
-			if (varient == null) FileUtil.deleteDirectory('$path/charts');
-			FileUtil.deleteFile('$path/meta$suffix.json');
-			FileUtil.deleteFile('$path/events$suffix.json');
-		});
+		if (Paths.json('songs/$songID/$fileName') == '') return null;
+		var meta = ParseUtil.jsonDirect('songs/$songID/$fileName');
+		if (meta.playData.noteStyle == 'funkin')
+			meta.playData.noteStyle = 'default';
+		meta = ParseUtil.applyMerge(meta, '_merge/data/songs/$songID/$fileName');
+		_cached_vslice_meta.set(fileName, meta);
+		return meta;
+	}
+
+	private static function _get_vslice_chart(songID, ?varient:String):Dynamic {
+		var fileName = '$songID-chart${varient != null ? '-$varient' : ''}';
+		if (_cached_vslice_chart.exists(fileName)) return _cached_vslice_chart.get(fileName);
+
+		if (Paths.json('songs/$songID/$fileName') == '') return null;
+		var chart = ParseUtil.jsonDirect('songs/$songID/$fileName');
+		_cached_vslice_chart.set(fileName, chart);
+		return chart;
 	}
 
 	public static function aliasVSliceStage(stageID:String):String {
@@ -380,18 +310,13 @@ class ChartConverters {
 		if (!aliases.exists(stageID)) return stageID;
 		return aliases.get(stageID);
 	}
+}
 
-	// public static function fromImaginative(chartPath:String) {
-		// return case new FNFCodename()
-	// }
-
-	/**
-	```haxe
-	// Code for converting the chart to yaml.
-	if (chartCache.fileExt != 'yaml') {
-		sys.FileSystem.deleteFile(chartCache.filePath);
-		Yaml.write(chartCache.filePath.replace('.${chartCache.fileExt}', '.yaml'), convertChartData(parsedCache,  detectJsonChartFormat(parsedCache)));
-	}
-	```*/
-
+typedef SongTimeChange = {
+	public var t:Float;
+	public var ?b:Float;
+	public var bpm:Float;
+	public var ?n:Int;
+	public var ?d:Int;
+	public var ?bt:Array<Int>;
 }

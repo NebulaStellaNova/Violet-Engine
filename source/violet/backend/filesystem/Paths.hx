@@ -2,7 +2,6 @@ package violet.backend.filesystem;
 
 import haxe.io.Path;
 import sys.FileSystem;
-import moonchart.backend.Util as MoonUtil;
 import violet.backend.utils.FileUtil;
 import violet.backend.utils.NovaUtils;
 import violet.backend.utils.StringUtil;
@@ -23,16 +22,9 @@ class Paths {
 	}
 
 	public static function init():Void {
-		MoonUtil.readFolder = (folder:String) -> Paths.readFolder(folder, true);
-		MoonUtil.isFolder = (folder:String) -> Paths.folderExists(folder, true);
-		// MoonUtil.saveBytes;
-		// MoonUtil.saveText = (path:String, text:String) -> return FileUtil.setFileContent(path, text);
-		// MoonUtil.getBytes;
-		MoonUtil.getText = FileUtil.getFileContent;
 		#if ANIMATE_SUPPORT
 		FlxAnimateAssets.exists = (path:String, type:AssetType) -> return fileExists(path, true);
-		FlxAnimateAssets.getText = MoonUtil.getText;
-		// FlxAnimateAssets.getBytes = MoonUtil.getBytes;
+		FlxAnimateAssets.getText = FileUtil.getFileContent;
 		FlxAnimateAssets.getBitmapData = (path:String) -> return Cache.image(path, 'root').bitmap;
 		function newLister(path:String, ?type:AssetType, ?library:String, includeSubDirectories:Bool = false):Array<String> {
 			var list:Array<String> = readFolder(path, true);

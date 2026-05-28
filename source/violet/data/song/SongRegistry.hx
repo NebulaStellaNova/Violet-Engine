@@ -11,15 +11,6 @@ import violet.data.level.LevelRegistry;
 @:registryData('Song', [violet.data.song.Song, violet.data.song.SongData])
 class SongRegistry implements violet.data.RegistryImpl {
 
-	inline static function checkAndConvertVSliceSongs(songList:Array<String>):Void {
-		for (songID in songList) {
-			if (Paths.fileExists('songs/$songID/$songID-metadata.json')) {
-				if (!Paths.fileExists('songs/$songID/$songID-chart.json')) continue;
-				ChartConverters.convertVSliceSong(songID);
-			}
-		}
-	}
-
 	public static function registerEntries():Void {
 		trace('debug:<yellow>Registering ${id}s...');
 
@@ -30,15 +21,29 @@ class SongRegistry implements violet.data.RegistryImpl {
 				for (song in level.getSongs())
 					song
 		];
-		checkAndConvertVSliceSongs(songList);
 		for (songID in songList) {
-			final parsed:Dynamic = ParseUtil.jsonOrYaml('songs/$songID/meta', null, 'null');
+			var parsed:Null<SongData> = null;
+			if (Paths.json('songs/$songID/$songID-metadata') != '') {
+				parsed = ChartConverters.metaFromVSlice(songID);
+			} else {
+				parsed = ParseUtil.jsonOrYaml('songs/$songID/meta', null, 'null');
+			}
 			if (parsed == null) {
 				trace('warning:<orange>Could not find $id, "<magenta>$songID<orange>", ignoring entry.');
 				continue;
 			} else registerEntry(songID, null, parsed);
-			for (i in (parsed?.variants ?? []))
-				registerEntry(songID, i, ParseUtil.jsonOrYaml('songs/$songID/meta-$i'));
+			for (i in (parsed?.variants ?? [])) {
+				var varParsed:Null<SongData> = null;
+				if (Paths.json('songs/$songID/$songID-metadata-$i') != '') {
+					varParsed = ChartConverters.metaFromVSlice(songID, i);
+				} else {
+					varParsed = ParseUtil.jsonOrYaml('songs/$songID/meta-$i', null, 'null');
+				}
+				if (varParsed == null) {
+					trace('warning:<orange>Could not find $id for varient $i, "<magenta>$songID<orange>", ignoring entry.');
+					continue;
+				} else registerEntry(songID, i, varParsed);
+			}
 		}
 	}
 
