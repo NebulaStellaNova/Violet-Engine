@@ -6,7 +6,7 @@ import violet.backend.utils.ParseUtil;
 @:registryData('Character', [violet.data.character.Character, violet.data.character.CharacterData])
 class CharacterRegistry implements violet.data.RegistryImpl {
 
-	public static function registerEntries() {
+	public static function registerEntries():Void {
 		trace('debug:<yellow>Registering ${id}s...');
 
 		clearEntries();
@@ -43,7 +43,7 @@ class CharacterRegistry implements violet.data.RegistryImpl {
 
 	inline public static function fetchEntry(id:String):Null<CharacterData> {
 		if (!entryExists(id)) // we love inlining :3
-			trace('debug:<red>Character entry "<yellow>$id<red>" doesn\'t exist.');
+			trace('debug:<red>$_id entry "<yellow>$id<red>" doesn\'t exist.');
 		return entries.get(id);
 	}
 

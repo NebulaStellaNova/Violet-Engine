@@ -259,7 +259,12 @@ class ModdingAPI {
 			violet.data.chart.ChartRegistry,
 		];
 		for (registry in registries) {
-			LoadingState.loadingText = 'Loading: ${Reflect.field(registry, 'id')}s...';
+			var regId:String = {
+				var id = Reflect.field(registry, 'id');
+				if (id == 'DialogueBox') id += 'e';
+				id;
+			}
+			LoadingState.loadingText = 'Loading: ${regId}s...';
 			Reflect.callMethod(null, Reflect.field(registry, 'registerEntries'), []);
 			LoadingState.loadingPercent += 1/registries.length;
 		}

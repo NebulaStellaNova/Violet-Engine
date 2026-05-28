@@ -1078,7 +1078,7 @@ class PlayState extends violet.backend.StateBackend {
 		if (stage != null) stage.stageScripts.callVariants(func, params);
 		if (strumLines != null) {
 			for (line in strumLines) {
-				for (i in line.characters) i.scripts.call(func, params);
+				for (i in line.characters) i.scripts.callVariants(func, params);
 			}
 		}
 	}

@@ -40,7 +40,7 @@ class ChartRegistry implements violet.data.RegistryImpl {
 				final eventPath = hasVariant ? pathing('songs/${song.songName}/events-${song.variant}') : pathing('songs/${song.songName}/events');
 
 				if (chartPath != '') registerEntry(song, diff, { difficulty: diff, filePath: chartPath, fileExt: haxe.io.Path.extension(chartPath), eventsPath: eventPath })
-				else trace('warning:<orange>Could not find chart for song "<magenta>${Song.setupId(song.id, diff, song.variant, '<orange>:<magenta>')}<orange>"');
+				else trace('warning:<orange>Could not find chart for song "<magenta>${Song.setupId(song.id, diff, song.variant, '<orange>:<magenta>')}<orange>".');
 			}
 		}
 	}
