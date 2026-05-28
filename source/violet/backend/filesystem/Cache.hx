@@ -30,7 +30,7 @@ class Cache {
 		FlxG.signals.preStateSwitch.add(()-> {
 			var nextStateID = FlxStringUtil.getClassName(Type.getClass(@:privateAccess FlxG.game._nextState.createInstance()), true);
 			var previousStateID = FlxStringUtil.getClassName(FlxG.state, true);
-			/* if (nextStateID != previousStateID) */ clear();
+			/* if (nextStateID != previousStateID) */ /* clear(); */
 		});
 	}
 
@@ -45,12 +45,13 @@ class Cache {
 
 
 	public static function clear() {
-		for (key=>i in imgCache) {
-			// FlxG.bitmap.removeByKey(key);
+		for (i=>key in imgCacheKeys) {
+			FlxG.bitmap.removeByKey(key);
 		}
 		cachedCharacters.clear();
 		cache.clear();
-		// imgCache.clear();
+		imgCache.resize(0);
+		imgCacheKeys.resize(0);
 	}
 
 	public static function image(path:String, directory:String = '', ?ext:String = 'png', doCache:Bool = true):FlxGraphic {
