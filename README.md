@@ -1,6 +1,6 @@
 # Get The Engine
 PLEASE Download from the [Actions Tab](https://github.com/NebulaStellaNova/Violet-Engine/actions)<br>
-but if for whatever reason you can't, here's direct downloads for each platform (NOTE: High change these are outdated, so be aware):<br>
+but if for whatever reason you can't, here's direct downloads for each platform (NOTE: There's a high chance these are outdated, so be aware):<br>
 - [Violet Engine Windows Build](https://nightly.link/NebulaStellaNova/Violet-Engine/workflows/test/main/Violet%20Windows%20Build.zip)<br>
 - [Violet Engine Linux Build](https://nightly.link/NebulaStellaNova/Violet-Engine/workflows/test/main/Violet%20Linux%20Build.zip)<br>
 - [Violet Engine MacOS Build](https://nightly.link/NebulaStellaNova/Violet-Engine/workflows/test/main/Violet%20macOS%20Build.zip)<br>
