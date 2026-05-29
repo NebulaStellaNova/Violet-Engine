@@ -12,9 +12,9 @@ class ZipUtil {
 	 */
 	public static function extractZip(inputPath:String, outputPath:String):Void {
 		#if windows
-		NovaUtils.runHiddenCommand("tar", ["-xf", inputPath, "-C", outputPath]);
+		NovaUtils.runHiddenCommand("tar", ["-xf", '"$inputPath"', "-C", '"$outputPath"']);
 		#else
-		NovaUtils.runHiddenCommand("unzip", [inputPath, "-d", outputPath]);
+		NovaUtils.runHiddenCommand("unzip", ['"$inputPath"', "-d", '"$outputPath"']);
 		#end
 	}
 

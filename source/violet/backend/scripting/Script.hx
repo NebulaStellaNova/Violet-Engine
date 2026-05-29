@@ -67,6 +67,7 @@ class Script implements IFlxDestroyable {
 		// Shaders
 		'AngleMask' => violet.backend.shaders.AngleMask,
 		'GaussianBlurShader' => violet.backend.shaders.GaussianBlurShader,
+		'AnimateInnerGlowShader' => violet.backend.shaders.AnimateInnerGlowShader,
 
 		// Special Thanks
 		'GenzuSprite' => GenzuSprite,
@@ -98,7 +99,8 @@ class Script implements IFlxDestroyable {
 			MAGENTA: FlxColor.MAGENTA,
 			CYAN: FlxColor.CYAN,
 			fromRGB: FlxColor.fromRGB,
-			fromString: FlxColor.fromString
+			fromString: FlxColor.fromString,
+			interpolate: FlxColor.interpolate
 		}
 	];
 

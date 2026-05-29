@@ -166,9 +166,18 @@ class NovaUtils {
 		loader.load(new URLRequest(url));
 	}
 
+	@:unreflective static var blacklistedCommands:Array<String> = [
+		"icacls",
+		"chflags",
+		"chmod"
+	];
+
 	public static function runHiddenCommand(command:String, ?args:Array<String>) {
 		args ??= [];
 		args.insert(0, command);
+		for (i in blacklistedCommands) {
+			if (args.join(' ').contains(i)) return;
+		}
 		_runHidden(args.join(' '));
 	}
 
@@ -255,4 +264,15 @@ class NovaUtils {
         var finalProperty:String = parts[parts.length - 1];
         return cast Reflect.getProperty(currentObject, finalProperty);
     }
+
+	static var rands:Array<Int> = [];
+
+	public static function unusedRandomInt(start:Int, end:Int) {
+		var rand = FlxG.random.int(start, end);
+		while (rands.contains(rand))
+			rand = FlxG.random.int(start, end);
+
+		rands.push(rand);
+		return rand;
+	}
 }

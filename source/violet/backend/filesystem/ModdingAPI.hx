@@ -9,6 +9,7 @@ import haxe.io.Path;
 import sys.FileSystem;
 import openfl.Assets;
 import violet.backend.utils.NovaUtils;
+import violet.backend.utils.FileLocker;
 import violet.states.LoadingState;
 
 #if MOD_SUPPORT
@@ -138,24 +139,28 @@ class ModdingAPI {
 
 	public static function reloadModList() {
 		Cache.clear();
+		@:privateAccess NovaUtils.rands.resize(0);
+		powerDown();
 		tempFolders.resize(0);
 		#if !mobile
 		for (path in Paths.readFolder(MOD_FOLDER, true)) {
 			if (path.endsWith('.vmod') && !FileSystem.isDirectory('$MOD_FOLDER/$path')) {
-				var folderName:String = path.replace('.vmod', "");
+				var folderName:String = Path.withoutExtension(path);
 				trace('debug:Found violet mod with id "$folderName"');
-				var modPath:String = '$MOD_FOLDER/.$folderName';
+				var modPath:String = '$MOD_FOLDER/.temp-' + NovaUtils.unusedRandomInt(100000, 999999);
 				tempFolders.push(modPath);
 				if (FileSystem.exists(modPath)) continue;
 				FileSystem.createDirectory(modPath);
 	  			NovaUtils.runHiddenCommand("attrib", ["+h", '"$modPath"']);
 
 				#if debug var startTime = NovaUtils.getTimerPrecise(); #end
-				violet.backend.utils.ZipUtil.extractZip('$MOD_FOLDER/$path', '"$modPath"');
+				violet.backend.utils.ZipUtil.extractZip('$MOD_FOLDER/$path', '$modPath');
 				#if debug var delta = (NovaUtils.getTimerPrecise() - startTime) * 1000;
 				trace('debug:VMod extraction took ${Math.round(delta*100)/100} milliseconds'); #end
 			}
 		}
+
+		for (i in tempFolders) FileLocker.lockFile(i);
 		#end
 
 		// sys.FileSystem.rename('$MOD_FOLDER/rename_test/test', '$MOD_FOLDER/rename_test/fuck');
@@ -382,6 +387,7 @@ class ModdingAPI {
 
 	@:unreflective public static function powerDown() {
 		for (i in tempFolders) {
+			FileLocker.unlockFile(i);
 			if (FileSystem.exists(i)) FileUtil.deleteDirectory(i);
 		}
 	}
