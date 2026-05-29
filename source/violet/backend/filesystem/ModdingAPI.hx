@@ -139,6 +139,7 @@ class ModdingAPI {
 
 	public static function reloadModList() {
 		Cache.clear();
+		@:privateAccess NovaUtils.rands.resize(0);
 		powerDown();
 		tempFolders.resize(0);
 		#if !mobile
