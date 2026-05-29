@@ -15,7 +15,6 @@ haxelib install yaml
 haxelib git hxcpp https://github.com/FunkinCrew/hxcpp
 haxelib git funkin.vis https://github.com/FunkinCrew/funkVis useGrig
 haxelib git grig.audio https://github.com/FunkinCrew/grig.audio
-haxelib git moonchart https://github.com/MaybeMaru/moonchart.git
 haxelib git flxrhythmconductor https://github.com/PurSnake/FlxRhythmConductor --skip-dependencies
 haxelib git lemon-ui https://github.com/NebulaStellaNova/LemonUI --skip-dependencies
 haxelib git hxcpp-debug-server https://github.com/FunkinCrew/hxcpp-debugger
@@ -25,4 +24,4 @@ haxelib git lscript https://github.com/SrtHero278/lscript --skip-dependencies
 haxelib git rulescript https://github.com/Kriptel/RuleScript dev
 haxelib git flixel-animate https://github.com/NebulaStellaNova/flixel-animate bullshity-fix --skip-dependencies
 haxelib git hython https://github.com/Paopun20/hython.git legacy
-haxelib git nxscript https://github.com/senioritaelizabeth/NxScript.git dev
+haxelib git nxscript https://github.com/Kitsumizy/NxScript dev --always

@@ -34,10 +34,6 @@ class StageRegistry implements violet.data.RegistryImpl {
 	}
 
 	public static function registerEntry(id:String, _data:StageData):Void {
-		if (entryExists(id)) {
-			trace('warning:<orange>$_id with ID "<magenta>$id<orange>" is already registered, ignoring entry.');
-			return;
-		}
 		entries.set(id, _data);
 		trace('debug:<cyan>Registered $_id entry, "<magenta>$id<cyan>".');
 	}

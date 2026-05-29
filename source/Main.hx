@@ -84,8 +84,6 @@ class Main extends openfl.display.Sprite {
 		lemonui.Constants.FONT_REGULAR = Paths.font('Inconsolata-Medium.ttf');
 		lemonui.Constants.FONT_BOLD = Paths.font('Inconsolata-Bold.ttf');
 
-		moonchart.Moonchart.DEFAULT_DIFF = 'normal';
-		moonchart.Moonchart.CASE_SENSITIVE_DIFFS = moonchart.Moonchart.SPACE_SENSITIVE_DIFFS = false;
 		Paths.init();
 		Cache.init();
 		#if EDIT_WINDOW_BORDER_COLOR

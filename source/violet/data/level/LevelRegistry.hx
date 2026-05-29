@@ -42,10 +42,6 @@ class LevelRegistry implements violet.data.RegistryImpl {
 		var entry = new Level(id);
 		data.push(entry);
 		trace('debug:<cyan>Registered $_id entry, "<magenta>$id<cyan>".');
-
-		// preload story menu assets
-		entry.buildTitleGraphic().destroy();
-		entry.buildProps().destroy();
 	}
 
 	inline public static function getVisibleEntries():Array<Level> {

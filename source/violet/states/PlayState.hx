@@ -256,6 +256,7 @@ class PlayState extends violet.backend.StateBackend {
 		Conductor.setupBPMChanges(songData, sortedEvents);
 		Conductor.offset = (countdownLength) * Conductor.beatLengthMs;
 
+		trace(Paths.vocal(songData.songName, null, PlayState.variation));
 		if (Paths.vocal(songData.songName, null, PlayState.variation) != '') generalVocals = Conductor.addAdditionalTrack(FlxG.sound.load(Cache.sound(Paths.vocal(songData.songName, null, PlayState.variation), 'root', null, true), FlxG.sound.defaultMusicGroup));
 		else generalVocals = Conductor.addAdditionalTrack(new FlxSound());
 

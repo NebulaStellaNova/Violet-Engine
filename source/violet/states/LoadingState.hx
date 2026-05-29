@@ -144,7 +144,8 @@ class LoadingState extends StateBackend { // for now
 
 		var it = null;
 		it = ()->{
-			try {
+			var internal;
+			internal = ()->{
 				ModdingAPI.reloadModList();
 				@:bypassAccessor ModdingAPI.activeModsIds = FlxG.save.data.enabledModIds;
 				new HXCHandler();
@@ -152,8 +153,14 @@ class LoadingState extends StateBackend { // for now
 				ModdingAPI.checkForHXC();
 				GlobalPack.init();
 				refreshRedirects();
+			}
+			try {
+				internal();
 			} catch (e:Dynamic) {
-				trace(e);
+				trace('warning:Failed to load registries for unknown reason, trying again...');
+				try {
+					internal();
+				} catch (e:Dynamic) {}
 			}
 			Main.threadCallacks.remove(it);
 		}

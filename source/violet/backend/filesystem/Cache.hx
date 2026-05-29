@@ -1,5 +1,8 @@
 package violet.backend.filesystem;
 
+import haxe.io.Bytes;
+import openfl.utils.ByteArray;
+import sys.FileSystem;
 import flixel.util.FlxStringUtil;
 import violet.states.PlayState;
 import violet.data.character.Character;
@@ -27,11 +30,14 @@ class Cache {
 		FlxG.signals.preStateSwitch.add(()-> {
 			var nextStateID = FlxStringUtil.getClassName(Type.getClass(@:privateAccess FlxG.game._nextState.createInstance()), true);
 			var previousStateID = FlxStringUtil.getClassName(FlxG.state, true);
-			/* if (nextStateID != previousStateID) */ clear();
+			/* if (nextStateID != previousStateID) */ /* clear(); */
 		});
 	}
 
 	static final cache:Map<String, Dynamic> = new Map<String, Dynamic>();
+
+	static final imgCache:Array<FlxGraphic> = [];
+	static final imgCacheKeys:Array<String> = [];
 
 	/* public static function xml(path:String):String {
 		if (cache.exists(path))
@@ -39,21 +45,25 @@ class Cache {
 
 
 	public static function clear() {
-		for (key=>i in cache) {
-			if (i is FlxGraphic) {
-				FlxG.bitmap.removeByKey(key);
-			}
+		for (i=>key in imgCacheKeys) {
+			FlxG.bitmap.removeByKey(key);
 		}
 		cachedCharacters.clear();
 		cache.clear();
+		imgCache.resize(0);
+		imgCacheKeys.resize(0);
 	}
 
 	public static function image(path:String, directory:String = '', ?ext:String = 'png', doCache:Bool = true):FlxGraphic {
 		var imagePath:String = Paths.image(path, directory, ext);
-		if (cache.exists(imagePath) && doCache) {
-			var graphic:FlxGraphic = FlxGraphic.fromGraphic(cache.get(imagePath));
-			if (!graphic.isDestroyed)
+		if (imgCacheKeys.contains(imagePath) && doCache) {
+
+			var graphic:FlxGraphic = imgCache[imgCacheKeys.indexOf(imagePath)];
+
+			if (!graphic.isDestroyed) {
+				graphic.refresh();
 				return graphic;
+			}
 		}
 
 		var bitmap:BitmapData = null;
@@ -65,10 +75,15 @@ class Cache {
 			bitmap = BetterBitmapData.fromFile(Paths.image('zuko-here'));
 		}
 
+		bitmap.lock();
+
 		var graphic:FlxGraphic = FlxGraphic.fromBitmapData(bitmap, imagePath, false);
 		graphic.destroyOnNoUse = false;
 		graphic.persist = true;
-		cache.set(imagePath, graphic);
+		imgCacheKeys.push(imagePath);
+		imgCache.push(graphic);
+
+		bitmap.unlock();
 		return graphic;
 	}
 
