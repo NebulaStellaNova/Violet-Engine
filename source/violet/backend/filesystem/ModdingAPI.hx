@@ -139,6 +139,7 @@ class ModdingAPI {
 
 	public static function reloadModList() {
 		Cache.clear();
+		powerDown();
 		tempFolders.resize(0);
 		#if !mobile
 		for (path in Paths.readFolder(MOD_FOLDER, true)) {
