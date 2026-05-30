@@ -157,7 +157,7 @@ class ParseUtil {
 }
 
 /**
- * Used for parsing colors from json files.
+ * Used for parsing colors from data files.
  */
 abstract ParseColor(String) {
 
@@ -189,26 +189,29 @@ abstract ParseColor(String) {
 		return color.blue;
 	}
 
-	@:from inline public static function fromString(from:String):ParseColor
-		return cast FlxColor.fromString(from ?? 'white').toWebString();
+	@:from inline public static function fromString(value:String):ParseColor
+		return cast FlxColor.fromString(value ?? 'white').toWebString();
 	@:to inline public function toString():String
 		return this ?? '#FFFFFF';
 
-	@:from inline public static function fromInt(from:Int):ParseColor
-		return FlxColor.fromInt(from ?? FlxColor.WHITE).toWebString();
+	@:from inline public static function fromInt(value:Int):ParseColor
+		return FlxColor.fromInt(value ?? FlxColor.WHITE).toWebString();
 	@:to inline public function toInt():Int
 		return FlxColor.fromString(this ?? 'white');
 
-	@:from inline public static function fromFlxColor(from:FlxColor):ParseColor
-		return FlxColor.fromInt(from ?? FlxColor.WHITE).toWebString();
+	@:from inline public static function fromFlxColor(value:FlxColor):ParseColor
+		return FlxColor.fromInt(value ?? FlxColor.WHITE).toWebString();
 	@:to inline public function toFlxColor():FlxColor
 		return FlxColor.fromString(this ?? 'white');
 
-	@:from inline public static function fromArray(from:Array<Int>):ParseColor
-		return fromInt(FlxColor.fromRGB(from[0] ?? 255, from[1] ?? 255, from[2] ?? 255));
+	@:from inline public static function fromArray(value:Array<Int>):ParseColor
+		return fromInt(FlxColor.fromRGB(value[0] ?? 255, value[1] ?? 255, value[2] ?? 255, value[3] ?? 255));
 	@:to inline public function toArray():Array<Int> {
-		var color:FlxColor = toFlxColor();
-		return [color.red ?? 255, color.green ?? 255, color.blue ?? 255];
+		final color:FlxColor = toFlxColor();
+		return [color.red ?? 255, color.green ?? 255, color.blue ?? 255, color.alpha ?? 255];
 	}
+
+	inline public function ifNull(defaultValue:ParseColor):ParseColor
+		return this ?? defaultValue.toString();
 
 }
