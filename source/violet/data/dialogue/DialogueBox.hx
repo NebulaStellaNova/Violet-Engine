@@ -35,8 +35,12 @@ class DialogueBox extends FlxSpriteGroup {
 		boxSprite.addAnimsFromDataArray(this._data.animations);
 
 		textDisplay = new NovaTypeText(0, 0, this._data.text.width ?? 300);
-		textDisplay.setFormat(Paths.font(this._data.text.fontFamily), this._data.text.size ?? 32, this._data.text.color, LEFT, this._data.text.borderStyle, this._data.text.borderColor);
-		textDisplay.borderSize = this._data.text.borderSize ?? 2;
+		textDisplay.setFormat(Paths.font(this._data.text.font), this._data.text.size ?? 32, this._data.text.color.ifNull(FlxColor.WHITE), LEFT, this._data.text.borderStyle ?? OUTLINE, this._data.text.borderColor.ifNull(FlxColor.BLACK));
+		var point:ArrayPoint<Float> = this._data.text.borderSize.resolve(2);
+		if (!point.isSingular() && this._data.text.borderStyle == SHADOW)
+			textDisplay.borderStyle = SHADOW_XY(point[0], point[1]);
+		else textDisplay.borderSize = this._data.text.borderSize ?? 2;
+		point.clear();
 		// textDisplay.sounds = [FlxG.sound.load(Cache.sound(), 0.6)];
 		if (this._data.offsets != null) textDisplay.setPosition(this._data.text.offsets[0] ?? 0, this._data.text.offsets[1] ?? 0);
 
