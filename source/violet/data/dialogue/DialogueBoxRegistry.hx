@@ -1,8 +1,5 @@
 package violet.data.dialogue;
 
-import violet.backend.utils.FileUtil;
-import violet.backend.utils.ParseUtil;
-
 @:registryData('DialogueBox', [violet.data.dialogue.DialogueBox, violet.data.dialogue.DialogueBoxData])
 class DialogueBoxRegistry implements violet.data.RegistryImpl {
 

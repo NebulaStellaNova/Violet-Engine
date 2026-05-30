@@ -1,8 +1,5 @@
 package violet.data.character;
 
-import violet.backend.utils.FileUtil;
-import violet.backend.utils.ParseUtil;
-
 @:registryData('Character', [violet.data.character.Character, violet.data.character.CharacterData])
 class CharacterRegistry implements violet.data.RegistryImpl {
 

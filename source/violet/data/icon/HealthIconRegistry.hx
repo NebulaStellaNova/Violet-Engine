@@ -1,7 +1,5 @@
 package violet.data.icon;
 
-import violet.backend.utils.ParseUtil;
-
 @:registryData('HealthIcon', [violet.data.icon.HealthIcon, violet.data.icon.HealthIconData])
 class HealthIconRegistry implements violet.data.RegistryImpl {
 

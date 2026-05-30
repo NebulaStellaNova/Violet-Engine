@@ -1,8 +1,5 @@
 package violet.data.notestyles;
 
-import haxe.io.Path;
-import violet.backend.utils.ParseUtil;
-
 @:registryData('NoteStyle', [violet.data.notestyles.NoteStyle, violet.data.notestyles.NoteStyleData])
 class NoteStyleRegistry implements violet.data.RegistryImpl {
 
