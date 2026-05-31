@@ -254,13 +254,15 @@ class ModdingAPI {
 		NovaUtils.CURRENT_MUSIC = null;
 		registered = true;
 
-		final registries:Array<Class<Dynamic>> = [
+		final registries:Array<Class<violet.data.RegistryImpl>> = [
 			violet.data.notestyles.NoteStyleRegistry,
 			violet.data.level.LevelRegistry,
 			violet.data.icon.HealthIconRegistry,
 			violet.data.character.CharacterRegistry,
 			violet.data.song.SongRegistry,
+			violet.data.dialogue.SpeakerRegistry,
 			violet.data.dialogue.DialogueBoxRegistry,
+			violet.data.dialogue.ConversationRegistry,
 			violet.data.stage.StageRegistry,
 			violet.data.chart.ChartRegistry,
 		];

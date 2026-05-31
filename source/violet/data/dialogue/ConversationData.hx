@@ -1,5 +1,7 @@
 package violet.data.dialogue;
 
+import violet.backend.utils.ParseUtil;
+
 typedef ConversationData = {
 	var backdrop:BackdropData;
 	var ?outro:OutroData;
@@ -7,41 +9,84 @@ typedef ConversationData = {
 	var dialogue:Array<DialogueEntryData>;
 }
 
-enum BackdropData {
-	SOLID(data:BackdropData_Solid);
+private typedef NoData = {
+	var ?type:String;
+}
+
+abstract BackdropData(Dynamic) from NoData from BackdropData_Solid {
+	inline public function build(none:NoData->Void, solid:BackdropData_Solid->Void):Void {
+		switch (this.type.toLowerCase()) {
+			default: none(this);
+			case 'solid': solid(this);
+		}
+	}
+}
+abstract OutroData(Dynamic) from NoData from OutroData_Fade {
+	inline public function build(none:NoData->Void, fade:OutroData_Fade->Void):Void {
+		switch (this.type.toLowerCase()) {
+			default: none(this);
+			case 'fade': fade(this);
+		}
+	}
 }
 
 typedef BackdropData_Solid = {
-	var type:String;
+	> NoData,
 	var color:ParseColor;
 	@:default(0) var ?fadeTime:Float;
 }
-
-enum OutroData {
-	NONE(data:OutroData_None);
-	FADE(data:OutroData_Fade);
-}
-
-typedef OutroData_None = {
-	var type:String;
-}
-
 typedef OutroData_Fade = {
-	var type:String;
+	> NoData,
 	@:default(1) var ?fadeTime:Float;
 }
 
 typedef MusicData = {
 	var asset:String;
 	@:default(0) var ?fadeTime:Float;
-	@:default(false) var ?looped:Bool;
+	var ?pause:Bool;
 }
 
 typedef DialogueEntryData = {
 	var speaker:String;
-	var speakerAnimation:String;
+	var speakerAnim:String;
 	var box:String;
-	var boxAnimation:String;
-	var text:Array<String>;
+	var boxAnim:String;
+	var lines:ConversationText;
+	var ?music:MusicData;
 	@:default(1) var ?speed:Float;
+}
+
+typedef RawConversationTextPiece = {
+	var ?speaker:String;
+	var ?speakerAnim:String;
+	var ?box:String;
+	var ?boxAnim:String;
+	var text:String;
+	var ?music:MusicData;
+	@:default(1) var ?speed:Float;
+}
+
+@:forward
+abstract ConversationTextPiece(RawConversationTextPiece) from RawConversationTextPiece to RawConversationTextPiece {
+
+	@:from inline public static function fromString(value:String):ConversationTextPiece {
+		return {text: value}
+	}
+
+}
+@:forward
+abstract ConversationText(Array<ConversationTextPiece>) from Array<ConversationTextPiece> to Array<ConversationTextPiece> {
+
+	@:from inline public static function fromPiece(value:ConversationTextPiece):ConversationText {
+		return [value];
+	}
+
+	@:from inline public static function fromString(value:String):ConversationText {
+		return fromPiece({text: value});
+	}
+
+	@:from inline public static function fromStringArray(value:Array<String>):ConversationText {
+		return [for (text in value) {text: text}];
+	}
+
 }

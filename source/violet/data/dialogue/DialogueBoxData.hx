@@ -1,6 +1,6 @@
 package violet.data.dialogue;
 
-import flixel.text.FlxText.FlxTextBorderStyle;
+import flixel.text.FlxText;
 import violet.backend.utils.ParseUtil;
 import violet.data.ArrayPoint;
 import violet.data.animation.AnimationData;
@@ -33,8 +33,6 @@ enum abstract TextBorderStyle(String) from String to String {
 typedef DialogueBoxData = {
 	public var name:String;
 	public var assetPath:String;
-	public var ?flipX:Bool;
-	public var ?flipY:Bool;
 	public var ?isPixel:Bool;
 	public var ?offsets:Array<Float>;
 	public var text:DialogueBoxTextData;
@@ -47,8 +45,8 @@ typedef DialogueBoxTextData = {
 	var ?width:Float;
 	var ?size:Int;
 	var ?color:ParseColor;
-	var ?fontFamily:String;
-	var borderColor:ParseColor;
+	var ?font:String;
+	var ?borderColor:ParseColor;
 	var ?borderSize:ArrayPoint<Float>;
 	var ?borderStyle:TextBorderStyle;
 }
