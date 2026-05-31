@@ -43,6 +43,16 @@ class Cache {
 		if (cache.exists(path))
 	} */
 
+	public static function remove(path:String, directory:String = '', ?ext:String = 'png') {
+		var imagePath:String = Paths.image(path, directory, ext);
+		for (i=>key in imgCacheKeys) {
+			if (key == imagePath) {
+				FlxG.bitmap.removeByKey(key);
+				imgCache.remove(imgCache[i]);
+				imgCacheKeys.remove(key);
+			}
+		}
+	}
 
 	public static function clear() {
 		for (i=>key in imgCacheKeys) {

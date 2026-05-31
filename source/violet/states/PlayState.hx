@@ -1034,6 +1034,7 @@ class PlayState extends violet.backend.StateBackend {
 	}
 
 	function endSong():Void {
+		Conductor.stop();
 		var event:EventBase = runSongEvent('endSong', runSongEvent('songEnd', new EventBase()));
 		if (event.cancelled) return;
 		songEnded = true;

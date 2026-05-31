@@ -48,6 +48,7 @@ class StateBackend extends flixel.FlxState {
 	public static var instance:StateBackend;
 
 	override public function create() {
+		Cache.remove('alphabet/english-bold');
 		super.create();
 
 		Conductor.init();
