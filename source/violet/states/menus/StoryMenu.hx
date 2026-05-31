@@ -198,6 +198,8 @@ class StoryMenu extends SubStateBackend {
 				canInteract = true;
 			});
 		}
+
+		changeDifficulty(0);
 	}
 
 	var time:Float = 0;
