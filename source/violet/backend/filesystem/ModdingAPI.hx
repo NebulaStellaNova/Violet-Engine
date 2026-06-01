@@ -380,9 +380,12 @@ class ModdingAPI {
 	#end
 
 	@:unreflective public static function powerDown() {
-		for (i in tempFolders) {
-			FileLocker.unlockFile(i);
-			if (FileSystem.exists(i)) FileUtil.deleteDirectory(i);
+		for (i in FileSystem.readDirectory(MOD_FOLDER)) {
+			if (i.startsWith('.temp-')) {
+				var path = '$MOD_FOLDER/$i';
+				FileLocker.unlockFile(path);
+				FileUtil.deleteDirectory(path);
+			}
 		}
 	}
 }
