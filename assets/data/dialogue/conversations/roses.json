@@ -6,8 +6,7 @@
 	},
 	"music": {
 		"asset": "",
-		"fadeTime": 0,
-		"looped": false
+		"fadeTime": 0
 	},
 	"outro": {
 		"type": "fade",
@@ -16,30 +15,24 @@
 	"dialogue": [
 		{
 			"speaker": "senpai-angry",
-			"speakerAnimation": "talk",
-			"box": "roses",
-			"boxAnimation": "idle",
-			"text": [
-				"Not bad for an ugly worm."
-			]
+			"speakerAnim": "talk",
+			"box": "senpai",
+			"boxAnim": "idle",
+			"lines": "Not bad for an ugly worm."
 		},
 		{
 			"speaker": "senpai-angry",
-			"speakerAnimation": "talk",
-			"box": "roses",
-			"boxAnimation": "idle",
-			"text": [
-				"But this time I'll rip your nuts off right after your girlfriend finishes gargling mine."
-			]
+			"speakerAnim": "talk",
+			"box": "senpai",
+			"boxAnim": "idle",
+			"lines": "But this time I'll rip your nuts off right after your girlfriend finishes gargling mine."
 		},
 		{
 			"speaker": "bf-pixel",
-			"speakerAnimation": "talkEnter",
-			"box": "roses",
-			"boxAnimation": "idle",
-			"text": [
-				"Bop beep be be skdoo bep"
-			]
+			"speakerAnim": "talkEnter",
+			"box": "senpai",
+			"boxAnim": "idle",
+			"lines": ["Bop beep be be skdoo bep", "... heheheha!"]
 		}
 	]
 }

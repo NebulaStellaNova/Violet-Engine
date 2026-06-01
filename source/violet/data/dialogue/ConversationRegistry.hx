@@ -1,5 +1,7 @@
 package violet.data.dialogue;
 
+import violet.data.dialogue.ConversationData;
+
 @:registryData('Conversation', [violet.data.dialogue.Conversation, violet.data.dialogue.ConversationData])
 class ConversationRegistry implements violet.data.RegistryImpl {
 
@@ -15,9 +17,22 @@ class ConversationRegistry implements violet.data.RegistryImpl {
 				trace('warning:<orange>Could not find $entryID, "<magenta>data/dialogue/conversations/$file<orange>", ignoring entry.');
 				continue;
 			}
-			final parsed:Dynamic = ParseUtil.jsonOrYaml(metaPath, '', null);
-			if (parsed != null) registerEntry(entryID, parsed);
-			else trace('warning:<orange>Could not parse $entryID, "<magenta>data/dialogue/conversations/$file<orange>", ignoring entry.');
+			final parsed:ConversationData = ParseUtil.jsonOrYaml(metaPath, '', null);
+			if (parsed != null) {
+				// hating how I have to do this manually :(
+				for (entry in parsed.dialogue) {
+					if (entry.lines is String)
+						entry.lines = ConversationText.fromString(cast entry.lines);
+					else if (entry.lines is Array)
+						entry.lines = ConversationText.fromArray(cast entry.lines);
+					else if (!Reflect.isObject(entry.lines))
+						entry.lines = ConversationText.fromPiece(cast entry.lines);
+					for (line in entry.lines)
+						if (line is String)
+							line = ConversationTextPiece.fromString(cast line);
+				}
+				registerEntry(entryID, parsed);
+			} else trace('warning:<orange>Could not parse $entryID, "<magenta>data/dialogue/conversations/$file<orange>", ignoring entry.');
 		}
 	}
 

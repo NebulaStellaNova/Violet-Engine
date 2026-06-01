@@ -7,14 +7,17 @@ class Speaker extends NovaSprite {
 
 	public var scripts:ScriptPack = new ScriptPack();
 
+	public var convo:Null<Conversation>;
+
 	public final id:String;
 	public final _data:SpeakerData;
 
 	private var faceLeftCache:Bool = false;
 	private var initialFlipX:Bool = false;
 
-	public function new(id:String) {
+	public function new(id:String, ?convo:Conversation) {
 		this.id = id;
+		this.convo = convo;
 		this.initialFlipX = this.flipX;
 		this._data = SpeakerRegistry.fetchEntry(id) ?? SpeakerRegistry.fetchEntry('bf');
 		super(Paths.image(this._data.assetPath));

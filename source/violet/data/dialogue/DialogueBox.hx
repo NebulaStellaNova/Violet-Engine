@@ -8,21 +8,27 @@ class DialogueBox extends FlxSpriteGroup {
 
 	public var scripts:ScriptPack = new ScriptPack();
 
+	public var convo:Null<Conversation>;
+
 	public final id:String;
 	public final _data:DialogueBoxData;
 
 	public var text(get, set):String;
 	inline function get_text():String
 		return textDisplay.text;
-	inline function set_text(value:String):String
+	inline function set_text(value:String):String {
+		textDisplay.resetText(value);
+		textDisplay.start();
 		return textDisplay.text = value;
+	}
 
 	public var boxSprite:NovaSprite;
 	public var textDisplay:NovaTypeText;
 
-	public function new(id:String) {
+	public function new(id:String, ?convo:Conversation) {
 		super();
 		this.id = id;
+		this.convo = convo;
 		this._data = DialogueBoxRegistry.fetchEntry(id) ?? DialogueBoxRegistry.fetchEntry('default');
 
 		ModdingAPI.checkForScripts('data/dialogue/boxes', id, scripts);
@@ -52,7 +58,20 @@ class DialogueBox extends FlxSpriteGroup {
 		add(boxSprite);
 		add(textDisplay);
 
+		boxSprite.animation.onFrameChange.add(this.onAnimationFrame);
+   		boxSprite.animation.onFinish.add(this.onAnimationFinished);
 		scripts.callVariants('postCreate');
+	}
+
+	function onAnimationFinished(name:String):Void {
+		convo?.scripts.callVariants('boxAnimationFinished', [name]);
+		scripts.callVariants('animationFinished', [name]);
+		@:privateAccess convo?.speaker?.scripts.callVariants('boxAnimationFinished', [name]);
+	}
+	function onAnimationFrame(name:String, frameNumber:Int, frameIndex:Int):Void {
+		convo?.scripts.callVariants('boxAnimationFrame', [name, frameNumber, frameIndex]);
+		scripts.callVariants('animationFrame', [name, frameNumber, frameIndex]);
+		@:privateAccess convo?.speaker?.scripts.callVariants('boxAnimationFrame', [name, frameNumber, frameIndex]);
 	}
 
 	public function playAnim(name:String, forced:Bool = false, reversed:Bool = false, frame:Int = 0):Void {

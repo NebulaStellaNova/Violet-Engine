@@ -8,10 +8,25 @@ import violet.data.dialogue.ConversationData;
 import violet.states.PlayState;
 
 enum abstract ConversationState(String) {
+	/**
+	 * We just startin'.
+	 */
 	var START = 'start';
+	/**
+	 * The box is opening.
+	 */
 	var OPENING = 'opening';
+	/**
+	 * Someone is speaking.
+	 */
 	var SPEAKING = 'speaking';
+	/**
+	 * Awaiting user input.
+	 */
 	var IDLE = 'idle';
+	/**
+	 * The conversation is ending.
+	 */
 	var ENDING = 'ending';
 }
 
@@ -54,11 +69,24 @@ class Conversation extends FlxSpriteGroup {
 		return currentEntry.lines[currentLineIndex];
 	}
 
+	@:unreflective var _text:String = '';
+	public var currentText(get, set):String;
+	inline function get_currentText():String {
+		if (box != null) box.text = _text;
+		return _text;
+	}
+	inline function set_currentText(value:String):String {
+		if (box != null) box.text = value;
+		return _text = value;
+	}
+
 	var music:FlxSound;
 	var backdrop:NovaSprite;
 
 	var speaker:Speaker;
 	var box:DialogueBox;
+
+	var lastBoxAnim:String = '';
 
 	// all loaded entries
 	var boxes:Array<DialogueBox> = [];
@@ -70,7 +98,7 @@ class Conversation extends FlxSpriteGroup {
 		inline function checkString(?str:String):Bool return str == null || str.trim() == '';
 		this.formattedId = '${checkString(prefix) ? '' : '$prefix-'}$id${checkString(PlayState.variation) ? '' : '-${PlayState.variation}'}${checkString(suffix) ? '' : '-$suffix'}';
 		this._data = ConversationRegistry.fetchEntry(formattedId);
-		this.dialogueEntries = this._data.dialogue;
+		this.dialogueEntries = this._data.dialogue.copy();
 
 		camera = new flixel.FlxCamera();
 		camera.bgColor = FlxColor.TRANSPARENT;
@@ -81,14 +109,14 @@ class Conversation extends FlxSpriteGroup {
 		scripts.parent = this;
 		scripts.callVariants('create');
 
-		music = FlxG.sound.load();
+		music = FlxG.sound.load(Cache.sound('flixel'));
 		backdrop = new NovaSprite();
 		this._data.backdrop.build(
 			// calling upon conversation scripts alone, on purpose
 			data -> {
 				// only called if the type is unrecognized
 				if (!(data.type == 'none' || data.type == null))
-						scripts.callVariants('buildBackdrop', [data.type, data]);
+					scripts.callVariants('buildBackdrop', [data.type, data]);
 			},
 			data -> {
 				var event = scripts.event('buildSolidBackdrop', new BuildSolidBackdropEvent(data.color, data.fadeTime ?? 0));
@@ -101,37 +129,49 @@ class Conversation extends FlxSpriteGroup {
 				}
 			}
 		);
-		backdrop.z = 10;
 		add(backdrop);
+		backdrop.z = 10;
 
 		loadEntries();
 
 		scripts.callVariants('postCreate');
 
-		next();
+		trace(0);
+		if (currentEntry.music != null)
+			loadMusicViaData(currentEntry.music);
+		trace(1);
+		convoState = OPENING;
+		trace(2);
+		changeBox(currentEntry.box);
+		trace(3);
+		box.playAnim(currentEntry.boxAnim, true);
+		trace(4);
+		lastBoxAnim = box.animation?.name ?? '';
+		trace(5);
+		// next();
 	}
 
 	public function loadEntries():Void {
 		for (entry in dialogueEntries) {
-			if (boxes.exists(box -> box.id == entry.box)) {
-				final box = new DialogueBox(entry.box);
+			if (!boxes.exists(box -> return box.id == entry.box)) {
+				final box = new DialogueBox(entry.box, this);
 				box.kill();
 				boxes.push(box);
 			}
-			if (speakers.exists(speaker -> speaker.id == entry.speaker)) {
-				final speaker = new Speaker(entry.speaker);
+			if (!speakers.exists(speaker -> return speaker.id == entry.speaker)) {
+				final speaker = new Speaker(entry.speaker, this);
 				speaker.kill();
 				speakers.push(speaker);
 			}
 
 			for (entry in entry.lines) {
-				if (entry.box != null && boxes.exists(box -> box.id == entry.box)) {
-					final box = new DialogueBox(entry.box);
+				if (entry.box != null && !boxes.exists(box -> return box.id == entry.box)) {
+					final box = new DialogueBox(entry.box, this);
 					box.kill();
 					boxes.push(box);
 				}
-				if (entry.speaker != null && speakers.exists(speaker -> speaker.id == entry.speaker)) {
-					final speaker = new Speaker(entry.speaker);
+				if (entry.speaker != null && !speakers.exists(speaker -> return speaker.id == entry.speaker)) {
+					final speaker = new Speaker(entry.speaker, this);
 					speaker.kill();
 					speakers.push(speaker);
 				}
@@ -163,11 +203,12 @@ class Conversation extends FlxSpriteGroup {
 	}
 
 	public function changeBox(boxId:String):DialogueBox {
-		if (box.id == boxId) return box;
-		var newBox = boxes.find(box -> box.id == boxId);
+		final wasNull = box == null;
+		if (!wasNull && box.id == boxId) return box;
+		var newBox = boxes.find(box -> return box.id == boxId);
 		if (newBox == null) {
 			trace('warning:<orange>Couldn\'t find box with ID "<magenta>$boxId<orange>", using default box.');
-			newBox = boxes.find(box -> box.id == 'default');
+			newBox = boxes.find(box -> return box.id == 'default');
 			if (newBox == null) {
 				NovaUtils.addNotification('Default box not found', 'Couldn\'t find the default box, looks like you need to double-check some things.', ERROR);
 				return box;
@@ -175,9 +216,12 @@ class Conversation extends FlxSpriteGroup {
 		}
 
 		boxes.remove(newBox);
-		box.kill();
-		box.typingCompleteCallback = null;
-		remove(box);
+		if (!wasNull) {
+			box.typingCompleteCallback = null;
+			box.kill();
+		}
+		if (members.has(box))
+			members.remove(box);
 
 		add(newBox);
 		newBox.revive();
@@ -186,11 +230,12 @@ class Conversation extends FlxSpriteGroup {
 		return box = newBox;
 	}
 	public function getSpeaker(speakerId:String):Speaker {
-		if (speaker.id == speakerId) return speaker;
-		var newSpeaker = speakers.find(speaker -> speaker.id == speakerId);
+		final wasNull = speaker == null;
+		if (!wasNull && speaker.id == speakerId) return speaker;
+		var newSpeaker = speakers.find(speaker -> return speaker.id == speakerId);
 		if (newSpeaker == null) {
 			trace('warning:<orange>Couldn\'t find speaker with ID "<magenta>$speakerId<orange>", using default speaker.');
-			newSpeaker = speakers.find(speaker -> speaker.id == 'bf');
+			newSpeaker = speakers.find(speaker -> return speaker.id == 'bf');
 			if (newSpeaker == null) {
 				NovaUtils.addNotification('Default speaker not found', 'Couldn\'t find the default speaker, looks like you need to double-check some things.', ERROR);
 				return speaker;
@@ -198,8 +243,9 @@ class Conversation extends FlxSpriteGroup {
 		}
 
 		speakers.remove(newSpeaker);
-		speaker.kill();
-		remove(speaker);
+		if (!wasNull) speaker.kill();
+		if (members.has(speaker))
+			members.remove(speaker);
 
 		add(newSpeaker);
 		newSpeaker.revive();
@@ -208,42 +254,87 @@ class Conversation extends FlxSpriteGroup {
 	}
 
 	public function next():Void {
+		trace(0);
+		var event = runEvent('preNextDialogue', new EventBase());
+		if (event.cancelled) return;
+		var dialogueEvent:Null<OnDialogueEntryEvent> = null;
+		trace(1);
+
 		currentLineIndex++;
 		if (currentLineIndex >= currentEntry.lines.length) {
+			trace(2);
 			currentLineIndex = 0;
 			currentEntryIndex++;
 
-			if (currentEntryIndex >= dialogueEntries.length) {
-				// end
-			} else {
+			if (currentEntryIndex >= dialogueEntries.length)
+				end();
+			else {
+				trace(3);
 				if (convoState == IDLE) {
+					trace(4);
+					dialogueEvent = runEvent('nextDialogue', new OnDialogueEntryEvent(currentEntry, currentLine));
+					if (dialogueEvent.cancelled) return;
 					convoState = OPENING;
-					var event = runEvent('nextDialogue', new OnDialogueEntryEvent(currentEntry));
-					if (event.cancelled) return;
 
-					loadMusicViaData(event.entry.music);
-					changeBox(event.entry.box);
-					box.playAnim(event.entry.boxAnim, true);
+					if (dialogueEvent.entry.music != null)
+						loadMusicViaData(dialogueEvent.entry.music);
+					changeBox(dialogueEvent.entry.box);
+					box.playAnim(dialogueEvent.entry.boxAnim, true);
 					lastBoxAnim = box.animation.name;
-
-					runEvent('nextDialoguePost', event);
+					trace(5);
 				}
+				trace(6);
 			}
 		} else {
+			trace(7);
+			trace([currentEntryIndex, currentLineIndex, dialogueEvent, convoState]);
+			trace([currentEntry, currentLine]);
+			dialogueEvent = runEvent('nextDialogue', new OnDialogueEntryEvent(currentEntry, currentLine));
+			if (dialogueEvent.cancelled) return;
 			convoState = SPEAKING;
-			box.text += currentLine.text;
+
+			trace(8);
+			if (dialogueEvent.line.music != null)
+				loadMusicViaData(dialogueEvent.line.music);
+			trace(9);
+			if (dialogueEvent.line.box != null) {
+				trace(10);
+				var prevBox = box;
+				changeBox(dialogueEvent.line.box);
+				if (prevBox != box) {
+					get_currentText();
+					box.textDisplay.skip();
+				}
+				trace(11);
+			}
+			trace(12);
+			trace([box, dialogueEvent.line.boxAnim]);
+			if (dialogueEvent.line.boxAnim != null) {
+				trace(13);
+				box.playAnim(dialogueEvent.line.boxAnim, true);
+				lastBoxAnim = box.animation.name;
+			} else box.playAnim(lastBoxAnim, true);
+			trace(14);
+
+			currentText += dialogueEvent.line.text;
+			trace(15);
 		}
+		trace([currentEntryIndex, currentLineIndex, dialogueEvent, convoState]);
+
+		runEvent('nextDialoguePost', dialogueEvent ?? new OnDialogueEntryEvent(currentEntry, currentLine));
 	}
 
-	var lastBoxAnim:String = '';
 	override public function update(elapsed:Float):Void {
 		scripts.callVariants('update', [elapsed]);
 		super.update(elapsed);
 		switch (convoState) {
 			case START:
 			case OPENING:
-				if (box != null && (box.animation.finished || box.animation.name == lastBoxAnim)) {
+				if (box != null && (box.animation.finished || box.animation?.name == lastBoxAnim)) {
 					convoState = SPEAKING;
+					getSpeaker(currentEntry.speaker);
+					speaker.playAnim(currentEntry.speakerAnim, true);
+					currentText = currentLine.text;
 				}
 			case SPEAKING:
 			case IDLE:
@@ -251,10 +342,20 @@ class Conversation extends FlxSpriteGroup {
 				if (outroTween == null)
 					outro();
 		}
+		if (Controls.accept) {
+			switch (convoState) {
+				case START:
+				case OPENING: box?.textDisplay.skip();
+				case SPEAKING: box?.textDisplay.skip();
+				case IDLE: next();
+				case ENDING: end();
+			}
+		}
 		scripts.callVariants('postUpdate', [elapsed]);
 		scripts.callVariants('updatePost', [elapsed]);
 	}
 
+	var outroTween:FlxTween;
 	public function outro():Void {
 		this._data.outro.build(
 			data -> {
@@ -264,18 +365,23 @@ class Conversation extends FlxSpriteGroup {
 				else end();
 			},
 			data -> {
-				outroTween = FlxTween.tween(this, {alpha: 0.0}, data.fadeTime, {
-					ease: FlxEase.circOut
-					onComplete: _ -> end(),
+				final fadeTime = data.fadeTime ?? 1;
+				outroTween = FlxTween.tween(this, {alpha: 0.0}, fadeTime, {
+					ease: FlxEase.circOut,
+					onComplete: _ -> end()
 				});
-				music.fadeOut(data.fadeTime ?? 1);
+				music.fadeOut(fadeTime);
 			}
 		);
 	}
 
+	public var completeOutroCallback:Null<Void->Void>;
 	public function end():Void {
+		convoState = ENDING;
 		music.stop();
-		scripts.callVariants('end');
+		if (completeOutroCallback != null)
+			completeOutroCallback();
+		callInScripts('endOfConvo');
 	}
 
 	public function onTypingComplete():Void {

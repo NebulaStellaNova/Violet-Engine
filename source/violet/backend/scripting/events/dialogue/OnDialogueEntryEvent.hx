@@ -4,11 +4,13 @@ import violet.data.dialogue.ConversationData;
 
 class OnDialogueEntryEvent extends EventBase {
 
-	public var entry:DialogueEntryData;
+	public final entry:DialogueEntryData;
+	public final line:ConversationTextPiece;
 
-	public function new(entry:DialogueEntryData) {
+	public function new(entry:DialogueEntryData, line:ConversationTextPiece) {
 		super();
 		this.entry = entry;
+		this.line = line;
 	}
 
 }

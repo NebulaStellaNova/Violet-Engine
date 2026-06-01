@@ -85,7 +85,7 @@ abstract ConversationText(Array<ConversationTextPiece>) from Array<ConversationT
 		return fromPiece({text: value});
 	}
 
-	@:from inline public static function fromStringArray(value:Array<String>):ConversationText {
+	@:from inline public static function fromArray(value:Array<String>):ConversationText {
 		return [for (text in value) {text: text}];
 	}
 
