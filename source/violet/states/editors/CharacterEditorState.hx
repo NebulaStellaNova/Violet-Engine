@@ -14,6 +14,7 @@ import openfl.display.Loader;
 import openfl.display.LoaderInfo;
 import openfl.net.FileReference;
 import openfl.net.FileFilter;
+import flixel.FlxSprite;
 
 import violet.data.animation.AnimationData;
 import lemonui.elements.NumericStepper;
@@ -33,7 +34,6 @@ import violet.backend.StateBackend;
 
 using violet.backend.utils.MathUtil;
 using violet.backend.utils.AnimationUtil;
-
 
 typedef CameraTarget = {
 	var x:Float;
@@ -59,7 +59,7 @@ class CharacterEditorState extends StateBackend {
 		for (i in animationList) {
 			if (i.name == animationDropdown.selectedText.text) return i;
 		}
-		return animationList[0]; // Null safety
+		return animationList[0];// Null safety
 	}
 
 	public var bgCamera:FlxCamera;
@@ -80,6 +80,10 @@ class CharacterEditorState extends StateBackend {
 	}
 
 	public var cameraTarget:CameraTarget = { x: 0, y: 0, zoom: 1 }
+	public var copiedOffset:Array<Float> = [0, 0];
+	
+	public var lastMouseX:Float = 0;
+	public var lastMouseY:Float = 0;
 
 	// -- Character Window -- \\
 	public var characterDropdown:Dropdown;
@@ -121,6 +125,7 @@ class CharacterEditorState extends StateBackend {
 
 	override function create() {
 		super.create();
+		FlxG.mouse.visible = true;
 
 		newList = [];
 
@@ -140,14 +145,164 @@ class CharacterEditorState extends StateBackend {
 		bg.camera = bgCamera;
 		add(bg);
 
+		var crosshairH = new FlxSprite(-2000, -1).makeGraphic(4000, 2, FlxColor.WHITE);
+		var crosshairV = new FlxSprite(-1, -2000).makeGraphic(2, 4000, FlxColor.WHITE);
+		crosshairH.camera = charCamera;
+		crosshairV.camera = charCamera;
+		crosshairH.alpha = 0.5;
+		crosshairV.alpha = 0.5;
+		add(crosshairH);
+		add(crosshairV);
+
 		var menuBar = ElementUtil.buildFromXML(Paths.xml('data/ui/character-editor/menubar')).root;
 		var bar:MenuBar = menuBar.findElement('menubar');
 		menuBar.camera = lemonCamera;
+		
 		var newCharacter:MenuItem = menuBar.findElement('newCharacter');
 		newCharacter.onClick = ()->{
 			bar.closeAll();
-			openSubState(new NewCharacterScreen());
+			openSubState(new AtlasTypePrompt(
+				function() {
+					var dialog = new lime.ui.FileDialog();
+					dialog.onSelect.add(function(path:String) {
+						var id = haxe.io.Path.withoutDirectory(haxe.io.Path.withoutExtension(path));
+						var dir = haxe.io.Path.directory(path);
+						
+						var pngPath = dir + "/" + id + ".png";
+						var xmlPath = dir + "/" + id + ".xml";
+
+						if (!FileSystem.exists(pngPath) || !FileSystem.exists(xmlPath)) return;
+
+						var targetFolder = "resources/images/characters/";
+						if (!FileSystem.exists(targetFolder)) FileSystem.createDirectory(targetFolder);
+
+						sys.io.File.copy(pngPath, targetFolder + id + ".png");
+						sys.io.File.copy(xmlPath, targetFolder + id + ".xml");
+
+						var data:CharacterData = {
+							version: "1.0.0",
+							name: id,
+							assetPath: "characters/" + id,
+							offsets: [0, 0],
+							cameraOffsets: [150, -100],
+							animations: [],
+							healthIcon: 'face'
+						};
+
+						var xmlContent = sys.io.File.getContent(targetFolder + id + ".xml");
+						var xml = Xml.parse(xmlContent).firstElement();
+						if (xml != null) {
+							var animNames:Array<String> = [];
+							var ereg = new EReg("([0-9]+)$", "");
+							for (tex in xml.elementsNamed("SubTexture")) {
+								var texName = tex.get("name");
+								if (texName != null) {
+									var cleanName = ereg.replace(texName, "");
+									if (StringTools.endsWith(cleanName, " ")) cleanName = cleanName.substr(0, cleanName.length - 1);
+									if (!animNames.contains(cleanName)) animNames.push(cleanName);
+								}
+							}
+							for (anm in animNames) {
+								data.animations.push({
+									name: anm,
+									prefix: anm,
+									offsets: [0, 0],
+									looped: false,
+									flipX: false,
+									flipY: false,
+									frameRate: 24
+								});
+							}
+						}
+
+						CharacterRegistry.characterDatas.set(id, data);
+						if (!newList.contains(id)) newList.push(id);
+						refreshCharacterDropdown();
+						for (i in 0...characterDropdown.options.length) {
+							if (characterDropdown.options[i] == id) {
+								characterDropdown.selectedIndex = i;
+								characterDropdown.onChange(i, id);
+								break;
+							}
+						}
+					});
+					dialog.browse(lime.ui.FileDialogType.OPEN, null, null, "Select Character PNG or XML");
+				},
+				function() {
+					var dialog = new lime.ui.FileDialog();
+					dialog.onSelect.add(function(path:String) {
+						if (path == null || path == "") return;
+						
+						var id = haxe.io.Path.withoutDirectory(path);
+						var activeMods = ModdingAPI.getActiveMods();
+						var baseTarget = (activeMods != null && activeMods.length > 0) ? "mods/" + activeMods[0].id : Paths.ASSETS_FOLDER; 
+						var targetFolder = baseTarget + "/images/characters/" + id;
+						
+						if (!FileSystem.exists(targetFolder)) FileSystem.createDirectory(targetFolder);
+
+						for (file in FileSystem.readDirectory(path)) {
+							sys.io.File.copy(path + "/" + file, targetFolder + "/" + file);
+						}
+
+						var data:CharacterData = {
+							version: "1.0.0",
+							name: id,
+							assetPath: "characters/" + id,
+							offsets: [0, 0],
+							cameraOffsets: [150, -100],
+							animations: [],
+							healthIcon: 'face'
+						};
+
+						var animNames:Array<String> = [];
+						var eregNum = new EReg("([0-9]+)$", "");
+						var nameRegex = new EReg('"name"\\s*:\\s*"([^"]+)"', "g");
+
+						for (file in FileSystem.readDirectory(targetFolder)) {
+							if (StringTools.endsWith(file, ".json")) {
+								var content = sys.io.File.getContent(targetFolder + "/" + file);
+								var contentToSearch = content;
+								while (nameRegex.match(contentToSearch)) {
+									var texName = nameRegex.matched(1);
+									var cleanName = eregNum.replace(texName, "");
+									if (StringTools.endsWith(cleanName, " ")) cleanName = cleanName.substr(0, cleanName.length - 1);
+									
+									if (!animNames.contains(cleanName) && cleanName != "" && cleanName.toLowerCase() != "sprite" && cleanName.toLowerCase() != "animation") {
+										animNames.push(cleanName);
+									}
+									contentToSearch = nameRegex.matchedRight();
+								}
+							}
+						}
+
+						for (anm in animNames) {
+							data.animations.push({
+								name: anm,
+								prefix: anm,
+								offsets: [0, 0],
+								looped: false,
+								flipX: false,
+								flipY: false,
+								frameRate: 24
+							});
+						}
+
+						CharacterRegistry.characterDatas.set(id, data);
+						if (!newList.contains(id)) newList.push(id);
+						instance.refreshCharacterDropdown();
+						for (i in 0...instance.characterDropdown.options.length) {
+							if (instance.characterDropdown.options[i] == id) {
+								instance.characterDropdown.selectedIndex = i;
+								instance.characterDropdown.onChange(i, id);
+								break;
+							}
+						}
+					});
+					dialog.browse(lime.ui.FileDialogType.OPEN_DIRECTORY, null, null, "Select Texture Atlas Folder");
+				}
+			));
 		}
+		
 		var newAnimation:MenuItem = menuBar.findElement('newAnimation');
 		newAnimation.onClick = ()->{
 			bar.closeAll();
@@ -203,13 +358,16 @@ class CharacterEditorState extends StateBackend {
 		loopedBox = characterWindow.findElement('isLooped');
 		ghostBox = characterWindow.findElement('isGhost');
 		byLabel = characterWindow.findElement('byLabel');
+		
 		characterDropdown.onChange = function(v:Int, v2:String) {
 			if (character != null) remove(character);
 			if (ghost != null) remove(ghost);
 
 			animationList = [];
 
-			ghost = new Character(characterDropdown.selectedOption.id);
+			var selectedId = characterDropdown.options[v];
+
+			ghost = new Character(selectedId);
 			ghost.debug = true;
 			ghost.allowOnComplete = false;
 			ghost.camera = charCamera;
@@ -222,7 +380,7 @@ class CharacterEditorState extends StateBackend {
 			@:privateAccess ghost.__baseFlipped = false;
 			add(ghost);
 
-			character = new Character(characterDropdown.selectedOption.id);
+			character = new Character(selectedId);
 			character.debug = true;
 			character.allowOnComplete = false;
 			character.camera = charCamera;
@@ -234,7 +392,12 @@ class CharacterEditorState extends StateBackend {
 			@:privateAccess character.__baseFlipped = false;
 			add(character);
 
-			ghost._data = character._data = character.cloneData();
+			if (newList.contains(selectedId)) {
+				character._data = CharacterRegistry.characterDatas.get(selectedId);
+				ghost._data = character._data;
+			} else {
+				ghost._data = character._data = character.cloneData();
+			}
 
 			name.text = character._data.name;
 			assetPath.text = character._data.assetPath;
@@ -270,8 +433,47 @@ class CharacterEditorState extends StateBackend {
 
 			assetPath.onChange = function(value:String) {
 				assetPath.elementColor = 0xFF3d3f41;
-				if (Paths.image(value) != '' && value != '') {
+				var imgPath = Paths.image(value);
+				if (imgPath != null && imgPath != '' && value != '') {
 					character._data.assetPath = value;
+					
+					var xmlPath = StringTools.replace(imgPath, ".png", ".xml");
+					if (FileSystem.exists(xmlPath)) {
+						var content = sys.io.File.getContent(xmlPath);
+						var xml = Xml.parse(content).firstElement();
+						if (xml != null) {
+							var newAnims:Array<String> = [];
+							var ereg = new EReg("([0-9]+)$", "");
+							for (tex in xml.elementsNamed("SubTexture")) {
+								var name = tex.get("name");
+								if (name != null) {
+									var cleanName = ereg.replace(name, "");
+									if (StringTools.endsWith(cleanName, " ")) cleanName = cleanName.substr(0, cleanName.length - 1);
+									if (!newAnims.contains(cleanName)) newAnims.push(cleanName);
+								}
+							}
+							if (newAnims.length > 0) {
+								if (character._data.animations == null) character._data.animations = [];
+								for (anm in newAnims) {
+									var exists = false;
+									for (existing in character._data.animations) {
+										if (existing.name == anm) exists = true;
+									}
+									if (!exists) {
+										character._data.animations.push({
+											name: anm,
+											prefix: anm,
+											offsets: [0, 0],
+											looped: false,
+											flipX: false,
+											flipY: false,
+											frameRate: 24
+										});
+									}
+								}
+							}
+						}
+					}
 					reloadCharacters();
 				} else {
 					assetPath.elementColor = 0xff751b1b;
@@ -331,7 +533,8 @@ class CharacterEditorState extends StateBackend {
 						refreshAnimations();
 						return;
 					}
-					if (Paths.image(value) != '') {
+					var animImg = Paths.image(value);
+					if (animImg != null && animImg != '') {
 						selectedAnimation.assetPath = value;
 						refreshAnimations();
 					} else {
@@ -493,7 +696,7 @@ class CharacterEditorState extends StateBackend {
 			if (FileSystem.exists(path)) FileSystem.deleteFile(path);
 			var data = character.cloneData();
 			data.animations = animationList.copy();
-
+			
 			// -- Removes null and unchanged fields -- \\
 			for (i in Reflect.fields(data)) if (Reflect.field(data, i) == null) Reflect.deleteField(data, i);
 			for (anim in data.animations) {
@@ -511,11 +714,11 @@ class CharacterEditorState extends StateBackend {
 					}
 				}
 			}
-
 			// JsonUtil.stringify();
 			sys.io.File.saveContent(path, ParseUtil.stringifyYaml(data));
 		});
 	}
+	
 	override function update(elapsed:Float) {
 		super.update(elapsed);
 
@@ -524,9 +727,37 @@ class CharacterEditorState extends StateBackend {
 		var movement:Int = FlxG.keys.pressed.SHIFT ? 20 : 5;
 		cameraTarget.x += FlxG.keys.pressed.A ? -movement : FlxG.keys.pressed.D ? movement : 0;
 		cameraTarget.y += FlxG.keys.pressed.W ? -movement : FlxG.keys.pressed.S ? movement : 0;
-		var zoomAmt = (movement/250)/cameraTarget.zoom;
-		cameraTarget.zoom += FlxG.keys.pressed.Q ? -zoomAmt : FlxG.keys.pressed.E ? zoomAmt : 0;
-		cameraTarget.zoom = FlxMath.bound(cameraTarget.zoom, 0.1, 50);
+		
+		if (FlxG.mouse.wheel != 0) {
+			cameraTarget.zoom += (FlxG.mouse.wheel * 0.15) * cameraTarget.zoom;
+			cameraTarget.zoom = FlxMath.bound(cameraTarget.zoom, 0.1, 50);
+		}
+
+		if (FlxG.mouse.justPressedRight || FlxG.mouse.justPressedMiddle) {
+			lastMouseX = FlxG.mouse.screenX;
+			lastMouseY = FlxG.mouse.screenY;
+		} else if (FlxG.mouse.pressedRight || FlxG.mouse.pressedMiddle) {
+			cameraTarget.x -= (FlxG.mouse.screenX - lastMouseX) / charCamera.zoom;
+			cameraTarget.y -= (FlxG.mouse.screenY - lastMouseY) / charCamera.zoom;
+			lastMouseX = FlxG.mouse.screenX;
+			lastMouseY = FlxG.mouse.screenY;
+		}
+
+		if (FlxG.keys.pressed.CONTROL) {
+			if (FlxG.keys.justPressed.C) {
+				copiedOffset[0] = xOffsetStepper.value;
+				copiedOffset[1] = yOffsetStepper.value;
+			} else if (FlxG.keys.justPressed.V) {
+				xOffsetStepper.onChange(copiedOffset[0]);
+				yOffsetStepper.onChange(copiedOffset[1]);
+			}
+		}
+
+		if (FlxG.keys.justPressed.R) {
+			cameraTarget.x = 0;
+			cameraTarget.y = 0;
+			cameraTarget.zoom = 1;
+		}
 
 		if (FlxG.keys.justPressed.LEFT) xOffsetStepper.onChange(xOffsetStepper.value += FlxG.keys.pressed.SHIFT ? 1 : 10);
 		if (FlxG.keys.justPressed.RIGHT) xOffsetStepper.onChange(xOffsetStepper.value -= FlxG.keys.pressed.SHIFT ? 1 : 10);
@@ -548,5 +779,53 @@ class CharacterEditorState extends StateBackend {
 		charCamera.scroll.pointLerp(cameraTarget.y, 0.1, Y);
 		charCamera.zoom = charCamera.zoom.lerp(cameraTarget.zoom, 0.1);
 	}
+}
 
+class AtlasTypePrompt extends flixel.FlxSubState {
+	var onSparrow:Void->Void;
+	var onTexture:Void->Void;
+
+	public function new(onS:Void->Void, onT:Void->Void) {
+		super(0x88000000);
+		onSparrow = onS;
+		onTexture = onT;
+	}
+
+	override function create() {
+		super.create();
+		cameras = [CharacterEditorState.instance.lemonCamera];
+
+		var box = new flixel.FlxSprite().makeGraphic(500, 200, 0xFF222222);
+		box.screenCenter();
+		add(box);
+
+		var title = new flixel.text.FlxText(0, box.y + 20, 0, "Choose Atlas Format", 24);
+		title.screenCenter(flixel.util.FlxAxes.X);
+		add(title);
+
+		var txt1 = new flixel.text.FlxText(0, box.y + 75, 0, "1. Sparrow (PNG+XML)", 18);
+		txt1.screenCenter(flixel.util.FlxAxes.X);
+		add(txt1);
+
+		var txt2 = new flixel.text.FlxText(0, box.y + 115, 0, "2. Texture Atlas (Folder)", 18);
+		txt2.screenCenter(flixel.util.FlxAxes.X);
+		add(txt2);
+
+		var inst = new flixel.text.FlxText(0, box.y + 165, 0, "Press 1 or 2 (ESC to cancel)", 16);
+		inst.screenCenter(flixel.util.FlxAxes.X);
+		add(inst);
+	}
+
+	override function update(elapsed:Float) {
+		super.update(elapsed);
+		if (flixel.FlxG.keys.justPressed.ONE) {
+			close();
+			if (onSparrow != null) onSparrow();
+		} else if (flixel.FlxG.keys.justPressed.TWO) {
+			close();
+			if (onTexture != null) onTexture();
+		} else if (flixel.FlxG.keys.justPressed.ESCAPE) {
+			close();
+		}
+	}
 }
