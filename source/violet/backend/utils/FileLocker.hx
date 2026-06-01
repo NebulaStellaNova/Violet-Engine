@@ -3,11 +3,12 @@ package violet.backend.utils;
 /**
  * This is ONLY used for the ModdingAPI's temp folders, this is also INTENTIONALLY not allowed to be used by scripting.
 */
+@:unreflective
 class FileLocker {
 
 	@:unreflective
 	public static function lockFile(path:String):Void {
-		/* var os = Sys.systemName();
+		var os = Sys.systemName();
 		switch (os) {
 			case "Windows":
 				_run("icacls", [path, "/deny", "Everyone:(D,W)"]);
@@ -15,12 +16,12 @@ class FileLocker {
 				_run("chflags", ["uchg", path]);
 			case "Linux":
 				_run("chmod", ["a-w", path]);
-		} */
+		}
 	}
 
 	@:unreflective
 	public static function unlockFile(path:String):Void {
-		/* var os = Sys.systemName();
+		var os = Sys.systemName();
 		switch (os) {
 			case "Windows":
 				_run("icacls", [path, "/remove:d", "Everyone"]);
@@ -28,7 +29,7 @@ class FileLocker {
 				_run("chflags", ["nouchg", path]);
 			case "Linux":
 				_run("chmod", ["a+w", path]);
-		} */
+		}
 	}
 
 	@:unreflective
