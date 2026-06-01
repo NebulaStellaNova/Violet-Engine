@@ -192,6 +192,11 @@ class StoryMenu extends SubStateBackend {
 				canInteract = true;
 			});
 		}
+
+		scroll(0, false);
+
+		curDifficulty = Math.floor((levelList[curSelected].getDifficulties().length-1)/2);
+		changeDifficulty(0);
 	}
 
 	var time:Float = 0;
@@ -275,11 +280,14 @@ class StoryMenu extends SubStateBackend {
 
 	function scroll(direction:Int, playSound:Bool = true) {
 		if (!canInteract) return;
+		var prev = curSelected;
 		curSelected = FlxMath.wrap(curSelected + direction, 0, levelList.length - 1);
+		if (prev == curSelected) return; // Stops scroll if there's only one week.
 
 		updateTrackList();
 		if (playSound)
 			NovaUtils.playMenuSFX(SCROLL);
+		changeDifficulty(0);
 	}
 
 	function changeDifficulty(direction:Int) {
@@ -305,6 +313,7 @@ class StoryMenu extends SubStateBackend {
 				PlayState.loadSong(PlayState.playlist.shift(), curDifficultyString);
 			});
 		});
+
 	}
 
 	function updateTrackList() {

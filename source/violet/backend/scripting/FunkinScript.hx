@@ -82,9 +82,9 @@ class FunkinScript extends Script {
 			// trace('error:${e.message}');
 			var data:Array<String> = e.message.split(":");
 			var scriptString = data.shift();
-			var lineNum = data.shift();
-			var errorMsg = data.join(':');
-			NovaUtils.addNotification('Novamod Script Exception!', 'Error executing "$fileName:$lineNum":$errorMsg', ERROR);
+			var lineNum = data.shift() ?? 'UNKNOWN';
+			var errorMsg = data.join(':') ?? e.message;
+			NovaUtils.addNotification('Novamod Script Exception!', 'Error executing "$fileName:$lineNum": ${errorMsg.trim() == '' ? e.message : errorMsg}', ERROR);
 		}
 		return def;
 	}
