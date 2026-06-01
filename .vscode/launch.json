@@ -5,6 +5,12 @@
 	"version": "0.2.0",
 	"configurations": [
 		{
+			"program": "${workspaceFolder}/export/debug/windows/bin/Violet Engine.exe",
+			"name": "HXCPP",
+			"type": "hxcpp",
+			"request": "launch",
+		},
+		{
 			"name": "Debug",
 			"type": "lime",
 			"request": "launch",
