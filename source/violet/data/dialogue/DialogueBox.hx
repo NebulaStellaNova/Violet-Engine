@@ -58,8 +58,8 @@ class DialogueBox extends FlxSpriteGroup {
 		add(boxSprite);
 		add(textDisplay);
 
-		boxSprite.animation.onFrameChange.add(this.onAnimationFrame);
    		boxSprite.animation.onFinish.add(this.onAnimationFinished);
+   		boxSprite.animation.onFrameChange.add(this.onFrameChange);
 		scripts.callVariants('postCreate');
 	}
 
@@ -68,10 +68,10 @@ class DialogueBox extends FlxSpriteGroup {
 		scripts.callVariants('animationFinished', [name]);
 		@:privateAccess convo?.speaker?.scripts.callVariants('boxAnimationFinished', [name]);
 	}
-	function onAnimationFrame(name:String, frameNumber:Int, frameIndex:Int):Void {
-		convo?.scripts.callVariants('boxAnimationFrame', [name, frameNumber, frameIndex]);
-		scripts.callVariants('animationFrame', [name, frameNumber, frameIndex]);
-		@:privateAccess convo?.speaker?.scripts.callVariants('boxAnimationFrame', [name, frameNumber, frameIndex]);
+	function onFrameChange(name:String, frameNumber:Int, frameIndex:Int):Void {
+		convo?.scripts.callVariants('boxFrameChange', [name, frameNumber, frameIndex]);
+		scripts.callVariants('frameChange', [name, frameNumber, frameIndex]);
+		@:privateAccess convo?.speaker?.scripts.callVariants('boxFrameChange', [name, frameNumber, frameIndex]);
 	}
 
 	public function playAnim(name:String, forced:Bool = false, reversed:Bool = false, frame:Int = 0):Void {
