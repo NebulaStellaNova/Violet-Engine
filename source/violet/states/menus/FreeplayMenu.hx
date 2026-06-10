@@ -105,12 +105,12 @@ class FreeplayMenu extends SubStateBackend {
 		topBar.y = -topBar.height;
 		add(topBar);
 
-		scoreText = new NovaText(30, 15, 0, "SCORE: 00000000", Paths.font('ErasBoldITC'));
+		scoreText = new NovaText(30, 15, "SCORE: 00000000", Paths.font('ErasBoldITC'));
 		scoreText.size = 80;
 		scoreText.updateHitbox();
 		add(scoreText);
 
-		difficultyText = new NovaText(FlxG.width - 30, 15, 0, "NORMAL", Paths.font('akira', null, 'otf'));
+		difficultyText = new NovaText(FlxG.width - 30, 15, "NORMAL", Paths.font('akira', null, 'otf'));
 		difficultyText.size = 90;
 		difficultyText.scale.x = difficultyText.scale.y = 0.5;
 		difficultyText.scale.y *= 1.8;
@@ -136,7 +136,6 @@ class FreeplayMenu extends SubStateBackend {
 
 		ostText = new NovaText(100, FlxG.height - 47, 500*2, "FIRE FIGHT P1");
 		ostText.setFormat(Paths.font("akira", null, "otf"), 50, FlxColor.WHITE, "center");
-		ostText.antialiasing = true;
 		ostText.scale.x = ostText.scale.y = 0.5;
 		ostText.scale.y *= 1.4;
 		ostText.updateHitbox();

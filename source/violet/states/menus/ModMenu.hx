@@ -17,9 +17,7 @@ class ModTag extends FlxSpriteGroup {
 	override public function new(tag:String) {
 		super();
 
-		var label:NovaText = new NovaText(7.5, 5, 0, tag);
-		label.font = Paths.font('vcr.ttf');
-		label.size = 50;
+		var label:NovaText = new NovaText(7.5, 5, tag, 50, Paths.font('vcr.ttf'));
 		label.updateHitbox();
 
 		var bg:NovaSprite = new NovaSprite().makeGraphic(label.width + 15, label.height + 10, FlxColor.BLACK);
@@ -136,7 +134,7 @@ class ModMenu extends SubStateBackend {
 		modTitleText.alignment = CENTER;
 		add(modTitleText);
 
-		tagsText = new NovaText(0, 0, '', Paths.font('PhantomMuff/empty letters.ttf'));
+		tagsText = new NovaText('', Paths.font('PhantomMuff/empty letters.ttf'));
 		tagsText.size = 60;
 		tagsText.text = 'Tag:';
 		tagsText.scrollFactor.set();

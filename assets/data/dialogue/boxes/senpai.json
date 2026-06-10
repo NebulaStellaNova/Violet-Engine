@@ -1,0 +1,48 @@
+{
+	"name": "Senpai",
+	"assetPath": "dialogue/boxes/senpai",
+	"isPixel": true,
+	"offsets": [-660, -340],
+	"scale": 5.4,
+	"text": {
+		"offsets": [225, 450],
+		"width": 800,
+		"color": "#3F2021",
+		"font": "pixel.otf",
+		"borderColor": "#D89494",
+		"borderSize": 2,
+		"borderStyle": "shadow"
+	},
+	"animations": [
+		{
+			"name": "enter",
+			"prefix": "Text Box Appear0"
+		},
+		{
+			"name": "speaking",
+			"prefix": "Text Box Speaking0"
+		},
+		{
+			"name": "sentenceEnd",
+			"prefix": "Text Box Sentence End0"
+		},
+		{
+			"name": "idle",
+			"prefix": "Text Box wait to click0",
+			"looped": true
+		},
+		{
+			"name": "click",
+			"prefix": "Text Box CLICK0"
+		},
+		{
+			"name": "exit",
+			"prefix": "Text Box Appear0",
+			"frameIndices": [4, 3, 2, 1, 0]
+		},
+		{
+			"name": "angrySenpai",
+			"prefix": "SENPAI ANGRY IMPACT SPEECH0"
+		}
+	]
+}

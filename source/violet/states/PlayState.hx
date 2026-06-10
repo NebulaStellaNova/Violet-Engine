@@ -499,7 +499,6 @@ class PlayState extends violet.backend.StateBackend {
 		staticExit = exitToMenu;
 
 		callSongScripts('update', [elapsed]);
-		callSongScripts('onUpdate', [elapsed]);
 
 		var totalTime = Conductor.instrumental.length;
 		var currentTime = Conductor.instrumental.time;
@@ -565,7 +564,7 @@ class PlayState extends violet.backend.StateBackend {
 		}
 
 		callSongScripts('postUpdate', [elapsed]);
-		callSongScripts('onUpdatePost', [elapsed]);
+		callSongScripts('updatePost', [elapsed]);
 	}
 
 	function onVoidTap(id:Int, strumLine:StrumLine) {
@@ -1079,7 +1078,7 @@ class PlayState extends violet.backend.StateBackend {
 		if (stage != null) stage.stageScripts.callVariants(func, params);
 		if (strumLines != null) {
 			for (line in strumLines) {
-				for (i in line.characters) i.scripts.call(func, params);
+				for (i in line.characters) i.scripts.callVariants(func, params);
 			}
 		}
 	}

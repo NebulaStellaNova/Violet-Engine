@@ -254,17 +254,25 @@ class ModdingAPI {
 		NovaUtils.CURRENT_MUSIC = null;
 		registered = true;
 
-		final registries:Array<Class<Dynamic>> = [
+		final registries:Array<Class<violet.data.RegistryImpl>> = [
 			violet.data.notestyles.NoteStyleRegistry,
 			violet.data.level.LevelRegistry,
 			violet.data.icon.HealthIconRegistry,
 			violet.data.character.CharacterRegistry,
 			violet.data.song.SongRegistry,
+			violet.data.dialogue.SpeakerRegistry,
+			violet.data.dialogue.DialogueBoxRegistry,
+			violet.data.dialogue.ConversationRegistry,
 			violet.data.stage.StageRegistry,
 			violet.data.chart.ChartRegistry,
 		];
 		for (registry in registries) {
-			LoadingState.loadingText = 'Loading: ${Reflect.field(registry, 'id')}s...';
+			var regId:String = {
+				var id = Reflect.field(registry, 'id');
+				if (id == 'DialogueBox') id += 'e';
+				id;
+			}
+			LoadingState.loadingText = 'Loading: ${regId}s...';
 			Reflect.callMethod(null, Reflect.field(registry, 'registerEntries'), []);
 			LoadingState.loadingPercent += 1/registries.length;
 		}

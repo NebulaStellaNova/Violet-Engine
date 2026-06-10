@@ -1,9 +1,5 @@
 package violet.data.stage;
 
-import haxe.io.Path;
-import violet.backend.utils.FileUtil;
-import violet.backend.utils.ParseUtil;
-
 @:registryData('Stage', [violet.data.stage.Stage, violet.data.stage.StageData])
 class StageRegistry implements violet.data.RegistryImpl {
 

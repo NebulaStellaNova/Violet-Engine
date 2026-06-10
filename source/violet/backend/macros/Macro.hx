@@ -19,6 +19,7 @@ class Macro {
 		addMetadata('violet.backend.macros.Macro.buildFlxSprite()', 'flixel.FlxSprite');
 		addMetadata('violet.backend.macros.Macro.buildFlxGroup()', 'flixel.group.FlxTypedGroup');
 		addMetadata('violet.backend.macros.Macro.buildFlxSpriteGroup()', 'flixel.group.FlxTypedSpriteGroup');
+		addMetadata('violet.backend.macros.Macro.buildFlxTypeText()', 'flixel.addons.text.FlxTypeText');
 		addMetadata('violet.backend.macros.Macro.buildFlxCamera()', 'flixel.FlxCamera');
 		addMetadata('violet.backend.macros.Macro.buildFlxBaseKeyList()', 'flixel.input.FlxBaseKeyList');
 		addMetadata('violet.backend.macros.VarTweenMacro.init()', 'flixel.tweens.misc.VarTween');
@@ -237,6 +238,21 @@ class Macro {
 			}
 		}
 		return classFields.concat(tempClass.fields);
+	}
+
+	public static macro function buildFlxTypeText():Array<Field> {
+		var classFields:Array<Field> = Context.getBuildFields();
+		var newConstructor = classFields.filter(field -> return field.name == 'new')[0];
+		switch (newConstructor.kind) {
+			case FFun(f):
+				switch (f.args[2].type) {
+					case TPath(p):
+						p.name = 'Float'; // WHY TF IS IT AN INT????????
+					default:
+				}
+			default:
+		}
+		return classFields;
 	}
 
 	public static macro function buildFlxCamera():Array<Field> {

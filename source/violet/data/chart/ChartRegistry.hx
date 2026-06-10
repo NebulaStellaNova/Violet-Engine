@@ -1,7 +1,6 @@
 package violet.data.chart;
 
 import violet.data.song.Song;
-import violet.backend.utils.ParseUtil;
 import violet.data.song.SongRegistry;
 
 typedef ChartCache = {

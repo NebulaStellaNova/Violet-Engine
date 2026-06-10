@@ -1,8 +1,5 @@
 package violet.data.level;
 
-import haxe.io.Path;
-import violet.backend.utils.ParseUtil;
-
 @:registryData('Level', [violet.data.level.Level, violet.data.level.LevelData])
 class LevelRegistry implements violet.data.RegistryImpl {
 
